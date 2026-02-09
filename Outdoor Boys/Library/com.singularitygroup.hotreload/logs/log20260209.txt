@@ -1,0 +1,178 @@
+2026-02-09 12:07:07.083 +09:00 [INF] Hot Reload Server is starting. Do not close this window.
+2026-02-09 12:07:07.140 +09:00 [INF] 
+2026-02-09 12:07:07.248 +09:00 [INF] Initialized user with id: 43A796AC92D834C139F6AA1D3820986C44B0AB6BCCE74F9D65B23FF8E9D031BE
+2026-02-09 12:07:07.944 +09:00 [INF] Compiling... (the first time might take a minute, depending on project size)
+2026-02-09 12:07:13.945 +09:00 [INF] Finished compiling in 6s
+2026-02-09 12:07:13.953 +09:00 [INF] 
+2026-02-09 12:07:13.953 +09:00 [INF] Hot Reload Server is ready. Edit code to see updates in unity.
+2026-02-09 12:07:13.954 +09:00 [INF] Keep this window open while using Hot Reload (minimizing is OK)
+2026-02-09 12:29:00.231 +09:00 [INF] Detected Changed in /Users/larrydarrell/Unity Projects/Repository Projects/project-OutDoor-Boys/Outdoor Boys/Assets/Scripts/_Environment/_Tile/Tile_Generator.cs
+2026-02-09 12:29:04.502 +09:00 [INF] Hot Reloading Start in Tile_Generator.cs  - Assembly-CSharp (3968ms)
+2026-02-09 12:29:16.159 +09:00 [INF] Compiling...
+2026-02-09 12:29:20.800 +09:00 [INF] Finished compiling in 4s
+2026-02-09 12:29:32.363 +09:00 [INF] Detected Renamed in /Users/larrydarrell/Unity Projects/Repository Projects/project-OutDoor-Boys/Outdoor Boys/Assets/Plugins/Easy Save 3/Resources/ES3/ES3GlobalReferences.asset
+2026-02-09 12:29:32.469 +09:00 [INF] Detected Renamed in /Users/larrydarrell/Unity Projects/Repository Projects/project-OutDoor-Boys/Outdoor Boys/Assets/Scenes/SampleScene.unity
+2026-02-09 12:29:54.922 +09:00 [INF] Detected Renamed in /Users/larrydarrell/Unity Projects/Repository Projects/project-OutDoor-Boys/Outdoor Boys/Assets/Scenes/SampleScene.unity
+2026-02-09 12:30:59.436 +09:00 [INF] Detected Changed in /Users/larrydarrell/Unity Projects/Repository Projects/project-OutDoor-Boys/Outdoor Boys/Assets/Scripts/_Environment/_Tile/Tile_Generator.cs
+2026-02-09 12:31:00.581 +09:00 [INF] Hot Reloading Generate_Tiles in Tile_Generator.cs  - Assembly-CSharp (1018ms)
+2026-02-09 12:37:01.562 +09:00 [INF] Detected Changed in /Users/larrydarrell/Unity Projects/Repository Projects/project-OutDoor-Boys/Outdoor Boys/Assets/Scripts/_Environment/_Tile/Tile_Generator.cs
+2026-02-09 12:37:02.733 +09:00 [INF] Hot Reloading Generate_Tiles in Tile_Generator.cs  - Assembly-CSharp (969ms)
+2026-02-09 12:37:07.953 +09:00 [INF] Detected Changed in /Users/larrydarrell/Unity Projects/Repository Projects/project-OutDoor-Boys/Outdoor Boys/Assets/Scripts/_Environment/_Tile/Tile_Generator.cs
+2026-02-09 12:47:58.689 +09:00 [INF] Detected Changed in /Users/larrydarrell/Unity Projects/Repository Projects/project-OutDoor-Boys/Outdoor Boys/Assets/Scripts/_Environment/_Tile/Tile_Generator.cs
+2026-02-09 12:47:59.180 +09:00 [INF] Hot Reloading Generate_Tiles in Tile_Generator.cs  - Assembly-CSharp (414ms)
+2026-02-09 12:48:38.621 +09:00 [INF] Detected Changed in /Users/larrydarrell/Unity Projects/Repository Projects/project-OutDoor-Boys/Outdoor Boys/Assets/Scripts/_Environment/_Tile/Tile_Generator.cs
+2026-02-09 12:48:39.124 +09:00 [INF] Hot Reloading Generate_Tiles in Tile_Generator.cs  - Assembly-CSharp (372ms)
+2026-02-09 12:52:47.745 +09:00 [INF] Detected Changed in /Users/larrydarrell/Unity Projects/Repository Projects/project-OutDoor-Boys/Outdoor Boys/Assets/Scripts/_Environment/_Tile/Tile_Generator.cs
+2026-02-09 12:52:49.204 +09:00 [INF] Hot Reloading Generate_Tiles in Tile_Generator.cs  - Assembly-CSharp (1200ms)
+2026-02-09 12:53:01.693 +09:00 [INF] Compiling...
+2026-02-09 12:53:05.015 +09:00 [INF] Finished compiling in 3s
+2026-02-09 13:07:22.441 +09:00 [INF] Detected Changed in /Users/larrydarrell/Unity Projects/Repository Projects/project-OutDoor-Boys/Outdoor Boys/Assets/Scripts/_Environment/_Tile/Tile_Generator.cs
+2026-02-09 13:07:23.530 +09:00 [INF] Hot Reloading Generate_Tiles in Tile_Generator.cs  - Assembly-CSharp (925ms)
+2026-02-09 13:07:36.516 +09:00 [INF] Compiling...
+2026-02-09 13:07:40.271 +09:00 [INF] Finished compiling in 3s
+2026-02-09 13:11:15.696 +09:00 [INF] Detected Changed in /Users/larrydarrell/Unity Projects/Repository Projects/project-OutDoor-Boys/Outdoor Boys/Assets/Scripts/_Environment/_Tile/Tile_Generator.cs
+2026-02-09 13:11:16.201 +09:00 [INF] Hot Reloading Generate_Tiles in Tile_Generator.cs  - Assembly-CSharp (429ms)
+2026-02-09 13:12:42.747 +09:00 [INF] Detected Changed in /Users/larrydarrell/Unity Projects/Repository Projects/project-OutDoor-Boys/Outdoor Boys/Assets/Scripts/_Environment/_Tile/Tile_Generator.cs
+2026-02-09 13:12:43.397 +09:00 [INF] Hot Reloading Generate_Tiles in Tile_Generator.cs  - Assembly-CSharp (378ms)
+2026-02-09 13:12:50.835 +09:00 [INF] Detected Changed in /Users/larrydarrell/Unity Projects/Repository Projects/project-OutDoor-Boys/Outdoor Boys/Assets/Scripts/_Environment/_Tile/Tile_Generator.cs
+2026-02-09 13:13:06.888 +09:00 [INF] Detected Renamed in /Users/larrydarrell/Unity Projects/Repository Projects/project-OutDoor-Boys/Outdoor Boys/Assets/Scenes/SampleScene.unity
+2026-02-09 13:32:50.717 +09:00 [INF] Detected Changed in /Users/larrydarrell/Unity Projects/Repository Projects/project-OutDoor-Boys/Outdoor Boys/Assets/Scripts/_Environment/_Tile/Tile_Generator.cs
+2026-02-09 13:32:50.720 +09:00 [INF] Detected Changed in /Users/larrydarrell/Unity Projects/Repository Projects/project-OutDoor-Boys/Outdoor Boys/Assets/Scripts/_Environment/_Tile/Tile.cs
+2026-02-09 13:32:52.485 +09:00 [INF] Hot Reloading Start, Generate_Tiles, .ctor in Tile_Generator.cs  - Assembly-CSharp (1719ms)
+2026-02-09 13:33:07.732 +09:00 [INF] Compiling...
+2026-02-09 13:33:10.470 +09:00 [INF] Finished compiling in 2s
+2026-02-09 13:33:18.366 +09:00 [INF] Detected Changed in /Users/larrydarrell/Unity Projects/Repository Projects/project-OutDoor-Boys/Outdoor Boys/Assets/Scripts/_Environment/_Tile/Tile.cs
+2026-02-09 13:33:32.838 +09:00 [INF] Detected Renamed in /Users/larrydarrell/Unity Projects/Repository Projects/project-OutDoor-Boys/Outdoor Boys/Assets/Prefabs/Stone Tile.prefab
+2026-02-09 13:34:11.631 +09:00 [INF] Detected Changed in /Users/larrydarrell/Unity Projects/Repository Projects/project-OutDoor-Boys/Outdoor Boys/Assets/Scripts/_Environment/_Tile/Tile_Generator.cs
+2026-02-09 13:34:12.007 +09:00 [INF] Hot Reloading Update_TileSetSprite in Tile_Generator.cs  - Assembly-CSharp (254ms)
+2026-02-09 13:35:22.135 +09:00 [INF] Detected Changed in /Users/larrydarrell/Unity Projects/Repository Projects/project-OutDoor-Boys/Outdoor Boys/Assets/Scripts/_Environment/_Tile/Tile_Generator.cs
+2026-02-09 13:35:22.510 +09:00 [INF] Hot Reloading Update_TileSetSprite in Tile_Generator.cs  - Assembly-CSharp (250ms)
+2026-02-09 13:36:16.603 +09:00 [INF] Detected Changed in /Users/larrydarrell/Unity Projects/Repository Projects/project-OutDoor-Boys/Outdoor Boys/Assets/Scripts/_Environment/_Tile/Tile_Generator.cs
+2026-02-09 13:36:16.957 +09:00 [INF] Hot Reloading Update_TileSetSprite in Tile_Generator.cs  - Assembly-CSharp (199ms)
+2026-02-09 13:36:55.354 +09:00 [INF] Detected Changed in /Users/larrydarrell/Unity Projects/Repository Projects/project-OutDoor-Boys/Outdoor Boys/Assets/Scripts/_Environment/_Tile/Tile_Generator.cs
+2026-02-09 13:36:55.754 +09:00 [INF] Hot Reloading Update_TileSetSprite in Tile_Generator.cs  - Assembly-CSharp (225ms)
+2026-02-09 13:39:48.885 +09:00 [INF] Detected Renamed in /Users/larrydarrell/Unity Projects/Repository Projects/project-OutDoor-Boys/Outdoor Boys/Assets/Scenes/SampleScene.unity
+2026-02-09 14:53:11.679 +09:00 [INF] Detected Changed in /Users/larrydarrell/Unity Projects/Repository Projects/project-OutDoor-Boys/Outdoor Boys/Assets/Scripts/_Environment/_Tile/Tile_Generator.cs
+2026-02-09 14:53:11.680 +09:00 [INF] Detected Changed in /Users/larrydarrell/Unity Projects/Repository Projects/project-OutDoor-Boys/Outdoor Boys/Assets/Scripts/_Environment/_Tile/Tile.cs
+2026-02-09 14:53:11.685 +09:00 [INF] Detected Changed in /Users/larrydarrell/Unity Projects/Repository Projects/project-OutDoor-Boys/Outdoor Boys/Assets/Scripts/_Environment/_Tile/TileData.cs
+2026-02-09 14:53:11.706 +09:00 [INF] Detected Changed in /Users/larrydarrell/Unity Projects/Repository Projects/project-OutDoor-Boys/Outdoor Boys/Assets/Scripts/_Environment/_Tile/Tile.cs
+2026-02-09 14:53:11.707 +09:00 [INF] Detected Changed in /Users/larrydarrell/Unity Projects/Repository Projects/project-OutDoor-Boys/Outdoor Boys/Assets/Scripts/_Environment/_Tile/Tile_Generator.cs
+2026-02-09 14:53:12.824 +09:00 [INF] errors: Insert EnumDeclaration: Adding enum requires recompiling in unity. in TileData.cs:5
+(at /Users/larrydarrell/Unity Projects/Repository Projects/project-OutDoor-Boys/Outdoor Boys/Assets/Scripts/_Environment/_Tile/TileData.cs:5)
+Insert EnumDeclaration: Adding enum requires recompiling in unity. in TileData.cs:5
+(at /Users/larrydarrell/Unity Projects/Repository Projects/project-OutDoor-Boys/Outdoor Boys/Assets/Scripts/_Environment/_Tile/TileData.cs:5)
+Insert ClassConstructorDeclaration: Adding constructor requires recompiling in unity. in TileData.cs:15
+(at /Users/larrydarrell/Unity Projects/Repository Projects/project-OutDoor-Boys/Outdoor Boys/Assets/Scripts/_Environment/_Tile/TileData.cs:15)
+2026-02-09 14:53:24.308 +09:00 [INF] Compiling...
+2026-02-09 14:53:28.826 +09:00 [INF] Finished compiling in 4s
+2026-02-09 15:19:57.367 +09:00 [INF] Detected Renamed in /Users/larrydarrell/Unity Projects/Repository Projects/project-OutDoor-Boys/Outdoor Boys/Assets/Prefabs/Stone Tile.prefab
+2026-02-09 15:21:38.954 +09:00 [INF] Detected Changed in /Users/larrydarrell/Unity Projects/Repository Projects/project-OutDoor-Boys/Outdoor Boys/Assets/Scripts/_Environment/_Tile/TileStaticData.cs
+2026-02-09 15:21:38.962 +09:00 [INF] Detected Created in /Users/larrydarrell/Unity Projects/Repository Projects/project-OutDoor-Boys/Outdoor Boys/Assets/Scripts/_Environment/_Tile/TileStaticData.cs
+2026-02-09 15:21:39.008 +09:00 [INF] Detected Created in /Users/larrydarrell/Unity Projects/Repository Projects/project-OutDoor-Boys/Outdoor Boys/Assets/Scripts/_Environment/_Tile/TileStaticData.cs.meta
+2026-02-09 15:21:39.102 +09:00 [INF] Detected Changed in /Users/larrydarrell/Unity Projects/Repository Projects/project-OutDoor-Boys/Outdoor Boys/Assets/Scripts/_Environment/_Tile/TileStaticData.cs.meta
+2026-02-09 15:21:39.102 +09:00 [INF] Detected Created in /Users/larrydarrell/Unity Projects/Repository Projects/project-OutDoor-Boys/Outdoor Boys/Assets/Scripts/_Environment/_Tile/TileStaticData.cs.meta
+2026-02-09 15:21:39.124 +09:00 [WRN] File is not part of any project: /Users/larrydarrell/Unity Projects/Repository Projects/project-OutDoor-Boys/Outdoor Boys/Assets/Scripts/_Environment/_Tile/TileStaticData.cs
+2026-02-09 15:21:50.999 +09:00 [INF] Compiling...
+2026-02-09 15:21:54.557 +09:00 [INF] Finished compiling in 3s
+2026-02-09 15:25:21.962 +09:00 [INF] Detected Changed in /Users/larrydarrell/Unity Projects/Repository Projects/project-OutDoor-Boys/Outdoor Boys/Assets/Scripts/_Environment/_Tile/Tile.cs
+2026-02-09 15:25:38.627 +09:00 [INF] Compiling...
+2026-02-09 15:25:41.905 +09:00 [INF] Finished compiling in 3s
+2026-02-09 15:25:54.871 +09:00 [INF] Detected Changed in /Users/larrydarrell/Unity Projects/Repository Projects/project-OutDoor-Boys/Outdoor Boys/Assets/Scripts/_Environment/_Tile/TileScrObj.cs
+2026-02-09 15:25:54.871 +09:00 [INF] Detected Created in /Users/larrydarrell/Unity Projects/Repository Projects/project-OutDoor-Boys/Outdoor Boys/Assets/Scripts/_Environment/_Tile/TileScrObj.cs
+2026-02-09 15:25:54.872 +09:00 [INF] Detected Created in /Users/larrydarrell/Unity Projects/Repository Projects/project-OutDoor-Boys/Outdoor Boys/Assets/Scripts/_Environment/_Tile/TileScrObj.cs.meta
+2026-02-09 15:25:54.976 +09:00 [INF] Detected Changed in /Users/larrydarrell/Unity Projects/Repository Projects/project-OutDoor-Boys/Outdoor Boys/Assets/Scripts/_Environment/_Tile/TileScrObj.cs.meta
+2026-02-09 15:25:54.976 +09:00 [INF] Detected Created in /Users/larrydarrell/Unity Projects/Repository Projects/project-OutDoor-Boys/Outdoor Boys/Assets/Scripts/_Environment/_Tile/TileScrObj.cs.meta
+2026-02-09 15:25:55.108 +09:00 [WRN] File is not part of any project: /Users/larrydarrell/Unity Projects/Repository Projects/project-OutDoor-Boys/Outdoor Boys/Assets/Scripts/_Environment/_Tile/TileScrObj.cs
+2026-02-09 15:26:02.721 +09:00 [INF] Compiling...
+2026-02-09 15:26:05.226 +09:00 [INF] Finished compiling in 2s
+2026-02-09 15:30:49.127 +09:00 [INF] Detected Changed in /Users/larrydarrell/Unity Projects/Repository Projects/project-OutDoor-Boys/Outdoor Boys/Assets/Scripts/_Environment/_Tile/TileData.cs
+2026-02-09 15:30:49.128 +09:00 [INF] Detected Changed in /Users/larrydarrell/Unity Projects/Repository Projects/project-OutDoor-Boys/Outdoor Boys/Assets/Scripts/_Environment/_Tile/TileScrObj.cs
+2026-02-09 15:30:49.666 +09:00 [INF] errors: Renamed MethodParameter is not supported for constructors: Renaming parameter requires recompiling in unity. in TileData.cs:15
+(at /Users/larrydarrell/Unity Projects/Repository Projects/project-OutDoor-Boys/Outdoor Boys/Assets/Scripts/_Environment/_Tile/TileData.cs:15)
+TypeUpdate MethodParameter is not supported for constructors: Updating the type of parameter requires recompiling in unity. in TileData.cs:15
+(at /Users/larrydarrell/Unity Projects/Repository Projects/project-OutDoor-Boys/Outdoor Boys/Assets/Scripts/_Environment/_Tile/TileData.cs:15)
+ChangingSignature ClassConstructorDeclaration: Changing the signature of constructor requires recompiling in unity because is not supported by the runtime. in TileData.cs:15
+(at /Users/larrydarrell/Unity Projects/Repository Projects/project-OutDoor-Boys/Outdoor Boys/Assets/Scripts/_Environment/_Tile/TileData.cs:15)
+2026-02-09 15:30:57.346 +09:00 [INF] Compiling...
+2026-02-09 15:30:59.797 +09:00 [INF] Finished compiling in 2s
+2026-02-09 15:33:35.799 +09:00 [INF] Detected Changed in /Users/larrydarrell/Unity Projects/Repository Projects/project-OutDoor-Boys/Outdoor Boys/Assets/Scripts/_Environment/_Tile/TileScrObj.cs
+2026-02-09 15:33:35.809 +09:00 [INF] Detected Changed in /Users/larrydarrell/Unity Projects/Repository Projects/project-OutDoor-Boys/Outdoor Boys/Assets/Scripts/_Environment/_Tile/TileScrObj.cs
+2026-02-09 15:33:36.265 +09:00 [INF] errors: UpdateAttribute ClassDeclaration: Updating attribute 'CreateAssetMenuAttribute' requires recompiling in unity. in TileScrObj.cs:6
+(at /Users/larrydarrell/Unity Projects/Repository Projects/project-OutDoor-Boys/Outdoor Boys/Assets/Scripts/_Environment/_Tile/TileScrObj.cs:6)
+2026-02-09 15:33:44.018 +09:00 [INF] Compiling...
+2026-02-09 15:33:46.706 +09:00 [INF] Finished compiling in 2s
+2026-02-09 15:37:22.443 +09:00 [INF] Detected Changed in /Users/larrydarrell/Unity Projects/Repository Projects/project-OutDoor-Boys/Outdoor Boys/Assets/Scripts/_Environment/_Tile/Tile.cs
+2026-02-09 15:37:22.444 +09:00 [INF] Detected Changed in /Users/larrydarrell/Unity Projects/Repository Projects/project-OutDoor-Boys/Outdoor Boys/Assets/Scripts/_Environment/_Tile/Tile_Generator.cs
+2026-02-09 15:37:22.457 +09:00 [INF] Detected Changed in /Users/larrydarrell/Unity Projects/Repository Projects/project-OutDoor-Boys/Outdoor Boys/Assets/Scripts/_Environment/_Tile/Tile.cs
+2026-02-09 15:37:24.723 +09:00 [INF] Scripts have compile errors: /Users/larrydarrell/Unity Projects/Repository Projects/project-OutDoor-Boys/Outdoor Boys/Assets/Scripts/_Environment/_Tile/Tile.cs(27,13): error CS0103: The name '_setSprites' does not exist in the current context
+/Users/larrydarrell/Unity Projects/Repository Projects/project-OutDoor-Boys/Outdoor Boys/Assets/Scripts/_Environment/_Tile/Tile.cs(33,43): error CS0103: The name '_setSprites' does not exist in the current context
+/Users/larrydarrell/Unity Projects/Repository Projects/project-OutDoor-Boys/Outdoor Boys/Assets/Scripts/_Environment/_Tile/Tile.cs(33,60): error CS0103: The name '_setSprites' does not exist in the current context
+2026-02-09 15:50:44.954 +09:00 [INF] Detected Changed in /Users/larrydarrell/Unity Projects/Repository Projects/project-OutDoor-Boys/Outdoor Boys/Assets/Scripts/_Environment/_Tile/TileScrObj.cs
+2026-02-09 15:50:44.957 +09:00 [INF] Detected Changed in /Users/larrydarrell/Unity Projects/Repository Projects/project-OutDoor-Boys/Outdoor Boys/Assets/Scripts/_Environment/_Tile/Tile_Generator.cs
+2026-02-09 15:50:44.957 +09:00 [INF] Detected Changed in /Users/larrydarrell/Unity Projects/Repository Projects/project-OutDoor-Boys/Outdoor Boys/Assets/Scripts/_Environment/_Tile/Tile.cs
+2026-02-09 15:50:46.071 +09:00 [INF] Hot Reloading Start, Update_TileSetSprite in TileScrObj.cs  - Assembly-CSharp (913ms)
+2026-02-09 15:50:57.752 +09:00 [INF] Compiling...
+2026-02-09 15:51:00.461 +09:00 [INF] Finished compiling in 2s
+2026-02-09 15:51:28.287 +09:00 [INF] Detected Created in /Users/larrydarrell/Unity Projects/Repository Projects/project-OutDoor-Boys/Outdoor Boys/Assets/Scripts/_Game Managers
+2026-02-09 15:51:28.288 +09:00 [INF] Detected Created in /Users/larrydarrell/Unity Projects/Repository Projects/project-OutDoor-Boys/Outdoor Boys/Assets/Scripts/_Game Managers.meta
+2026-02-09 15:51:28.355 +09:00 [INF] Detected Changed in /Users/larrydarrell/Unity Projects/Repository Projects/project-OutDoor-Boys/Outdoor Boys/Assets/Scripts/_Game Managers.meta
+2026-02-09 15:51:28.355 +09:00 [INF] Detected Created in /Users/larrydarrell/Unity Projects/Repository Projects/project-OutDoor-Boys/Outdoor Boys/Assets/Scripts/_Game Managers.meta
+2026-02-09 15:51:44.083 +09:00 [INF] Detected Changed in /Users/larrydarrell/Unity Projects/Repository Projects/project-OutDoor-Boys/Outdoor Boys/Assets/Scripts/_Game Managers/Data_Manager.cs
+2026-02-09 15:51:44.083 +09:00 [INF] Detected Created in /Users/larrydarrell/Unity Projects/Repository Projects/project-OutDoor-Boys/Outdoor Boys/Assets/Scripts/_Game Managers/Data_Manager.cs
+2026-02-09 15:51:44.084 +09:00 [INF] Detected Created in /Users/larrydarrell/Unity Projects/Repository Projects/project-OutDoor-Boys/Outdoor Boys/Assets/Scripts/_Game Managers/Data_Manager.cs.meta
+2026-02-09 15:51:44.179 +09:00 [INF] Detected Changed in /Users/larrydarrell/Unity Projects/Repository Projects/project-OutDoor-Boys/Outdoor Boys/Assets/Scripts/_Game Managers/Data_Manager.cs.meta
+2026-02-09 15:51:44.179 +09:00 [INF] Detected Created in /Users/larrydarrell/Unity Projects/Repository Projects/project-OutDoor-Boys/Outdoor Boys/Assets/Scripts/_Game Managers/Data_Manager.cs.meta
+2026-02-09 15:51:44.184 +09:00 [WRN] File is not part of any project: /Users/larrydarrell/Unity Projects/Repository Projects/project-OutDoor-Boys/Outdoor Boys/Assets/Scripts/_Game Managers/Data_Manager.cs
+2026-02-09 15:51:52.570 +09:00 [INF] Compiling...
+2026-02-09 15:51:55.553 +09:00 [INF] Finished compiling in 2s
+2026-02-09 15:56:20.052 +09:00 [INF] Detected Changed in /Users/larrydarrell/Unity Projects/Repository Projects/project-OutDoor-Boys/Outdoor Boys/Assets/Scripts/_Game Managers/Data_Manager.cs
+2026-02-09 15:56:31.275 +09:00 [INF] Compiling...
+2026-02-09 15:56:34.077 +09:00 [INF] Finished compiling in 2s
+2026-02-09 15:56:48.087 +09:00 [INF] Detected Created in /Users/larrydarrell/Unity Projects/Repository Projects/project-OutDoor-Boys/Outdoor Boys/Assets/ScrObjs/Rocks.asset
+2026-02-09 15:56:48.087 +09:00 [INF] Detected Changed in /Users/larrydarrell/Unity Projects/Repository Projects/project-OutDoor-Boys/Outdoor Boys/Assets/ScrObjs/Rocks.asset.meta
+2026-02-09 15:56:48.087 +09:00 [INF] Detected Created in /Users/larrydarrell/Unity Projects/Repository Projects/project-OutDoor-Boys/Outdoor Boys/Assets/ScrObjs/Rocks.asset.meta
+2026-02-09 15:56:48.181 +09:00 [INF] Detected Renamed in /Users/larrydarrell/Unity Projects/Repository Projects/project-OutDoor-Boys/Outdoor Boys/Assets/ScrObjs/Rocks.asset
+2026-02-09 15:56:57.874 +09:00 [INF] Detected Renamed in /Users/larrydarrell/Unity Projects/Repository Projects/project-OutDoor-Boys/Outdoor Boys/Assets/Plugins/Easy Save 3/Resources/ES3/ES3GlobalReferences.asset
+2026-02-09 15:56:57.874 +09:00 [INF] Detected Renamed in /Users/larrydarrell/Unity Projects/Repository Projects/project-OutDoor-Boys/Outdoor Boys/Assets/ScrObjs/Rocks.asset
+2026-02-09 15:56:57.938 +09:00 [INF] Detected Created in /Users/larrydarrell/Unity Projects/Repository Projects/project-OutDoor-Boys/Outdoor Boys/Assets/ScrObjs/Rocks.asset
+2026-02-09 15:56:57.938 +09:00 [INF] Detected Changed in /Users/larrydarrell/Unity Projects/Repository Projects/project-OutDoor-Boys/Outdoor Boys/Assets/ScrObjs/Rocks.asset.meta
+2026-02-09 15:56:57.938 +09:00 [INF] Detected Created in /Users/larrydarrell/Unity Projects/Repository Projects/project-OutDoor-Boys/Outdoor Boys/Assets/ScrObjs/Rocks.asset.meta
+2026-02-09 15:56:57.956 +09:00 [INF] Detected Created in /Users/larrydarrell/Unity Projects/Repository Projects/project-OutDoor-Boys/Outdoor Boys/Assets/ScrObjs/Rocks 1.asset
+2026-02-09 15:56:57.956 +09:00 [INF] Detected Created in /Users/larrydarrell/Unity Projects/Repository Projects/project-OutDoor-Boys/Outdoor Boys/Assets/ScrObjs/Rocks 1.asset.meta
+2026-02-09 15:57:03.746 +09:00 [INF] Detected Created in /Users/larrydarrell/Unity Projects/Repository Projects/project-OutDoor-Boys/Outdoor Boys/Assets/ScrObjs/Grass.asset
+2026-02-09 15:57:03.747 +09:00 [INF] Detected Renamed in /Users/larrydarrell/Unity Projects/Repository Projects/project-OutDoor-Boys/Outdoor Boys/Assets/ScrObjs/Grass.asset.meta
+2026-02-09 15:57:06.993 +09:00 [INF] Detected Created in /Users/larrydarrell/Unity Projects/Repository Projects/project-OutDoor-Boys/Outdoor Boys/Assets/ScrObjs/Grass.asset
+2026-02-09 15:57:06.993 +09:00 [INF] Detected Created in /Users/larrydarrell/Unity Projects/Repository Projects/project-OutDoor-Boys/Outdoor Boys/Assets/ScrObjs/Grass.asset.meta
+2026-02-09 15:57:06.994 +09:00 [INF] Detected Created in /Users/larrydarrell/Unity Projects/Repository Projects/project-OutDoor-Boys/Outdoor Boys/Assets/ScrObjs/Grass 1.asset
+2026-02-09 15:57:06.994 +09:00 [INF] Detected Created in /Users/larrydarrell/Unity Projects/Repository Projects/project-OutDoor-Boys/Outdoor Boys/Assets/ScrObjs/Grass 1.asset.meta
+2026-02-09 15:57:12.527 +09:00 [INF] Detected Created in /Users/larrydarrell/Unity Projects/Repository Projects/project-OutDoor-Boys/Outdoor Boys/Assets/ScrObjs/Soil.asset
+2026-02-09 15:57:12.527 +09:00 [INF] Detected Renamed in /Users/larrydarrell/Unity Projects/Repository Projects/project-OutDoor-Boys/Outdoor Boys/Assets/ScrObjs/Soil.asset.meta
+2026-02-09 15:57:27.550 +09:00 [INF] Detected Renamed in /Users/larrydarrell/Unity Projects/Repository Projects/project-OutDoor-Boys/Outdoor Boys/Assets/ScrObjs/Grass.asset
+2026-02-09 15:57:27.551 +09:00 [INF] Detected Renamed in /Users/larrydarrell/Unity Projects/Repository Projects/project-OutDoor-Boys/Outdoor Boys/Assets/ScrObjs/Soil.asset
+2026-02-09 15:57:27.619 +09:00 [INF] Detected Created in /Users/larrydarrell/Unity Projects/Repository Projects/project-OutDoor-Boys/Outdoor Boys/Assets/ScrObjs/Soil.asset
+2026-02-09 15:57:27.619 +09:00 [INF] Detected Created in /Users/larrydarrell/Unity Projects/Repository Projects/project-OutDoor-Boys/Outdoor Boys/Assets/ScrObjs/Soil 1.asset
+2026-02-09 15:57:27.619 +09:00 [INF] Detected Created in /Users/larrydarrell/Unity Projects/Repository Projects/project-OutDoor-Boys/Outdoor Boys/Assets/ScrObjs/Soil 1.asset.meta
+2026-02-09 15:57:34.799 +09:00 [INF] Detected Created in /Users/larrydarrell/Unity Projects/Repository Projects/project-OutDoor-Boys/Outdoor Boys/Assets/ScrObjs/Water.asset
+2026-02-09 15:57:34.799 +09:00 [INF] Detected Renamed in /Users/larrydarrell/Unity Projects/Repository Projects/project-OutDoor-Boys/Outdoor Boys/Assets/ScrObjs/Water.asset.meta
+2026-02-09 15:58:05.443 +09:00 [INF] Detected Changed in /Users/larrydarrell/Unity Projects/Repository Projects/project-OutDoor-Boys/Outdoor Boys/Assets/Scripts/_Environment/_Tile/TileScrObj.cs
+2026-02-09 15:58:06.491 +09:00 [INF] Hot Reloading get_type, get_sprites in TileScrObj.cs  - Assembly-CSharp (790ms)
+2026-02-09 15:58:13.997 +09:00 [INF] Compiling...
+2026-02-09 15:58:16.312 +09:00 [INF] Finished compiling in 2s
+2026-02-09 15:58:39.412 +09:00 [INF] Detected Renamed in /Users/larrydarrell/Unity Projects/Repository Projects/project-OutDoor-Boys/Outdoor Boys/Assets/ScrObjs/Rocks.asset
+2026-02-09 15:58:41.003 +09:00 [INF] Detected Created in /Users/larrydarrell/Unity Projects/Repository Projects/project-OutDoor-Boys/Outdoor Boys/Assets/Prefabs/Rock Tile.prefab
+2026-02-09 15:58:41.003 +09:00 [INF] Detected Renamed in /Users/larrydarrell/Unity Projects/Repository Projects/project-OutDoor-Boys/Outdoor Boys/Assets/Prefabs/Rock Tile.prefab.meta
+2026-02-09 15:58:41.073 +09:00 [INF] Detected Renamed in /Users/larrydarrell/Unity Projects/Repository Projects/project-OutDoor-Boys/Outdoor Boys/Assets/Prefabs/Rock Tile.prefab
+2026-02-09 15:59:47.900 +09:00 [INF] Detected Renamed in /Users/larrydarrell/Unity Projects/Repository Projects/project-OutDoor-Boys/Outdoor Boys/Assets/Plugins/Easy Save 3/Resources/ES3/ES3GlobalReferences.asset
+2026-02-09 15:59:47.901 +09:00 [INF] Detected Renamed in /Users/larrydarrell/Unity Projects/Repository Projects/project-OutDoor-Boys/Outdoor Boys/Assets/ScrObjs/Rocks.asset
+2026-02-09 15:59:47.977 +09:00 [INF] Detected Created in /Users/larrydarrell/Unity Projects/Repository Projects/project-OutDoor-Boys/Outdoor Boys/Assets/Prefabs/Rock Tile 1.prefab
+2026-02-09 15:59:47.977 +09:00 [INF] Detected Created in /Users/larrydarrell/Unity Projects/Repository Projects/project-OutDoor-Boys/Outdoor Boys/Assets/Prefabs/Rock Tile 1.prefab.meta
+2026-02-09 16:00:27.135 +09:00 [INF] Detected Created in /Users/larrydarrell/Unity Projects/Repository Projects/project-OutDoor-Boys/Outdoor Boys/Assets/Prefabs/Grass Tile.prefab
+2026-02-09 16:00:27.141 +09:00 [INF] Detected Renamed in /Users/larrydarrell/Unity Projects/Repository Projects/project-OutDoor-Boys/Outdoor Boys/Assets/Prefabs/Grass Tile.prefab.meta
+2026-02-09 16:00:27.242 +09:00 [INF] Detected Renamed in /Users/larrydarrell/Unity Projects/Repository Projects/project-OutDoor-Boys/Outdoor Boys/Assets/Prefabs/Grass Tile.prefab
+2026-02-09 16:00:46.291 +09:00 [INF] Detected Changed in /Users/larrydarrell/Unity Projects/Repository Projects/project-OutDoor-Boys/Outdoor Boys/Assets/Sprites/Tiles.png.meta
+2026-02-09 16:03:20.148 +09:00 [INF] Detected Renamed in /Users/larrydarrell/Unity Projects/Repository Projects/project-OutDoor-Boys/Outdoor Boys/Assets/ScrObjs/Grass.asset
+2026-02-09 16:03:20.236 +09:00 [INF] Detected Renamed in /Users/larrydarrell/Unity Projects/Repository Projects/project-OutDoor-Boys/Outdoor Boys/Assets/Scenes/SampleScene.unity
+2026-02-09 16:12:03.414 +09:00 [INF] Detected Changed in /Users/larrydarrell/Unity Projects/Repository Projects/project-OutDoor-Boys/Outdoor Boys/Assets/Scripts/_Environment/_Tile/Tile_Generator.cs
+2026-02-09 16:18:11.119 +09:00 [INF] Detected Changed in /Users/larrydarrell/Unity Projects/Repository Projects/project-OutDoor-Boys/Outdoor Boys/Assets/Scripts/_Environment/_Tile/TileScrObj.cs
+2026-02-09 16:18:12.335 +09:00 [INF] Detected Changed in /Users/larrydarrell/Unity Projects/Repository Projects/project-OutDoor-Boys/Outdoor Boys/Assets/Scripts/_Environment/_Tile/Tile_Generator.cs
+2026-02-09 16:18:20.950 +09:00 [INF] Detected Renamed in /Users/larrydarrell/Unity Projects/Repository Projects/project-OutDoor-Boys/Outdoor Boys/Assets/Plugins/Easy Save 3/Resources/ES3/ES3GlobalReferences.asset

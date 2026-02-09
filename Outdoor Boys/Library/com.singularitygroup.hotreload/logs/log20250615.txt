@@ -1,0 +1,8 @@
+2025-06-15 19:33:38.444 +09:00 [INF] Initialized user with id: 43A796AC92D834C139F6AA1D3820986C44B0AB6BCCE74F9D65B23FF8E9D031BE
+2025-06-15 19:33:38.489 +09:00 [INF] Hot Reload Server is starting. Do not close this window.
+2025-06-15 19:33:38.491 +09:00 [INF] 
+2025-06-15 19:33:39.425 +09:00 [INF] Compiling... (the first time might take a minute, depending on project size)
+2025-06-15 19:33:43.051 +09:00 [INF] Finished compiling in 3s
+2025-06-15 19:33:43.053 +09:00 [INF] 
+2025-06-15 19:33:43.054 +09:00 [INF] Hot Reload Server is ready. Edit code to see updates in unity.
+2025-06-15 19:33:43.054 +09:00 [INF] Keep this window open while using Hot Reload (minimizing is OK)
