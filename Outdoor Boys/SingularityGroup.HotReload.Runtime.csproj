@@ -66,9 +66,13 @@
   <ItemGroup>
     <Compile Include="Packages/com.singularitygroup.hotreload/Runtime/PersistencePaths.cs" />
     <Compile Include="Packages/com.singularitygroup.hotreload/Runtime/MonoBehaviours/RetryDialog.cs" />
+    <Compile Include="Packages/com.singularitygroup.hotreload/Runtime/Localization/LoggingTranslations.cs" />
+    <Compile Include="Packages/com.singularitygroup.hotreload/Runtime/Localization/SettingTranslations.cs" />
     <Compile Include="Packages/com.singularitygroup.hotreload/Runtime/PlayerCodePatcher.cs" />
     <Compile Include="Packages/com.singularitygroup.hotreload/Runtime/TaskExtensions.cs" />
     <Compile Include="Packages/com.singularitygroup.hotreload/Runtime/SymbolResolver.cs" />
+    <Compile Include="Packages/com.singularitygroup.hotreload/Runtime/Localization/ErrorTranslations.cs" />
+    <Compile Include="Packages/com.singularitygroup.hotreload/Runtime/Localization/MenuItemTranslations.cs" />
     <Compile Include="Packages/com.singularitygroup.hotreload/Runtime/CodePatcher.cs" />
     <Compile Include="Packages/com.singularitygroup.hotreload/Runtime/IServerHealthCheck.cs" />
     <Compile Include="Packages/com.singularitygroup.hotreload/Runtime/MethodUtils.cs" />
@@ -77,6 +81,7 @@
     <Compile Include="Packages/com.singularitygroup.hotreload/Runtime/Demo/Scripts/IDemo.cs" />
     <Compile Include="Packages/com.singularitygroup.hotreload/Runtime/MonoBehaviours/Prompts.cs" />
     <Compile Include="Packages/com.singularitygroup.hotreload/Runtime/ThreadUtility.cs" />
+    <Compile Include="Packages/com.singularitygroup.hotreload/Runtime/Localization/Translations.cs" />
     <Compile Include="Packages/com.singularitygroup.hotreload/Runtime/IpHelper.cs" />
     <Compile Include="Packages/com.singularitygroup.hotreload/Runtime/MethodPatchResponsesConverter.cs" />
     <Compile Include="Packages/com.singularitygroup.hotreload/Runtime/Burst/JobHotReloadUtility.cs" />
@@ -87,15 +92,19 @@
     <Compile Include="Packages/com.singularitygroup.hotreload/Runtime/MonoMethod.cs" />
     <Compile Include="Packages/com.singularitygroup.hotreload/Runtime/AppCallbackListener.cs" />
     <Compile Include="Packages/com.singularitygroup.hotreload/Runtime/MonoBehaviours/ConnectionDialog.cs" />
+    <Compile Include="Packages/com.singularitygroup.hotreload/Runtime/Localization/DialogTranslations.cs" />
+    <Compile Include="Packages/com.singularitygroup.hotreload/Runtime/Localization/UtilityTranslations.cs" />
     <Compile Include="Packages/com.singularitygroup.hotreload/Runtime/ServerHandshake.cs" />
     <Compile Include="Packages/com.singularitygroup.hotreload/Runtime/PlayerEntrypoint.cs" />
     <Compile Include="Packages/com.singularitygroup.hotreload/Runtime/PackageConst.cs" />
     <Compile Include="Packages/com.singularitygroup.hotreload/Runtime/BuildInfo.cs" />
     <Compile Include="Packages/com.singularitygroup.hotreload/Runtime/HotReloadSettingsObject.cs" />
+    <Compile Include="Packages/com.singularitygroup.hotreload/Runtime/Localization/CommonTranslations.cs" />
     <Compile Include="Packages/com.singularitygroup.hotreload/Runtime/PatchServerInfo.cs" />
     <Compile Include="Packages/com.singularitygroup.hotreload/Runtime/UnityHelper.cs" />
     <Compile Include="Packages/com.singularitygroup.hotreload/Runtime/BurstChecker.cs" />
     <Compile Include="Packages/com.singularitygroup.hotreload/Runtime/Demo/Scripts/HotReloadBasicDemo.cs" />
+    <Compile Include="Packages/com.singularitygroup.hotreload/Runtime/HotReloadSettingsHelper.cs" />
     <Compile Include="Packages/com.singularitygroup.hotreload/Runtime/InstallQRDialog.cs" />
     <Compile Include="Packages/com.singularitygroup.hotreload/Runtime/SymbolResolvingFailedException.cs" />
     <Compile Include="Packages/com.singularitygroup.hotreload/Runtime/HttpClientUtils.cs" />

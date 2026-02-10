@@ -12,6 +12,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 624857587274a4c00b00b8087992d1a7, type: 3}
   m_Name: Water
   m_EditorClassIdentifier: 
-  _type: 0
-  _prefab: {fileID: 0}
-  _sprites: []
+  _type: 1
+  _prefab: {fileID: 8222574897102272058, guid: 29698fb241b7f46ce851adfc5333f6dd, type: 3}
+  _groupedSprites:
+  - _sprites:
+    - {fileID: 379441915, guid: 99b3ae6f72cfb43edb595fcf1373eec9, type: 3}
+    - {fileID: -1139502263, guid: 99b3ae6f72cfb43edb595fcf1373eec9, type: 3}
+  - _sprites:
+    - {fileID: 1070028804, guid: 99b3ae6f72cfb43edb595fcf1373eec9, type: 3}
+    - {fileID: -2042424934, guid: 99b3ae6f72cfb43edb595fcf1373eec9, type: 3}

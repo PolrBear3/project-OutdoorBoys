@@ -14,6 +14,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _type: 0
   _prefab: {fileID: 8222574897102272058, guid: 5fea49c18c332411ea56939fe85425d3, type: 3}
-  _sprites:
-  - {fileID: 90284084, guid: 99b3ae6f72cfb43edb595fcf1373eec9, type: 3}
-  - {fileID: -1687050794, guid: 99b3ae6f72cfb43edb595fcf1373eec9, type: 3}
+  _groupedSprites:
+  - _sprites:
+    - {fileID: 134214964, guid: 99b3ae6f72cfb43edb595fcf1373eec9, type: 3}
+    - {fileID: -275892063, guid: 99b3ae6f72cfb43edb595fcf1373eec9, type: 3}
+  - _sprites:
+    - {fileID: -1831102898, guid: 99b3ae6f72cfb43edb595fcf1373eec9, type: 3}
+    - {fileID: 586006593, guid: 99b3ae6f72cfb43edb595fcf1373eec9, type: 3}
