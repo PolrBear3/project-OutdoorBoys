@@ -6,12 +6,9 @@ using UnityEngine;
 public class Tile_Generator : MonoBehaviour
 {
     [Space(20)]
-    [SerializeField] private GameObject _tilePrefab;
-    
     [SerializeField] private Vector2 _generateSize;
     public Vector2 generateSize => _generateSize;
 
-    [Space(10)]
     [SerializeField][Range(0, 100)] private float _harshGroundDensity;
 
 
@@ -37,7 +34,7 @@ public class Tile_Generator : MonoBehaviour
     private List<TileType> DensityConverted_TileTypes(int convertCount)
     {
         List<TileType> tileTypes = new();
-        
+
         for (int i = 0; i < convertCount; i++)
         {
             bool isHarshGround = _harshGroundDensity > UnityEngine.Random.Range(0, 100);
@@ -60,11 +57,11 @@ public class Tile_Generator : MonoBehaviour
         {
             List<Vector2> surroundingPositions = Utility.Surrounding_Positions(positions[i]);
             int harshGroundCount = 0;
-            
+
             for (int j = 0; j < surroundingPositions.Count; j++)
             {
                 bool positionFound = false;
-                
+
                 for (int k = 0; k < positions.Count; k++)
                 {
                     if (surroundingPositions[j] != positions[k]) continue;
@@ -109,7 +106,7 @@ public class Tile_Generator : MonoBehaviour
         {
             positions.Add(new(xStartingPoint + horizontalCount, yStartingPoint));
             horizontalCount++;
-            
+
             if (horizontalCount < convertedSize.x) continue;
 
             horizontalCount = 0;
@@ -121,23 +118,24 @@ public class Tile_Generator : MonoBehaviour
 
     private void Generate_Tiles()
     {
+        Data_Manager manager = Data_Manager.instance;
         Dictionary<Vector2, TileType> generateDatas = Iterated_TileDatas();
 
         foreach (var data in generateDatas)
         {
-            Vector2 generatePos = data.Key;
-            GameObject tilePrefab = Instantiate(_tilePrefab, generatePos, quaternion.identity);
+            GameObject tilePrefab = manager.TileScrObj(data.Value).prefab;
+            GameObject generatedTile = Instantiate(tilePrefab, data.Key, quaternion.identity);
 
-            if (!tilePrefab.TryGetComponent(out Tile tile))
+            if (!generatedTile.TryGetComponent(out Tile tile))
             {
                 Debug.Log("Tile Script Not Attached!");
                 return;
             }
 
-            tilePrefab.transform.SetParent(transform);
+            generatedTile.transform.SetParent(transform);
             _generatedTiles.Add(tile);
 
-            tile.Set_Data(Data_Manager.instance.TileScrObj(data.Value));
+            tile.Set_Data(manager.TileScrObj(data.Value));
         }
     }
 
