@@ -59,13 +59,14 @@
     <UnityVersion>2022.3.62f3</UnityVersion>
   </PropertyGroup>
   <ItemGroup>
-    <Analyzer Include="/Users/david/.vscode/extensions/visualstudiotoolsforunity.vstuc-1.2.1/Analyzers/Microsoft.Unity.Analyzers.dll" />
+    <Analyzer Include="/Users/larrydarrell/.vscode/extensions/visualstudiotoolsforunity.vstuc-1.2.1/Analyzers/Microsoft.Unity.Analyzers.dll" />
     <Analyzer Include="/Applications/Unity/Hub/Editor/2022.3.62f3/Unity.app/Contents/Tools/Unity.SourceGenerators/Unity.SourceGenerators.dll" />
     <Analyzer Include="/Applications/Unity/Hub/Editor/2022.3.62f3/Unity.app/Contents/Tools/Unity.SourceGenerators/Unity.Properties.SourceGenerator.dll" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Assets/Packages/LeanTween/Examples/Scripts/GeneralEasingTypes.cs" />
     <Compile Include="Assets/Packages/LeanTween/Testing/TestingIssue2.cs" />
+    <Compile Include="Assets/Scripts/_GamePlay/_Environment/_Tile/Tile_GenerateData.cs" />
     <Compile Include="Assets/Packages/LeanTween/Testing/Scripts/LeanPool.cs" />
     <Compile Include="Assets/TextMesh Pro/Examples &amp; Extras/Scripts/TMP_TextEventHandler.cs" />
     <Compile Include="Assets/Scripts/_InputSystem/Input_Manager.cs" />
@@ -101,6 +102,7 @@
     <Compile Include="Assets/Packages/LeanTween/Testing/TestingMaxTweens.cs" />
     <Compile Include="Assets/Packages/LeanTween/Examples/Scripts/PathSpline.cs" />
     <Compile Include="Assets/Packages/LeanTween/Framework/LeanSmooth.cs" />
+    <Compile Include="Assets/Scripts/_Systems/Cursor.cs" />
     <Compile Include="Assets/Packages/LeanTween/Examples/Scripts/GeneralCameraShake.cs" />
     <Compile Include="Assets/Packages/LeanTween/Examples/Scripts/TestingUnitTests.cs" />
     <Compile Include="Assets/TextMesh Pro/Examples &amp; Extras/Scripts/CameraController.cs" />
@@ -147,6 +149,7 @@
     <Compile Include="Assets/TextMesh Pro/Examples &amp; Extras/Scripts/TMP_UiFrameRateCounter.cs" />
     <Compile Include="Assets/TextMesh Pro/Examples &amp; Extras/Scripts/VertexZoom.cs" />
     <Compile Include="Assets/Packages/LeanTween/Testing/Testing246.cs" />
+    <Compile Include="Assets/Scripts/_Systems/EventPointer.cs" />
     <Compile Include="Assets/Packages/LeanTween/Testing/TestingSceneSwitching.cs" />
     <Compile Include="Assets/TextMesh Pro/Examples &amp; Extras/Scripts/TMP_TextSelector_B.cs" />
     <Compile Include="Assets/Packages/LeanTween/Testing/Testing243.cs" />

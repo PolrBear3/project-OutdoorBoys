@@ -124,7 +124,7 @@ ScriptedImporter:
   animatedSpriteImportData:
   - name: Tiles
     originalName: 
-    pivot: {x: 1.125, y: 0}
+    pivot: {x: 1.25, y: 0}
     alignment: 9
     border: {x: 0, y: 0, z: 0, w: 0}
     rect:

@@ -9,6 +9,10 @@ public class InGame_Manager : MonoBehaviour
     
     [Space(20)]
     [SerializeField] private Tile_Generator _tileGenerator;
+    public Tile_Generator tileGenerator => _tileGenerator;
+
+    [SerializeField] private Cursor _cursor;
+    public Cursor cursor => _cursor;
 
 
     // MonoBehaviour

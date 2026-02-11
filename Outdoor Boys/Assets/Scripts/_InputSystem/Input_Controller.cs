@@ -38,9 +38,6 @@ public class Input_Controller : MonoBehaviour
     private Vector2 _movementDirection;
     public Vector2 movementDirection => _movementDirection;
 
-    private Vector2 _cursorDirection;
-    public Vector2 cursorDirection => _cursorDirection;
-
     private bool _isHolding;
     public bool isHolding => _isHolding;
 
@@ -55,8 +52,8 @@ public class Input_Controller : MonoBehaviour
     public Action OnActionMapUpdate;
 
 
-    public Action<Vector2> OnMovement;
     public Action<Vector2> OnNavigate;
+    public Action<Vector2> OnCursorControl;
 
     public Action OnInteractStart;
     public Action OnInteract;
@@ -73,9 +70,9 @@ public class Input_Controller : MonoBehaviour
     // MonoBehaviour
     private void Awake()
     {
-        Set_Instance();
+        instance = this;
+
         Set_ActionMaps();
-        
         Handle_SchemeUpdate(_playerInput);
   
         // subscription
@@ -95,14 +92,6 @@ public class Input_Controller : MonoBehaviour
     
     
     // Data Control
-    private void Set_Instance()
-    {
-        if (instance != null) return;
-
-        instance = this;
-    }
-
-
     private void Set_ActionMaps()
     {
         for (int i = 0; i < _playerInput.actions.actionMaps.Count; i++)
@@ -145,6 +134,7 @@ public class Input_Controller : MonoBehaviour
             if (datas[i].actionRef.action.name != actionName) continue;
             return datas[i].actionRef;
         }
+
         return null;
     }
 
@@ -167,8 +157,15 @@ public class Input_Controller : MonoBehaviour
     public void Update_CurrentScheme(string schemeName)
     {
         _currentScheme = ControlScheme(schemeName);
-        OnSchemeUpdate?.Invoke();
         
+        if (_currentScheme == null)
+        {
+            Debug.Log("Update Scheme Not Found!");
+            return;
+        }
+
+        OnSchemeUpdate?.Invoke();
+
         Debug.Log("_currentScheme: " + _currentScheme.name + "/ _playerInput.currentControlScheme: " + _playerInput.currentControlScheme);
     }
     
@@ -213,11 +210,7 @@ public class Input_Controller : MonoBehaviour
 
     public void Movement(InputAction.CallbackContext context)
     {
-        _movementDirection = Vector2.zero;
-
         Vector2 directionInput = context.ReadValue<Vector2>();
-
-        OnMovement?.Invoke(directionInput);
         _movementDirection = directionInput;
     }
 
@@ -226,7 +219,6 @@ public class Input_Controller : MonoBehaviour
         if (!context.performed) return;
 
         Vector2 directionInput = context.ReadValue<Vector2>();
-
         OnNavigate?.Invoke(directionInput);
     }
 
@@ -297,26 +289,13 @@ public class Input_Controller : MonoBehaviour
     }
 
 
-    // UI Control
+    // Input_Manager
     private Input_Manager RecentUI_InputManager()
     {
         if (_activeInputManagers.Count <= 0) return null;
         return _activeInputManagers[_activeInputManagers.Count - 1];
     }
 
-    
-    public void CursorControl(InputAction.CallbackContext context)
-    {
-        _cursorDirection = Vector2.zero;
-
-        if (_isHolding) return;
-        if (!context.performed) return;
-
-        Vector2 directionInput = context.ReadValue<Vector2>();
-
-        RecentUI_InputManager().OnCursorControl?.Invoke(directionInput);
-        _cursorDirection = directionInput;
-    }
 
     public void Select(InputAction.CallbackContext context)
     {
@@ -364,6 +343,22 @@ public class Input_Controller : MonoBehaviour
         if (context.performed == false) return;
         
         RecentUI_InputManager().OnExit?.Invoke();
+    }
+
+
+    // All
+    public void CursorControl(InputAction.CallbackContext context)
+    {
+        if (_isHolding) return;
+        if (!context.performed) return;
+
+        Vector2 positionInput = context.ReadValue<Vector2>();
+        OnCursorControl?.Invoke(positionInput);
+
+        Input_Manager inputManager = RecentUI_InputManager();
+        if (inputManager == null) return;
+
+        RecentUI_InputManager().OnCursorControl?.Invoke(positionInput);
     }
 }
 
