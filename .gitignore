@@ -3,13 +3,13 @@
 # Get latest from https://github.com/github/gitignore/blob/main/Unity.gitignore
 #
 .utmp/
-Outdoor Boys/[Ll]ibrary/
-Outdoor Boys/[Tt]emp/
-Outdoor Boys/[Oo]bj/
-Outdoor Boys/[Bb]uild/
-Outdoor Boys/[Bb]uilds/
-Outdoor Boys/[Ll]ogs/
-Outdoor Boys/[Uu]ser[Ss]ettings/
+/[Ll]ibrary/
+/[Tt]emp/
+/[Oo]bj/
+/[Bb]uild/
+/[Bb]uilds/
+/[Ll]ogs/
+/[Uu]ser[Ss]ettings/
 *.log
 
 # By default unity supports Blender asset imports, *.blend1 blender files do not need to be commited to version control.
@@ -80,20 +80,20 @@ crashlytics-build.properties
 InitTestScene*.unity*
 
 # Addressables default ignores, before user customizations
-Outdoor Boys/ServerData
-Outdoor Boys/[Aa]ssets/StreamingAssets/aa*
-Outdoor Boys/[Aa]ssets/AddressableAssetsData/link.xml*
-Outdoor Boys/[Aa]ssets/Addressables_Temp*
+/ServerData
+/[Aa]ssets/StreamingAssets/aa*
+/[Aa]ssets/AddressableAssetsData/link.xml*
+/[Aa]ssets/Addressables_Temp*
 # By default, Addressables content builds will generate addressables_content_state.bin
 # files in platform-specific subfolders, for example:
 # /Assets/AddressableAssetsData/OSX/addressables_content_state.bin
 Outdoor Boys/[Aa]ssets/AddressableAssetsData/*/*.bin*
 
 # Visual Scripting auto-generated files
-Outdoor Boys/[Aa]ssets/Unity.VisualScripting.Generated/VisualScripting.Flow/UnitOptions.db
-Outdoor Boys/[Aa]ssets/Unity.VisualScripting.Generated/VisualScripting.Flow/UnitOptions.db.meta
-Outdoor Boys/[Aa]ssets/Unity.VisualScripting.Generated/VisualScripting.Core/Property Providers
-Outdoor Boys/[Aa]ssets/Unity.VisualScripting.Generated/VisualScripting.Core/Property Providers.meta
+/[Aa]ssets/Unity.VisualScripting.Generated/VisualScripting.Flow/UnitOptions.db
+/[Aa]ssets/Unity.VisualScripting.Generated/VisualScripting.Flow/UnitOptions.db.meta
+/[Aa]ssets/Unity.VisualScripting.Generated/VisualScripting.Core/Property Providers
+/[Aa]ssets/Unity.VisualScripting.Generated/VisualScripting.Core/Property Providers.meta
 
 # Auto-generated scenes by play mode tests
-Outdoor Boys/[Aa]ssets/[Ii]nit[Tt]est[Ss]cene*.unity*
+/[Aa]ssets/[Ii]nit[Tt]est[Ss]cene*.unity*
