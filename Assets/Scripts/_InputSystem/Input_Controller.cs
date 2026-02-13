@@ -35,9 +35,6 @@ public class Input_Controller : MonoBehaviour
     private List<string> _actionMaps = new();
 
 
-    private Vector2 _movementDirection;
-    public Vector2 movementDirection => _movementDirection;
-
     private bool _isHolding;
     public bool isHolding => _isHolding;
 
@@ -52,7 +49,9 @@ public class Input_Controller : MonoBehaviour
     public Action OnActionMapUpdate;
 
 
-    public Action<Vector2> OnNavigate;
+    public Action OnAnyInput;
+
+    public Action<Vector2> OnMovement;
     public Action<Vector2> OnCursorControl;
 
     public Action OnInteractStart;
@@ -64,7 +63,6 @@ public class Input_Controller : MonoBehaviour
 
     public Action OnCancel;
 
-    public Action<InputActionReference> OnAnyInput;
 
 
     // MonoBehaviour
@@ -199,27 +197,20 @@ public class Input_Controller : MonoBehaviour
 
 
     // InGame
-    private void Inovke_AnyInput(InputAction.CallbackContext context)
+    public void AnyInput(InputAction.CallbackContext context)
     {
-        InputActionReference actionRef = ActionReference(context.action.name);
-        if (actionRef == null) return;
-
-        OnAnyInput?.Invoke(actionRef);
+        if (!context.performed) return;
+        
+        OnAnyInput?.Invoke();
     }
 
 
     public void Movement(InputAction.CallbackContext context)
     {
-        Vector2 directionInput = context.ReadValue<Vector2>();
-        _movementDirection = directionInput;
-    }
-
-    public void Navigate(InputAction.CallbackContext context)
-    {
         if (!context.performed) return;
 
         Vector2 directionInput = context.ReadValue<Vector2>();
-        OnNavigate?.Invoke(directionInput);
+        OnMovement?.Invoke(directionInput);
     }
 
     public void Interact(InputAction.CallbackContext context)
@@ -240,12 +231,10 @@ public class Input_Controller : MonoBehaviour
         if (Time.time - _currentHoldTime >= _holdTime)
         {
             OnHoldInteract?.Invoke();
-            Inovke_AnyInput(context);
             return;
         }
 
         OnInteract?.Invoke();
-        Inovke_AnyInput(context);
     }
 
     public void Action1(InputAction.CallbackContext context)
@@ -262,7 +251,6 @@ public class Input_Controller : MonoBehaviour
         if (context.performed == false) return;
 
         OnAction1?.Invoke();
-        Inovke_AnyInput(context);
     }
 
     public void Action2(InputAction.CallbackContext context)
@@ -279,7 +267,6 @@ public class Input_Controller : MonoBehaviour
         if (context.performed == false) return;
 
         OnAction2?.Invoke();
-        Inovke_AnyInput(context);
     }
 
     public void Cancel(InputAction.CallbackContext context)

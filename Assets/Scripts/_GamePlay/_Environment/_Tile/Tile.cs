@@ -13,12 +13,23 @@ public class Tile : MonoBehaviour
     [SerializeField] private SpriteRenderer _pointerRenderer;
     public SpriteRenderer pointerRenderer => _pointerRenderer;
 
+    [SerializeField] private SpriteRenderer _shadowRenderer;
+
+    [Space(20)]
+    [SerializeField][Range(0, 1)] private float _shadowValue;
+    [SerializeField][Range(0, 10)] private float _shadowUpdateTime;
+
 
     private TileData _data;
     public TileData data => _data;
 
     private bool _pointerToggled;
     public bool pointerToggled => _pointerToggled;
+
+    private bool _shadowToggled;
+    public bool shadowToggled => _shadowToggled;
+
+    private Coroutine _shadowUpdateCoroutine;
 
 
     // MonoBehaviour
@@ -70,5 +81,34 @@ public class Tile : MonoBehaviour
 
         Tile cursorPointTile = toggle ? this : null;
         InGame_Manager.instance.cursor.Update_PointTile(cursorPointTile);
+    }
+
+
+    // Shadow
+    public void Toggle_Shadow(bool toggle)
+    {
+        _shadowToggled = toggle;
+        
+        if (_shadowUpdateCoroutine != null)
+        {
+            StopCoroutine(_shadowUpdateCoroutine);
+            _shadowUpdateCoroutine = null;
+        }
+
+        if (toggle == _shadowRenderer.gameObject.activeSelf) return;
+        _shadowUpdateCoroutine = StartCoroutine(Shadow_Update(toggle));
+    }
+    private IEnumerator Shadow_Update(bool toggle)
+    {
+        GameObject shadow = _shadowRenderer.gameObject;
+        if (toggle) shadow.SetActive(true);
+        
+        float shadowValue = toggle ? _shadowValue : 0f;
+        LeanTween.alpha(shadow, shadowValue, _shadowUpdateTime);
+
+        yield return new WaitForSeconds(_shadowUpdateTime);
+        
+        if (toggle) yield break;
+        shadow.SetActive(false);
     }
 }

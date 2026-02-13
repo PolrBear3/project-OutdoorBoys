@@ -7,16 +7,10 @@ public class Tile_Generator : MonoBehaviour
 {
     [Space(20)]
     [SerializeField] private Vector2 _generateSize;
-    public Vector2 generateSize => _generateSize;
-
     [SerializeField][Range(0, 100)] private float _harshGroundDensity;
 
     [Space(20)]
     [SerializeField] private Tile_PresetDatas[] _presetDatas;
-
-
-    private List<Tile> _generatedTiles = new();
-    public List<Tile> generatedTiles => _generatedTiles;
 
 
     // MonoBehaviour
@@ -24,18 +18,53 @@ public class Tile_Generator : MonoBehaviour
     {
         EventBus_Manager.Register(EventBus.AwakeLoad, Generate_PresetTiles);
         EventBus_Manager.Register(EventBus.AwakeLoad, Generate_Tiles);
-        EventBus_Manager.Register(EventBus.AwakeLoad, Update_TileSetSprite);
     }
 
     private void OnDestroy()
     {
         EventBus_Manager.UnRegister(EventBus.AwakeLoad, Generate_PresetTiles);
         EventBus_Manager.UnRegister(EventBus.AwakeLoad, Generate_Tiles);
-        EventBus_Manager.UnRegister(EventBus.AwakeLoad, Update_TileSetSprite);
     }
 
 
-    // Pre Data Load
+    // Data
+    public Vector2 Converted_GenerateSize()
+    {
+        return new(Mathf.RoundToInt(_generateSize.x), Mathf.RoundToInt(_generateSize.y));
+    }
+
+    public Vector2 Generate_StartPosition()
+    {
+        Vector2 convertedSize = Converted_GenerateSize();
+        return new(-(convertedSize.x - 1) / 2, (convertedSize.y - 1) / 2);
+    }
+
+    private List<Vector2> Generate_Positions()
+    {
+        List<Vector2> positions = new();
+
+        Vector2 convertedSize = Converted_GenerateSize();
+        Vector2 generateStartPos = Generate_StartPosition();
+
+        int generateCount = Mathf.RoundToInt(convertedSize.x * convertedSize.y);
+        int horizontalCount = 0;
+
+        for (int i = 0; i < generateCount; i++)
+        {
+            positions.Add(new(generateStartPos.x + horizontalCount, generateStartPos.y));
+            horizontalCount++;
+
+            if (horizontalCount < convertedSize.x) continue;
+
+            horizontalCount = 0;
+            generateStartPos.y--;
+        }
+
+        return positions;
+    }
+
+
+    // Pre Load Data
     private List<TileType> DensityConverted_TileTypes(int convertCount)
     {
         List<TileType> tileTypes = new();
@@ -95,37 +124,14 @@ public class Tile_Generator : MonoBehaviour
 
 
     // Generate
-    private List<Vector2> Generate_Positions()
-    {
-        List<Vector2> positions = new();
-
-        Vector2 convertedSize = new(Mathf.RoundToInt(_generateSize.x), Mathf.RoundToInt(_generateSize.y));
-
-        float xStartingPoint = -(convertedSize.x - 1) / 2;
-        float yStartingPoint = (convertedSize.y - 1) / 2;
-
-        int generateCount = Mathf.RoundToInt(convertedSize.x * convertedSize.y);
-        int horizontalCount = 0;
-
-        for (int i = 0; i < generateCount; i++)
-        {
-            positions.Add(new(xStartingPoint + horizontalCount, yStartingPoint));
-            horizontalCount++;
-
-            if (horizontalCount < convertedSize.x) continue;
-
-            horizontalCount = 0;
-            yStartingPoint--;
-        }
-
-        return positions;
-    }
-
     private Tile Generate_Tile(Vector2 generatePos, TileScrObj generateTile)
     {
-        for (int i = 0; i < _generatedTiles.Count; i++)
+        Tiles_Controller tilesController = InGame_Manager.instance.tilesController;
+        List<Tile> currentTiles = tilesController.currentTiles;
+        
+        for (int i = 0; i < currentTiles.Count; i++)
         {
-            if ((Vector2)_generatedTiles[i].transform.position != generatePos) continue;
+            if ((Vector2)currentTiles[i].transform.position != generatePos) continue;
             return null;
         }
 
@@ -137,10 +143,10 @@ public class Tile_Generator : MonoBehaviour
             return null;
         }
 
-        generatedTile.transform.SetParent(transform);
-        _generatedTiles.Add(tile);
-
         tile.Set_Data(generateTile);
+
+        tile.transform.SetParent(tilesController.transform);
+        currentTiles.Add(tile);
 
         return tile;
     }
@@ -174,17 +180,6 @@ public class Tile_Generator : MonoBehaviour
         foreach (var data in generateDatas)
         {
             Generate_Tile(data.Key, dataManager.TileScrObj(data.Value));
-        }
-    }
-
-
-    // Generated Tiles
-    private void Update_TileSetSprite()
-    {
-        for (int i = 0; i < _generatedTiles.Count; i++)
-        {
-            bool setOnBase = _generatedTiles[i].transform.position.y <= -((_generateSize.y - 1) / 2);
-            _generatedTiles[i].Update_SetSprite(setOnBase);
         }
     }
 }

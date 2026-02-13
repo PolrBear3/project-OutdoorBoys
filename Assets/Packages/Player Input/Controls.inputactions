@@ -15,15 +15,6 @@
                     "initialStateCheck": true
                 },
                 {
-                    "name": "Navigate",
-                    "type": "Value",
-                    "id": "996d0986-dfc4-4747-ad04-83e471c49b05",
-                    "expectedControlType": "",
-                    "processors": "",
-                    "interactions": "",
-                    "initialStateCheck": true
-                },
-                {
                     "name": "CursorControl",
                     "type": "Value",
                     "id": "179ca2ed-47f9-4abc-a80a-fe917326a756",
@@ -31,6 +22,24 @@
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": true
+                },
+                {
+                    "name": "LeftClick",
+                    "type": "Button",
+                    "id": "2c3d8f18-91bb-4d3a-8fe5-405953bbee32",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "RightClick",
+                    "type": "Button",
+                    "id": "d89b50f8-de9b-48ce-aec9-84cc0c9421a0",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
                 },
                 {
                     "name": "Interact",
@@ -72,17 +81,6 @@
             "bindings": [
                 {
                     "name": "2D Vector",
-                    "id": "880aab51-4853-4dc4-a4e8-e0532d89462b",
-                    "path": "2DVector",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "",
-                    "action": "Navigate",
-                    "isComposite": true,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "2D Vector",
                     "id": "f9d7cd0c-1470-47e2-ac0d-f77863f6a64e",
                     "path": "2DVector",
                     "interactions": "",
@@ -98,7 +96,7 @@
                     "path": "<Keyboard>/w",
                     "interactions": "",
                     "processors": "",
-                    "groups": "",
+                    "groups": ";PC",
                     "action": "Movement",
                     "isComposite": false,
                     "isPartOfComposite": true
@@ -109,7 +107,7 @@
                     "path": "<Keyboard>/s",
                     "interactions": "",
                     "processors": "",
-                    "groups": "",
+                    "groups": ";PC",
                     "action": "Movement",
                     "isComposite": false,
                     "isPartOfComposite": true
@@ -120,7 +118,7 @@
                     "path": "<Keyboard>/a",
                     "interactions": "",
                     "processors": "",
-                    "groups": "",
+                    "groups": ";PC",
                     "action": "Movement",
                     "isComposite": false,
                     "isPartOfComposite": true
@@ -131,52 +129,8 @@
                     "path": "<Keyboard>/d",
                     "interactions": "",
                     "processors": "",
-                    "groups": "",
+                    "groups": ";PC",
                     "action": "Movement",
-                    "isComposite": false,
-                    "isPartOfComposite": true
-                },
-                {
-                    "name": "up",
-                    "id": "97acebc2-50b8-4ddd-acfd-5931651d9ea8",
-                    "path": "<Keyboard>/w",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "",
-                    "action": "Navigate",
-                    "isComposite": false,
-                    "isPartOfComposite": true
-                },
-                {
-                    "name": "down",
-                    "id": "d990eb82-b194-4031-b212-c0254785c17f",
-                    "path": "<Keyboard>/s",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "",
-                    "action": "Navigate",
-                    "isComposite": false,
-                    "isPartOfComposite": true
-                },
-                {
-                    "name": "left",
-                    "id": "bbbd74e9-8db9-494d-9e4a-b54b4d1ae168",
-                    "path": "<Keyboard>/a",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "",
-                    "action": "Navigate",
-                    "isComposite": false,
-                    "isPartOfComposite": true
-                },
-                {
-                    "name": "right",
-                    "id": "19fff3e6-0bce-44ea-bbd7-2d42d0227746",
-                    "path": "<Keyboard>/d",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "",
-                    "action": "Navigate",
                     "isComposite": false,
                     "isPartOfComposite": true
                 },
@@ -186,7 +140,7 @@
                     "path": "<Keyboard>/space",
                     "interactions": "",
                     "processors": "",
-                    "groups": "",
+                    "groups": ";PC",
                     "action": "Interact",
                     "isComposite": false,
                     "isPartOfComposite": false
@@ -197,7 +151,7 @@
                     "path": "<Keyboard>/q",
                     "interactions": "",
                     "processors": "",
-                    "groups": "",
+                    "groups": ";PC",
                     "action": "Action1",
                     "isComposite": false,
                     "isPartOfComposite": false
@@ -208,7 +162,7 @@
                     "path": "<Keyboard>/e",
                     "interactions": "",
                     "processors": "",
-                    "groups": "",
+                    "groups": ";PC",
                     "action": "Action2",
                     "isComposite": false,
                     "isPartOfComposite": false
@@ -219,7 +173,7 @@
                     "path": "<Keyboard>/escape",
                     "interactions": "",
                     "processors": "",
-                    "groups": "",
+                    "groups": ";PC",
                     "action": "Cancel",
                     "isComposite": false,
                     "isPartOfComposite": false
@@ -230,8 +184,30 @@
                     "path": "<Mouse>/position",
                     "interactions": "",
                     "processors": "",
-                    "groups": "",
+                    "groups": ";PC",
                     "action": "CursorControl",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "0027390a-791f-436e-85e8-e8273701deb1",
+                    "path": "<Mouse>/leftButton",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";PC",
+                    "action": "LeftClick",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "33e04e2f-cc12-4bec-831b-d03ac241f40d",
+                    "path": "<Mouse>/rightButton",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";PC",
+                    "action": "RightClick",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }
