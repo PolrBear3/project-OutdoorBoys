@@ -4,9 +4,6 @@ using UnityEngine;
 
 public class Tiles_Controller : MonoBehaviour
 {
-    [Space(20)]
-    [SerializeField] private Vector2 _shadowDirection;
-
     private List<Tile> _currentTiles = new();
     public List<Tile> currentTiles => _currentTiles;
 
@@ -14,19 +11,21 @@ public class Tiles_Controller : MonoBehaviour
     // MonoBehaviour
     private void Awake()
     {
+        EventBus_Manager.Register(EventBus.AwakeLoad, Set_Data);
         EventBus_Manager.Register(EventBus.StartLoad, Update_DataSprites);
-        EventBus_Manager.Register(EventBus.StartLoad, Toggle_Shadows);
     }
 
     private void OnDestroy()
     {
+        EventBus_Manager.UnRegister(EventBus.AwakeLoad, Set_Data);
         EventBus_Manager.UnRegister(EventBus.StartLoad, Update_DataSprites);
-        EventBus_Manager.UnRegister(EventBus.StartLoad, Toggle_Shadows);
+
+        InGame_Manager.instance.time.OnNightTime -= Toggle_Shadows;
     }
 
 
     // Data
-    private Tile Positioned_Tile(Vector2 generatedPos)
+    public Tile Positioned_Tile(Vector2 generatedPos)
     {
         for (int i = 0; i < _currentTiles.Count; i++)
         {
@@ -36,33 +35,16 @@ public class Tiles_Controller : MonoBehaviour
         return null;
     }
 
-    private List<Tile> Grid_Tiles(bool isRow, int gridNum)
+
+    private void Set_Data()
     {
-        Tile_Generator tileGenerator = InGame_Manager.instance.tileGenerator;
-        
-        Vector2 generateSize = tileGenerator.Converted_GenerateSize();
-
-        Vector2 searchPos = tileGenerator.Generate_StartPosition();
-        Vector2 searchDirection = isRow ? new(1, 0) : new(0, -1);
-
-        List<Tile> gridTiles = new();
-        int tileCount = isRow ? (int)generateSize.x : (int)generateSize.y;
-
-        for (int i = 0; i < tileCount; i++)
-        {
-            gridTiles.Add(Positioned_Tile(searchPos));
-            searchPos += searchDirection;
-        }
-
-        return gridTiles;
+        InGame_Manager.instance.time.OnNightTime += Toggle_Shadows;
     }
 
-
-    // Data Update
     private void Update_DataSprites()
     {
         Vector2 generateStartPos = InGame_Manager.instance.tileGenerator.Generate_StartPosition();
-        
+
         for (int i = 0; i < _currentTiles.Count; i++)
         {
             bool setOnBase = _currentTiles[i].transform.position.y <= -generateStartPos.y;
@@ -72,18 +54,11 @@ public class Tiles_Controller : MonoBehaviour
 
 
     // Shadow
-    private void Toggle_Shadows() // toggles first top column rows of tiles
-    {
-        int gridNum = (int)InGame_Manager.instance.tileGenerator.Generate_StartPosition().x;
-        List<Tile> toggleTiles = Grid_Tiles(true, gridNum);
-
-        for (int i = 0; i < toggleTiles.Count; i++)
-        {
-            toggleTiles[i].Toggle_Shadow(true);
-        }
-    }
     private void Toggle_Shadows(bool toggle)
     {
-
+        for (int i = 0; i < _currentTiles.Count; i++)
+        {
+            currentTiles[i].Toggle_Shadow(toggle);
+        }
     }
 }

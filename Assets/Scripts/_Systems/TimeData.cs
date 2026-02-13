@@ -7,20 +7,20 @@ using UnityEngine;
 public class TimeData
 {
     private int _maxTimeCount;
-    
+
     private int _dayCount;
     public int dayCount => _dayCount;
-    
+
     private int _timeCount;
     public int timeCount => _timeCount;
 
 
-    public Action OnDataUpdate;
+    public Action OnTimeCountUpdate;
     public Action OnDayCountUpdate;
 
 
     // Constructors
-    public TimeData (int maxTimeCount)
+    public TimeData(int maxTimeCount)
     {
         _maxTimeCount = maxTimeCount;
     }
@@ -29,7 +29,7 @@ public class TimeData
     // Data
     public void UpdateData(int updateTimeCount)
     {
-        OnDataUpdate?.Invoke();
+        OnTimeCountUpdate?.Invoke();
 
         if (_timeCount + updateTimeCount <= _maxTimeCount)
         {

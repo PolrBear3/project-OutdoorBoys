@@ -6,6 +6,7 @@ using UnityEngine;
 public class Time_Manager : MonoBehaviour
 {
     [Space(20)]
+    [SerializeField][Range(0, 100)] private int _nightTimePoint;
     [SerializeField][Range(0, 100)] private int _dayTimeCount;
 
     [Space(10)]
@@ -18,6 +19,8 @@ public class Time_Manager : MonoBehaviour
 
     private bool _boostToggled;
     private Coroutine _timeTikCoroutine;
+
+    public Action<bool> OnNightTime;
 
 
     // MonoBehaviour
@@ -48,7 +51,7 @@ public class Time_Manager : MonoBehaviour
 
         Toggle_TimeTik(_timeTikCoroutine != null);
     }
-    
+
     public void Toggle_TimeTik(bool toggle)
     {
         if (_timeTikCoroutine != null)
@@ -56,20 +59,33 @@ public class Time_Manager : MonoBehaviour
             StopCoroutine(_timeTikCoroutine);
             _timeTikCoroutine = null;
         }
-        
+
         if (toggle == false) return;
         _timeTikCoroutine = StartCoroutine(Run_TimeTik());
     }
     private IEnumerator Run_TimeTik()
     {
+        float nightTimePoint = Mathf.Clamp(_nightTimePoint, 0, _dayTimeCount);
+
         while (true)
         {
             float tikTime = _boostToggled ? _boostTikTime : _tikTime;
             yield return new WaitForSeconds(tikTime);
 
             _data.UpdateData(1);
+            int currentTimeCount = _data.timeCount;
+
+            if (currentTimeCount <= 0)
+            {
+                OnNightTime?.Invoke(false);
+                continue;
+            }
+
+            if (currentTimeCount != _nightTimePoint) continue;
+            OnNightTime?.Invoke(true);
         }
     }
+
 
     private void Toggle_TimeTik()
     {
