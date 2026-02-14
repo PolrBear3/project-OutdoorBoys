@@ -7,6 +7,9 @@ public class Tile : MonoBehaviour
     [Space(20)]
     [SerializeField] private EventPointer _pointer;
 
+    [SerializeField] private Transform _setPosition;
+    public Transform setPosition => _setPosition;
+
     [Space(20)]
     [SerializeField] private SpriteRenderer _spriteRenderer;
 
@@ -33,22 +36,21 @@ public class Tile : MonoBehaviour
 
 
     // MonoBehaviour
-    private void Awake()
-    {
-        _pointer.OnEnter += Toggle_Pointer;
-        _pointer.OnExit += Toggle_Pointer;
-    }
-
     private void OnDestroy()
     {
         _pointer.OnEnter -= Toggle_Pointer;
         _pointer.OnExit -= Toggle_Pointer;
+        _pointer.OnClick -= Click_Interact;
     }
 
 
     // Data
     public TileData Set_Data(TileScrObj setTile)
     {
+        _pointer.OnEnter += Toggle_Pointer;
+        _pointer.OnExit += Toggle_Pointer;
+        _pointer.OnClick += Click_Interact;
+
         if (setTile == null) return null;
         
         _data = new(setTile);
@@ -81,6 +83,12 @@ public class Tile : MonoBehaviour
 
         Tile cursorPointTile = toggle ? this : null;
         InGame_Manager.instance.cursor.Update_PointTile(cursorPointTile);
+    }
+
+    private void Click_Interact()
+    {
+        Tiles_Controller controller = InGame_Manager.instance.tilesController;
+        controller.OnTileInteract?.Invoke(this);
     }
 
 
