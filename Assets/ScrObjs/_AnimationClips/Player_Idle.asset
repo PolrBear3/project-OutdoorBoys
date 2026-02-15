@@ -14,7 +14,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _clipName: Player_Idle
   _loop: 1
-  _playSpeed: 3
   _defaultSprite: {fileID: 2058226474, guid: cb01ed2ae3c714d4dba399cd0779d6f1, type: 3}
-  _clipSprites:
-  - {fileID: 2058226474, guid: cb01ed2ae3c714d4dba399cd0779d6f1, type: 3}
+  _clipSpriteDatas: []

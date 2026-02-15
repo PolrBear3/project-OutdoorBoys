@@ -14,9 +14,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _clipName: Player_Move
   _loop: 1
-  _playSpeed: 0.5
   _defaultSprite: {fileID: 2058226474, guid: cb01ed2ae3c714d4dba399cd0779d6f1, type: 3}
-  _clipSprites:
-  - {fileID: 2058226474, guid: cb01ed2ae3c714d4dba399cd0779d6f1, type: 3}
-  - {fileID: -1033316769, guid: cb01ed2ae3c714d4dba399cd0779d6f1, type: 3}
-  - {fileID: -76903804, guid: cb01ed2ae3c714d4dba399cd0779d6f1, type: 3}
+  _clipSpriteDatas:
+  - _clipSprite: {fileID: 2058226474, guid: cb01ed2ae3c714d4dba399cd0779d6f1, type: 3}
+    _durationTime: 0.5
+  - _clipSprite: {fileID: -1033316769, guid: cb01ed2ae3c714d4dba399cd0779d6f1, type: 3}
+    _durationTime: 0.5
+  - _clipSprite: {fileID: -76903804, guid: cb01ed2ae3c714d4dba399cd0779d6f1, type: 3}
+    _durationTime: 0.5

@@ -13,13 +13,11 @@ public class AnimationClipScrObj : ScriptableObject
     [SerializeField] private bool _loop;
     public bool loop => _loop;
 
-    [SerializeField][Range(0, 10)] private float _playSpeed;
-    public float playSpeed => _playSpeed;
-
     [Space(20)]
     [SerializeField] private Sprite _defaultSprite;
     public Sprite defaultSprite => _defaultSprite;
 
-    [SerializeField] private Sprite[] _clipSprites;
-    public Sprite[] clipSprites => _clipSprites;
+    [Space(10)]
+    [SerializeField] private ClipSpriteData[] _clipSpriteDatas;
+    public ClipSpriteData[] clipSpriteDatas => _clipSpriteDatas;
 }

@@ -17,6 +17,11 @@ public class Player_Controller : MonoBehaviour
         EventBus_Manager.Register(EventBus.StartLoad, Set_Position);
     }
 
+    void Start()
+    {
+        _animationPlayer.Play("Player_Idle");
+    }
+
     private void OnDestroy()
     {
         EventBus_Manager.UnRegister(EventBus.StartLoad, Set_Position);

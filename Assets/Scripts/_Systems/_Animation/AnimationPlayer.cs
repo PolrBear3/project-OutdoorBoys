@@ -38,22 +38,24 @@ public class AnimationPlayer : MonoBehaviour
     {
         if (_animationClips == null) return;
         AnimationClipScrObj playClip = AnimationClip(clipName);
-        
+
         if (playClip == null) return;
-        Sprite[] clipSprites = playClip.clipSprites;
+        ClipSpriteData[] spriteDatas = playClip.clipSpriteDatas;
 
         Stop();
 
-        if (_animationClips.Length <= 1)
+        if (spriteDatas.Length <= 1)
         {
-            for (int i = 0; i < clipSprites.Length; i++)
+            for (int i = 0; i < spriteDatas.Length; i++)
             {
-                if (clipSprites[i] == null) continue;
+                if (spriteDatas[i].clipSprite == null) continue;
 
-                _renderer.sprite = clipSprites[i];
+                _renderer.sprite = spriteDatas[i].clipSprite;
                 return;
             }
+
             _renderer.sprite = playClip.defaultSprite;
+            return;
         }
 
         _playCoroutine = StartCoroutine(Play_AnimationClip(playClip));
@@ -61,27 +63,22 @@ public class AnimationPlayer : MonoBehaviour
 
     private IEnumerator Play_AnimationClip(AnimationClipScrObj playClip)
     {
-        float playSpeed = Mathf.Min(0.1f, playClip.playSpeed);
+        ClipSpriteData[] spriteDatas = playClip.clipSpriteDatas;
 
-        Sprite[] clipSprites = playClip.clipSprites;
-        int spriteIndex = 0;
-
-        while (spriteIndex < clipSprites.Length)
+        do
         {
-            Sprite clipSprite = clipSprites[spriteIndex];
-            Sprite setSprite = clipSprite != null ? clipSprite : _renderer.sprite;
-            
-            _renderer.sprite = setSprite;
-            spriteIndex ++;
+            for (int i = 0; i < spriteDatas.Length; i++)
+            {
+                Sprite clipSprite = spriteDatas[i].clipSprite;
 
-            yield return new WaitForSeconds(playSpeed);
+                if (clipSprite == null) continue;
+                _renderer.sprite = clipSprite;
 
-            if (playClip.loop == false) continue;
-            if (spriteIndex < clipSprites.Length) continue;
-
-            spriteIndex = 0;
+                yield return new WaitForSeconds(spriteDatas[i].DurationTime());
+            }
         }
-        
+        while (playClip.loop);
+
         yield break;
     }
 }
