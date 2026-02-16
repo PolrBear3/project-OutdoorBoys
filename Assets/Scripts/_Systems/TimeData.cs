@@ -6,40 +6,25 @@ using UnityEngine;
 [System.Serializable]
 public class TimeData
 {
-    private int _maxTimeCount;
-
+    private int _timeCount;
+    public int timeCount => _timeCount;
+    
     private int _dayCount;
     public int dayCount => _dayCount;
 
-    private int _timeCount;
-    public int timeCount => _timeCount;
-
-
-    public Action OnTimeCountUpdate;
-    public Action OnDayCountUpdate;
-
 
     // Constructors
-    public TimeData(int maxTimeCount)
+    public TimeData(int timeCount, int dayCount)
     {
-        _maxTimeCount = maxTimeCount;
+        _timeCount = timeCount;
+        _dayCount = dayCount;
     }
 
 
     // Data
-    public void UpdateData(int updateTimeCount)
+    public void Set_Data(int timeCount, int dayCount)
     {
-        OnTimeCountUpdate?.Invoke();
-
-        if (_timeCount + updateTimeCount <= _maxTimeCount)
-        {
-            _timeCount += updateTimeCount;
-            return;
-        }
-
-        _timeCount = 0;
-        _dayCount++;
-
-        OnDayCountUpdate?.Invoke();
+        _timeCount = timeCount;
+        _dayCount = dayCount;
     }
 }

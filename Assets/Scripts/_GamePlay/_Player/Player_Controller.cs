@@ -9,6 +9,10 @@ public class Player_Controller : MonoBehaviour
     public AnimationPlayer animationPlayer => _animationPlayer;
 
     [SerializeField] private Player_Movement _movement;
+    public Player_Movement movement => _movement;
+
+    [SerializeField] private Player_Interaction _interaction;
+    public Player_Interaction interaction => _interaction;
 
 
     // MonoBehaviour
@@ -32,6 +36,13 @@ public class Player_Controller : MonoBehaviour
     private void Set_Position()
     {
         Tile setTile = InGame_Manager.instance.tilesController.Current_Tile(TileType.softGround);
+        
+        if (setTile == null)
+        {
+            Debug.Log("Random softGround Tile not Found!");
+            return;
+        }
+
         _movement.MoveTo_Tile(setTile);
     }
 }

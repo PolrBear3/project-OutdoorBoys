@@ -6,52 +6,79 @@ using UnityEngine;
 public class Time_Manager : MonoBehaviour
 {
     [Space(20)]
-    [SerializeField][Range(0, 100)] private int _nightTimePoint;
-    [SerializeField][Range(0, 100)] private int _dayTimeCount;
+    [SerializeField][Range(0, 100)] private int _nightPhaseCount;
+    [SerializeField][Range(0, 100)] private int _maxTimeCount;
 
     [Space(10)]
     [SerializeField][Range(0, 100)] private float _tikTime;
-    [SerializeField][Range(0, 100)] private float _boostTikTime;
 
 
     private TimeData _data;
     public TimeData data => _data;
 
-    private bool _boostToggled;
+    public Action OnTimeCountUpdate;
+    public Action OnNightPhase;
+    public Action OnDayCountUpdate;
+    
     private Coroutine _timeTikCoroutine;
-
-    public Action<bool> OnNightTime;
 
 
     // MonoBehaviour
     private void Awake()
     {
         EventBus_Manager.Register(EventBus.AwakeLoad, Set_Data);
-        EventBus_Manager.Register(EventBus.AwakeLoad, Toggle_TimeTik);
     }
 
     private void OnDestroy()
     {
         EventBus_Manager.UnRegister(EventBus.AwakeLoad, Set_Data);
-        EventBus_Manager.UnRegister(EventBus.AwakeLoad, Toggle_TimeTik);
     }
 
 
     // Data
     public void Set_Data()
     {
-        _data = new(_dayTimeCount);
+        _data = new(0, 0);
     }
 
-
-    // Tik Update
-    public void Toggle_BoostTimeTik(bool toggle)
+    public void Update_Data(int updateTimeCount)
     {
-        _boostToggled = toggle;
+        int calculatedTimeCount = data.timeCount + Mathf.Max(1, updateTimeCount);
 
-        Toggle_TimeTik(_timeTikCoroutine != null);
+        if (calculatedTimeCount <= _maxTimeCount)
+        {
+            data.Set_Data(calculatedTimeCount, data.dayCount);
+            OnTimeCountUpdate?.Invoke();
+
+            if (_data.timeCount != _nightPhaseCount) return;
+            OnNightPhase?.Invoke();
+
+            return;
+        }
+
+        int dayUpdateCount = Mathf.FloorToInt(calculatedTimeCount / _maxTimeCount);
+
+        data.Set_Data(calculatedTimeCount % _maxTimeCount - 1, _data.dayCount + dayUpdateCount);
+        OnTimeCountUpdate?.Invoke();
+
+        for (int i = 0; i < dayUpdateCount; i++)
+        {
+            OnDayCountUpdate?.Invoke();
+            OnNightPhase?.Invoke();
+        }
+
+        if (_data.timeCount < _nightPhaseCount) return;
+        OnNightPhase?.Invoke();
     }
 
+
+    public bool Is_Night()
+    {
+        return _data.timeCount >= _nightPhaseCount;
+    }
+
+
+    // Time Tik Count
     public void Toggle_TimeTik(bool toggle)
     {
         if (_timeTikCoroutine != null)
@@ -65,30 +92,12 @@ public class Time_Manager : MonoBehaviour
     }
     private IEnumerator Run_TimeTik()
     {
-        float nightTimePoint = Mathf.Clamp(_nightTimePoint, 0, _dayTimeCount);
-
+        float restrictedTikTime = Mathf.Min(0.1f, _tikTime);
+        
         while (true)
         {
-            float tikTime = _boostToggled ? _boostTikTime : _tikTime;
-            yield return new WaitForSeconds(tikTime);
-
-            _data.UpdateData(1);
-            int currentTimeCount = _data.timeCount;
-
-            if (currentTimeCount <= 0)
-            {
-                OnNightTime?.Invoke(false);
-                continue;
-            }
-
-            if (currentTimeCount != _nightTimePoint) continue;
-            OnNightTime?.Invoke(true);
+            yield return new WaitForSeconds(restrictedTikTime);
+            Update_Data(1);
         }
-    }
-
-
-    private void Toggle_TimeTik()
-    {
-        Toggle_TimeTik(true);
     }
 }

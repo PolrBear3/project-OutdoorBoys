@@ -23,7 +23,10 @@ public class Tiles_Controller : MonoBehaviour
         EventBus_Manager.UnRegister(EventBus.AwakeLoad, Set_Data);
         EventBus_Manager.UnRegister(EventBus.StartLoad, Update_DataSprites);
 
-        OnTileInteract = null;
+        Time_Manager time = InGame_Manager.instance.time;
+
+        time.OnNightPhase -= Update_Shadows;
+        time.OnDayCountUpdate -= Update_Shadows;
     }
 
 
@@ -64,7 +67,10 @@ public class Tiles_Controller : MonoBehaviour
 
     private void Set_Data()
     {
-        InGame_Manager.instance.time.OnNightTime += Toggle_Shadows;
+        Time_Manager time = InGame_Manager.instance.time;
+
+        time.OnNightPhase += Update_Shadows;
+        time.OnDayCountUpdate += Update_Shadows;
     }
 
     private void Update_DataSprites()
@@ -80,11 +86,13 @@ public class Tiles_Controller : MonoBehaviour
 
 
     // Shadow
-    private void Toggle_Shadows(bool toggle)
+    private void Update_Shadows()
     {
+        bool isNight = InGame_Manager.instance.time.Is_Night();
+        
         for (int i = 0; i < _currentTiles.Count; i++)
         {
-            currentTiles[i].Toggle_Shadow(toggle);
+            currentTiles[i].Toggle_Shadow(isNight);
         }
     }
 }

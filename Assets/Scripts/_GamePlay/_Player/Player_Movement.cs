@@ -8,6 +8,7 @@ public class Player_Movement : MonoBehaviour
 
     [Space(20)]
     [SerializeField][Range(0, 10)]  private float _moveSpeed;
+    [SerializeField][Range(0, 100)] private int _moveTimeCost;
 
     private Tile _currentTile;
     public Tile currentTile => _currentTile;
@@ -53,16 +54,19 @@ public class Player_Movement : MonoBehaviour
         if (destinationTile == null) return;
         if (LeanTween.isTweening(gameObject)) return;
         
-        bool settingPosition = _currentTile == null;
         Vector2 destination = destinationTile.setPosition.position;
-        
+
+        Tile previousTile = _currentTile;
         _currentTile = destinationTile;
 
-        if (settingPosition)
+        if (previousTile == null)
         {
             transform.position = destination;
             return;
         }
+
+        int distance = Mathf.RoundToInt(Vector2.Distance(destination, previousTile.transform.position));
+        InGame_Manager.instance.time.Update_Data(distance * _moveTimeCost);
 
         if (_moveAnimationCoroutine != null)
         {
@@ -77,10 +81,9 @@ public class Player_Movement : MonoBehaviour
     private void MoveTo_Tile(Vector2 direction)
     {
         Tiles_Controller controller = InGame_Manager.instance.tilesController;
-
         Tile destinationTile = controller.Current_Tile((Vector2)_currentTile.transform.position + direction);
+        
         if (destinationTile == null) return;
-
         MoveTo_Tile(destinationTile);
     }
 }

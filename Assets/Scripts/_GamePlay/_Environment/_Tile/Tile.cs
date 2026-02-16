@@ -101,9 +101,10 @@ public class Tile : MonoBehaviour
         {
             StopCoroutine(_shadowUpdateCoroutine);
             _shadowUpdateCoroutine = null;
+
+            LeanTween.cancel(_shadowRenderer.gameObject);
         }
 
-        if (toggle == _shadowRenderer.gameObject.activeSelf) return;
         _shadowUpdateCoroutine = StartCoroutine(Shadow_Update(toggle));
     }
     private IEnumerator Shadow_Update(bool toggle)
