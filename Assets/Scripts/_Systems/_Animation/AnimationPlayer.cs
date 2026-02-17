@@ -5,7 +5,8 @@ using UnityEngine;
 public class AnimationPlayer : MonoBehaviour
 {
     [Space(20)]
-    [SerializeField] private SpriteRenderer _renderer;
+    [SerializeField] private SpriteRenderer _spriteRenderer;
+    public SpriteRenderer spriteRenderer => _spriteRenderer;
 
     [Space(10)]
     [SerializeField] private AnimationClipScrObj[] _animationClips;
@@ -50,11 +51,11 @@ public class AnimationPlayer : MonoBehaviour
             {
                 if (spriteDatas[i].clipSprite == null) continue;
 
-                _renderer.sprite = spriteDatas[i].clipSprite;
+                _spriteRenderer.sprite = spriteDatas[i].clipSprite;
                 return;
             }
 
-            _renderer.sprite = playClip.defaultSprite;
+            _spriteRenderer.sprite = playClip.defaultSprite;
             return;
         }
 
@@ -72,7 +73,7 @@ public class AnimationPlayer : MonoBehaviour
                 Sprite clipSprite = spriteDatas[i].clipSprite;
 
                 if (clipSprite == null) continue;
-                _renderer.sprite = clipSprite;
+                _spriteRenderer.sprite = clipSprite;
 
                 yield return new WaitForSeconds(spriteDatas[i].DurationTime());
             }

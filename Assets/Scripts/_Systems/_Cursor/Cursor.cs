@@ -6,13 +6,21 @@ using UnityEngine.UI;
 public class Cursor : MonoBehaviour
 {
     [Space(20)]
+    [SerializeField] private ItemCursor _itemCursor;
+    public ItemCursor itemCursor => _itemCursor;
+    
+    [Space(20)]
     [SerializeField] private RectTransform _rect;
     [SerializeField] private Image _image;
 
+
     private bool _pointerVisible;
 
-    private Tile _pointTile;
-    public Tile pointTile => _pointTile;
+    private int _tilePointRange;
+    public int tilePointRange => _tilePointRange;
+
+    private Tile _pointingTile;
+    public Tile pointingTile => _pointingTile;
 
 
     // MonoBehaviour
@@ -41,6 +49,8 @@ public class Cursor : MonoBehaviour
         
         input.OnAnyInput += Toggle_PointerVisibility;
         input.OnCursorControl += Movement_Update;
+
+        Update_TilePointerRange(1);
     }
 
 
@@ -64,8 +74,27 @@ public class Cursor : MonoBehaviour
     }
 
 
-    public void Update_PointTile(Tile pointTile)
+    // Tile Pointing
+    public void Update_TilePointerRange(int range)
     {
-        _pointTile = pointTile;
+        _tilePointRange = Mathf.Max(0, range);
+    }
+
+    public bool PointingTile_InRange(Tile pointTile)
+    {
+        Tile playerTile = InGame_Manager.instance.player.movement.currentTile;
+        
+        Vector2 playerTilePos = playerTile.transform.position;
+        Vector2 pointTilePos = pointTile.transform.position;
+
+        float xDistance = Mathf.Abs(playerTilePos.x - pointTilePos.x);
+        float ydistance = Mathf.Abs(playerTilePos.y - pointTilePos.y);
+
+        return Mathf.Max(xDistance, ydistance) <= _tilePointRange;
+    }
+
+    public void Track_PointingTile(Tile pointTile)
+    {
+        _pointingTile = pointTile;
     }
 }

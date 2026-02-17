@@ -10,6 +10,15 @@ public class Data_Manager : MonoBehaviour
     [SerializeField] private TileScrObj[] _tileScrObjs;
     public TileScrObj[] tileScrObjs => _tileScrObjs;
 
+    [Space(20)]
+    [SerializeField] private Item_ScrObj[] _itemScrObjs;
+    public Item_ScrObj[] itemScrObjs => _itemScrObjs;
+
+    /*
+    [SerializeField] private UseableItem[] _useableItems;
+    public UseableItem[] useableItems => _useableItems;
+    */
+
 
     // MonoBehaviour
     private void Awake()
@@ -39,5 +48,17 @@ public class Data_Manager : MonoBehaviour
 
         if (tiles.Count <= 0) return null;
         return tiles[randIndex];
+    }
+
+
+    // _itemScrObjs
+    public Item_ScrObj ItemScrObj(string itemName)
+    {
+        for (int i = 0; i < _itemScrObjs.Length; i++)
+        {
+            if (itemName != _itemScrObjs[i].itemName) continue;
+            return _itemScrObjs[i];
+        }
+        return null;
     }
 }

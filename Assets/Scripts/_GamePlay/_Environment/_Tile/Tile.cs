@@ -19,6 +19,13 @@ public class Tile : MonoBehaviour
     [SerializeField] private SpriteRenderer _shadowRenderer;
 
     [Space(20)]
+    [SerializeField] private Transform _placeableItemsPrefabs;
+    public Transform placeableItemsPrefabs => _placeableItemsPrefabs;
+
+    [SerializeField] private Transform _droppedItemsPrefabs;
+    public Transform droppedItemsPrefabs => _droppedItemsPrefabs;
+
+    [Space(20)]
     [SerializeField][Range(0, 1)] private float _shadowValue;
     [SerializeField][Range(0, 10)] private float _shadowUpdateTime;
 
@@ -71,22 +78,27 @@ public class Tile : MonoBehaviour
     }
 
 
-    // Pointer
+    // EventPointer
     private void Toggle_Pointer()
     {
         Toggle_Pointer(_pointer.pointerDetected);
     }
     private void Toggle_Pointer(bool toggle)
     {
-        _pointerToggled = toggle;
-        _pointerRenderer.gameObject.SetActive(toggle);
+        Cursor cursor = InGame_Manager.instance.cursor;
+        bool activeToggle = toggle && cursor.PointingTile_InRange(this);
+        
+        _pointerToggled = activeToggle;
+        _pointerRenderer.gameObject.SetActive(activeToggle);
 
-        Tile cursorPointTile = toggle ? this : null;
-        InGame_Manager.instance.cursor.Update_PointTile(cursorPointTile);
+        Tile cursorPointTile = activeToggle ? this : null;
+        cursor.Track_PointingTile(cursorPointTile);
     }
 
     private void Click_Interact()
     {
+        if (_pointerToggled == false) return;
+        
         Tiles_Controller controller = InGame_Manager.instance.tilesController;
         controller.OnTileInteract?.Invoke(this);
     }

@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -12,6 +13,8 @@ public class Player_Movement : MonoBehaviour
 
     private Tile _currentTile;
     public Tile currentTile => _currentTile;
+
+    public Action OnMovement;
 
     private Coroutine _moveAnimationCoroutine;
     
@@ -84,6 +87,8 @@ public class Player_Movement : MonoBehaviour
         Tile destinationTile = controller.Current_Tile((Vector2)_currentTile.transform.position + direction);
         
         if (destinationTile == null) return;
+        
         MoveTo_Tile(destinationTile);
+        OnMovement?.Invoke();
     }
 }

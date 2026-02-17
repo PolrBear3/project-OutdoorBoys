@@ -10,7 +10,7 @@ public class InGame_Manager : MonoBehaviour
     [Space(20)]
     [SerializeField] private Cursor _cursor;
     public Cursor cursor => _cursor;
-
+    
     [SerializeField] private Time_Manager _time;
     public Time_Manager time => _time;
 
