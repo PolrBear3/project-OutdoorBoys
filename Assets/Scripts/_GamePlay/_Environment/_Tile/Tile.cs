@@ -33,6 +33,10 @@ public class Tile : MonoBehaviour
     private TileData _data;
     public TileData data => _data;
 
+    private List<PlaceableItem> _placedItems = new();
+    public List<PlaceableItem> placedItems => _placedItems;
+    
+    
     private bool _pointerToggled;
     public bool pointerToggled => _pointerToggled;
 
@@ -79,7 +83,7 @@ public class Tile : MonoBehaviour
 
 
     // EventPointer
-    private void Toggle_Pointer()
+    public void Toggle_Pointer()
     {
         Toggle_Pointer(_pointer.pointerDetected);
     }
@@ -131,5 +135,46 @@ public class Tile : MonoBehaviour
         
         if (toggle) yield break;
         shadow.SetActive(false);
+    }
+
+
+    // Item Datas
+    public void Track_PlacingItem(PlaceableItem placingItem)
+    {
+        _placedItems.Add(placingItem);
+        _data.placedItemDatas.Add(placingItem.data);
+    }
+
+    public void Remove_PlacedItem(PlaceableItem placingItem)
+    {
+        _placedItems.Remove(placingItem);
+        _data.placedItemDatas.Remove(placingItem.data);
+
+        Destroy(placingItem.gameObject);
+    }
+
+
+    public int Placed_StackableItems()
+    {
+        int count = 0;
+
+        for (int i = 0; i < _placedItems.Count; i++)
+        {
+            if (_placedItems[i].data.itemScrObj.stackable == false) continue;
+            count++;
+        }
+
+        return count;
+    }
+
+    public bool NonStackableItem_Placed()
+    {
+        for (int i = 0; i < _placedItems.Count; i++)
+        {
+            if (_placedItems[i].data.itemScrObj.stackable) continue;
+            return true;
+        }
+
+        return false;
     }
 }

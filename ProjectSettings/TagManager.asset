@@ -38,8 +38,17 @@ TagManager:
   - 
   - 
   m_SortingLayers:
+  - name: Tile
+    uniqueID: 678841433
+    locked: 0
+  - name: Behind Player
+    uniqueID: 773141381
+    locked: 0
   - name: Default
     uniqueID: 0
+    locked: 0
+  - name: Front of Player
+    uniqueID: 2232913127
     locked: 0
   - name: UI
     uniqueID: 3631528629

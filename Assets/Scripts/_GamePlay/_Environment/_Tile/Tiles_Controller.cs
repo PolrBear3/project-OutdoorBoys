@@ -23,14 +23,31 @@ public class Tiles_Controller : MonoBehaviour
         EventBus_Manager.UnRegister(EventBus.AwakeLoad, Set_Data);
         EventBus_Manager.UnRegister(EventBus.StartLoad, Update_DataSprites);
 
-        Time_Manager time = InGame_Manager.instance.time;
+        InGame_Manager manager = InGame_Manager.instance;
+        Time_Manager time = manager.time;
 
         time.OnNightPhase -= Update_Shadows;
         time.OnDayCountUpdate -= Update_Shadows;
+
+        manager.cursor.OnTilePointRangeUpdate -= Update_PointerToggles;
+        manager.player.movement.OnMovement -= Update_PointerToggles;
     }
 
 
     // Data
+    private void Set_Data()
+    {
+        InGame_Manager manager = InGame_Manager.instance;
+        Time_Manager time = manager.time;
+
+        time.OnNightPhase += Update_Shadows;
+        time.OnDayCountUpdate += Update_Shadows;
+
+        manager.cursor.OnTilePointRangeUpdate += Update_PointerToggles;
+        manager.player.movement.OnMovement += Update_PointerToggles;
+    }
+
+
     public Tile Current_Tile(Vector2 generatedPos)
     {
         for (int i = 0; i < _currentTiles.Count; i++)
@@ -65,14 +82,7 @@ public class Tiles_Controller : MonoBehaviour
     }
 
 
-    private void Set_Data()
-    {
-        Time_Manager time = InGame_Manager.instance.time;
-
-        time.OnNightPhase += Update_Shadows;
-        time.OnDayCountUpdate += Update_Shadows;
-    }
-
+    // Update
     private void Update_DataSprites()
     {
         Vector2 generateStartPos = InGame_Manager.instance.tileGenerator.Generate_StartPosition();
@@ -84,15 +94,21 @@ public class Tiles_Controller : MonoBehaviour
         }
     }
 
-
-    // Shadow
     private void Update_Shadows()
     {
         bool isNight = InGame_Manager.instance.time.Is_Night();
         
-        for (int i = 0; i < _currentTiles.Count; i++)
+        foreach (Tile tile in _currentTiles)
         {
-            currentTiles[i].Toggle_Shadow(isNight);
+            tile.Toggle_Shadow(isNight);
+        }
+    }
+
+    private void Update_PointerToggles()
+    {
+        foreach (Tile tile in _currentTiles)
+        {
+            tile.Toggle_Pointer();
         }
     }
 }

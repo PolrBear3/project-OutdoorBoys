@@ -22,6 +22,8 @@ public class InGame_Manager : MonoBehaviour
     [SerializeField] private Tiles_Controller _tilesController;
     public Tiles_Controller tilesController => _tilesController;
 
+
+    [Space(20)]
     [SerializeField] private Player_Controller _player;
     public Player_Controller player => _player;
 

@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -13,11 +14,16 @@ public class Cursor : MonoBehaviour
     [SerializeField] private RectTransform _rect;
     [SerializeField] private Image _image;
 
+    [Space(20)]
+    [SerializeField] private Sprite _defaultPointerSprite;
+
 
     private bool _pointerVisible;
 
     private int _tilePointRange;
     public int tilePointRange => _tilePointRange;
+
+    public Action OnTilePointRangeUpdate;
 
     private Tile _pointingTile;
     public Tile pointingTile => _pointingTile;
@@ -39,6 +45,8 @@ public class Cursor : MonoBehaviour
 
         input.OnAnyInput -= Toggle_PointerVisibility;
         input.OnCursorControl -= Movement_Update;
+
+        _itemCursor.OnItemDataUpdate -= PointerSprite_Update;
     }
 
 
@@ -49,6 +57,8 @@ public class Cursor : MonoBehaviour
         
         input.OnAnyInput += Toggle_PointerVisibility;
         input.OnCursorControl += Movement_Update;
+
+        _itemCursor.OnItemDataUpdate += PointerSprite_Update;
 
         Update_TilePointerRange(1);
     }
@@ -66,7 +76,7 @@ public class Cursor : MonoBehaviour
         _rect.gameObject.SetActive(toggle);
         UnityEngine.Cursor.visible = !toggle;
     }
-    
+
     private void Movement_Update(Vector2 cursorPosition)
     {
         if (_pointerVisible == false) return;
@@ -74,10 +84,20 @@ public class Cursor : MonoBehaviour
     }
 
 
+    private void PointerSprite_Update(ItemData setData)
+    {
+        Sprite updateSprite = setData != null ? setData.itemScrObj.inventorySprite : _defaultPointerSprite;
+
+        _image.sprite = updateSprite;
+    }
+
+
     // Tile Pointing
     public void Update_TilePointerRange(int range)
     {
         _tilePointRange = Mathf.Max(0, range);
+
+        OnTilePointRangeUpdate?.Invoke();
     }
 
     public bool PointingTile_InRange(Tile pointTile)

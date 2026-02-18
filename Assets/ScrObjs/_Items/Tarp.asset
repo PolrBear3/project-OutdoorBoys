@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 069327ba6dded4f16af0714f2c328413, type: 3}
   m_Name: Tarp
   m_EditorClassIdentifier: 
-  _inventorySprite: {fileID: 0}
+  _inventorySprite: {fileID: -1266407030, guid: bf7ece83f843c4c35977c02f8c40d92d, type: 3}
   _itemName: Tarp
   _description: 
   _placeablePrefab: {fileID: 3637228250238346253, guid: f990c87832dc348cba041952eea5503d, type: 3}

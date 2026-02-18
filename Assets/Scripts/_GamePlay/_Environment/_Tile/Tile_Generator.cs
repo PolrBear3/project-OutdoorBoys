@@ -2,9 +2,24 @@ using System.Collections;
 using System.Collections.Generic;
 using Unity.Mathematics;
 using UnityEngine;
+using UnityEngine.Experimental.Rendering.Universal;
+
+[System.Serializable]
+public struct TileGenerate_ResoulationData
+{
+    [SerializeField] private Vector2 _maxGenerateSize;
+    public Vector2 maxGenerateSize => _maxGenerateSize;
+
+    [SerializeField] private Vector2 _resolution;
+    public Vector2 resolution => _resolution;
+}
 
 public class Tile_Generator : MonoBehaviour
 {
+    [Space(20)]
+    [SerializeField] PixelPerfectCamera _pixelCamera;
+    [SerializeField] TileGenerate_ResoulationData[] resolutionDatas;
+
     [Space(20)]
     [SerializeField] private Vector2 _generateSize;
     [SerializeField][Range(0, 100)] private float _harshGroundDensity;
@@ -18,12 +33,16 @@ public class Tile_Generator : MonoBehaviour
     {
         EventBus_Manager.Register(EventBus.AwakeLoad, Generate_PresetTiles);
         EventBus_Manager.Register(EventBus.AwakeLoad, Generate_Tiles);
+
+        EventBus_Manager.Register(EventBus.AwakeLoad, Update_Resolution);
     }
 
     private void OnDestroy()
     {
         EventBus_Manager.UnRegister(EventBus.AwakeLoad, Generate_PresetTiles);
         EventBus_Manager.UnRegister(EventBus.AwakeLoad, Generate_Tiles);
+        
+        EventBus_Manager.UnRegister(EventBus.AwakeLoad, Update_Resolution);
     }
 
 
@@ -180,6 +199,24 @@ public class Tile_Generator : MonoBehaviour
         foreach (var data in generateDatas)
         {
             Generate_Tile(data.Key, dataManager.TileScrObj(data.Value));
+        }
+    }
+
+
+    // Camera
+    private void Update_Resolution()
+    {
+        for (int i = 0; i < resolutionDatas.Length; i++)
+        {
+            TileGenerate_ResoulationData resData = resolutionDatas[i];
+            Vector2 maxSize = resData.maxGenerateSize;
+            
+            if (_generateSize.x > maxSize.x || _generateSize.y > maxSize.y) continue;
+
+            _pixelCamera.refResolutionX = (int)resData.resolution.x;
+            _pixelCamera.refResolutionY = (int)resData.resolution.y;
+            
+            return;
         }
     }
 }

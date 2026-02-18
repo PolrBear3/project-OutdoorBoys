@@ -22,30 +22,4 @@ public class TileData
     {
         _tileScrObj = setTile;
     }
-
-
-    // Item Datas
-    public int Placed_StackableItems()
-    {
-        int count = 0;
-
-        for (int i = 0; i < _placedItemDatas.Count; i++)
-        {
-            if (_placedItemDatas[i].itemScrObj.stackable == false) continue;
-            count++;
-        }
-
-        return count;
-    }
-
-    public bool NonStackableItem_Placed()
-    {
-        for (int i = 0; i < _placedItemDatas.Count; i++)
-        {
-            if (_placedItemDatas[i].itemScrObj.stackable) continue;
-            return true;
-        }
-
-        return false;
-    }
 }
