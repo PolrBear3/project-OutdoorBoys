@@ -14,8 +14,6 @@ public class ItemCursor : MonoBehaviour
     private ItemData _currentItemData;
     public ItemData currentItemData => _currentItemData;
 
-    public Action<ItemData> OnItemDataUpdate;
-
 
     // MonoBehaviour
     private void Awake()
@@ -29,8 +27,8 @@ public class ItemCursor : MonoBehaviour
 
         Tiles_Controller tilesController = InGame_Manager.instance.tilesController;
 
-        tilesController.OnTileInteract -= Place_CurrentItem;
-        tilesController.OnTileInteract -= Use_CurrentItem;
+        tilesController.OnTileSelect -= Place_CurrentItem;
+        tilesController.OnTileSelect -= Use_CurrentItem;
     }
 
 
@@ -39,73 +37,98 @@ public class ItemCursor : MonoBehaviour
     {
         Tiles_Controller tilesController = InGame_Manager.instance.tilesController;
 
-        tilesController.OnTileInteract += Place_CurrentItem;
-        tilesController.OnTileInteract += Use_CurrentItem;
+        tilesController.OnTileSelect += Place_CurrentItem;
+        tilesController.OnTileSelect += Use_CurrentItem;
 
-        Set_CurrentItemData(new(Data_Manager.instance.ItemScrObj("Tarp"), 3));
-        Update_TilePointerRange();
+        Set_CurrentItem(new(Data_Manager.instance.ItemScrObj("Tarp"), 5));
     }
 
-    public void Set_CurrentItemData(ItemData setData)
+    public void Set_CurrentItem(ItemData setItemData)
     {
-        _currentItemData = setData;
+        _currentItemData = setItemData;
 
-        OnItemDataUpdate?.Invoke(_currentItemData);
+        // range
+        int updateRange = setItemData != null ? setItemData.itemScrObj.triggerRange : 0;
+        _cursor.Update_TilePointerRange(updateRange);
+
+        // sprite
+        Sprite itemSprite = setItemData != null ? setItemData.itemScrObj.inventorySprite : null;
+        _cursor.Update_PointerSprite(itemSprite);
+
+        // amount text
+        if (setItemData == null)
+        {
+            _cursor.amountText.gameObject.SetActive(false);
+            return;
+        }
+        _cursor.Update_AmountText(setItemData.count);
     }
 
 
     // Item Trigger
-    private void Update_TilePointerRange()
-    {
-        int updateRange = _currentItemData != null ? _currentItemData.itemScrObj.triggerRange : 0;
-        
-        _cursor.Update_TilePointerRange(updateRange);
+    private void Pickup_CurrentItem(Tile selectTile)
+    {        
+        List<PlaceableItem> placedItems = selectTile.placedItems;
+        if (placedItems.Count <= 0) return;
+
+        PlaceableItem pickupItem = placedItems[0];
+
+        Set_CurrentItem(pickupItem.data);
+        selectTile.Remove_PlacedItem(pickupItem);
     }
 
-
-    private void Place_CurrentItem(Tile interactTile)
+    private void Place_CurrentItem(Tile selectTile)
     {
         if (_currentItemData == null)
         {
-            Pickup_CurrentItem(interactTile);
+            Pickup_CurrentItem(selectTile);
             return;
         }
 
         Item_ScrObj currentItem = _currentItemData.itemScrObj;
-        
-        if (currentItem.placeablePrefab == null) return;
-        if (interactTile.Placed_StackableItems() > 1) return;
-        if (currentItem.stackable == false && interactTile.NonStackableItem_Placed()) return;
+        List<PlaceableItem> placedItems = selectTile.placedItems;
+
+        for (int i = 0; i < placedItems.Count; i++)
+        {
+            ItemData placedItemData = placedItems[i].data;
+
+            if (currentItem != placedItemData.itemScrObj) continue;
+            if (placedItemData.count >= currentItem.maxAmount) continue;
+
+            _currentItemData.Update_CurrentCount(_currentItemData.count - 1);
+            _cursor.Update_AmountText(_currentItemData.count);
+
+            placedItemData.Update_CurrentCount(placedItemData.count + 1);
+            return;
+        }
+
+        if (selectTile.Placed_StackableItems() > 1) return;
+        if (currentItem.stackable == false && selectTile.NonStackableItem_Placed()) return;
 
         GameObject spawnedItem = Instantiate(currentItem.placeablePrefab);
         Transform itemTransform = spawnedItem.transform;
+
         PlaceableItem placedItem = spawnedItem.GetComponent<PlaceableItem>();
+        placedItem.Set_Data(new(currentItem, 1));
         
-        placedItem.Set_Data(_currentItemData);
-        placedItem.Set_CurrentTile(interactTile);
+        placedItem.Track_CurrentTile(selectTile);
+        selectTile.Track_PlacingItem(placedItem);
         
-        interactTile.Track_PlacingItem(placedItem);
-        
-        itemTransform.SetParent(interactTile.placeableItemsPrefabs);
+        itemTransform.SetParent(selectTile.placeableItemsPrefabs);
         itemTransform.localPosition = Vector2.zero + currentItem.offsetPosition;
 
-        Set_CurrentItemData(null);
-        Update_TilePointerRange();
+        _currentItemData.Update_CurrentCount(_currentItemData.count - 1);
+
+        if (_currentItemData.count > 0)
+        {
+            _cursor.Update_AmountText(_currentItemData.count);
+            return;
+        }
+        Set_CurrentItem(null);
     }
-    private void Pickup_CurrentItem(Tile interactTile)
-    {
-        if (_currentItemData != null) return;
+    
 
-        List<PlaceableItem> placedItemDatas = interactTile.placedItems;
-        if (placedItemDatas.Count <= 0) return;
-
-        Set_CurrentItemData(placedItemDatas[0].data);
-        Update_TilePointerRange();
-
-        interactTile.Remove_PlacedItem(placedItemDatas[0]);
-    }
-
-    private void Use_CurrentItem(Tile interactTile)
+    private void Use_CurrentItem(Tile selectTile)
     {
         if (_currentItemData == null) return;
         Item_ScrObj currentItem = _currentItemData.itemScrObj;

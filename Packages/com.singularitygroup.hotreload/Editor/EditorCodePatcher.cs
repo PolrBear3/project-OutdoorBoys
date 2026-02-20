@@ -37,8 +37,7 @@ namespace SingularityGroup.HotReload.Editor {
     
     [InitializeOnLoad]
     internal static class EditorCodePatcher {
-        const string sessionFilePath = PackageConst.LibraryCachePath + "/sessionId.txt";
-        const string patchesFilePath = PackageConst.LibraryCachePath + "/patches.json";
+        static string sessionFilePath = PackageConst.LibraryCachePath + "/sessionId.txt";
         
         internal static readonly ServerDownloader serverDownloader;
         internal static bool _compileError;
@@ -56,7 +55,6 @@ namespace SingularityGroup.HotReload.Editor {
         internal static PatchStatus patchStatus = PatchStatus.None;
         
         internal static event Action<(MethodPatchResponse, RegisterPatchesResult)> OnPatchHandled;
-        
         
         internal static Config config;
 
@@ -101,8 +99,8 @@ namespace SingularityGroup.HotReload.Editor {
             }
             Translations.LoadDefaultLocalization();
             SingularityGroup.HotReload.Localization.Translations.LoadDefaultLocalization();
-            if (File.Exists(PackageConst.ConfigFileName)) {
-                config = JsonConvert.DeserializeObject<Config>(File.ReadAllText(PackageConst.ConfigFileName));
+            if (File.Exists(PackageConst.ConfigFilePath)) {
+                config = JsonConvert.DeserializeObject<Config>(File.ReadAllText(PackageConst.ConfigFilePath));
             } else {
                 config = new Config();
             }
@@ -117,7 +115,7 @@ namespace SingularityGroup.HotReload.Editor {
             serverDownloader = new ServerDownloader();
             serverDownloader.CheckIfDownloaded(HotReloadCli.controller);
             SingularityGroup.HotReload.Demo.Demo.I = new EditorDemo();
-            if (HotReloadPrefs.DeactivateHotReload || new DirectoryInfo(Path.GetFullPath("..")).Name == "VP") {
+            if (HotReloadPrefs.DeactivateHotReload) {
                 ResetSettings();
                 return;
             }
@@ -127,7 +125,11 @@ namespace SingularityGroup.HotReload.Editor {
             
             timer = new Timer(OnIntervalThreaded, (Action) OnIntervalMainThread, 500, 500);
 
-            UpdateHost();
+            if (MultiplayerPlaymodeHelper.IsClone) {
+                InitServerInfo();
+            } else {
+                UpdateHost();
+            }
             licenseType = UnityLicenseHelper.GetLicenseType();
             compileChecker = CompileChecker.Create();
             compileChecker.onCompilationFinished += OnCompilationFinished;
@@ -143,10 +145,21 @@ namespace SingularityGroup.HotReload.Editor {
             EditorApplication.quitting += ResetSettingsOnQuit;
             
             AssemblyReloadEvents.beforeAssemblyReload += () => {
-                HotReloadTimelineHelper.PersistTimeline();
+                HotReloadTimelineHelper.PersistTimeline().Forget();
+            };
+            AssemblyReloadEvents.afterAssemblyReload += () => {
+                ServerHealthCheck.instance.CheckHealth();
+                if (ServerHealthCheck.I.IsServerHealthy) {
+                    HotReloadTimelineHelper.InitPersistedEvents().Forget();
+                } else {
+                    HotReloadTimelineHelper.ClearPersistance();
+                }
             };
 
             CompilationPipeline.assemblyCompilationFinished += (string _, CompilerMessage[] messages) => {
+                if (MultiplayerPlaymodeHelper.IsClone) {
+                    return;
+                }
                 foreach (var message in messages) {
                     if (message.type != CompilerMessageType.Error) {
                         continue;
@@ -174,6 +187,10 @@ namespace SingularityGroup.HotReload.Editor {
             };
             
             CompilationPipeline.compilationFinished += obj => {
+                if (MultiplayerPlaymodeHelper.IsClone) {
+                    CompileMethodDetourer.Reset();
+                    return;
+                }
                 // reset in case package got removed
                 // if it got removed, it will not be enabled again
                 // if it wasn't removed, settings will get handled by OnIntervalMainThread
@@ -187,8 +204,7 @@ namespace SingularityGroup.HotReload.Editor {
             DetectVersionUpdate();
             CodePatcher.I.fieldHandler = new FieldHandler(FieldDrawerUtil.StoreField, UnityFieldHelper.HideField, UnityFieldHelper.RegisterInspectorFieldAttributes);
             if (EditorApplication.isPlayingOrWillChangePlaymode) {
-                CodePatcher.I.InitPatchesBlocked(patchesFilePath);
-                HotReloadTimelineHelper.InitPersistedEvents();
+                CodePatcher.I.InitPatchesBlocked();
             }
 
 #pragma warning disable CS0612 // Type or member is obsolete
@@ -263,6 +279,9 @@ namespace SingularityGroup.HotReload.Editor {
         }
 
         public static bool TryRecompileUnsupportedChanges() {
+            if (MultiplayerPlaymodeHelper.IsClone) {
+                return false;
+            }
             var isPlaying = EditorApplication.isPlaying;
             if (!HotReloadPrefs.AutoRecompileUnsupportedChanges
                 || HotReloadTimelineHelper.UnsupportedChangesCount == 0
@@ -278,6 +297,9 @@ namespace SingularityGroup.HotReload.Editor {
         }
 
         public static void RecompileUnsupportedChanges() {
+            if (MultiplayerPlaymodeHelper.IsClone) {
+                return;
+            }
             if (HotReloadPrefs.ShowCompilingUnsupportedNotifications) {
                 EditorWindowHelper.ShowNotification(EditorWindowHelper.NotificationStatus.NeedsRecompile);
             }
@@ -292,6 +314,9 @@ namespace SingularityGroup.HotReload.Editor {
         /// Post state for player builds.
         /// Only check build target because user can change build settings whenever.
         internal static void TryPrepareBuildInfo() {
+            if (MultiplayerPlaymodeHelper.IsClone) {
+                return;
+            }
             // Note: we post files state even when build target is wrong
             // because you might connect with a build downloaded onto the device. 
             if ((DateTime.UtcNow - lastPrepareBuildInfo).TotalSeconds > 5) {
@@ -318,6 +343,9 @@ namespace SingularityGroup.HotReload.Editor {
         // CheckEditorStart distinguishes between domain reload and first editor open
         // We have some separate logic on editor start (InstallUtility.HandleEditorStart)
         private static void DetectEditorStart() {
+            if (MultiplayerPlaymodeHelper.IsClone) {
+                return;
+            }
             var editorId = EditorAnalyticsSessionInfo.id;
             var currVersion = PackageConst.Version;
             Task.Run(() => {
@@ -367,7 +395,7 @@ namespace SingularityGroup.HotReload.Editor {
         }
         
         private static void DetectVersionUpdate() {
-            if (serverDownloader.CheckIfDownloaded(HotReloadCli.controller)) {
+            if (serverDownloader.CheckIfDownloaded(HotReloadCli.controller) || MultiplayerPlaymodeHelper.IsClone) {
                 return;
             }
             ServerHealthCheck.instance.CheckHealth();
@@ -387,7 +415,15 @@ namespace SingularityGroup.HotReload.Editor {
         }
 
         static void OnIntervalThreaded(object o) {
+            var wasHealhy = ServerHealthCheck.I.IsServerHealthy;
             ServerHealthCheck.instance.CheckHealth();
+            if (wasHealhy != ServerHealthCheck.I.IsServerHealthy) {
+                InitServerInfo();
+            }
+            if (MultiplayerPlaymodeHelper.IsClone && ServerHealthCheck.I.IsServerHealthy) {
+                // technically need to call this once but for consistency sake we call it every time (overhead should be minimal)
+                RequestHelper.RegisterClone().Forget();
+            }
             ThreadUtility.RunOnMainThread((Action)o);
             if (serverDownloader.Progress >= 1f) {
                 serverDownloader.CheckIfDownloaded(HotReloadCli.controller);
@@ -418,10 +454,13 @@ namespace SingularityGroup.HotReload.Editor {
         public static string lastCompileErrorLog;
         static async Task FlushErrors() {
             var response = await RequestHelper.RequestFlushErrors();
-            if (response == null || disableServerLogs) {
+            if (response == null || disableServerLogs || MultiplayerPlaymodeHelper.IsClone) {
                 return;
             }
             if (!Application.isPlaying && HotReloadPrefs.PauseHotReloadInEditMode) {
+                return;
+            }
+            if (Debugger.IsAttached && !CodePatcher.I.debuggerCompatibilityEnabled) {
                 return;
             }
             foreach (var responseWarning in response.warnings) {
@@ -480,26 +519,46 @@ namespace SingularityGroup.HotReload.Editor {
             if (!Application.isPlaying && HotReloadPrefs.PauseHotReloadInEditMode) {
                 return;
             }
-
-            if (HotReloadPrefs.AutoDisableHotReloadWithDebugger && Debugger.IsAttached) {
-                if (!HotReloadState.ShowedDebuggerCompatibility) {
-                    HotReloadSuggestionsHelper.SetSuggestionActive(HotReloadSuggestionKind.HotReloadWhileDebuggerIsAttached);
-                    HotReloadState.ShowedDebuggerCompatibility = true;
-                }
-                if (CodePatcher.I.OriginalPatchMethods.Count() > 0) {
-                    if (!Application.isPlaying) {
-                        if (!loggedDebuggerRecompile) {
-                            Log.Info(Translations.Errors.InfoDebuggerAttached);
-                            loggedDebuggerRecompile = true;
+            if (Debugger.IsAttached && !CodePatcher.I.debuggerCompatibilityEnabled) {
+                var userAutoRefreshDisabled = AutoRefreshSettingChecker.IsUserAutoRefreshDisabled();
+                if (!HotReloadPrefs.DebuggerOnboardingShown) {
+                    HotReloadPrefs.DebuggerOnboardingShown = true;
+                    if (EditorUtility.DisplayDialogComplex(
+                            title: Translations.Dialogs.DialogTitleHotReloadDebuggerDetected,
+                            message: userAutoRefreshDisabled ? Translations.Dialogs.DialogMessageHotReloadDebuggerDetectedPause : Translations.Dialogs.DialogMessageHotReloadDebuggerDetectedRecompile,
+                            ok: userAutoRefreshDisabled ? Translations.Dialogs.DialogButtonHotReloadDebuggerDetectedPause : Translations.Dialogs.DialogButtonHotReloadDebuggerDetectedRecompile,
+                            cancel: Translations.Dialogs.DialogCloseHotReloadDebuggerDetected,
+                            alt: Translations.Dialogs.DialogButtonHotReloadDebuggerDetectedAdvancedOptions) == 2
+                    ) {
+                        if (EditorUtility.DisplayDialog(
+                                title: Translations.Dialogs.DialogTitleHotReloadDebuggerOptions,
+                                message: Translations.Dialogs.DialogMessageHotReloadDebuggerOptions,
+                                ok: Translations.Dialogs.DialogButtonHotReloadDebuggerOptionsContinue,
+                                cancel: userAutoRefreshDisabled ? Translations.Dialogs.DialogButtonHotReloadDebuggerOptionsCancelPause : Translations.Dialogs.DialogButtonHotReloadDebuggerOptionsCancelRecompile)
+                        ) {
+                            CodePatcher.I.debuggerCompatibilityEnabled = true;
+                            HotReloadPrefs.AutoDisableHotReloadWithDebugger = false;
+                            return;
                         }
-                        HotReloadRunTab.Recompile();
-                        HotReloadSuggestionsHelper.SetSuggestionInactive(HotReloadSuggestionKind.HotReloadedMethodsWhenDebuggerIsAttached);
-                    } else {
-                        HotReloadSuggestionsHelper.SetSuggestionActive(HotReloadSuggestionKind.HotReloadedMethodsWhenDebuggerIsAttached);
                     }
                 }
-            } else if (HotReloadSuggestionsHelper.CheckSuggestionActive(HotReloadSuggestionKind.HotReloadedMethodsWhenDebuggerIsAttached)) {
-                HotReloadSuggestionsHelper.SetSuggestionInactive(HotReloadSuggestionKind.HotReloadedMethodsWhenDebuggerIsAttached);
+                if (!HotReloadState.WarnedDebuggerAttached) {
+                    HotReloadState.WarnedDebuggerAttached = true;
+                    // passed both prompts - hot reload is paused
+                    if (CodePatcher.I.PatchesApplied > 0 || !userAutoRefreshDisabled) {
+                        Log.Info(Translations.Errors.InfoDebuggerAttachedFullRecompile);
+                    } else {
+                        // warn about Hot Reload being paused
+                        Log.Info(Translations.Errors.InfoDebuggerAttachedPauseHotReload);
+                    }
+                }
+                if (CodePatcher.I.PatchesApplied > 0) {
+                    // recompile if any patches were made to avoid debugger session being broken
+                    HotReloadRunTab.Recompile();
+                }
+                return;
+            } else {
+                HotReloadState.WarnedDebuggerAttached = false;
             }
             
             if(ServerHealthCheck.I.IsServerHealthy) {
@@ -540,6 +599,9 @@ namespace SingularityGroup.HotReload.Editor {
         internal static bool disableInlineChecks = false;
         internal static HashSet<MethodBase> inlinedMethodsFound = new HashSet<MethodBase>();
         internal static void CheckInlinedMethods() {
+            if (MultiplayerPlaymodeHelper.IsClone) {
+                return;
+            }
             if (CompilationPipeline.codeOptimization != CodeOptimization.Release) {
                 return;
             }
@@ -589,7 +651,11 @@ namespace SingularityGroup.HotReload.Editor {
         }
 
         static void CheckAutoRefresh() {
-            if (HotReloadPrefs.AllowDisableUnityAutoRefresh && ServerHealthCheck.I.IsServerHealthy) {
+            if (MultiplayerPlaymodeHelper.IsClone) {
+                return;
+            }
+            var disabledDuringDebugger = Debugger.IsAttached && !CodePatcher.I.debuggerCompatibilityEnabled;
+            if (HotReloadPrefs.AllowDisableUnityAutoRefresh && ServerHealthCheck.I.IsServerHealthy && !disabledDuringDebugger) {
                 AutoRefreshSettingChecker.Apply();
                 AutoRefreshSettingChecker.Check();
             } else {
@@ -598,7 +664,11 @@ namespace SingularityGroup.HotReload.Editor {
         }
         
         static void CheckScriptCompilation() {
-            if (HotReloadPrefs.AllowDisableUnityAutoRefresh && ServerHealthCheck.I.IsServerHealthy) {
+            if (MultiplayerPlaymodeHelper.IsClone) {
+                return;
+            }
+            var disabledDuringDebugger = Debugger.IsAttached && !CodePatcher.I.debuggerCompatibilityEnabled;
+            if (HotReloadPrefs.AllowDisableUnityAutoRefresh && ServerHealthCheck.I.IsServerHealthy && !disabledDuringDebugger) {
                 ScriptCompilationSettingChecker.Apply();
                 ScriptCompilationSettingChecker.Check();
             } else {
@@ -641,6 +711,9 @@ namespace SingularityGroup.HotReload.Editor {
         };
         
         static void HandleAssetChange(string assetPath) {
+            if (MultiplayerPlaymodeHelper.IsClone) {
+                return;
+            }
             // ignore directories
             if (Directory.Exists(assetPath)) {
                 return;
@@ -740,6 +813,9 @@ namespace SingularityGroup.HotReload.Editor {
         }
         
         static void CheckPlaymodeTint() {
+            if (MultiplayerPlaymodeHelper.IsClone) {
+                return;
+            }
             if (config.changePlaymodeTint && ServerHealthCheck.I.IsServerHealthy && Application.isPlaying) {
                 PlaymodeTintSettingChecker.Apply();
                 PlaymodeTintSettingChecker.Check();
@@ -765,8 +841,9 @@ namespace SingularityGroup.HotReload.Editor {
                 || response.addedFieldInitializerFields.Length > 0
             ) {
                 LogBurstHint(response);
-                patchResult = CodePatcher.I.RegisterPatches(response, persist: true);
-                CodePatcher.I.SaveAppliedPatches(patchesFilePath).Forget();
+                // don't save patches in virtual players since we will use main editor instance for that
+                var persist = !MultiplayerPlaymodeHelper.IsClone;
+                patchResult = CodePatcher.I.RegisterPatches(response, persist: persist);
             }
             
             if (patchResult?.inspectorModified == true) {
@@ -997,12 +1074,17 @@ namespace SingularityGroup.HotReload.Editor {
         }
         
         static void ClearPersistence() {
-            Task.Run(() => File.Delete(patchesFilePath));
-            HotReloadTimelineHelper.ClearPersistance();
+            if (MultiplayerPlaymodeHelper.IsClone) {
+                return;
+            }
+            CodePatcher.I.ClearPatchesThreaded();
         }
 
         static bool requestingCompile;
         static async Task RequestCompile() {
+            if (MultiplayerPlaymodeHelper.IsClone) {
+                return;
+            }
             requestingCompile = true;
             try {
                 await RequestHelper.RequestClearPatches();
@@ -1143,6 +1225,8 @@ namespace SingularityGroup.HotReload.Editor {
         internal static bool DownloadRequired => DownloadProgress < 1f;
         internal static bool DownloadStarted => serverDownloader.Started;
         internal static bool RequestingDownloadAndRun => requestingDownloadAndRun;
+        internal static CancellationTokenSource downloadCancelToken;
+        
         internal static async Task<bool> DownloadAndRun(LoginData loginData = null, bool recompileOnDone = false) {
             if (requestingDownloadAndRun) {
                 return false;
@@ -1151,7 +1235,8 @@ namespace SingularityGroup.HotReload.Editor {
             requestingDownloadAndRun = true;
             try {
                 if (DownloadRequired) {
-                    var ok = await serverDownloader.PromptForDownload();
+                    downloadCancelToken = new CancellationTokenSource(); 
+                    var ok = await serverDownloader.PromptForDownload(downloadCancelToken.Token);
                     if (!ok) {
                         return false;
                     }
@@ -1165,6 +1250,21 @@ namespace SingularityGroup.HotReload.Editor {
                 return true;
             } finally {
                 requestingDownloadAndRun = false;
+            }
+        }
+
+        private static void InitServerInfo() {
+            // only needed for clones
+            if (!MultiplayerPlaymodeHelper.IsClone) {
+                return;
+            }
+            var serverInfoRaw = File.ReadAllText(PackageConst.ServerInfoFilePath);
+            PatchServerInfo serverInfo = null;
+            if (!string.IsNullOrEmpty(serverInfoRaw)) {
+                serverInfo = JsonConvert.DeserializeObject<PatchServerInfo>(serverInfoRaw);
+            }
+            if (serverInfo != null) {
+                RequestHelper.SetServerInfo(serverInfo);
             }
         }
         
@@ -1251,7 +1351,7 @@ namespace SingularityGroup.HotReload.Editor {
         internal static bool Running => ServerHealthCheck.I.IsServerHealthy;
         
         internal static void RequestServerInfo() {
-            if (requestingServerInfo) {
+            if (requestingServerInfo || MultiplayerPlaymodeHelper.IsClone) {
                 return;
             }
             RequestServerInfoAsync().Forget();

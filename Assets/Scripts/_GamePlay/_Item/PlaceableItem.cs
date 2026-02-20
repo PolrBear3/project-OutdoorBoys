@@ -27,7 +27,7 @@ public abstract class PlaceableItem : MonoBehaviour
         _data = setData;
     }
 
-    public void Set_CurrentTile(Tile setTile)
+    public void Track_CurrentTile(Tile setTile)
     {
         if (setTile == null)
         {

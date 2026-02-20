@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
 
 public class Cursor : MonoBehaviour
 {
@@ -13,6 +14,9 @@ public class Cursor : MonoBehaviour
     [Space(20)]
     [SerializeField] private RectTransform _rect;
     [SerializeField] private Image _image;
+
+    [SerializeField] private TextMeshProUGUI _amountText;
+    public TextMeshProUGUI amountText => _amountText;
 
     [Space(20)]
     [SerializeField] private Sprite _defaultPointerSprite;
@@ -45,8 +49,6 @@ public class Cursor : MonoBehaviour
 
         input.OnAnyInput -= Toggle_PointerVisibility;
         input.OnCursorControl -= Movement_Update;
-
-        _itemCursor.OnItemDataUpdate -= PointerSprite_Update;
     }
 
 
@@ -57,10 +59,6 @@ public class Cursor : MonoBehaviour
         
         input.OnAnyInput += Toggle_PointerVisibility;
         input.OnCursorControl += Movement_Update;
-
-        _itemCursor.OnItemDataUpdate += PointerSprite_Update;
-
-        Update_TilePointerRange(1);
     }
 
 
@@ -84,11 +82,19 @@ public class Cursor : MonoBehaviour
     }
 
 
-    private void PointerSprite_Update(ItemData setData)
+    public void Update_PointerSprite(Sprite sprite)
     {
-        Sprite updateSprite = setData != null ? setData.itemScrObj.inventorySprite : _defaultPointerSprite;
+        Sprite updateSprite = sprite != null ? sprite : _defaultPointerSprite;
 
         _image.sprite = updateSprite;
+    }
+
+    public void Update_AmountText(int updateAmount)
+    {
+        _amountText.text = updateAmount.ToString();
+        
+        if (_amountText.gameObject.activeSelf) return;
+        _amountText.gameObject.SetActive(true);
     }
 
 
@@ -99,6 +105,7 @@ public class Cursor : MonoBehaviour
 
         OnTilePointRangeUpdate?.Invoke();
     }
+
 
     public bool PointingTile_InRange(Tile pointTile)
     {

@@ -16,13 +16,13 @@ namespace SingularityGroup.HotReload.Editor.Cli {
         }
 
         public static string GetProjectIdentifier() {
-            if (File.Exists(PackageConst.ConfigFileName)) {
-                var config = JsonConvert.DeserializeObject<Config>(File.ReadAllText(PackageConst.ConfigFileName));
+            if (File.Exists(PackageConst.ConfigFilePath)) {
+                var config = JsonConvert.DeserializeObject<Config>(File.ReadAllText(PackageConst.ConfigFilePath));
                 if (config.singleInstance) {
                     return null;
                 }
             }
-            var path = Path.GetDirectoryName(UnityHelper.DataPath);
+            var path = Path.GetFullPath(MultiplayerPlaymodeHelper.PathToMainProject("."));
             var name = new DirectoryInfo(path).Name;
             using (SHA256 sha256 = SHA256.Create()) {
                 byte[] inputBytes = Encoding.UTF8.GetBytes(path);
@@ -42,16 +42,7 @@ namespace SingularityGroup.HotReload.Editor.Cli {
         }
         
         public static string GetHotReloadTempDir() {
-            if (UnityHelper.Platform == RuntimePlatform.OSXEditor) {
-                // project specific temp directory that is writeable on MacOS (Path.GetTempPath() wasn't when run through HotReload.app)
-                return Path.GetFullPath(PackageConst.LibraryCachePath + "/HotReloadServerTemp");
-            } else {
-                if (projectIdentifier != null) {
-                    return Path.Combine(Path.GetTempPath(), "HotReloadTemp", projectIdentifier);
-                } else {
-                    return Path.Combine(Path.GetTempPath(), "HotReloadTemp");
-                }
-            }
+            return Path.GetFullPath(Path.Combine(PackageConst.LibraryCachePath, "HotReloadServerTemp"));
         }
         
         public static string GetAppDataPath() {

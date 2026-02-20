@@ -35,8 +35,9 @@ public class Player_Controller : MonoBehaviour
     // Game Load
     private void Set_Position()
     {
-        Tile setTile = InGame_Manager.instance.tilesController.Current_Tile(TileType.softGround);
-        
+        // Tile setTile = InGame_Manager.instance.tilesController.Current_Tile(TileType.softGround);
+        Tile setTile = InGame_Manager.instance.tilesController.currentTiles[1];
+
         if (setTile == null)
         {
             Debug.Log("Random softGround Tile not Found!");

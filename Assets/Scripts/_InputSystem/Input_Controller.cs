@@ -11,38 +11,24 @@ public class Input_Controller : MonoBehaviour
     public static Input_Controller instance;
 
     
+    [Space(20)]
     [SerializeField] private PlayerInput _playerInput;
     public PlayerInput playerInput => _playerInput;
 
-    [Space(20)]
+    [Space(10)]
     [SerializeField] private ControlScheme_ScrObj[] _schemes;
 
-    [Space(20)]
-    [SerializeField][Range(0, 100)] private float _holdTime;
-
-    
-    private float _currentHoldTime;
-    public float currentHoldTime => _currentHoldTime;
-
-    private List<Input_Manager> _activeInputManagers = new();
-    public List<Input_Manager> activeInputManagers => _activeInputManagers;
     
     private ControlScheme_ScrObj _currentScheme;
     public ControlScheme_ScrObj currentScheme => _currentScheme;
 
     private string _currentSchemeName;
-    
+
+    private List<Input_Manager> _activeInputManagers = new();
+    public List<Input_Manager> activeInputManagers => _activeInputManagers;
+   
     private List<string> _actionMaps = new();
-
-
-    private bool _isHolding;
-    public bool isHolding => _isHolding;
-
-    private bool _action1Pressed;
-    public bool action1Pressed => _action1Pressed;
-
-    private bool _action2Pressed;
-    public bool action2Pressed => _action2Pressed;
+    private HashSet<Guid> _inputGateIDs = new();
 
 
     public Action OnSchemeUpdate;
@@ -53,6 +39,10 @@ public class Input_Controller : MonoBehaviour
 
     public Action<Vector2> OnMovement;
     public Action<Vector2> OnCursorControl;
+
+    public Action OnLeftClickStart;
+    public Action OnLeftClick;
+    public Action OnHoldLeftClick;
 
     public Action OnInteractStart;
     public Action OnInteract;
@@ -88,54 +78,6 @@ public class Input_Controller : MonoBehaviour
         _playerInput.onControlsChanged -= Handle_SchemeUpdate;
     }
     
-    
-    // Data Control
-    private void Set_ActionMaps()
-    {
-        for (int i = 0; i < _playerInput.actions.actionMaps.Count; i++)
-        {
-            _actionMaps.Add(_playerInput.actions.actionMaps[i].name);
-        }
-    }
-
-    public void Update_ActionMap(int indexNum)
-    {
-        if (indexNum < 0 || indexNum >= _actionMaps.Count) return;
-
-        indexNum = Mathf.Clamp(indexNum, 0, _actionMaps.Count - 1);
-        string mapName = _actionMaps[indexNum];
-
-        _playerInput.SwitchCurrentActionMap(mapName);
-        
-        OnActionMapUpdate?.Invoke();
-    }
-
-    public int Current_ActionMapNum()
-    {
-        string currentMapName = _playerInput.currentActionMap.name;
-
-        for (int i = 0; i < _actionMaps.Count; i++)
-        {
-            if (currentMapName != _actionMaps[i]) continue;
-            return i;
-        }
-        return 0;
-    }
-
-
-    public InputActionReference ActionReference(string actionName)
-    {
-        ActionKey_Data[] datas = _currentScheme.actionKeyDatas;
-
-        for (int i = 0; i < datas.Length; i++)
-        {
-            if (datas[i].actionRef.action.name != actionName) continue;
-            return datas[i].actionRef;
-        }
-
-        return null;
-    }
-
 
     // Scheme Control
     private void CurrentScheme_Update()
@@ -196,12 +138,100 @@ public class Input_Controller : MonoBehaviour
     }
 
 
-    // InGame
+    // Action Map
+    private void Set_ActionMaps()
+    {
+        for (int i = 0; i < _playerInput.actions.actionMaps.Count; i++)
+        {
+            _actionMaps.Add(_playerInput.actions.actionMaps[i].name);
+        }
+    }
+
+    public void Update_ActionMap(int indexNum)
+    {
+        if (indexNum < 0 || indexNum >= _actionMaps.Count) return;
+
+        indexNum = Mathf.Clamp(indexNum, 0, _actionMaps.Count - 1);
+        string mapName = _actionMaps[indexNum];
+
+        _playerInput.SwitchCurrentActionMap(mapName);
+
+        OnActionMapUpdate?.Invoke();
+    }
+
+
+    public int Current_ActionMapNum()
+    {
+        string currentMapName = _playerInput.currentActionMap.name;
+
+        for (int i = 0; i < _actionMaps.Count; i++)
+        {
+            if (currentMapName != _actionMaps[i]) continue;
+            return i;
+        }
+        return 0;
+    }
+
+    public InputActionReference ActionReference(string actionName)
+    {
+        ActionKey_Data[] datas = _currentScheme.actionKeyDatas;
+
+        for (int i = 0; i < datas.Length; i++)
+        {
+            if (datas[i].actionRef.action.name != actionName) continue;
+            return datas[i].actionRef;
+        }
+
+        return null;
+    }
+
+
+    // Input_Manager
+    private Input_Manager RecentUI_InputManager()
+    {
+        if (_activeInputManagers.Count <= 0) return null;
+        return _activeInputManagers[_activeInputManagers.Count - 1];
+    }
+
+
+    // Input Action
     public void AnyInput(InputAction.CallbackContext context)
     {
         if (!context.performed) return;
         
         OnAnyInput?.Invoke();
+    }
+
+
+    public void CursorControl(InputAction.CallbackContext context)
+    {
+        // if (_isHolding) return;
+        if (!context.performed) return;
+
+        Vector2 positionInput = context.ReadValue<Vector2>();
+        OnCursorControl?.Invoke(positionInput);
+
+        Input_Manager inputManager = RecentUI_InputManager();
+        if (inputManager == null) return;
+
+        RecentUI_InputManager().OnCursorControl?.Invoke(positionInput);
+    }
+
+    public void LeftClick(InputAction.CallbackContext context)
+    {
+        Guid actionID = context.action.id;
+
+        if (context.started && _inputGateIDs.Add(actionID)) OnLeftClickStart?.Invoke();
+        if (!context.performed) return;
+
+        _inputGateIDs.Remove(actionID);
+
+        if (context.interaction is UnityEngine.InputSystem.Interactions.HoldInteraction)
+        {
+            OnHoldLeftClick?.Invoke();
+            return;
+        }
+        OnLeftClick?.Invoke();
     }
 
 
@@ -215,57 +245,30 @@ public class Input_Controller : MonoBehaviour
 
     public void Interact(InputAction.CallbackContext context)
     {
-        if (context.started)
-        {
-            _isHolding = true;
-            _currentHoldTime = Time.time;
+        Guid actionID = context.action.id;
+        
+        if (context.started && _inputGateIDs.Add(actionID)) OnInteractStart?.Invoke();
+        if (!context.performed) return;
 
-            OnInteractStart?.Invoke();
-            return;
-        }
+        _inputGateIDs.Remove(actionID);
 
-        if (context.canceled == false) return;
-
-        _isHolding = false;
-
-        if (Time.time - _currentHoldTime >= _holdTime)
+        if (context.interaction is UnityEngine.InputSystem.Interactions.HoldInteraction)
         {
             OnHoldInteract?.Invoke();
             return;
         }
-
         OnInteract?.Invoke();
     }
 
     public void Action1(InputAction.CallbackContext context)
     {
-        if (context.started)
-        {
-            _action1Pressed = true;
-        }
-        else if (context.canceled)
-        {
-            _action1Pressed = false;
-        }
-
         if (context.performed == false) return;
-
         OnAction1?.Invoke();
     }
 
     public void Action2(InputAction.CallbackContext context)
     {
-        if (context.started)
-        {
-            _action2Pressed = true;
-        }
-        else if (context.canceled)
-        {
-            _action2Pressed = false;
-        }
-
         if (context.performed == false) return;
-
         OnAction2?.Invoke();
     }
 
@@ -273,79 +276,6 @@ public class Input_Controller : MonoBehaviour
     {
         if (context.performed == false) return;
         OnCancel?.Invoke();
-    }
-
-
-    // Input_Manager
-    private Input_Manager RecentUI_InputManager()
-    {
-        if (_activeInputManagers.Count <= 0) return null;
-        return _activeInputManagers[_activeInputManagers.Count - 1];
-    }
-
-
-    public void Select(InputAction.CallbackContext context)
-    {
-        if (context.started)
-        {
-            _isHolding = true;
-            _currentHoldTime = Time.time;
-
-            RecentUI_InputManager().OnSelectStart?.Invoke();
-            return;
-        }
-
-        if (context.canceled == false) return;
-
-        _isHolding = false;
-
-        if (Time.time - _currentHoldTime >= _holdTime)
-        {
-            RecentUI_InputManager().OnHoldSelect?.Invoke();
-            return;
-        }
-
-        RecentUI_InputManager().OnSelect?.Invoke();
-    }
-
-    public void Option1(InputAction.CallbackContext context)
-    {
-        if (_isHolding) return;
-        if (context.performed == false) return;
-        
-        RecentUI_InputManager().OnOption1?.Invoke();
-    }
-
-    public void Option2(InputAction.CallbackContext context)
-    {
-        if (_isHolding) return;
-        if (context.performed == false) return;
-        
-        RecentUI_InputManager().OnOption2?.Invoke();
-    }
-
-    public void Exit(InputAction.CallbackContext context)
-    {
-        if (_isHolding) return;
-        if (context.performed == false) return;
-        
-        RecentUI_InputManager().OnExit?.Invoke();
-    }
-
-
-    // All
-    public void CursorControl(InputAction.CallbackContext context)
-    {
-        if (_isHolding) return;
-        if (!context.performed) return;
-
-        Vector2 positionInput = context.ReadValue<Vector2>();
-        OnCursorControl?.Invoke(positionInput);
-
-        Input_Manager inputManager = RecentUI_InputManager();
-        if (inputManager == null) return;
-
-        RecentUI_InputManager().OnCursorControl?.Invoke(positionInput);
     }
 }
 

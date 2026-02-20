@@ -29,7 +29,7 @@
                     "id": "2c3d8f18-91bb-4d3a-8fe5-405953bbee32",
                     "expectedControlType": "",
                     "processors": "",
-                    "interactions": "",
+                    "interactions": "Tap,Hold(duration=1)",
                     "initialStateCheck": false
                 },
                 {
@@ -44,10 +44,10 @@
                 {
                     "name": "Interact",
                     "type": "Button",
-                    "id": "563958ed-a4f6-4a87-a1ca-d6ee7686e48d",
+                    "id": "79ce13db-bebc-4367-9f83-5c1ec046eac9",
                     "expectedControlType": "",
                     "processors": "",
-                    "interactions": "",
+                    "interactions": "Tap,Hold(duration=1)",
                     "initialStateCheck": false
                 },
                 {
@@ -136,7 +136,7 @@
                 },
                 {
                     "name": "",
-                    "id": "b1578da1-b8a9-4bc8-8113-6383f840e51c",
+                    "id": "b83a5613-54a3-447e-9e66-c6f3ff985221",
                     "path": "<Keyboard>/space",
                     "interactions": "",
                     "processors": "",

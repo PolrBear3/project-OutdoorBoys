@@ -76,6 +76,7 @@ namespace SingularityGroup.HotReload.Editor {
         private const string DeactivateHotReloadKey = "HotReloadWindow.DeactivateHotReload";
         private const string ActiveLocaleKey = "HotReloadWindow.ActiveLocale";
         public const string DontShowPromptForDownloadKey = "ServerDownloader.DontShowPromptForDownload";
+        public const string DebuggerOnboardingShownKey = "HotReloadWindow.DebuggerOnboardingShownKey";
         #if UNITY_EDITOR_WIN
         public const string UseWatchmanKey = "ServerDownloader.UseWatchman";
         #endif
@@ -508,5 +509,10 @@ namespace SingularityGroup.HotReload.Editor {
             set { EditorPrefs.SetBool(UseWatchmanKey, value); }
         }
         #endif
+        
+        public static bool DebuggerOnboardingShown {
+            get { return EditorPrefs.GetBool(DebuggerOnboardingShownKey); }
+            set { EditorPrefs.SetBool(DebuggerOnboardingShownKey, value); }
+        }
     }
 }

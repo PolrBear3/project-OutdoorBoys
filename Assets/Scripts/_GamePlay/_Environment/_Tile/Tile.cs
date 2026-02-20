@@ -51,7 +51,6 @@ public class Tile : MonoBehaviour
     {
         _pointer.OnEnter -= Toggle_Pointer;
         _pointer.OnExit -= Toggle_Pointer;
-        _pointer.OnClick -= Click_Interact;
     }
 
 
@@ -60,7 +59,6 @@ public class Tile : MonoBehaviour
     {
         _pointer.OnEnter += Toggle_Pointer;
         _pointer.OnExit += Toggle_Pointer;
-        _pointer.OnClick += Click_Interact;
 
         if (setTile == null) return null;
         
@@ -91,20 +89,12 @@ public class Tile : MonoBehaviour
     {
         Cursor cursor = InGame_Manager.instance.cursor;
         bool activeToggle = toggle && cursor.PointingTile_InRange(this);
-        
+
         _pointerToggled = activeToggle;
         _pointerRenderer.gameObject.SetActive(activeToggle);
 
         Tile cursorPointTile = activeToggle ? this : null;
         cursor.Track_PointingTile(cursorPointTile);
-    }
-
-    private void Click_Interact()
-    {
-        if (_pointerToggled == false) return;
-        
-        Tiles_Controller controller = InGame_Manager.instance.tilesController;
-        controller.OnTileInteract?.Invoke(this);
     }
 
 

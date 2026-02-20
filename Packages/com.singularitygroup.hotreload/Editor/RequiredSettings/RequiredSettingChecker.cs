@@ -17,7 +17,7 @@ namespace SingularityGroup.HotReload.Editor {
     //   1: enabled 
     //   2: enabled outside playmode
     // 
-    // On newer Unity versions, Visual Studio is also checking the kAutoRefresh setting (but it should only check kAutoRefreshMode).
+    // On newer Unity versions, Visual Studio and Rider also checking the kAutoRefresh setting.
     // This is making hot reload unusable and so this setting needs to also get disabled.
     internal static class AutoRefreshSettingChecker {
         const string autoRefreshKey = "kAutoRefresh";
@@ -26,63 +26,55 @@ namespace SingularityGroup.HotReload.Editor {
         #endif
         
         const int desiredValue = 0;
+        
+        public static bool IsUserAutoRefreshDisabled() {
+            #if UNITY_2021_3_OR_NEWER
+            var autoRefreshSetting = EditorPrefs.GetInt(autoRefreshModeKey);
+            #else
+            var autoRefreshSetting = EditorPrefs.GetInt(autoRefreshKey);
+            #endif
+            return autoRefreshSetting == 0;
+        }
 
         public static void Apply() {
-            if (HotReloadPrefs.AppliedAutoRefresh) {
-                return;
+            if (!HotReloadPrefs.AppliedAutoRefresh) {
+                var defaultPref = EditorPrefs.GetInt(autoRefreshKey);
+                HotReloadPrefs.DefaultAutoRefresh = defaultPref;
+                EditorPrefs.SetInt(autoRefreshKey, desiredValue);
+                HotReloadPrefs.AppliedAutoRefresh = true;
             }
-            
-            var defaultPref = EditorPrefs.GetInt(autoRefreshKey);
-            HotReloadPrefs.DefaultAutoRefresh = defaultPref;
-            EditorPrefs.SetInt(autoRefreshKey, desiredValue);
-            
-            #if UNITY_2021_3_OR_NEWER
-            var defaultModePref = EditorPrefs.GetInt(autoRefreshModeKey);
-            HotReloadPrefs.DefaultAutoRefreshMode = defaultModePref;
-            EditorPrefs.SetInt(autoRefreshModeKey, desiredValue);
-            #endif
 
-            HotReloadPrefs.AppliedAutoRefresh = true;
+            #if UNITY_2021_3_OR_NEWER
+            if (!HotReloadState.DisallowedAutoRefresh) {
+                AssetDatabase.DisallowAutoRefresh();
+                HotReloadState.DisallowedAutoRefresh = true;
+            }
+            #endif
         }
 
         public static void Check() {
-            if (!HotReloadPrefs.AppliedAutoRefresh) {
-                return;
-            }
-            
-            if (EditorPrefs.GetInt(autoRefreshKey) != desiredValue) {
+            if (HotReloadPrefs.AppliedAutoRefresh && EditorPrefs.GetInt(autoRefreshKey) != desiredValue) {
                 HotReloadPrefs.DefaultAutoRefresh = -1;
             }
-            
-            #if UNITY_2021_3_OR_NEWER
-            if (EditorPrefs.GetInt(autoRefreshModeKey) != desiredValue) {
-                HotReloadPrefs.DefaultAutoRefreshMode = -1;
-            }
-            #endif
         }
 
         public static void Reset() {
-            if (!HotReloadPrefs.AppliedAutoRefresh) {
-                return;
+            if (HotReloadPrefs.AppliedAutoRefresh) {
+                if (EditorPrefs.GetInt(autoRefreshKey) == desiredValue
+                    && HotReloadPrefs.DefaultAutoRefresh != -1
+                ) {
+                    EditorPrefs.SetInt(autoRefreshKey, HotReloadPrefs.DefaultAutoRefresh);
+                }
+                HotReloadPrefs.DefaultAutoRefresh = -1;
+                HotReloadPrefs.AppliedAutoRefresh = false;
             }
-            
-            if (EditorPrefs.GetInt(autoRefreshKey) == desiredValue
-                && HotReloadPrefs.DefaultAutoRefresh != -1
-            ) {
-                EditorPrefs.SetInt(autoRefreshKey, HotReloadPrefs.DefaultAutoRefresh);
-            }
-            HotReloadPrefs.DefaultAutoRefresh = -1;
             
             #if UNITY_2021_3_OR_NEWER
-            if (EditorPrefs.GetInt(autoRefreshModeKey) == desiredValue 
-                && HotReloadPrefs.DefaultAutoRefreshMode != -1
-            ) {
-                EditorPrefs.SetInt(autoRefreshModeKey, HotReloadPrefs.DefaultAutoRefreshMode);
+            if (HotReloadState.DisallowedAutoRefresh) {
+                AssetDatabase.AllowAutoRefresh();
+                HotReloadState.DisallowedAutoRefresh = false;
             }
-            HotReloadPrefs.DefaultAutoRefreshMode = -1;
             #endif
-
-            HotReloadPrefs.AppliedAutoRefresh = false;
         }
     }
     

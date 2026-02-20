@@ -8,7 +8,8 @@ public class Tiles_Controller : MonoBehaviour
     private List<Tile> _currentTiles = new();
     public List<Tile> currentTiles => _currentTiles;
 
-    public Action<Tile> OnTileInteract;
+    public Action<Tile> OnTileSelect;
+    public Action<Tile> OnTileHoldSelect;
 
 
     // MonoBehaviour
@@ -22,6 +23,11 @@ public class Tiles_Controller : MonoBehaviour
     {
         EventBus_Manager.UnRegister(EventBus.AwakeLoad, Set_Data);
         EventBus_Manager.UnRegister(EventBus.StartLoad, Update_DataSprites);
+
+        Input_Controller input = Input_Controller.instance;
+
+        input.OnLeftClick -= Select_Tile;
+        input.OnHoldLeftClick -= HoldSelect_Tile;
 
         InGame_Manager manager = InGame_Manager.instance;
         Time_Manager time = manager.time;
@@ -37,6 +43,11 @@ public class Tiles_Controller : MonoBehaviour
     // Data
     private void Set_Data()
     {
+        Input_Controller input = Input_Controller.instance;
+
+        input.OnLeftClick += Select_Tile;
+        input.OnHoldLeftClick += HoldSelect_Tile;
+        
         InGame_Manager manager = InGame_Manager.instance;
         Time_Manager time = manager.time;
 
@@ -79,6 +90,37 @@ public class Tiles_Controller : MonoBehaviour
 
         int matchRandIndex = UnityEngine.Random.Range(0, matchTypeTiles.Count);
         return matchTypeTiles[matchRandIndex];
+    }
+
+    /// <returns>
+    /// pointer toggled tile
+    /// </returns>
+    public Tile Current_Tile()
+    {
+        for (int i = 0; i < _currentTiles.Count; i++)
+        {
+            if (_currentTiles[i].pointerToggled == false) continue;
+            return _currentTiles[i];
+        }
+        return null;
+    }
+
+
+    // Select
+    public void Select_Tile()
+    {
+        Tile pointingTile = Current_Tile();
+        if (pointingTile == null) return;
+
+        OnTileSelect?.Invoke(pointingTile);
+    }
+
+    public void HoldSelect_Tile()
+    {
+        Tile pointingTile = Current_Tile();
+        if (pointingTile == null) return;
+
+        OnTileHoldSelect?.Invoke(pointingTile);
     }
 
 

@@ -81,6 +81,8 @@ namespace SingularityGroup.HotReload {
                 } catch(Exception ex) {
                     Log.Error($"{Localization.Translations.Logging.LoadingPatchesFromDiskError}\n{ex}");
                 }
+            } else {
+                PersistencePath = Path.Combine(PackageConst.LibraryCachePath, "patches.json");
             }
 #if UNITY_EDITOR
             // Unity event methods are not assigned outside the scene. 
@@ -715,9 +717,12 @@ namespace SingularityGroup.HotReload {
             });
         }
         
-        public void InitPatchesBlocked(string filePath) {
+        public void InitPatchesBlocked() {
+            if (PersistencePath == null) {
+                return;
+            }
             seenResponses.Clear();
-            var file = new FileInfo(filePath);
+            var file = new FileInfo(PersistencePath);
             if (file.Exists) {
                 using(var fs = new FileStream(file.FullName, FileMode.Open, FileAccess.Read, FileShare.Read, 4096, FileOptions.SequentialScan))
                 using (StreamReader sr = new StreamReader(fs))
@@ -729,6 +734,13 @@ namespace SingularityGroup.HotReload {
                 }
                 ApplyPatches(persist: false);
             }
+        }
+
+        public void ClearPatchesThreaded() {
+            if (PersistencePath == null) {
+                return;
+            }
+            Task.Run(() => File.Delete(PersistencePath));
         }
         
         

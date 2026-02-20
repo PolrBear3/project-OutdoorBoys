@@ -4,11 +4,10 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
-public class EventPointer : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IPointerClickHandler
+public class EventPointer : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
 {
     public Action OnEnter;
     public Action OnExit;
-    public Action OnClick;
 
     private bool _pointerDetected;
     public bool pointerDetected => _pointerDetected;
@@ -25,10 +24,5 @@ public class EventPointer : MonoBehaviour, IPointerEnterHandler, IPointerExitHan
     {
         _pointerDetected = false;
         OnExit?.Invoke();
-    }
-
-    public void OnPointerClick(PointerEventData eventData)
-    {
-        OnClick?.Invoke();
     }
 }

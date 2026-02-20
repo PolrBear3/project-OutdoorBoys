@@ -24,6 +24,13 @@ public class Item_ScrObj : ScriptableObject
     public Vector2 offsetPosition => _offsetPosition;
 
     [Space(20)]
+    [SerializeField][Range(0, 100)] private int _maxAmount;
+    public int maxAmount => _maxAmount;
+
+    [SerializeField][Range(0, 100)] private int _itemWeight;
+    public int itemWeight => _itemWeight;
+
+    [Space(20)]
     [SerializeField] private bool _stackable;
     public bool stackable => _stackable;
 
