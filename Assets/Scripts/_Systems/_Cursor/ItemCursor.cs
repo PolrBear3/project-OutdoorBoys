@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using Unity.Mathematics;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class ItemCursor : MonoBehaviour
@@ -11,8 +12,8 @@ public class ItemCursor : MonoBehaviour
     public Cursor cursor => _cursor;
 
     
-    private ItemData _currentItemData;
-    public ItemData currentItemData => _currentItemData;
+    private ItemData _itemData;
+    public ItemData itemData => _itemData;
 
 
     // MonoBehaviour
@@ -27,8 +28,9 @@ public class ItemCursor : MonoBehaviour
 
         Tiles_Controller tilesController = InGame_Manager.instance.tilesController;
 
-        tilesController.OnTileSelect -= Place_CurrentItem;
-        tilesController.OnTileSelect -= Use_CurrentItem;
+        tilesController.OnTileSelect -= Place_Item;
+        tilesController.OnTileSelect -= Use_Item;
+        tilesController.OnTileHoldSelect -= Place_AllItem;
     }
 
 
@@ -37,23 +39,23 @@ public class ItemCursor : MonoBehaviour
     {
         Tiles_Controller tilesController = InGame_Manager.instance.tilesController;
 
-        tilesController.OnTileSelect += Place_CurrentItem;
-        tilesController.OnTileSelect += Use_CurrentItem;
-
-        Set_CurrentItem(new(Data_Manager.instance.ItemScrObj("Tarp"), 5));
+        tilesController.OnTileSelect += Place_Item;
+        tilesController.OnTileSelect += Use_Item;
+        tilesController.OnTileHoldSelect += Place_AllItem;
     }
 
-    public void Set_CurrentItem(ItemData setItemData)
+
+    public void Set_Item(ItemData setItemData)
     {
-        _currentItemData = setItemData;
+        _itemData = setItemData;
 
         // range
         int updateRange = setItemData != null ? setItemData.itemScrObj.triggerRange : 0;
         _cursor.Update_TilePointerRange(updateRange);
 
         // sprite
-        Sprite itemSprite = setItemData != null ? setItemData.itemScrObj.inventorySprite : null;
-        _cursor.Update_PointerSprite(itemSprite);
+        _cursor.Update_PointerSprite(setItemData?.itemScrObj.inventorySprite);
+        InGame_Manager.instance.player.interaction.Update_IndicationIcon(setItemData?.itemScrObj.microSprite);
 
         // amount text
         if (setItemData == null)
@@ -61,77 +63,125 @@ public class ItemCursor : MonoBehaviour
             _cursor.amountText.gameObject.SetActive(false);
             return;
         }
-        _cursor.Update_AmountText(setItemData.count);
+        _cursor.Update_AmountText(setItemData.amount);
+    }
+
+    public void Update_Item(ItemData updateItemData)
+    {
+        if (updateItemData == null)
+        {
+            Set_Item(null);
+            return;
+        }
+
+        if (_itemData == null || _itemData.itemScrObj != updateItemData.itemScrObj)
+        {
+            Set_Item(updateItemData);
+            return;
+        }
+
+        _itemData.Update_CurrentAmount(updateItemData.amount);
+        _cursor.Update_AmountText(_itemData.amount);
     }
 
 
     // Item Trigger
-    private void Pickup_CurrentItem(Tile selectTile)
+    private void Pickup_Item(Tile selectTile)
     {        
         List<PlaceableItem> placedItems = selectTile.placedItems;
         if (placedItems.Count <= 0) return;
 
-        PlaceableItem pickupItem = placedItems[0];
+        Item_ScrObj pickupItem = _itemData != null ? _itemData.itemScrObj : placedItems[0].data.itemScrObj;
+        int maxAmount = pickupItem.maxAmount;
 
-        Set_CurrentItem(pickupItem.data);
-        selectTile.Remove_PlacedItem(pickupItem);
+        for (int i = placedItems.Count - 1; i >= 0 ; i--)
+        {
+            int currentAmount = _itemData != null ? _itemData.amount : 0;
+            if (currentAmount >= maxAmount) return;
+
+            PlaceableItem placedItem = placedItems[i];
+            if (pickupItem != placedItem.data.itemScrObj) continue;
+
+            ItemData placedItemData = placedItem.data;
+            int availableAmount = Mathf.Min(maxAmount - currentAmount, placedItemData.amount);
+
+            Update_Item(new(pickupItem, currentAmount + availableAmount));
+            placedItemData.Update_CurrentAmount(placedItemData.amount - availableAmount);
+
+            if (placedItemData.amount > 0) continue;
+            selectTile.Remove_PlacedItem(placedItem);
+        }
     }
 
-    private void Place_CurrentItem(Tile selectTile)
+
+    private void Place_Item(Tile selectTile)
     {
-        if (_currentItemData == null)
+        if (_itemData == null)
         {
-            Pickup_CurrentItem(selectTile);
+            Pickup_Item(selectTile);
             return;
         }
 
-        Item_ScrObj currentItem = _currentItemData.itemScrObj;
         List<PlaceableItem> placedItems = selectTile.placedItems;
+        Item_ScrObj currentItem = _itemData.itemScrObj;
 
         for (int i = 0; i < placedItems.Count; i++)
         {
             ItemData placedItemData = placedItems[i].data;
 
             if (currentItem != placedItemData.itemScrObj) continue;
-            if (placedItemData.count >= currentItem.maxAmount) continue;
+            if (placedItemData.amount >= currentItem.maxAmount) continue;
 
-            _currentItemData.Update_CurrentCount(_currentItemData.count - 1);
-            _cursor.Update_AmountText(_currentItemData.count);
-
-            placedItemData.Update_CurrentCount(placedItemData.count + 1);
+            placedItemData.Update_CurrentAmount(placedItemData.amount + 1);
+            
+            Update_Item(new(currentItem, _itemData.amount - 1));
+            if (_itemData.amount > 0) return;
+            Set_Item(null);
+            
             return;
         }
 
         if (selectTile.Placed_StackableItems() > 1) return;
         if (currentItem.stackable == false && selectTile.NonStackableItem_Placed()) return;
 
-        GameObject spawnedItem = Instantiate(currentItem.placeablePrefab);
-        Transform itemTransform = spawnedItem.transform;
-
-        PlaceableItem placedItem = spawnedItem.GetComponent<PlaceableItem>();
-        placedItem.Set_Data(new(currentItem, 1));
+        GameObject spawnedItem = Instantiate(currentItem.placeablePrefab, selectTile.placeableItemsPrefabs);
+        spawnedItem.transform.localPosition = currentItem.offsetPosition;
         
+        PlaceableItem placedItem = spawnedItem.GetComponent<PlaceableItem>();
+        
+        placedItem.Set_Data(new(currentItem, 1));
         placedItem.Track_CurrentTile(selectTile);
         selectTile.Track_PlacingItem(placedItem);
-        
-        itemTransform.SetParent(selectTile.placeableItemsPrefabs);
-        itemTransform.localPosition = Vector2.zero + currentItem.offsetPosition;
 
-        _currentItemData.Update_CurrentCount(_currentItemData.count - 1);
-
-        if (_currentItemData.count > 0)
-        {
-            _cursor.Update_AmountText(_currentItemData.count);
-            return;
-        }
-        Set_CurrentItem(null);
+        Update_Item(new(currentItem, _itemData.amount - 1));
+        if (_itemData.amount > 0) return;
+        Set_Item(null);
     }
     
-
-    private void Use_CurrentItem(Tile selectTile)
+    private void Place_AllItem(Tile selectTile)
     {
-        if (_currentItemData == null) return;
-        Item_ScrObj currentItem = _currentItemData.itemScrObj;
+        if (_itemData == null)
+        {
+            Pickup_Item(selectTile);
+            return;
+        }
+
+        int placeCount = _itemData.amount;
+
+        while (placeCount > 0)
+        {
+            Place_Item(selectTile);
+
+            if (_itemData == null) return;
+            placeCount--;
+        }
+    }
+
+
+    private void Use_Item(Tile selectTile)
+    {
+        if (_itemData == null) return;
+        Item_ScrObj currentItem = _itemData.itemScrObj;
 
         if (currentItem.placeablePrefab != null) return;
 

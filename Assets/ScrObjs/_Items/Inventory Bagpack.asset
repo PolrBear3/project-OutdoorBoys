@@ -1,0 +1,24 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 069327ba6dded4f16af0714f2c328413, type: 3}
+  m_Name: Inventory Bagpack
+  m_EditorClassIdentifier: 
+  _inventorySprite: {fileID: -587851174, guid: bf7ece83f843c4c35977c02f8c40d92d, type: 3}
+  _microSprite: {fileID: 951127381, guid: bf7ece83f843c4c35977c02f8c40d92d, type: 3}
+  _itemName: Inventory Bagpack
+  _description: 
+  _placeablePrefab: {fileID: 3637228250238346253, guid: 5ae2d5289854640738d91542b1e4bc79, type: 3}
+  _offsetPosition: {x: 0, y: 0.3}
+  _maxAmount: 1
+  _itemWeight: 0
+  _stackable: 0
+  _triggerRange: 0

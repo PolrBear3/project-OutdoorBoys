@@ -11,9 +11,9 @@ GameObject:
   - component: {fileID: 4520642281758493457}
   - component: {fileID: 5977787769705234577}
   - component: {fileID: 3045259509940891077}
-  - component: {fileID: 6387085787024065436}
+  - component: {fileID: 6089735947523773965}
   m_Layer: 0
-  m_Name: Tarp
+  m_Name: Inventory Bagpack
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -72,10 +72,10 @@ SpriteRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
-  m_SortingLayerID: -2062054169
-  m_SortingLayer: 1
+  m_SortingLayerID: 773141381
+  m_SortingLayer: -1
   m_SortingOrder: 0
-  m_Sprite: {fileID: 1318615896, guid: bf7ece83f843c4c35977c02f8c40d92d, type: 3}
+  m_Sprite: {fileID: -587851174, guid: bf7ece83f843c4c35977c02f8c40d92d, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -100,7 +100,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _spriteRenderer: {fileID: 5977787769705234577}
   _animationClips: []
---- !u!114 &6387085787024065436
+--- !u!114 &6089735947523773965
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -109,9 +109,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 3637228250238346253}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b49ce47e335e14e0daf27546273daaff, type: 3}
+  m_Script: {fileID: 11500000, guid: a6a5f0f1d968b45b3981a8041b3cbf8c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   _animPlayer: {fileID: 3045259509940891077}
-  _transparencyValue: 0.5
-  _transparencyUpdateDuration: 0.25

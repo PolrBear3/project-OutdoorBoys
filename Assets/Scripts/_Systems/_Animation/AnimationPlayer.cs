@@ -24,6 +24,12 @@ public class AnimationPlayer : MonoBehaviour
         }
         return null;
     }
+    private AnimationClipScrObj AnimationClip(int clipIndexNum)
+    {
+        int clipIndex = Mathf.Clamp(clipIndexNum, 0, _animationClips.Length - 1);
+
+        return _animationClips[clipIndex];
+    }
 
 
     // Main
@@ -35,6 +41,32 @@ public class AnimationPlayer : MonoBehaviour
         _playCoroutine = null;
     }
 
+    public void Play(int clipIndexNum)
+    {
+        if (_animationClips == null) return;
+        AnimationClipScrObj playClip = AnimationClip(clipIndexNum);
+
+        if (playClip == null) return;
+        ClipSpriteData[] spriteDatas = playClip.clipSpriteDatas;
+
+        Stop();
+
+        if (spriteDatas.Length <= 1)
+        {
+            for (int i = 0; i < spriteDatas.Length; i++)
+            {
+                if (spriteDatas[i].clipSprite == null) continue;
+
+                _spriteRenderer.sprite = spriteDatas[i].clipSprite;
+                return;
+            }
+
+            _spriteRenderer.sprite = playClip.defaultSprite;
+            return;
+        }
+
+        _playCoroutine = StartCoroutine(Play_AnimationClip(playClip));
+    }
     public void Play(string clipName)
     {
         if (_animationClips == null) return;

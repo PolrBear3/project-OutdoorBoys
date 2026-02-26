@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: Tarp
   m_EditorClassIdentifier: 
   _inventorySprite: {fileID: -1266407030, guid: bf7ece83f843c4c35977c02f8c40d92d, type: 3}
+  _microSprite: {fileID: -750134385, guid: bf7ece83f843c4c35977c02f8c40d92d, type: 3}
   _itemName: Tarp
   _description: 
   _placeablePrefab: {fileID: 3637228250238346253, guid: f990c87832dc348cba041952eea5503d, type: 3}

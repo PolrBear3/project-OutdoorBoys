@@ -9,6 +9,9 @@ public class Item_ScrObj : ScriptableObject
     [SerializeField] private Sprite _inventorySprite;
     public Sprite inventorySprite => _inventorySprite;
     
+    [SerializeField] private Sprite _microSprite;
+    public Sprite microSprite => _microSprite;
+
     [Space(20)]
     [SerializeField] private string _itemName;
     public string itemName => _itemName;
