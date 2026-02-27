@@ -8,8 +8,11 @@ public class Tiles_Controller : MonoBehaviour
     private List<Tile> _currentTiles = new();
     public List<Tile> currentTiles => _currentTiles;
 
+
     public Action<Tile> OnTileSelect;
     public Action<Tile> OnTileHoldSelect;
+
+    public Action OnTileSelectComplete;
 
 
     // MonoBehaviour
@@ -47,7 +50,7 @@ public class Tiles_Controller : MonoBehaviour
 
         input.OnLeftClick += Select_Tile;
         input.OnHoldLeftClick += HoldSelect_Tile;
-        
+
         InGame_Manager manager = InGame_Manager.instance;
         Time_Manager time = manager.time;
 
@@ -68,7 +71,7 @@ public class Tiles_Controller : MonoBehaviour
         }
         return null;
     }
-    
+
     /// <returns>
     /// random type matching tile, random tile among all current tiles if no matching tiles were found
     /// </returns>
@@ -113,6 +116,7 @@ public class Tiles_Controller : MonoBehaviour
         if (pointingTile == null) return;
 
         OnTileSelect?.Invoke(pointingTile);
+        OnTileSelectComplete?.Invoke();
     }
 
     public void HoldSelect_Tile()
@@ -121,6 +125,7 @@ public class Tiles_Controller : MonoBehaviour
         if (pointingTile == null) return;
 
         OnTileHoldSelect?.Invoke(pointingTile);
+        OnTileSelectComplete?.Invoke();
     }
 
 
@@ -139,7 +144,7 @@ public class Tiles_Controller : MonoBehaviour
     private void Update_Shadows()
     {
         bool isNight = InGame_Manager.instance.time.Is_Night();
-        
+
         foreach (Tile tile in _currentTiles)
         {
             tile.Toggle_Shadow(isNight);

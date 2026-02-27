@@ -35,8 +35,8 @@ public class Tile : MonoBehaviour
 
     private List<PlaceableItem> _placedItems = new();
     public List<PlaceableItem> placedItems => _placedItems;
-    
-    
+
+
     private bool _pointerToggled;
     public bool pointerToggled => _pointerToggled;
 
@@ -61,7 +61,7 @@ public class Tile : MonoBehaviour
         _pointer.OnExit += Toggle_Pointer;
 
         if (setTile == null) return null;
-        
+
         _data = new(setTile);
         return _data;
     }
@@ -69,13 +69,13 @@ public class Tile : MonoBehaviour
     public void Update_SetSprite(bool isBaseTile)
     {
         if (_data == null) return;
-        
+
         TileScrObj tileScrObj = _data.tileScrObj;
         if (tileScrObj == null) return;
 
         Sprite[] sprites = tileScrObj.GroupedSprites();
         if (sprites.Length <= 1) return;
-        
+
         _spriteRenderer.sprite = isBaseTile ? sprites[1] : sprites[0];
     }
 
@@ -102,7 +102,7 @@ public class Tile : MonoBehaviour
     public void Toggle_Shadow(bool toggle)
     {
         _shadowToggled = toggle;
-        
+
         if (_shadowUpdateCoroutine != null)
         {
             StopCoroutine(_shadowUpdateCoroutine);
@@ -117,12 +117,12 @@ public class Tile : MonoBehaviour
     {
         GameObject shadow = _shadowRenderer.gameObject;
         if (toggle) shadow.SetActive(true);
-        
+
         float shadowValue = toggle ? _shadowValue : 0f;
         LeanTween.alpha(shadow, shadowValue, _shadowUpdateTime);
 
         yield return new WaitForSeconds(_shadowUpdateTime);
-        
+
         if (toggle) yield break;
         shadow.SetActive(false);
     }
@@ -166,5 +166,16 @@ public class Tile : MonoBehaviour
         }
 
         return false;
+    }
+
+    public int Placed_ItemCount(Item_ScrObj placedTargetItem)
+    {
+        int count = 0;
+
+        for (int i = 0; i < _placedItems.Count; i++)
+        {
+            if (placedTargetItem == _placedItems[i].data.itemScrObj) count++;
+        }
+        return count;
     }
 }
