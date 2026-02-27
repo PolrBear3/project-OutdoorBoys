@@ -35,6 +35,7 @@ namespace SingularityGroup.HotReload.Editor {
         private const string PatchesCollapseKey = "HotReloadWindow.PatchesCollapse";
         private const string PatchesGroupAllKey = "HotReloadWindow.PatchesGroupAll";
         private const string LaunchOnEditorStartKey = "HotReloadWindow.LaunchOnEditorStart";
+        private const string AutoClearTimelineKey = "HotReloadWindow.AutoClearTimeline";
         private const string AutoRecompileUnsupportedChangesKey = "HotReloadWindow.AutoRecompileUnsupportedChanges";
         private const string AutoRecompilePartiallyUnsupportedChangesKey = "HotReloadWindow.AutoRecompilePartiallyUnsupportedChanges";
         private const string DisplayNewMonobehaviourMethodsAsPartiallySupportedKey = "HotReloadWindow.DisplayNewMonobehaviourMethodsAsPartiallySupported";
@@ -280,6 +281,11 @@ namespace SingularityGroup.HotReload.Editor {
         public static bool LaunchOnEditorStart {
             get { return EditorPrefs.GetBool(LaunchOnEditorStartKey, false); }
             set { EditorPrefs.SetBool(LaunchOnEditorStartKey, value); }
+        }
+        
+        public static bool AutoClearTimeline {
+            get { return EditorPrefs.GetBool(AutoClearTimelineKey, true); }
+            set { EditorPrefs.SetBool(AutoClearTimelineKey, value); }
         }
 
         public static bool AutoRecompileUnsupportedChanges {

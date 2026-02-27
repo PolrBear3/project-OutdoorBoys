@@ -14,9 +14,7 @@ namespace SingularityGroup.HotReload.Editor {
         private const string RecompiledUnsupportedChangesInPlaymodeKey = "HotReloadWindow.RecompiledUnsupportedChangesInPlaymode";
         private const string EditorCodePatcherInitKey = "HotReloadWindow.EditorCodePatcherInit";
         private const string ShowedDebuggerCompatibilityKey = "HotReloadWindow.ShowedDebuggerCompatibility";
-        #if UNITY_2021_3_OR_NEWER
         private const string DisallowedAutoRefreshKey = "HotReloadWindow.DisallowedAutoRefresh";
-        #endif
         private const string WarnedDebuggerAttachedKey = "HotReloadWindow.WarnedDebuggerAttached";
         
 
@@ -80,12 +78,10 @@ namespace SingularityGroup.HotReload.Editor {
             set { SessionState.SetBool(ShowedDebuggerCompatibilityKey, value); }
         }
         
-        #if UNITY_2021_3_OR_NEWER
         public static bool DisallowedAutoRefresh {
             get { return SessionState.GetBool(DisallowedAutoRefreshKey, false); }
             set { SessionState.SetBool(DisallowedAutoRefreshKey, value); }
         }
-        #endif
         
         public static bool WarnedDebuggerAttached {
             get { return SessionState.GetBool(WarnedDebuggerAttachedKey, false); }

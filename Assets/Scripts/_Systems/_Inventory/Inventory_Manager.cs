@@ -1,10 +1,15 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class Inventory_Manager : MonoBehaviour
 {
+    [SerializeField] private Item_ScrObj _inventoryBagpack;
+    
     [Space(20)]
+    [SerializeField] private Image _togglePanel;
+
     [SerializeField] private InventorySlot[] _slots;
     public InventorySlot[] slots => _slots;
 
@@ -45,12 +50,27 @@ public class Inventory_Manager : MonoBehaviour
 
 
     // Main
-    private void Toggle_Update()
-    {
-        Debug.Log("toggle update");
-    }
     private void Toggle_Update(Tile selectedTile)
     {
-        Debug.Log("toggle update : " + selectedTile);
+        Item_ScrObj currentItem = InGame_Manager.instance.cursor.itemCursor.itemData?.itemScrObj;
+        bool itemPlaced = currentItem == null || currentItem != _inventoryBagpack;
+
+        _togglePanel.gameObject.SetActive(itemPlaced);
+    }
+    private void Toggle_Update()
+    {
+        Tile playerTile = InGame_Manager.instance.player.movement.currentTile;
+        List<PlaceableItem> placedItems = playerTile.placedItems;
+
+        GameObject togglePanel = _togglePanel.gameObject;
+
+        for (int i = 0; i < placedItems.Count; i++)
+        {
+            if (placedItems[i].data.itemScrObj != _inventoryBagpack) continue;
+
+            togglePanel.SetActive(true);
+            return;
+        }
+        togglePanel.SetActive(false);
     }
 }

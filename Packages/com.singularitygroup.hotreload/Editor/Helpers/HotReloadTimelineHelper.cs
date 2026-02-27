@@ -168,7 +168,6 @@ namespace SingularityGroup.HotReload.Editor {
             if (MultiplayerPlaymodeHelper.IsClone) {
                 return;
             }
-            CreateReloadFinishedEventEntry(patchedMethodsDisplayNames: new string[]{"Full assembly recompilation"});
             var persistedData = new PersistedAlertData(eventsTimeline.Where(x => x.alertType != AlertType.CompileError).Select(x => x.alertData).ToArray());
             try {
                 await Task.Run(() => File.WriteAllText(path: filePath, contents: JsonConvert.SerializeObject(persistedData)));

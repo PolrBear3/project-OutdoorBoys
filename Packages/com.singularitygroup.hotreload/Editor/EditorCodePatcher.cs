@@ -147,14 +147,13 @@ namespace SingularityGroup.HotReload.Editor {
             AssemblyReloadEvents.beforeAssemblyReload += () => {
                 HotReloadTimelineHelper.PersistTimeline().Forget();
             };
-            AssemblyReloadEvents.afterAssemblyReload += () => {
-                ServerHealthCheck.instance.CheckHealth();
-                if (ServerHealthCheck.I.IsServerHealthy) {
-                    HotReloadTimelineHelper.InitPersistedEvents().Forget();
-                } else {
-                    HotReloadTimelineHelper.ClearPersistance();
-                }
-            };
+            
+            ServerHealthCheck.instance.CheckHealth();
+            if (ServerHealthCheck.I.IsServerHealthy && !HotReloadPrefs.AutoClearTimeline) {
+                HotReloadTimelineHelper.InitPersistedEvents().Forget();
+            } else {
+                HotReloadTimelineHelper.ClearPersistance();
+            }
 
             CompilationPipeline.assemblyCompilationFinished += (string _, CompilerMessage[] messages) => {
                 if (MultiplayerPlaymodeHelper.IsClone) {
@@ -199,6 +198,10 @@ namespace SingularityGroup.HotReload.Editor {
                 PlaymodeTintSettingChecker.Reset();
                 HotReloadRunTab.recompiling = false;
                 CompileMethodDetourer.Reset();
+                
+                if (!HotReloadPrefs.AutoClearTimeline) {
+                    HotReloadTimelineHelper.CreateReloadFinishedEventEntry(patchedMethodsDisplayNames: new string[]{"Full assembly recompilation"});
+                }
             };
             DetectEditorStart();
             DetectVersionUpdate();
@@ -283,9 +286,18 @@ namespace SingularityGroup.HotReload.Editor {
                 return false;
             }
             var isPlaying = EditorApplication.isPlaying;
+
+            var hasPartiallyUnsupportedPatches = false;
+            foreach (var patchResponse in CodePatcher.I.PatchHistory) {
+                if (patchResponse.partiallySupportedChanges == null) {
+                    continue;
+                }
+                hasPartiallyUnsupportedPatches |= HasPartiallySupportedChangesFiltered(patchResponse.partiallySupportedChanges);
+            }
+            
             if (!HotReloadPrefs.AutoRecompileUnsupportedChanges
-                || HotReloadTimelineHelper.UnsupportedChangesCount == 0
-                    && (!HotReloadPrefs.AutoRecompilePartiallyUnsupportedChanges || HotReloadTimelineHelper.PartiallySupportedChangesCount == 0)
+                || !CodePatcher.I.anyFailures
+                    && (!HotReloadPrefs.AutoRecompilePartiallyUnsupportedChanges || !hasPartiallyUnsupportedPatches)
                 || _compileError 
                 || isPlaying && !HotReloadPrefs.AutoRecompileUnsupportedChangesInPlayMode
                 || !isPlaying && !HotReloadPrefs.AutoRecompileUnsupportedChangesInEditMode
@@ -625,6 +637,7 @@ namespace SingularityGroup.HotReload.Editor {
                         HotReloadPrefs.LoggedInlinedMethodsDialogue = true;
                     }
                     HotReloadTimelineHelper.CreateInlinedMethodsEntry(entryType: EntryType.Foldout, patchedMethodsDisplayNames: newInlinedMethods.Select(mb => $"{mb.DeclaringType?.Name}::{mb.Name}").ToArray());
+                    CodePatcher.I.anyFailures = true;
                     if (HotReloadPrefs.AutoRecompileUnsupportedChangesImmediately || UnityEditorInternal.InternalEditorUtility.isApplicationActive) {
                         TryRecompileUnsupportedChanges();
                     }
@@ -728,6 +741,7 @@ namespace SingularityGroup.HotReload.Editor {
             foreach (var compileFile in compileFiles) {
                 if (assetPath.EndsWith(compileFile, StringComparison.Ordinal)) {
                     HotReloadTimelineHelper.CreateErrorEventEntry(string.Format(Translations.Utility.AssemblyFileEditError, assetPath), entryType: EntryType.Foldout);
+                    CodePatcher.I.anyFailures = true;
                     _applyingFailed = true;
                     if (HotReloadPrefs.AutoRecompileUnsupportedChangesImmediately || UnityEditorInternal.InternalEditorUtility.isApplicationActive) {
                         TryRecompileUnsupportedChanges();
@@ -739,6 +753,7 @@ namespace SingularityGroup.HotReload.Editor {
             foreach (var plugin in plugins) {
                 if (assetPath.EndsWith(plugin, StringComparison.Ordinal)) {
                     HotReloadTimelineHelper.CreateErrorEventEntry(string.Format(Translations.Utility.NativePluginEditError, assetPath), entryType: EntryType.Foldout);
+                    CodePatcher.I.anyFailures = true;
                     _applyingFailed = true;
                     if (HotReloadPrefs.AutoRecompileUnsupportedChangesImmediately || UnityEditorInternal.InternalEditorUtility.isApplicationActive) {
                         TryRecompileUnsupportedChanges();
@@ -846,6 +861,8 @@ namespace SingularityGroup.HotReload.Editor {
                 patchResult = CodePatcher.I.RegisterPatches(response, persist: persist);
             }
             
+            CodePatcher.I.RegisterFailures(response, patchResult);
+            
             if (patchResult?.inspectorModified == true) {
                 // repaint all views calls all gui callbacks but doesn't rebuild the visual tree
                 // which is needed to hide removed fields
@@ -853,6 +870,7 @@ namespace SingularityGroup.HotReload.Editor {
                 InternalEditorUtility.RepaintAllViews();
             }
 
+            // Keep in sync with HasPartiallySupportedChangesFiltered
             var partiallySupportedChangesFiltered = new List<PartiallySupportedChange>(response.partiallySupportedChanges ?? Array.Empty<PartiallySupportedChange>());
             partiallySupportedChangesFiltered.RemoveAll(x => !HotReloadTimelineHelper.GetPartiallySupportedChangePref(x));
             if (!HotReloadPrefs.DisplayNewMonobehaviourMethodsAsPartiallySupported && partiallySupportedChangesFiltered.Remove(PartiallySupportedChange.AddMonobehaviourMethod)) {
@@ -1016,7 +1034,19 @@ namespace SingularityGroup.HotReload.Editor {
             HotReloadState.LastPatchId = response.id;
             OnPatchHandled?.Invoke((response, patchResult));
         }
-        
+
+        // Keep in sync with HandleResponseReceived
+        static bool HasPartiallySupportedChangesFiltered(PartiallySupportedChange[] partiallySupportedChanges) {
+            foreach (var change in partiallySupportedChanges) {
+                if (HotReloadTimelineHelper.GetPartiallySupportedChangePref(change) &&
+                    (change != PartiallySupportedChange.AddMonobehaviourMethod || HotReloadPrefs.DisplayNewMonobehaviourMethodsAsPartiallySupported)
+                ) {
+                    return true;
+                }
+            }
+            return false;
+        }
+
         static string GetExtendedMethodName(SMethod method) {
             var colonIndex = method.displayName.IndexOf("::", StringComparison.Ordinal);
             if (colonIndex > 0) {

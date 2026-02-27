@@ -65,10 +65,13 @@ namespace SingularityGroup.HotReload {
         readonly string tmpDir;
         public FieldHandler fieldHandler;
         public bool debuggerCompatibilityEnabled;
+        public bool anyFailures;
         
+        public IReadOnlyList<MethodPatchResponse> PatchHistory => patchHistory;
+
         CodePatcher() {
             pendingPatches = new List<MethodPatchResponse>();
-            patchHistory = new List<MethodPatchResponse>(); 
+            patchHistory = new List<MethodPatchResponse>();
             if(UnityHelper.IsEditor) {
                 tmpDir = PackageConst.LibraryCachePath;
             } else {
@@ -125,6 +128,10 @@ namespace SingularityGroup.HotReload {
         internal string[] GetAssemblySearchPaths() {
             EnsureSymbolResolver();
             return assemblySearchPaths;
+        }
+
+        internal void RegisterFailures(MethodPatchResponse patch, RegisterPatchesResult result) {
+            anyFailures |= patch.failures?.Length > 0 || result?.patchFailures.Count > 0 || result?.patchExceptions.Count > 0;
         }
        
         internal RegisterPatchesResult RegisterPatches(MethodPatchResponse patches, bool persist) {

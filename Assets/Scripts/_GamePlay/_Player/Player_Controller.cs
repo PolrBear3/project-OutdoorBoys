@@ -15,7 +15,7 @@ public class Player_Controller : MonoBehaviour
     public Player_Interaction interaction => _interaction;
 
     [Space(20)]
-    [SerializeField] private Item_ScrObj _inventoryBagpackScrObj;
+    [SerializeField] private Item_ScrObj _inventoryBagpack;
 
 
     // MonoBehaviour
@@ -52,11 +52,11 @@ public class Player_Controller : MonoBehaviour
     {
         ItemCursor itemCursor = InGame_Manager.instance.cursor.itemCursor;
         
-        if (_inventoryBagpackScrObj == null)
+        if (_inventoryBagpack == null)
         {
             itemCursor.Set_Item(null);
             return;
         }
-        itemCursor.Set_Item(new(_inventoryBagpackScrObj, 1));
+        itemCursor.Set_Item(new(_inventoryBagpack, 1));
     }
 }
