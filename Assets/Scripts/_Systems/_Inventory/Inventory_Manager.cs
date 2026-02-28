@@ -47,14 +47,8 @@ public class Inventory_Manager : MonoBehaviour
 
         Input_Controller input = Input_Controller.instance;
 
-        input.OnLeftClick -= Select_HoveringSlot;
-        input.OnHoldLeftClick -= HoldSelect_HoveringSlot;
-    }
-
-    private void Add_LoadItem_Test()
-    {
-        Load_ItemData(new(loadItem, loadItemAmount));
-        Load_Slots();
+        input.OnLeftClick -= Transfer_Item;
+        input.OnHoldLeftClick -= Transfer_AllItems;
     }
 
 
@@ -71,10 +65,8 @@ public class Inventory_Manager : MonoBehaviour
 
         Input_Controller input = Input_Controller.instance;
 
-        input.OnLeftClick += Select_HoveringSlot;
-        input.OnHoldLeftClick += HoldSelect_HoveringSlot;
-
-        input.OnInteract += Add_LoadItem_Test;
+        input.OnLeftClick += Transfer_Item;
+        input.OnHoldLeftClick += Transfer_AllItems;
     }
 
     private List<InventorySlot> EmptySlots()
@@ -97,7 +89,7 @@ public class Inventory_Manager : MonoBehaviour
     }
 
 
-    // Main
+    // Toggle
     private void Toggle_Update()
     {
         Tile playerTile = InGame_Manager.instance.player.movement.currentTile;
@@ -105,7 +97,13 @@ public class Inventory_Manager : MonoBehaviour
         _togglePanel.gameObject.SetActive(playerTile.Placed_ItemCount(_inventoryBagpack) > 0);
     }
 
+    public bool Toggled()
+    {
+        return _togglePanel.gameObject.activeSelf;
+    }
 
+
+    // Load
     /// <returns>
     /// Remaining amount as ItemData after load
     /// </returns>
@@ -113,6 +111,15 @@ public class Inventory_Manager : MonoBehaviour
     {
         if (addData == null) return addData;
         Item_ScrObj dataItem = addData.itemScrObj;
+
+        if (dataItem.Is_PlaceableItem() == false)
+        {
+            List<InventorySlot> newSlots = EmptySlots();
+            if (newSlots.Count <= 0) return addData;
+
+            newSlots[0].Set_Data(addData);
+            return null;
+        }
 
         int maxAmount = dataItem.maxAmount;
         if (maxAmount <= 0) return addData;
@@ -169,8 +176,7 @@ public class Inventory_Manager : MonoBehaviour
                 return;
             }
 
-            slot.Update_ItemImage();
-            slot.Update_AmountText();
+            slot.Update_Visuals();
         }
     }
 
@@ -182,18 +188,90 @@ public class Inventory_Manager : MonoBehaviour
     }
 
 
-    private void Select_HoveringSlot()
+    // Item Control
+    private void Swap_Items()
     {
-        if (_hoveringSlot == null) return;
+        ItemCursor itemCursor = InGame_Manager.instance.cursor.itemCursor;
+        if (_hoveringSlot.data == null && itemCursor.itemData == null) return;
 
-        OnSlotSelect?.Invoke(_hoveringSlot);
+        ItemData swapSlotData = _hoveringSlot?.data;
+
+        _hoveringSlot.Set_Data(itemCursor.itemData);
+        _hoveringSlot.Update_Visuals();
+
+        itemCursor.Set_Data(swapSlotData);
+        itemCursor.Update_Visuals();
     }
 
-    private void HoldSelect_HoveringSlot()
+    private void Transfer_Item()
     {
-        if (_hoveringSlot == null) return;
+        InventorySlot hoveringSlot = _hoveringSlot;
+        if (hoveringSlot == null) return;
 
-        OnSlotHoldSelect?.Invoke(_hoveringSlot);
+        ItemData slotItemData = hoveringSlot.data;
+        Item_ScrObj pickupItem = slotItemData?.itemScrObj;
+
+        ItemCursor itemCursor = InGame_Manager.instance.cursor.itemCursor;
+        ItemData cursorItemData = itemCursor.itemData;
+
+        bool isUseItem = slotItemData != null && pickupItem.Is_PlaceableItem() == false;
+
+        if (isUseItem || cursorItemData != null && pickupItem != cursorItemData.itemScrObj) // different items
+        {
+            Swap_Items();
+            return;
+        }
+        if (cursorItemData != null && cursorItemData.amount >= pickupItem.maxAmount) // amount maxed
+        {
+            Swap_Items();
+            return;
+        }
+        if (slotItemData == null) return;
+
+        slotItemData.Update_CurrentAmount(slotItemData.amount - 1);
+
+        hoveringSlot.Set_Data(slotItemData.amount > 0 ? slotItemData : null);
+        hoveringSlot.Update_Visuals();
+
+        int currentCursorAmount = cursorItemData != null ? cursorItemData.amount : 0;
+
+        itemCursor.Update_Data(new(pickupItem, currentCursorAmount + 1));
+        itemCursor.Update_Visuals();
+    }
+    private void Transfer_AllItems()
+    {
+        InventorySlot hoveringSlot = _hoveringSlot;
+        if (hoveringSlot == null) return;
+
+        ItemData slotItemData = hoveringSlot.data;
+        Item_ScrObj pickupItem = slotItemData?.itemScrObj;
+
+        ItemCursor itemCursor = InGame_Manager.instance.cursor.itemCursor;
+        ItemData cursorItemData = itemCursor.itemData;
+
+        bool isUseItem = slotItemData != null && pickupItem.Is_PlaceableItem() == false;
+
+        if (isUseItem || pickupItem != cursorItemData.itemScrObj) // different items
+        {
+            Swap_Items();
+            return;
+        }
+        if (cursorItemData != null && cursorItemData.amount >= pickupItem.maxAmount) // amount maxed
+        {
+            Swap_Items();
+            return;
+        }
+
+        int currentCursorAmount = cursorItemData != null ? cursorItemData.amount : 0;
+        int transferAmount = Mathf.Min(pickupItem.maxAmount - currentCursorAmount, slotItemData.amount);
+
+        slotItemData.Update_CurrentAmount(slotItemData.amount - transferAmount);
+
+        hoveringSlot.Set_Data(slotItemData.amount > 0 ? slotItemData : null);
+        hoveringSlot.Update_Visuals();
+
+        itemCursor.Update_Data(new(pickupItem, currentCursorAmount + transferAmount));
+        itemCursor.Update_Visuals();
     }
 }
 
@@ -235,7 +313,7 @@ public class Inventory_Manager_Editor : Editor
             manager.Load_Slots();
 
             if (data == null) return;
-            Debug.Log(data.amount);
+            Debug.Log("Leftover Amount: " + data.amount);
         }
 
         EditorGUILayout.EndHorizontal();

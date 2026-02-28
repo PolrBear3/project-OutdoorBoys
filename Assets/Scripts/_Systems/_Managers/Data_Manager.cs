@@ -11,8 +11,8 @@ public class Data_Manager : MonoBehaviour
     public TileScrObj[] tileScrObjs => _tileScrObjs;
 
     [Space(20)]
-    [SerializeField] private Item_ScrObj[] _itemScrObjs;
-    public Item_ScrObj[] itemScrObjs => _itemScrObjs;
+    [SerializeField] private Item_ScrObj[] _placeableItems;
+    public Item_ScrObj[] placeableItems => _placeableItems;
 
     /*
     [SerializeField] private UseableItem[] _useableItems;
@@ -52,12 +52,12 @@ public class Data_Manager : MonoBehaviour
 
 
     // _itemScrObjs
-    public Item_ScrObj ItemScrObj(string itemName)
+    public Item_ScrObj PlaceableItems(string itemName)
     {
-        for (int i = 0; i < _itemScrObjs.Length; i++)
+        for (int i = 0; i < _placeableItems.Length; i++)
         {
-            if (itemName != _itemScrObjs[i].itemName) continue;
-            return _itemScrObjs[i];
+            if (itemName != _placeableItems[i].itemName) continue;
+            return _placeableItems[i];
         }
         return null;
     }

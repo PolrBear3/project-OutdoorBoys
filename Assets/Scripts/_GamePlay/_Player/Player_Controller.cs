@@ -52,11 +52,9 @@ public class Player_Controller : MonoBehaviour
     {
         ItemCursor itemCursor = InGame_Manager.instance.cursor.itemCursor;
         
-        if (_inventoryBagpack == null)
-        {
-            itemCursor.Set_Item(null);
-            return;
-        }
-        itemCursor.Set_Item(new(_inventoryBagpack, 1));
+        ItemData itemData = _inventoryBagpack != null ? new(_inventoryBagpack, 1) : null;
+        itemCursor.Set_Data(itemData);
+        
+        itemCursor.Update_Visuals();
     }
 }

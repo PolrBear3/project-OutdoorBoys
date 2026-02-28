@@ -113,6 +113,7 @@ public class Tiles_Controller : MonoBehaviour
     public void Select_Tile()
     {
         Tile pointingTile = Current_Tile();
+ 
         if (pointingTile == null) return;
 
         OnTileSelect?.Invoke(pointingTile);
@@ -122,6 +123,7 @@ public class Tiles_Controller : MonoBehaviour
     public void HoldSelect_Tile()
     {
         Tile pointingTile = Current_Tile();
+        
         if (pointingTile == null) return;
 
         OnTileHoldSelect?.Invoke(pointingTile);

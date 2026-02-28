@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 4520642281758493457}
   - component: {fileID: 5977787769705234577}
   - component: {fileID: 3045259509940891077}
+  - component: {fileID: 1531750997209139500}
   - component: {fileID: 6387085787024065436}
   m_Layer: 0
   m_Name: Tarp
@@ -100,6 +101,19 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _spriteRenderer: {fileID: 5977787769705234577}
   _animationClips: []
+--- !u!114 &1531750997209139500
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3637228250238346253}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 323441c1b63994c64a313a9760ba9652, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _animPlayer: {fileID: 3045259509940891077}
 --- !u!114 &6387085787024065436
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -112,6 +126,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b49ce47e335e14e0daf27546273daaff, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _animPlayer: {fileID: 3045259509940891077}
+  _placeableItem: {fileID: 1531750997209139500}
   _transparencyValue: 0.5
   _transparencyUpdateDuration: 0.25

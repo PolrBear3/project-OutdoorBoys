@@ -56,22 +56,21 @@ public class InventorySlot : MonoBehaviour
     }
 
 
-    // UI
-    public void Update_ItemImage()
+    // Visuals
+    public void Update_Visuals()
     {
-        bool spriteAvailable = _data != null;
-        _itemImage.gameObject.SetActive(spriteAvailable);
+        _itemImage.gameObject.SetActive(_data != null);
+        _itemImage.sprite = _data?.itemScrObj.inventorySprite;
 
-        if (spriteAvailable == false) return;
-        _itemImage.sprite = _data.itemScrObj.inventorySprite;
+        Update_AmountText();
     }
 
     public void Update_AmountText()
     {
-        bool toggle = _data != null && _data.amount > 0;
-        _amountText.gameObject.SetActive(toggle);
+        bool toggleText = _data != null && _data.amount > 0;
+        _amountText.gameObject.SetActive(toggleText);
 
-        if (toggle == false) return;
+        if (toggleText == false) return;
         _amountText.text = _data.amount.ToString();
     }
 }

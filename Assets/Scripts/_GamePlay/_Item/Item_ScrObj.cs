@@ -39,4 +39,11 @@ public class Item_ScrObj : ScriptableObject
 
     [SerializeField][Range(0, 10)]  private int _triggerRange;
     public int triggerRange => _triggerRange;
+
+
+    // Main
+    public bool Is_PlaceableItem()
+    {
+        return _placeablePrefab != null;
+    }
 }

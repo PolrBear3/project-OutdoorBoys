@@ -1,8 +1,9 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public abstract class PlaceableItem : MonoBehaviour
+public class PlaceableItem : MonoBehaviour
 {
     [Space(20)]
     [SerializeField] private AnimationPlayer _animPlayer;

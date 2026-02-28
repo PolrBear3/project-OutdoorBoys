@@ -15,7 +15,6 @@ public class Input_Controller : MonoBehaviour
     [SerializeField] private PlayerInput _playerInput;
     public PlayerInput playerInput => _playerInput;
 
-    [Space(10)]
     [SerializeField] private ControlScheme_ScrObj[] _schemes;
 
     
@@ -43,6 +42,10 @@ public class Input_Controller : MonoBehaviour
     public Action OnLeftClickStart;
     public Action OnLeftClick;
     public Action OnHoldLeftClick;
+
+    public Action OnRightClickStart;
+    public Action OnRightClick;
+    public Action OnHoldRightClick;
 
     public Action OnInteractStart;
     public Action OnInteract;
@@ -221,9 +224,12 @@ public class Input_Controller : MonoBehaviour
     {
         Guid actionID = context.action.id;
 
-        if (context.started && _inputGateIDs.Add(actionID)) OnLeftClickStart?.Invoke();
+        if (context.started && _inputGateIDs.Add(actionID))
+        {
+            OnLeftClickStart?.Invoke();
+        }
+        
         if (!context.performed) return;
-
         _inputGateIDs.Remove(actionID);
 
         if (context.interaction is UnityEngine.InputSystem.Interactions.HoldInteraction)
@@ -232,6 +238,26 @@ public class Input_Controller : MonoBehaviour
             return;
         }
         OnLeftClick?.Invoke();
+    }
+
+    public void RightClick(InputAction.CallbackContext context)
+    {
+        Guid actionID = context.action.id;
+
+        if (context.started && _inputGateIDs.Add(actionID))
+        {
+            OnRightClickStart?.Invoke();
+        }
+
+        if (!context.performed) return;
+        _inputGateIDs.Remove(actionID);
+
+        if (context.interaction is UnityEngine.InputSystem.Interactions.HoldInteraction)
+        {
+            OnHoldRightClick?.Invoke();
+            return;
+        }
+        OnRightClick?.Invoke();
     }
 
 

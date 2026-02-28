@@ -2,8 +2,10 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Tarp : PlaceableItem
+public class Tarp : MonoBehaviour
 {
+    [SerializeField] private PlaceableItem _placeableItem;
+
     [Space(20)]
     [SerializeField][Range(0, 1)] private float _transparencyValue;
     [SerializeField][Range(0, 10)] private float _transparencyUpdateDuration;
@@ -30,7 +32,7 @@ public class Tarp : PlaceableItem
     private void Update_Transparency()
     {
         Tile playerTile = InGame_Manager.instance.player.movement.currentTile;
-        float transparencyValue = playerTile == currentTile ? _transparencyValue : 1f;
+        float transparencyValue = playerTile == _placeableItem.currentTile ? _transparencyValue : 1f;
 
         LeanTween.cancel(gameObject);
         LeanTween.alpha(gameObject, transparencyValue, _transparencyUpdateDuration);
