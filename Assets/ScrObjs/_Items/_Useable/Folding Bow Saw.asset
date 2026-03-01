@@ -16,7 +16,8 @@ MonoBehaviour:
   _microSprite: {fileID: -2143257270, guid: bf7ece83f843c4c35977c02f8c40d92d, type: 3}
   _itemName: Folding Bow Saw
   _description: 
-  _placeablePrefab: {fileID: 0}
+  _itemType: 1
+  _itemPrefab: {fileID: 5769858720269626403, guid: 8ce1b163514ca42b9a1be1e442291502, type: 3}
   _offsetPosition: {x: 0, y: 0}
   _maxAmount: 5
   _itemWeight: 0

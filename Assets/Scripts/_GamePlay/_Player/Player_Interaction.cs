@@ -14,6 +14,10 @@ public class Player_Interaction : MonoBehaviour
     [SerializeField][Range(0, 100)] private int _skipTimeCost;
 
 
+    private GameObject _currentItemPrefab;
+    public GameObject currentItemPrefab => _currentItemPrefab;
+
+
     // MonoBehaviour
     private void Awake()
     {
@@ -43,6 +47,21 @@ public class Player_Interaction : MonoBehaviour
 
         if (updateAvailable == false) return;
         _indicationIcon.sprite = iconSprite;
+    }
+
+
+    public void Load_ItemPrefab(GameObject itemPrefab)
+    {
+        if (itemPrefab == null && _currentItemPrefab == null) return;
+
+        if (itemPrefab == null)
+        {
+            Destroy(_currentItemPrefab);
+            _currentItemPrefab = null;
+
+            return;
+        }
+        _currentItemPrefab = Instantiate(itemPrefab, transform);
     }
 
 

@@ -112,7 +112,7 @@ public class Inventory_Manager : MonoBehaviour
         if (addData == null) return addData;
         Item_ScrObj dataItem = addData.itemScrObj;
 
-        if (dataItem.Is_PlaceableItem() == false)
+        if (dataItem.itemType != ItemType.place)
         {
             List<InventorySlot> newSlots = EmptySlots();
             if (newSlots.Count <= 0) return addData;
@@ -214,9 +214,9 @@ public class Inventory_Manager : MonoBehaviour
         ItemCursor itemCursor = InGame_Manager.instance.cursor.itemCursor;
         ItemData cursorItemData = itemCursor.itemData;
 
-        bool isUseItem = slotItemData != null && pickupItem.Is_PlaceableItem() == false;
+        bool nonPlaceItem = slotItemData != null && pickupItem.itemType != ItemType.place;
 
-        if (isUseItem || cursorItemData != null && pickupItem != cursorItemData.itemScrObj) // different items
+        if (nonPlaceItem || cursorItemData != null && pickupItem != cursorItemData.itemScrObj) // different items
         {
             Swap_Items();
             return;
@@ -249,9 +249,9 @@ public class Inventory_Manager : MonoBehaviour
         ItemCursor itemCursor = InGame_Manager.instance.cursor.itemCursor;
         ItemData cursorItemData = itemCursor.itemData;
 
-        bool isUseItem = slotItemData != null && pickupItem.Is_PlaceableItem() == false;
+        bool nonPlaceItem = slotItemData != null && pickupItem.itemType != ItemType.place;
 
-        if (isUseItem || pickupItem != cursorItemData.itemScrObj) // different items
+        if (nonPlaceItem || cursorItemData != null && pickupItem != cursorItemData.itemScrObj) // different items
         {
             Swap_Items();
             return;

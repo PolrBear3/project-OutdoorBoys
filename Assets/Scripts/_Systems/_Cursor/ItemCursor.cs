@@ -63,6 +63,8 @@ public class ItemCursor : MonoBehaviour
 
         int updateRange = setItemData != null ? setItemData.itemScrObj.triggerRange : 0;
         _cursor.Update_TilePointerRange(updateRange);
+
+        Load_UseItem();
     }
 
     public void Update_Data(ItemData updateItemData)
@@ -101,7 +103,7 @@ public class ItemCursor : MonoBehaviour
     // Item Control
     private void Pickup_Item(Tile selectTile)
     {
-        if (_itemData?.itemScrObj.Is_PlaceableItem() == false) return;
+        if (_itemData?.itemScrObj.itemType != ItemType.place) return;
 
         List<PlaceableItem> placedItems = selectTile.placedItems;
         if (placedItems.Count <= 0) return;
@@ -138,7 +140,7 @@ public class ItemCursor : MonoBehaviour
         Item_ScrObj returnItem = _itemData.itemScrObj;
 
         ItemData leftOverData = inventory.Load_ItemData(_itemData);
-        if (leftOverData != null && returnItem.Is_PlaceableItem() == false) return;
+        if (leftOverData != null && returnItem.itemType != ItemType.place) return;
 
         inventory.Load_Slots();
         Set_Data(leftOverData);
@@ -153,7 +155,7 @@ public class ItemCursor : MonoBehaviour
             return;
         }
 
-        if (_itemData.itemScrObj.Is_PlaceableItem() == false) return; 
+        if (_itemData.itemScrObj.itemType != ItemType.place) return; 
 
         List<PlaceableItem> placedItems = selectTile.placedItems;
         Item_ScrObj currentItem = _itemData.itemScrObj;
@@ -177,7 +179,7 @@ public class ItemCursor : MonoBehaviour
         if (selectTile.Placed_StackableItems() > 1) return;
         if (currentItem.stackable == false && selectTile.NonStackableItem_Placed()) return;
 
-        GameObject spawnedItem = Instantiate(currentItem.placeablePrefab, selectTile.placeableItemsPrefabs);
+        GameObject spawnedItem = Instantiate(currentItem.itemPrefab, selectTile.placeableItemsPrefabs);
         spawnedItem.transform.localPosition = currentItem.offsetPosition;
         
         PlaceableItem placedItem = spawnedItem.GetComponent<PlaceableItem>();
@@ -211,13 +213,29 @@ public class ItemCursor : MonoBehaviour
     }
 
 
+    private void Load_UseItem()
+    {
+        Player_Interaction player = InGame_Manager.instance.player.interaction;
+
+        bool isUseableITem = _itemData != null && _itemData.itemScrObj.itemType == ItemType.use;
+
+        GameObject loadItem = isUseableITem ? _itemData.itemScrObj.itemPrefab : null;
+        player.Load_ItemPrefab(loadItem);
+
+        if (loadItem == null || player.currentItemPrefab.TryGetComponent(out UseableItem useItem) == false) return;
+        useItem.Set_Data(_itemData);
+    }
+
     private void Use_Item(Tile selectTile)
     {
         if (_itemData == null) return;
         Item_ScrObj currentItem = _itemData.itemScrObj;
 
-        if (currentItem.Is_PlaceableItem()) return;
+        if (currentItem.itemType != ItemType.use) return;
 
-        // get useable item inherent class from Data_Manager
+        GameObject currentUseItem = InGame_Manager.instance.player.interaction.currentItemPrefab;
+        if (currentUseItem.TryGetComponent(out UseableItem useItem) == false) return;
+
+        useItem.Use(selectTile);
     }
 }

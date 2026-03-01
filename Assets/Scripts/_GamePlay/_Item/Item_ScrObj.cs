@@ -2,6 +2,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+public enum ItemType { place, use }
+
 [CreateAssetMenu(menuName = "New ScriptableObject/ New Item")]
 public class Item_ScrObj : ScriptableObject
 {
@@ -20,8 +22,12 @@ public class Item_ScrObj : ScriptableObject
     public string description => _description;
 
     [Space(20)]
-    [SerializeField] private GameObject _placeablePrefab;
-    public GameObject placeablePrefab => _placeablePrefab;
+    [SerializeField] private ItemType _itemType;
+    public ItemType itemType => _itemType;
+
+    [Space(20)]
+    [SerializeField] private GameObject _itemPrefab;
+    public GameObject itemPrefab => _itemPrefab;
 
     [SerializeField] private Vector2 _offsetPosition;
     public Vector2 offsetPosition => _offsetPosition;
@@ -39,11 +45,4 @@ public class Item_ScrObj : ScriptableObject
 
     [SerializeField][Range(0, 10)]  private int _triggerRange;
     public int triggerRange => _triggerRange;
-
-
-    // Main
-    public bool Is_PlaceableItem()
-    {
-        return _placeablePrefab != null;
-    }
 }
