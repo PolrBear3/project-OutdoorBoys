@@ -103,8 +103,6 @@ public class ItemCursor : MonoBehaviour
     // Item Control
     private void Pickup_Item(Tile selectTile)
     {
-        if (_itemData?.itemScrObj.itemType != ItemType.place) return;
-
         List<PlaceableItem> placedItems = selectTile.placedItems;
         if (placedItems.Count <= 0) return;
 
@@ -176,6 +174,9 @@ public class ItemCursor : MonoBehaviour
             return;
         }
 
+        if (selectTile.placedItems.Count >= 2) return;
+        if (selectTile.Placed_ItemCount(currentItem) >= currentItem.maxAmount) return;
+        
         if (selectTile.Placed_StackableItems() > 1) return;
         if (currentItem.stackable == false && selectTile.NonStackableItem_Placed()) return;
 
@@ -186,6 +187,8 @@ public class ItemCursor : MonoBehaviour
         
         placedItem.Set_Data(new(currentItem, 1));
         placedItem.Track_CurrentTile(selectTile);
+        placedItem.animPlayer.Set_DefaultPosition(currentItem.offsetPosition);
+
         selectTile.Track_PlacingItem(placedItem);
 
         Update_Data(new(currentItem, _itemData.amount - 1));

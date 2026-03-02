@@ -57,16 +57,18 @@ public class Player_Movement : MonoBehaviour
         if (destinationTile == null) return;
         if (LeanTween.isTweening(gameObject)) return;
         
+        Tile previousTile = _currentTile;
         Vector2 destination = destinationTile.setPosition.position;
 
-        Tile previousTile = _currentTile;
         _currentTile = destinationTile;
+        _currentTile.Toggle_Transparency(true);
 
         if (previousTile == null)
         {
             transform.position = destination;
             return;
         }
+        previousTile.Toggle_Transparency(false);
 
         int distance = Mathf.RoundToInt(Vector2.Distance(destination, previousTile.transform.position));
         InGame_Manager.instance.time.Update_Data(distance * _moveTimeCost);

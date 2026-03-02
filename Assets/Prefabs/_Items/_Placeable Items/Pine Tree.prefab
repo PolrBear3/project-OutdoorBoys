@@ -12,9 +12,8 @@ GameObject:
   - component: {fileID: 5977787769705234577}
   - component: {fileID: 3045259509940891077}
   - component: {fileID: 1531750997209139500}
-  - component: {fileID: 6387085787024065436}
   m_Layer: 0
-  m_Name: Tarp
+  m_Name: Pine Tree
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -73,10 +72,10 @@ SpriteRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
-  m_SortingLayerID: -2062054169
-  m_SortingLayer: 1
+  m_SortingLayerID: 773141381
+  m_SortingLayer: -1
   m_SortingOrder: 0
-  m_Sprite: {fileID: 1318615896, guid: bf7ece83f843c4c35977c02f8c40d92d, type: 3}
+  m_Sprite: {fileID: 1495015643, guid: bf7ece83f843c4c35977c02f8c40d92d, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -101,7 +100,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _spriteRenderer: {fileID: 5977787769705234577}
   _animationClips:
-  - {fileID: 11400000, guid: f7a2d73dd65204e07bdfd514451a5f04, type: 2}
+  - {fileID: 11400000, guid: 57845f7ce3bf144b09f657cb30bc9398, type: 2}
 --- !u!114 &1531750997209139500
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -115,18 +114,3 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _animPlayer: {fileID: 3045259509940891077}
---- !u!114 &6387085787024065436
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3637228250238346253}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b49ce47e335e14e0daf27546273daaff, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _placeableItem: {fileID: 1531750997209139500}
-  _transparencyValue: 0.5
-  _transparencyUpdateDuration: 0.25

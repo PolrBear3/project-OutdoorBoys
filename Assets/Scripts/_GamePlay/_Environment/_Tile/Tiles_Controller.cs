@@ -33,10 +33,6 @@ public class Tiles_Controller : MonoBehaviour
         input.OnHoldLeftClick -= HoldSelect_Tile;
 
         InGame_Manager manager = InGame_Manager.instance;
-        Time_Manager time = manager.time;
-
-        time.OnNightPhase -= Update_Shadows;
-        time.OnDayCountUpdate -= Update_Shadows;
 
         manager.cursor.OnTilePointRangeUpdate -= Update_PointerToggles;
         manager.player.movement.OnMovement -= Update_PointerToggles;
@@ -52,10 +48,6 @@ public class Tiles_Controller : MonoBehaviour
         input.OnHoldLeftClick += HoldSelect_Tile;
 
         InGame_Manager manager = InGame_Manager.instance;
-        Time_Manager time = manager.time;
-
-        time.OnNightPhase += Update_Shadows;
-        time.OnDayCountUpdate += Update_Shadows;
 
         manager.cursor.OnTilePointRangeUpdate += Update_PointerToggles;
         manager.player.movement.OnMovement += Update_PointerToggles;
@@ -140,16 +132,6 @@ public class Tiles_Controller : MonoBehaviour
         {
             bool setOnBase = _currentTiles[i].transform.position.y <= -generateStartPos.y;
             _currentTiles[i].Update_SetSprite(setOnBase);
-        }
-    }
-
-    private void Update_Shadows()
-    {
-        bool isNight = InGame_Manager.instance.time.Is_Night();
-
-        foreach (Tile tile in _currentTiles)
-        {
-            tile.Toggle_Shadow(isNight);
         }
     }
 

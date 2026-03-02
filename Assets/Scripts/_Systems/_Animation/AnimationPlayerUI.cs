@@ -1,27 +1,21 @@
 using System.Collections;
 using System.Collections.Generic;
-using Unity.Mathematics;
 using UnityEngine;
+using UnityEngine.UI;
 
-public class AnimationPlayer : MonoBehaviour
+public class AnimationPlayerUI : MonoBehaviour
 {
     [Space(20)]
-    [SerializeField] private SpriteRenderer _spriteRenderer;
-    public SpriteRenderer spriteRenderer => _spriteRenderer;
+    [SerializeField] private Image _image;
+    public Image image => _image;
 
     [Space(10)]
     [SerializeField] private AnimationClipScrObj[] _animationClips;
 
-    private Vector2 _defaultPosition;
     private Coroutine _playCoroutine;
 
 
     // Data
-    public void Set_DefaultPosition(Vector2 position)
-    {
-        _defaultPosition = position;
-    }
-
     private AnimationClipScrObj AnimationClip(string clipName)
     {
         for (int i = 0; i < _animationClips.Length; i++)
@@ -46,14 +40,7 @@ public class AnimationPlayer : MonoBehaviour
 
         StopCoroutine(_playCoroutine);
         _playCoroutine = null;
-
-        LeanTween.cancel(_spriteRenderer.gameObject);
-        Transform transform = _spriteRenderer.transform;
-
-        transform.localPosition = _defaultPosition;
-        transform.rotation = Quaternion.identity;
     }
-
 
     public void Play(AnimationClipScrObj clip)
     {
@@ -68,44 +55,16 @@ public class AnimationPlayer : MonoBehaviour
             {
                 if (spriteDatas[i].clipSprite == null) continue;
 
-                _spriteRenderer.sprite = spriteDatas[i].clipSprite;
+                _image.sprite = spriteDatas[i].clipSprite;
                 return;
             }
 
-            _spriteRenderer.sprite = clip.defaultSprite;
+            _image.sprite = clip.defaultSprite;
             return;
         }
 
         _playCoroutine = StartCoroutine(Play_AnimationClip(clip));
     }
-    private IEnumerator Play_AnimationClip(AnimationClipScrObj playClip)
-    {
-        ClipSpriteData[] spriteDatas = playClip.clipSpriteDatas;
-
-        do
-        {
-            for (int i = 0; i < spriteDatas.Length; i++)
-            {
-                ClipSpriteData data = spriteDatas[i];
-
-                Sprite dataSprite = data.clipSprite;
-                _spriteRenderer.sprite = dataSprite != null ? dataSprite : _spriteRenderer.sprite;
-
-                GameObject animObject = _spriteRenderer.gameObject;
-                float transformDuration = data.Transform_DurationTime();
-
-                LeanTween.moveLocal(animObject, _defaultPosition + data.offSetPosition, transformDuration);
-                LeanTween.rotateLocal(animObject, new(0f, 0f, data.rotationValue), transformDuration);
-
-                yield return new WaitForSeconds(spriteDatas[i].DurationTime());
-            }
-        }
-        while (playClip.loop);
-
-        Stop();
-        yield break;
-    }
-
     public void Play(int clipIndexNum)
     {
         if (_animationClips == null) return;
@@ -119,5 +78,26 @@ public class AnimationPlayer : MonoBehaviour
 
         AnimationClipScrObj playClip = AnimationClip(clipName);
         Play(playClip);
+    }
+
+    private IEnumerator Play_AnimationClip(AnimationClipScrObj playClip)
+    {
+        ClipSpriteData[] spriteDatas = playClip.clipSpriteDatas;
+
+        do
+        {
+            for (int i = 0; i < spriteDatas.Length; i++)
+            {
+                Sprite clipSprite = spriteDatas[i].clipSprite;
+
+                if (clipSprite == null) continue;
+                _image.sprite = clipSprite;
+
+                yield return new WaitForSeconds(spriteDatas[i].DurationTime());
+            }
+        }
+        while (playClip.loop);
+
+        yield break;
     }
 }

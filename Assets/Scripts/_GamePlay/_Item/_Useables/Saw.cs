@@ -26,6 +26,12 @@ public class Saw : MonoBehaviour
     // Main
     private void Use_OnTree(Tile useTile)
     {
-        Debug.Log("Saw Tree: " + useTile.placedItems.Count);
+        for (int i = 0; i < _treeItems.Length; i++)
+        {
+            PlaceableItem treeItem = useTile.PlacedItem(_treeItems[i]);
+            if (treeItem == null) continue;
+
+            treeItem.animPlayer.Play(0);
+        }
     }
 }
