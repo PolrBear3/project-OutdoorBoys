@@ -1,13 +1,14 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 
-public class Time_Manager : MonoBehaviour
+public class Time_Manager : MonoBehaviour, ISaveLoadable
 {
     [Space(20)]
-    [SerializeField][Range(0, 100)] private int _nightPhaseCount;
-    [SerializeField][Range(0, 100)] private int _maxTimeCount;
+    [SerializeField][Range(0, 1000)] private int _nightPhaseCount;
+    [SerializeField][Range(0, 1000)] private int _maxTimeCount;
 
     [Space(10)]
     [SerializeField][Range(0, 100)] private float _tikTime;
@@ -16,39 +17,34 @@ public class Time_Manager : MonoBehaviour
     private TimeData _data;
     public TimeData data => _data;
 
-    public Action OnTimeCountUpdate;
+    public Action<int> OnTimeCountUpdate;
     public Action OnNightPhase;
-    public Action OnDayCountUpdate;
+    public Action<int> OnDayCountUpdate;
     
     private Coroutine _timeTikCoroutine;
 
 
-    // MonoBehaviour
-    private void Awake()
+    // ISaveLoadable
+    public void Save_Data()
     {
-        EventBus_Manager.Register(EventBus.AwakeLoad, Set_Data);
+        ES3.Save(SaveKeys.Time_SaveKeys.Data, _data ?? new TimeData(0, 0));
     }
 
-    private void OnDestroy()
+    public void Load_Data()
     {
-        EventBus_Manager.UnRegister(EventBus.AwakeLoad, Set_Data);
+        _data = ES3.Load(SaveKeys.Time_SaveKeys.Data, new TimeData(0, 0));
     }
 
 
     // Data
-    public void Set_Data()
-    {
-        _data = new(0, 0);
-    }
-
     public void Update_Data(int updateTimeCount)
     {
         int calculatedTimeCount = data.timeCount + Mathf.Max(1, updateTimeCount);
 
         if (calculatedTimeCount <= _maxTimeCount)
         {
-            data.Set_Data(calculatedTimeCount, data.dayCount);
-            OnTimeCountUpdate?.Invoke();
+            _data.Set_Data(calculatedTimeCount, data.dayCount);
+            OnTimeCountUpdate?.Invoke(_data.timeCount);
 
             if (_data.timeCount != _nightPhaseCount) return;
             OnNightPhase?.Invoke();
@@ -58,12 +54,12 @@ public class Time_Manager : MonoBehaviour
 
         int dayUpdateCount = Mathf.FloorToInt(calculatedTimeCount / _maxTimeCount);
 
-        data.Set_Data(calculatedTimeCount % _maxTimeCount - 1, _data.dayCount + dayUpdateCount);
-        OnTimeCountUpdate?.Invoke();
+        _data.Set_Data(calculatedTimeCount % _maxTimeCount - 1, _data.dayCount + dayUpdateCount);
+        OnTimeCountUpdate?.Invoke(_data.timeCount);
 
         for (int i = 0; i < dayUpdateCount; i++)
         {
-            OnDayCountUpdate?.Invoke();
+            OnDayCountUpdate?.Invoke(_data.dayCount);
             OnNightPhase?.Invoke();
         }
 

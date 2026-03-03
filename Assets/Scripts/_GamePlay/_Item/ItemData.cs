@@ -20,9 +20,18 @@ public class ItemData
     }
 
 
-    // Current Data
+    // Data
     public void Update_CurrentAmount(int updateAmount)
     {
         _amount = Mathf.Max(0, updateAmount);
+    }
+
+
+    public int Item_Weight()
+    {
+        int singleWeight = _itemScrObj.itemWeight;
+
+        if (_itemScrObj.itemType != ItemType.place) return singleWeight;
+        return singleWeight * _amount;
     }
 }

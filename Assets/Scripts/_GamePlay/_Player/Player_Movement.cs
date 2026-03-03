@@ -9,7 +9,6 @@ public class Player_Movement : MonoBehaviour
 
     [Space(20)]
     [SerializeField][Range(0, 10)]  private float _moveSpeed;
-    [SerializeField][Range(0, 100)] private int _moveTimeCost;
 
     private Tile _currentTile;
     public Tile currentTile => _currentTile;
@@ -44,11 +43,11 @@ public class Player_Movement : MonoBehaviour
     private IEnumerator PlayAnimation_Movement()
     {
         AnimationPlayer animPlayer = _controller.animationPlayer;
-        animPlayer.Play("Player_Move");
+        animPlayer.Play(1);
         
         yield return new WaitForSeconds(_moveSpeed);
 
-        animPlayer.Play("Player_Idle");
+        animPlayer.Play(0);
         yield break;
     }
 
@@ -70,8 +69,17 @@ public class Player_Movement : MonoBehaviour
         }
         previousTile.Toggle_Transparency(false);
 
-        int distance = Mathf.RoundToInt(Vector2.Distance(destination, previousTile.transform.position));
-        InGame_Manager.instance.time.Update_Data(distance * _moveTimeCost);
+        InGame_Manager manager = InGame_Manager.instance;
+
+        ItemData currentItem = manager.cursor.itemCursor.itemData;
+        bool hasInventoryBagpack = currentItem != null && currentItem.itemScrObj == _controller.inventoryBagpack;
+
+        int distanceToTile = Mathf.RoundToInt(Vector2.Distance(destination, previousTile.transform.position));
+        
+        int currentInventoryWeight = hasInventoryBagpack ? manager.inventory.Total_ItemWeight() : 0;
+        int currentItemWeight = currentItem != null ? currentItem.Item_Weight() + currentInventoryWeight : 0;
+
+        manager.time.Update_Data(distanceToTile + currentItemWeight * distanceToTile);
 
         if (_moveAnimationCoroutine != null)
         {

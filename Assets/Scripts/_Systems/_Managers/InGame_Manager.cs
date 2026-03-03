@@ -5,8 +5,13 @@ using UnityEngine;
 public class InGame_Manager : MonoBehaviour
 {
     public static InGame_Manager instance;
-    
-    
+
+
+    [Space(20)]
+    [SerializeField] private InGameUI_Manager _ingameUI;
+    public InGameUI_Manager ingameUI => _ingameUI;
+
+
     [Space(20)]
     [SerializeField] private Cursor _cursor;
     public Cursor cursor => _cursor;

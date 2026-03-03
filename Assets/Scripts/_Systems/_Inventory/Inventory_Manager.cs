@@ -189,6 +189,21 @@ public class Inventory_Manager : MonoBehaviour
 
 
     // Item Control
+    public int Total_ItemWeight()
+    {
+        int count = 0;
+
+        for (int i = 0; i < _slots.Length; i++)
+        {
+            ItemData slotItemData = _slots[i].data;
+            if (slotItemData == null) continue;
+
+            count += slotItemData.Item_Weight();
+        }
+        return count;
+    }
+
+
     private void Swap_Items()
     {
         ItemCursor itemCursor = InGame_Manager.instance.cursor.itemCursor;
@@ -208,10 +223,12 @@ public class Inventory_Manager : MonoBehaviour
         InventorySlot hoveringSlot = _hoveringSlot;
         if (hoveringSlot == null) return;
 
+        InGame_Manager manager = InGame_Manager.instance;
+
         ItemData slotItemData = hoveringSlot.data;
         Item_ScrObj pickupItem = slotItemData?.itemScrObj;
 
-        ItemCursor itemCursor = InGame_Manager.instance.cursor.itemCursor;
+        ItemCursor itemCursor = manager.cursor.itemCursor;
         ItemData cursorItemData = itemCursor.itemData;
 
         bool nonPlaceItem = slotItemData != null && pickupItem.itemType != ItemType.place;

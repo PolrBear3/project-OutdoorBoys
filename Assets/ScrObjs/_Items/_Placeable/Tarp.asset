@@ -20,6 +20,6 @@ MonoBehaviour:
   _itemPrefab: {fileID: 3637228250238346253, guid: f990c87832dc348cba041952eea5503d, type: 3}
   _offsetPosition: {x: 0, y: 0}
   _maxAmount: 2
-  _itemWeight: 0
+  _itemWeight: 1
   _stackable: 1
   _triggerRange: 1

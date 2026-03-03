@@ -118,10 +118,10 @@ public class ItemCursor : MonoBehaviour
             if (pickupItem != placedItem.data.itemScrObj) continue;
 
             ItemData placedItemData = placedItem.data;
-            int availableAmount = Mathf.Min(maxAmount - currentAmount, placedItemData.amount);
+            int pickupAmount = Mathf.Min(maxAmount - currentAmount, placedItemData.amount);
 
-            Update_Data(new(pickupItem, currentAmount + availableAmount));
-            placedItemData.Update_CurrentAmount(placedItemData.amount - availableAmount);
+            Update_Data(new(pickupItem, currentAmount + pickupAmount));
+            placedItemData.Update_CurrentAmount(placedItemData.amount - pickupAmount);
 
             if (placedItemData.amount > 0) continue;
             selectTile.Remove_PlacedItem(placedItem);
