@@ -1,23 +1,27 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class Movement_Controller : MonoBehaviour
 {
     [Space(20)]
-    [SerializeField] private LeanTweenType _moveTweenType;
-
     [SerializeField][Range(0, 10)] private float _moveDuration;
     public float moveDuration => _moveDuration;
 
 
-    private LeanTweenType _currentMoveTweenType;
-
     private Tile _currentTile;
     public Tile currentTile => _currentTile;
+    
+    private float _currentMoveDuration;
 
-    public Action<int> OnMovement;
+    public Action OnMovement;
+    public Action<int> OnMovementDistanced;
+    public Action<bool> OnMovementStated;
+
+    private Coroutine _movementCoroutine;
+    public Coroutine movementCoroutine => _movementCoroutine;
 
 
     // MonoBehaviour
@@ -35,12 +39,13 @@ public class Movement_Controller : MonoBehaviour
     // Data
     private void Set_Data()
     {
-        Update_MoveTweenType(_moveTweenType);
+        Update_MoveDurationValue(0);
     }
 
-    public void Update_MoveTweenType(LeanTweenType tweenType)
+    public void Update_MoveDurationValue(float value)
     {
-        _currentMoveTweenType = tweenType;
+        value = value <= 0 ? _moveDuration : value;
+        _currentMoveDuration = value;
     }
 
 
@@ -63,12 +68,15 @@ public class Movement_Controller : MonoBehaviour
         }
         previousTile.Toggle_Transparency(false);
 
+        OnMovement?.Invoke();
+
         int moveDistance = Mathf.RoundToInt(Vector2.Distance(destination, previousTile.transform.position));
-        OnMovement?.Invoke(moveDistance);
+        OnMovementDistanced?.Invoke(moveDistance);
 
-        LeanTween.move(gameObject, destination, _moveDuration).setEase(_currentMoveTweenType); // move
+        Start_MovementStateUpdate();
+
+        LeanTween.move(gameObject, destination, _currentMoveDuration); // move
     }
-
     public void MoveTo_Tile(Vector2 direction)
     {
         Tiles_Controller controller = InGame_Manager.instance.tilesController;
@@ -76,5 +84,24 @@ public class Movement_Controller : MonoBehaviour
 
         if (destinationTile == null) return;
         MoveTo_Tile(destinationTile);
+    }
+
+    private void Start_MovementStateUpdate()
+    {
+        if (_movementCoroutine != null)
+        {
+            StopCoroutine(_movementCoroutine);
+            _movementCoroutine = null;
+        }
+        _movementCoroutine = StartCoroutine(MovementState_Update());
+    }
+    private IEnumerator MovementState_Update()
+    {
+        OnMovementStated(true);
+
+        yield return new WaitForSeconds(_currentMoveDuration);
+        OnMovementStated(false);
+        
+        _movementCoroutine = null;
     }
 }

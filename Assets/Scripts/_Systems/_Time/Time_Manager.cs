@@ -39,7 +39,7 @@ public class Time_Manager : MonoBehaviour, ISaveLoadable
     // Data
     public void Update_Data(int updateTimeCount)
     {
-        int calculatedTimeCount = data.timeCount + Mathf.Max(1, updateTimeCount);
+        int calculatedTimeCount = data.timeCount + Mathf.Max(0, updateTimeCount);
 
         if (calculatedTimeCount <= _maxTimeCount)
         {

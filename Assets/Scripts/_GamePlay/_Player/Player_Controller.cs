@@ -9,8 +9,8 @@ public class Player_Controller : MonoBehaviour, ISaveLoadable
     [SerializeField] private AnimationPlayer _animationPlayer;
     public AnimationPlayer animationPlayer => _animationPlayer;
 
-    [SerializeField] private Player_Movement _movement;
-    public Player_Movement movement => _movement;
+    [SerializeField] private Movement_Controller _movement;
+    public Movement_Controller movement => _movement;
 
     [SerializeField] private Player_Interaction _interaction;
     public Player_Interaction interaction => _interaction;

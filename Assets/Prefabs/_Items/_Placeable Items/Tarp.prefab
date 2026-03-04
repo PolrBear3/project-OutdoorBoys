@@ -128,5 +128,5 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _placeableItem: {fileID: 1531750997209139500}
-  _transparencyValue: 0.5
+  _transparencyValue: 0.2
   _transparencyUpdateDuration: 0.25

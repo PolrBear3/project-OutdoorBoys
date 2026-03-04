@@ -12,16 +12,10 @@ public class Inventory_Manager : MonoBehaviour
     [SerializeField] private Item_ScrObj _inventoryBagpack;
 
     [Space(20)]
+    [SerializeField] private ItemSlot_Manager _slotManager;
+    public ItemSlot_Manager slotManager => _slotManager;
+
     [SerializeField] private Image _togglePanel;
-
-    [SerializeField] private InventorySlot[] _slots;
-    public InventorySlot[] slots => _slots;
-
-
-    private InventorySlot _hoveringSlot;
-
-    public Action<InventorySlot> OnSlotSelect;
-    public Action<InventorySlot> OnSlotHoldSelect;
 
 
     [HideInInspector] public Item_ScrObj loadItem;
@@ -55,8 +49,8 @@ public class Inventory_Manager : MonoBehaviour
     // Data
     public void Set_Data()
     {
-        Load_ItemData(new(loadItem, loadItemAmount));
-        Load_Slots();
+        Add_ItemData(new(loadItem, loadItemAmount));
+        _slotManager.Update_Visuals();
 
         InGame_Manager manager = InGame_Manager.instance;
 
@@ -67,25 +61,6 @@ public class Inventory_Manager : MonoBehaviour
 
         input.OnLeftClick += Transfer_Item;
         input.OnHoldLeftClick += Transfer_AllItems;
-    }
-
-    private List<InventorySlot> EmptySlots()
-    {
-        List<InventorySlot> emptySlots = new();
-
-        for (int i = 0; i < _slots.Length; i++)
-        {
-            InventorySlot slot = _slots[i];
-
-            if (slot == null)
-            {
-                Debug.Log("Inspector Slot Field Empty at Index : " + i);
-                return null;
-            }
-
-            if (slot.data == null) emptySlots.Add(slot);
-        }
-        return emptySlots;
     }
 
 
@@ -103,38 +78,36 @@ public class Inventory_Manager : MonoBehaviour
     }
 
 
-    // Load
+    // Item Control
     /// <returns>
     /// Remaining amount as ItemData after load
     /// </returns>
-    public ItemData Load_ItemData(ItemData addData)
+    public ItemData Add_ItemData(ItemData addData)
     {
         if (addData == null) return addData;
+
         Item_ScrObj dataItem = addData.itemScrObj;
+        List<ItemSlot> emptySlots = _slotManager.EmptySlots();;
 
         if (dataItem.itemType != ItemType.place)
         {
-            List<InventorySlot> newSlots = EmptySlots();
-            if (newSlots.Count <= 0) return addData;
+            if (emptySlots.Count <= 0) return addData;
 
-            newSlots[0].Set_Data(addData);
+            emptySlots[0].Set_Data(addData);
             return null;
         }
 
         int maxAmount = dataItem.maxAmount;
         if (maxAmount <= 0) return addData;
 
+        List<ItemSlot> slots = _slotManager.slots;
         int loadCount = addData.amount;
 
-        for (int i = 0; i < _slots.Length; i++)
+        for (int i = 0; i < slots.Count; i++)
         {
-            if (_slots[i] == null)
-            {
-                Debug.Log("Inspector Slot Field Empty at Index : " + i);
-                return addData;
-            }
+            ItemSlot slot = slots[i];
+            if (slot == null) return addData;
 
-            InventorySlot slot = _slots[i];
             ItemData slotData = slot.data;
 
             if (slotData?.itemScrObj != dataItem) continue;
@@ -149,14 +122,13 @@ public class Inventory_Manager : MonoBehaviour
             if (loadCount <= 0) return null;
         }
 
-        List<InventorySlot> emptySlots = EmptySlots();
         if (emptySlots.Count <= 0) return new(dataItem, loadCount);
 
         for (int i = 0; i < emptySlots.Count; i++)
         {
             int loadAmount = Mathf.Min(maxAmount, loadCount);
 
-            emptySlots[i].Set_Data(new(dataItem, loadAmount));
+            emptySlots[i].Set_Data(new ItemData(dataItem, loadAmount));
             loadCount -= loadAmount;
 
             if (loadCount <= 0) return null;
@@ -164,55 +136,17 @@ public class Inventory_Manager : MonoBehaviour
         return new(dataItem, loadCount);
     }
 
-    public void Load_Slots()
-    {
-        for (int i = 0; i < _slots.Length; i++)
-        {
-            InventorySlot slot = _slots[i];
-
-            if (slot == null)
-            {
-                Debug.Log("Inspector Slot Field Empty at Index : " + i);
-                return;
-            }
-
-            slot.Update_Visuals();
-        }
-    }
-
-
-    // Slot Select
-    public void Track_HoveringSlot(InventorySlot hoveringSlot)
-    {
-        _hoveringSlot = hoveringSlot;
-    }
-
-
-    // Item Control
-    public int Total_ItemWeight()
-    {
-        int count = 0;
-
-        for (int i = 0; i < _slots.Length; i++)
-        {
-            ItemData slotItemData = _slots[i].data;
-            if (slotItemData == null) continue;
-
-            count += slotItemData.Item_Weight();
-        }
-        return count;
-    }
-
 
     private void Swap_Items()
     {
+        ItemSlot hoveringSlot = _slotManager.hoveringSlot;
         ItemCursor itemCursor = InGame_Manager.instance.cursor.itemCursor;
-        if (_hoveringSlot.data == null && itemCursor.itemData == null) return;
+        
+        ItemData swapSlotData = hoveringSlot?.data;
+        if (swapSlotData == null && itemCursor.itemData == null) return;
 
-        ItemData swapSlotData = _hoveringSlot?.data;
-
-        _hoveringSlot.Set_Data(itemCursor.itemData);
-        _hoveringSlot.Update_Visuals();
+        hoveringSlot.Set_Data(itemCursor.itemData);
+        hoveringSlot.Update_Visuals();
 
         itemCursor.Set_Data(swapSlotData);
         itemCursor.Update_Visuals();
@@ -220,7 +154,7 @@ public class Inventory_Manager : MonoBehaviour
 
     private void Transfer_Item()
     {
-        InventorySlot hoveringSlot = _hoveringSlot;
+        ItemSlot hoveringSlot = _slotManager.hoveringSlot;
         if (hoveringSlot == null) return;
 
         InGame_Manager manager = InGame_Manager.instance;
@@ -257,7 +191,7 @@ public class Inventory_Manager : MonoBehaviour
     }
     private void Transfer_AllItems()
     {
-        InventorySlot hoveringSlot = _hoveringSlot;
+        ItemSlot hoveringSlot = _slotManager.hoveringSlot;
         if (hoveringSlot == null) return;
 
         ItemData slotItemData = hoveringSlot.data;
@@ -326,8 +260,8 @@ public class Inventory_Manager_Editor : Editor
         {
             if (loadItem == null) return;
 
-            ItemData data = manager.Load_ItemData(new(loadItem, loadAmount));
-            manager.Load_Slots();
+            ItemData data = manager.Add_ItemData(new(loadItem, loadAmount));
+            manager.slotManager.Update_Visuals();
 
             if (data == null) return;
             Debug.Log("Leftover Amount: " + data.amount);

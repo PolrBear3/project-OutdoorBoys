@@ -13,12 +13,24 @@ MonoBehaviour:
   m_Name: Player_Move
   m_EditorClassIdentifier: 
   _clipName: Player_Move
-  _loop: 1
   _defaultSprite: {fileID: 2058226474, guid: cb01ed2ae3c714d4dba399cd0779d6f1, type: 3}
+  _loop: 1
   _clipSpriteDatas:
-  - _clipSprite: {fileID: 2058226474, guid: cb01ed2ae3c714d4dba399cd0779d6f1, type: 3}
+  - _clipName: 
+    _clipSprite: {fileID: 2058226474, guid: cb01ed2ae3c714d4dba399cd0779d6f1, type: 3}
     _durationTime: 0.5
-  - _clipSprite: {fileID: -1033316769, guid: cb01ed2ae3c714d4dba399cd0779d6f1, type: 3}
+    _offSetPosition: {x: 0, y: 0}
+    _rotationValue: 0
+    _transformDurationTime: 0
+  - _clipName: 
+    _clipSprite: {fileID: -1033316769, guid: cb01ed2ae3c714d4dba399cd0779d6f1, type: 3}
     _durationTime: 0.5
-  - _clipSprite: {fileID: -76903804, guid: cb01ed2ae3c714d4dba399cd0779d6f1, type: 3}
+    _offSetPosition: {x: 0, y: 0}
+    _rotationValue: 0
+    _transformDurationTime: 0
+  - _clipName: 
+    _clipSprite: {fileID: -76903804, guid: cb01ed2ae3c714d4dba399cd0779d6f1, type: 3}
     _durationTime: 0.5
+    _offSetPosition: {x: 0, y: 0}
+    _rotationValue: 0
+    _transformDurationTime: 0

@@ -7,11 +7,11 @@ using UnityEngine.InputSystem;
 [CreateAssetMenu(menuName = "New ScriptableObject/ New Scheme!")]
 public class ControlScheme_ScrObj : ScriptableObject
 {
-    [Header("")]
+    [Space(20)]
     [SerializeField] private string _schemeName;
     public string schemeName => _schemeName;
 
-    [Header("")]
+    [Space(20)]
     [SerializeField] private TMP_SpriteAsset _emojiAsset;
     public TMP_SpriteAsset emojiAsset => _emojiAsset;
     

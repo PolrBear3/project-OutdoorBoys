@@ -38,7 +38,7 @@
                     "id": "d89b50f8-de9b-48ce-aec9-84cc0c9421a0",
                     "expectedControlType": "",
                     "processors": "",
-                    "interactions": "Tap,Hold(duration=1)",
+                    "interactions": "Tap,Hold(duration=0.5)",
                     "initialStateCheck": false
                 },
                 {
@@ -47,7 +47,7 @@
                     "id": "79ce13db-bebc-4367-9f83-5c1ec046eac9",
                     "expectedControlType": "",
                     "processors": "",
-                    "interactions": "Tap,Hold(duration=1)",
+                    "interactions": "Tap,Hold(duration=0.5)",
                     "initialStateCheck": false
                 },
                 {
@@ -212,6 +212,118 @@
                     "isPartOfComposite": false
                 }
             ]
+        },
+        {
+            "name": "uiMenu",
+            "id": "af8569ef-0e8c-4262-874a-b202b91b469d",
+            "actions": [
+                {
+                    "name": "OnNavigate",
+                    "type": "Value",
+                    "id": "daff424c-6afd-45fd-a308-4c0861412a03",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": true
+                },
+                {
+                    "name": "Select",
+                    "type": "Button",
+                    "id": "74ebbce7-7cd3-4332-9f06-87c08afbdc10",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "Tap,Hold(duration=0.5)",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "Exit",
+                    "type": "Button",
+                    "id": "48f521a4-9a62-47c2-b65e-126159a89094",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "83fb422e-bc44-458c-861a-e5acae660c14",
+                    "path": "<Keyboard>/escape",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";PC",
+                    "action": "Exit",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "2D Vector",
+                    "id": "341ad1b7-fb9a-4326-8b26-611ae45560cc",
+                    "path": "2DVector",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "OnNavigate",
+                    "isComposite": true,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "up",
+                    "id": "9b3c865b-4889-465e-bd73-0131a8ef89ef",
+                    "path": "<Keyboard>/w",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";PC",
+                    "action": "OnNavigate",
+                    "isComposite": false,
+                    "isPartOfComposite": true
+                },
+                {
+                    "name": "down",
+                    "id": "f6db2b6d-ed66-4b7d-b5fc-3b605a250ac1",
+                    "path": "<Keyboard>/s",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";PC",
+                    "action": "OnNavigate",
+                    "isComposite": false,
+                    "isPartOfComposite": true
+                },
+                {
+                    "name": "left",
+                    "id": "2bd7d688-13c0-4376-88a6-c7f83d710aaa",
+                    "path": "<Keyboard>/a",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";PC",
+                    "action": "OnNavigate",
+                    "isComposite": false,
+                    "isPartOfComposite": true
+                },
+                {
+                    "name": "right",
+                    "id": "486edb21-ae30-470a-a1e1-4a73e0c9a85b",
+                    "path": "<Keyboard>/d",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";PC",
+                    "action": "OnNavigate",
+                    "isComposite": false,
+                    "isPartOfComposite": true
+                },
+                {
+                    "name": "",
+                    "id": "576073f0-e9b5-4453-8977-585ef3e69ec8",
+                    "path": "<Mouse>/leftButton",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";PC",
+                    "action": "Select",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                }
+            ]
         }
     ],
     "controlSchemes": [
@@ -226,6 +338,17 @@
                 },
                 {
                     "devicePath": "<Mouse>",
+                    "isOptional": false,
+                    "isOR": false
+                }
+            ]
+        },
+        {
+            "name": "Switch",
+            "bindingGroup": "Switch",
+            "devices": [
+                {
+                    "devicePath": "<Gamepad>",
                     "isOptional": false,
                     "isOR": false
                 }

@@ -17,25 +17,28 @@ public class Input_Controller : MonoBehaviour
 
     [SerializeField] private ControlScheme_ScrObj[] _schemes;
 
-    
-    private ControlScheme_ScrObj _currentScheme;
-    public ControlScheme_ScrObj currentScheme => _currentScheme;
 
+    // Current Datas
     private string _currentSchemeName;
 
-    private List<Input_Manager> _activeInputManagers = new();
-    public List<Input_Manager> activeInputManagers => _activeInputManagers;
-   
+    private ControlScheme_ScrObj _currentControlScheme;
+    public ControlScheme_ScrObj currentControlScheme => _currentControlScheme;
+
     private List<string> _actionMaps = new();
     private HashSet<Guid> _inputGateIDs = new();
 
+    private List<UIMenu_InputController> _toggledMenuInputs = new();
+    public List<UIMenu_InputController> toggledMenuInputs => _toggledMenuInputs;
 
-    public Action OnSchemeUpdate;
+
+    // Observers
     public Action OnActionMapUpdate;
-
+    public Action OnSchemeUpdate;
 
     public Action OnAnyInput;
 
+
+    // Action Map inGame
     public Action<Vector2> OnMovement;
     public Action<Vector2> OnCursorControl;
 
@@ -57,16 +60,17 @@ public class Input_Controller : MonoBehaviour
     public Action OnCancel;
 
 
-
     // MonoBehaviour
     private void Awake()
     {
         instance = this;
 
-        Set_ActionMaps();
-        Handle_SchemeUpdate(_playerInput);
+        for (int i = 0; i < _playerInput.actions.actionMaps.Count; i++)
+        {
+            _actionMaps.Add(_playerInput.actions.actionMaps[i].name);
+        }
   
-        // subscription
+        Handle_SchemeUpdate(_playerInput);
         _playerInput.onControlsChanged += Handle_SchemeUpdate;
     }
 
@@ -77,79 +81,11 @@ public class Input_Controller : MonoBehaviour
     
     private void OnDestroy()
     {
-        // subscription
         _playerInput.onControlsChanged -= Handle_SchemeUpdate;
-    }
-    
-
-    // Scheme Control
-    private void CurrentScheme_Update()
-    {
-        if (_currentSchemeName == _playerInput.currentControlScheme) return;
-        _currentSchemeName = _playerInput.currentControlScheme;
-        
-        Update_CurrentScheme(_currentSchemeName);
-    }
-    
-    private void Handle_SchemeUpdate(PlayerInput playerInput)
-    {
-        Update_CurrentScheme(_playerInput.currentControlScheme);
-    }
-    
-    
-    public void Update_CurrentScheme(string schemeName)
-    {
-        _currentScheme = ControlScheme(schemeName);
-        
-        if (_currentScheme == null)
-        {
-            Debug.Log("Update Scheme Not Found!");
-            return;
-        }
-
-        OnSchemeUpdate?.Invoke();
-
-        Debug.Log("_currentScheme: " + _currentScheme.name + "/ _playerInput.currentControlScheme: " + _playerInput.currentControlScheme);
-    }
-    
-    public void Update_EmojiAsset(TextMeshProUGUI text)
-    {
-        text.spriteAsset = _currentScheme.emojiAsset;
-    }
-    
-    
-    private ControlScheme_ScrObj ControlScheme(string name)
-    {
-        for (int i = 0; i < _schemes.Length; i++)
-        {
-            if (_schemes[i].schemeName != name) continue;
-            return _schemes[i];
-        }
-        return null;
-    }
-    
-    public GameObject CurrentScheme_ActionKey(InputActionReference reference)
-    {
-        ActionKey_Data[] datas = _currentScheme.actionKeyDatas;
-
-        for (int i = 0; i < datas.Length; i++)
-        {
-            if (reference != datas[i].actionRef) continue;
-            return datas[i].actionKey;
-        }
-        return null;
     }
 
 
     // Action Map
-    private void Set_ActionMaps()
-    {
-        for (int i = 0; i < _playerInput.actions.actionMaps.Count; i++)
-        {
-            _actionMaps.Add(_playerInput.actions.actionMaps[i].name);
-        }
-    }
-
     public void Update_ActionMap(int indexNum)
     {
         if (indexNum < 0 || indexNum >= _actionMaps.Count) return;
@@ -161,7 +97,6 @@ public class Input_Controller : MonoBehaviour
 
         OnActionMapUpdate?.Invoke();
     }
-
 
     public int Current_ActionMapNum()
     {
@@ -175,9 +110,48 @@ public class Input_Controller : MonoBehaviour
         return 0;
     }
 
+
+    // Scheme
+    public void Update_CurrentScheme(string schemeName)
+    {
+        _currentControlScheme = ControlScheme(schemeName);
+
+        if (_currentControlScheme == null)
+        {
+            Debug.Log("Update Scheme Not Found!");
+            return;
+        }
+
+        OnSchemeUpdate?.Invoke();
+
+        Debug.Log("_currentScheme: " + _currentControlScheme.name + "/ _playerInput.currentControlScheme: " + _playerInput.currentControlScheme);
+    }
+
+    public void Update_EmojiAsset(TextMeshProUGUI text)
+    {
+        text.spriteAsset = _currentControlScheme.emojiAsset;
+    }
+
+
+    // Scheme Auto Update
+    private void CurrentScheme_Update()
+    {
+        if (_currentSchemeName == _playerInput.currentControlScheme) return;
+        _currentSchemeName = _playerInput.currentControlScheme;
+        
+        Update_CurrentScheme(_currentSchemeName);
+    }
+    
+    private void Handle_SchemeUpdate(PlayerInput playerInput)
+    {
+        Update_CurrentScheme(_playerInput.currentControlScheme);
+    }
+
+
+    // Datas
     public InputActionReference ActionReference(string actionName)
     {
-        ActionKey_Data[] datas = _currentScheme.actionKeyDatas;
+        ActionKey_Data[] datas = _currentControlScheme.actionKeyDatas;
 
         for (int i = 0; i < datas.Length; i++)
         {
@@ -188,16 +162,30 @@ public class Input_Controller : MonoBehaviour
         return null;
     }
 
-
-    // Input_Manager
-    private Input_Manager RecentUI_InputManager()
+    private ControlScheme_ScrObj ControlScheme(string name)
     {
-        if (_activeInputManagers.Count <= 0) return null;
-        return _activeInputManagers[_activeInputManagers.Count - 1];
+        for (int i = 0; i < _schemes.Length; i++)
+        {
+            if (_schemes[i].schemeName != name) continue;
+            return _schemes[i];
+        }
+        return null;
+    }
+
+    public GameObject CurrentScheme_ActionKey(InputActionReference reference)
+    {
+        ActionKey_Data[] datas = _currentControlScheme.actionKeyDatas;
+
+        for (int i = 0; i < datas.Length; i++)
+        {
+            if (reference != datas[i].actionRef) continue;
+            return datas[i].actionKey;
+        }
+        return null;
     }
 
 
-    // Input Action
+    // Input Actions
     public void AnyInput(InputAction.CallbackContext context)
     {
         if (!context.performed) return;
@@ -206,6 +194,7 @@ public class Input_Controller : MonoBehaviour
     }
 
 
+    // Action Map inGame
     public void CursorControl(InputAction.CallbackContext context)
     {
         // if (_isHolding) return;
@@ -213,11 +202,6 @@ public class Input_Controller : MonoBehaviour
 
         Vector2 positionInput = context.ReadValue<Vector2>();
         OnCursorControl?.Invoke(positionInput);
-
-        Input_Manager inputManager = RecentUI_InputManager();
-        if (inputManager == null) return;
-
-        RecentUI_InputManager().OnCursorControl?.Invoke(positionInput);
     }
 
     public void LeftClick(InputAction.CallbackContext context)
@@ -303,6 +287,56 @@ public class Input_Controller : MonoBehaviour
         if (context.performed == false) return;
         OnCancel?.Invoke();
     }
+
+
+    // Action Map uiMenu
+    private bool UIMenuInput_Toggled(out UIMenu_InputController recentInput)
+    {
+        if (_toggledMenuInputs.Count <= 0)
+        {
+            recentInput = null;
+            return false;
+        }
+        recentInput = _toggledMenuInputs[_toggledMenuInputs.Count - 1];
+        return true;
+    }
+
+
+    public void Navigate(InputAction.CallbackContext context)
+    {
+        if (UIMenuInput_Toggled(out UIMenu_InputController recentInput) == false) return;
+        if (!context.performed) return;
+
+        Vector2 directionInput = context.ReadValue<Vector2>();
+        recentInput.OnNavigate?.Invoke(directionInput);
+    }
+
+    public void Select(InputAction.CallbackContext context)
+    {
+        if (UIMenuInput_Toggled(out UIMenu_InputController recentInput) == false) return;
+
+        Guid actionID = context.action.id;
+
+        if (context.started && _inputGateIDs.Add(actionID)) recentInput.OnSelectStart?.Invoke();
+        if (!context.performed) return;
+
+        _inputGateIDs.Remove(actionID);
+
+        if (context.interaction is UnityEngine.InputSystem.Interactions.HoldInteraction)
+        {
+            recentInput.OnHoldSelect?.Invoke();
+            return;
+        }
+        recentInput.OnSelect?.Invoke();
+    }
+
+    public void Exit(InputAction.CallbackContext context)
+    {
+        if (UIMenuInput_Toggled(out UIMenu_InputController recentInput) == false) return;
+        if (context.performed == false) return;
+
+        recentInput.OnExit?.Invoke();
+    }
 }
 
 
@@ -321,7 +355,7 @@ public class Input_Controller_Inspector : Editor
 
         if (GUILayout.Button("Toggle Scheme"))
         {
-            if (controller.currentScheme.schemeName == "PC")
+            if (controller.currentControlScheme.schemeName == "PC")
             {
                 controller.Update_CurrentScheme("GamePad");
                 return;

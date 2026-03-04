@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 
-public class SchemeStringEvent : MonoBehaviour
+public class Text_EmojiAsset_Updater : MonoBehaviour
 {
     [SerializeField] private TextMeshProUGUI _updateText;
     
