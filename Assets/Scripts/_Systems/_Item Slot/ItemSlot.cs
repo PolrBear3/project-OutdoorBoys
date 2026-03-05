@@ -51,7 +51,11 @@ public class ItemSlot : MonoBehaviour
 
     public void Set_Data(ItemData setData)
     {
-        _data = setData;
+        _data = setData != null && setData.amount > 0 ? setData : null;
+    }
+    public void Clear_Data()
+    {
+        _data = null;
     }
 
     public void UpdateManager_HoveringSlot()
@@ -72,7 +76,7 @@ public class ItemSlot : MonoBehaviour
 
     public void Update_AmountText()
     {
-        bool toggleText = _data != null && _data.amount > 0;
+        bool toggleText = _data != null && _data.amount > 1;
         _amountText.gameObject.SetActive(toggleText);
 
         if (toggleText == false) return;

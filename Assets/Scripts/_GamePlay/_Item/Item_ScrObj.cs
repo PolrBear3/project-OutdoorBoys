@@ -45,4 +45,70 @@ public class Item_ScrObj : ScriptableObject
 
     [SerializeField][Range(0, 10)]  private int _triggerRange;
     public int triggerRange => _triggerRange;
+
+    [Space(20)]
+    [SerializeField] private ItemData[] _itemIngredientDatas;
+
+
+    // _itemIngredientDatas
+    public List<ItemData> Item_IngredientDatas()
+    {
+        List<ItemData> combinedDatas = new();
+
+        for (int i = 0; i < _itemIngredientDatas.Length; i++)
+        {
+            ItemData ingredientData = _itemIngredientDatas[i];
+            Item_ScrObj ingredientItem = ingredientData.itemScrObj;
+            int ingredientAmount = Mathf.Max(1, ingredientData.amount);
+
+            bool duplicateFound = false;
+            
+            for (int j = 0; j < combinedDatas.Count; j++)
+            {
+                ItemData combinedData = combinedDatas[j];
+                if (ingredientData.itemScrObj != combinedData.itemScrObj) continue;
+
+                combinedData.Update_CurrentAmount(combinedData.amount + ingredientAmount);
+                duplicateFound = true;
+                break;
+            }
+
+            if (duplicateFound) continue;
+            combinedDatas.Add(new(ingredientItem, ingredientAmount));
+        }
+
+        return combinedDatas;
+    }
+
+    public int Available_CraftCount(List<ItemData> checkItemDatas)
+    {
+        List<ItemData> ingredientDatas = new(Item_IngredientDatas());
+        if (ingredientDatas.Count <= 0) return 0;
+
+        int maxCraftCount = int.MaxValue;
+
+        for (int i = 0; i < ingredientDatas.Count; i++)
+        {
+            ItemData ingredientData = ingredientDatas[i];
+            Item_ScrObj ingredientItem = ingredientData.itemScrObj;
+
+            int haveAmount = 0;
+
+            for (int j = 0; j < checkItemDatas.Count; j++)
+            {
+                ItemData checkItemData = checkItemDatas[j];
+                if (checkItemData?.itemScrObj != ingredientItem) continue;
+
+                haveAmount += checkItemData.amount;
+            }
+
+            if (haveAmount < ingredientData.amount) return 0;
+            int craftByThisIngredient = haveAmount / ingredientData.amount;
+
+            if (craftByThisIngredient >= maxCraftCount) continue;
+            maxCraftCount = craftByThisIngredient;
+        }
+
+        return maxCraftCount;
+    }
 }

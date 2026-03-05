@@ -5,10 +5,10 @@ using UnityEngine;
 [System.Serializable]
 public class ItemData
 {
-    private Item_ScrObj _itemScrObj;
+    [SerializeField] private Item_ScrObj _itemScrObj;
     public Item_ScrObj itemScrObj => _itemScrObj;
     
-    private int _amount;
+    [SerializeField][Range(1, 100)] private int _amount;
     public int amount => _amount;
 
 
@@ -16,7 +16,7 @@ public class ItemData
     public ItemData(Item_ScrObj setItem, int setAmount)
     {
         _itemScrObj = setItem;
-        _amount = Mathf.Max(0, setAmount);
+        _amount = setAmount;
     }
 
 

@@ -7,6 +7,8 @@ using UnityEngine;
 public class Movement_Controller : MonoBehaviour
 {
     [Space(20)]
+    [SerializeField] private Vector2 _offset;
+
     [SerializeField][Range(0, 10)] private float _moveDuration;
     public float moveDuration => _moveDuration;
 
@@ -56,7 +58,7 @@ public class Movement_Controller : MonoBehaviour
         if (LeanTween.isTweening(gameObject)) return;
 
         Tile previousTile = _currentTile;
-        Vector2 destination = destinationTile.setPosition.position;
+        Vector2 destination = (Vector2)destinationTile.setPosition.position + _offset;
 
         _currentTile = destinationTile;
         _currentTile.Toggle_Transparency(true);

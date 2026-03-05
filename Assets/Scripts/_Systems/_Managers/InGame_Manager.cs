@@ -22,6 +22,9 @@ public class InGame_Manager : MonoBehaviour
     [SerializeField] private Inventory_Manager _inventory;
     public Inventory_Manager inventory => _inventory;
 
+    [SerializeField] private ItemCrafting_Manager _itemCrafting;
+    public ItemCrafting_Manager itemCrafting => _itemCrafting;
+
 
     [Space(20)]
     [SerializeField] private Tile_Generator _tileGenerator;

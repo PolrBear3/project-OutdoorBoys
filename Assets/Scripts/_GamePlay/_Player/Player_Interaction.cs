@@ -100,7 +100,7 @@ public class Player_Interaction : MonoBehaviour
     {
         InGame_Manager manager = InGame_Manager.instance;
 
-        ItemData currentItem = manager.cursor.itemCursor.itemData;
+        ItemData currentItem = manager.cursor.itemCursor.data;
         bool hasInventoryBagpack = currentItem != null && currentItem.itemScrObj == _controller.inventoryBagpack;
 
         int currentInventoryWeight = hasInventoryBagpack ? manager.inventory.slotManager.Total_ItemWeight() : 0;

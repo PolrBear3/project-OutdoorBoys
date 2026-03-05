@@ -1,9 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEditor;
-using UnityEditor.Localization.Plugins.XLIFF.V20;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -19,7 +17,7 @@ public class Inventory_Manager : MonoBehaviour
 
 
     [HideInInspector] public Item_ScrObj loadItem;
-    [HideInInspector][Range(0, 100)] public int loadItemAmount;
+    [HideInInspector] public int loadItemAmount;
 
 
     // MonoBehaviour
@@ -49,9 +47,6 @@ public class Inventory_Manager : MonoBehaviour
     // Data
     public void Set_Data()
     {
-        Add_ItemData(new(loadItem, loadItemAmount));
-        _slotManager.Update_Visuals();
-
         InGame_Manager manager = InGame_Manager.instance;
 
         manager.player.movement.OnMovement += Toggle_Update;
@@ -143,9 +138,9 @@ public class Inventory_Manager : MonoBehaviour
         ItemCursor itemCursor = InGame_Manager.instance.cursor.itemCursor;
         
         ItemData swapSlotData = hoveringSlot?.data;
-        if (swapSlotData == null && itemCursor.itemData == null) return;
+        if (swapSlotData == null && itemCursor.data == null) return;
 
-        hoveringSlot.Set_Data(itemCursor.itemData);
+        hoveringSlot.Set_Data(itemCursor.data);
         hoveringSlot.Update_Visuals();
 
         itemCursor.Set_Data(swapSlotData);
@@ -163,7 +158,7 @@ public class Inventory_Manager : MonoBehaviour
         Item_ScrObj pickupItem = slotItemData?.itemScrObj;
 
         ItemCursor itemCursor = manager.cursor.itemCursor;
-        ItemData cursorItemData = itemCursor.itemData;
+        ItemData cursorItemData = itemCursor.data;
 
         bool nonPlaceItem = slotItemData != null && pickupItem.itemType != ItemType.place;
 
@@ -198,7 +193,7 @@ public class Inventory_Manager : MonoBehaviour
         Item_ScrObj pickupItem = slotItemData?.itemScrObj;
 
         ItemCursor itemCursor = InGame_Manager.instance.cursor.itemCursor;
-        ItemData cursorItemData = itemCursor.itemData;
+        ItemData cursorItemData = itemCursor.data;
 
         bool nonPlaceItem = slotItemData != null && pickupItem.itemType != ItemType.place;
 
@@ -242,8 +237,6 @@ public class Inventory_Manager_Editor : Editor
 
     public override void OnInspectorGUI()
     {
-        Inventory_Manager manager = (Inventory_Manager)target;
-
         serializedObject.Update();
         DrawDefaultInspector();
 
@@ -260,8 +253,10 @@ public class Inventory_Manager_Editor : Editor
         {
             if (loadItem == null) return;
 
-            ItemData data = manager.Add_ItemData(new(loadItem, loadAmount));
-            manager.slotManager.Update_Visuals();
+            Inventory_Manager inventory = InGame_Manager.instance.inventory;
+            
+            ItemData data = inventory.Add_ItemData(new(loadItem, loadAmount));
+            inventory.slotManager.Update_Visuals();
 
             if (data == null) return;
             Debug.Log("Leftover Amount: " + data.amount);

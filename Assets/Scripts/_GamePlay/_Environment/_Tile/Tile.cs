@@ -117,6 +117,16 @@ public class Tile : MonoBehaviour
 
         Destroy(placingItem.gameObject);
     }
+    public void RemoveUpdate_PlacedItems()
+    {
+        for (int i = _placedItems.Count - 1; i >= 0 ; i--)
+        {
+            PlaceableItem placedItem = _placedItems[i];
+
+            if (placedItem.data.amount > 0) continue;
+            Remove_PlacedItem(placedItem);
+        }
+    }
 
 
     public int Placed_StackableItems()
@@ -144,16 +154,6 @@ public class Tile : MonoBehaviour
     }
 
 
-    public PlaceableItem PlacedItem(Item_ScrObj targetItem)
-    {
-        for (int i = 0; i < _placedItems.Count; i++)
-        {
-            if (targetItem != _placedItems[i].data.itemScrObj) continue;
-            return _placedItems[i];
-        }
-        return null;
-    }
-
     public int Placed_ItemCount(Item_ScrObj targetItem)
     {
         int count = 0;
@@ -166,5 +166,26 @@ public class Tile : MonoBehaviour
             count += placedItemData.amount;
         }
         return count;
+    }
+
+    public List<ItemData> Placed_ItemDatas()
+    {
+        List<ItemData> placedDatas = new();
+
+        for (int i = 0; i < _placedItems.Count; i++)
+        {
+            placedDatas.Add(_placedItems[i].data);
+        }
+        return placedDatas;
+    }
+
+    public PlaceableItem PlacedItem(Item_ScrObj targetItem)
+    {
+        for (int i = 0; i < _placedItems.Count; i++)
+        {
+            if (targetItem != _placedItems[i].data.itemScrObj) continue;
+            return _placedItems[i];
+        }
+        return null;
     }
 }

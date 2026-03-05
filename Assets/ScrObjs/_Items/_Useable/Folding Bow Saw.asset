@@ -23,3 +23,8 @@ MonoBehaviour:
   _itemWeight: 0
   _stackable: 0
   _triggerRange: 1
+  _itemIngredientDatas:
+  - _itemScrObj: {fileID: 11400000, guid: 86e876e6c7e9c467db97ab95dfa547ce, type: 2}
+    _amount: 1
+  - _itemScrObj: {fileID: 11400000, guid: 1f0f853271bde41e785e0d219c0cdbe3, type: 2}
+    _amount: 2

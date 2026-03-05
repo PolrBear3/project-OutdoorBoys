@@ -11,21 +11,24 @@ public class ItemSlot_Manager : MonoBehaviour
     private ItemSlot _hoveringSlot;
     public ItemSlot hoveringSlot => _hoveringSlot;
 
+    public Action<ItemSlot> OnSlotHover;
+    public Action<ItemSlot> OnSlotSelect;
+
 
     // MonoBehaviour
     private void Awake()
     {
-        EventBus_Manager.Register(EventBus.AwakeLoad, Set_Data);
+        EventBus_Manager.Register(EventBus.AwakeLoad, Set_Datas);
     }
     
     private void OnDestroy()
     {
-        EventBus_Manager.UnRegister(EventBus.AwakeLoad, Set_Data);
+        EventBus_Manager.UnRegister(EventBus.AwakeLoad, Set_Datas);
     }
 
 
     // Data
-    private void Set_Data()
+    private void Set_Datas()
     {
         for (int i = 0; i < _slots.Count; i++)
         {
@@ -33,6 +36,15 @@ public class ItemSlot_Manager : MonoBehaviour
 
             slot.Set_Data(this);
             slot.Update_Visuals();
+        }
+    }
+
+    public void Refresh_Datas()
+    {
+        for (int i = 0; i < _slots.Count; i++)
+        {
+            ItemSlot slot = _slots[i];
+            slot.Set_Data(slot.data);
         }
     }
 
@@ -49,6 +61,20 @@ public class ItemSlot_Manager : MonoBehaviour
             emptySlots.Add(slot);
         }
         return emptySlots;
+    }
+
+    public List<ItemData> Slot_ItemDatas()
+    {
+        List<ItemData> itemDatas = new();
+
+        for (int i = 0; i < _slots.Count; i++)
+        {
+            ItemData slotData = _slots[i].data;
+            if (slotData == null) continue;
+
+            itemDatas.Add(slotData);
+        }
+        return itemDatas;
     }
 
     public int Total_ItemWeight()

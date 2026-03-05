@@ -12,8 +12,8 @@ public class ItemCursor : MonoBehaviour
     public Cursor cursor => _cursor;
 
     
-    private ItemData _itemData;
-    public ItemData itemData => _itemData;
+    private ItemData _data;
+    public ItemData data => _data;
 
 
     // MonoBehaviour
@@ -59,9 +59,9 @@ public class ItemCursor : MonoBehaviour
     
     public void Set_Data(ItemData setItemData)
     {
-        _itemData = setItemData;
+        _data = setItemData != null && setItemData.amount > 0 ? setItemData : null;
 
-        int updateRange = setItemData != null ? setItemData.itemScrObj.triggerRange : 0;
+        int updateRange = _data != null ? _data.itemScrObj.triggerRange : 0;
         _cursor.Update_TilePointerRange(updateRange);
 
         Load_UseItem();
@@ -75,28 +75,28 @@ public class ItemCursor : MonoBehaviour
             return;
         }
 
-        if (_itemData == null || _itemData.itemScrObj != updateItemData.itemScrObj)
+        if (_data == null || _data.itemScrObj != updateItemData.itemScrObj)
         {
             Set_Data(updateItemData);
             return;
         }
 
-        _itemData.Update_CurrentAmount(updateItemData.amount);
+        _data.Update_CurrentAmount(updateItemData.amount);
     }
 
     public void Update_Visuals()
     {
         // sprite
-        _cursor.Update_PointerSprite(_itemData?.itemScrObj.inventorySprite);
-        InGame_Manager.instance.player.interaction.Update_IndicationIcon(_itemData?.itemScrObj.microSprite);
+        _cursor.Update_PointerSprite(_data?.itemScrObj.inventorySprite);
+        InGame_Manager.instance.player.interaction.Update_IndicationIcon(_data?.itemScrObj.microSprite);
 
         // amount text
-        if (_itemData == null)
+        if (_data == null || _data.amount <= 1)
         {
             _cursor.amountText.gameObject.SetActive(false);
             return;
         }
-        _cursor.Update_AmountText(_itemData.amount);
+        _cursor.Update_AmountText(_data.amount);
     }
 
 
@@ -106,12 +106,12 @@ public class ItemCursor : MonoBehaviour
         List<PlaceableItem> placedItems = selectTile.placedItems;
         if (placedItems.Count <= 0) return;
 
-        Item_ScrObj pickupItem = _itemData != null ? _itemData.itemScrObj : placedItems[0].data.itemScrObj;
+        Item_ScrObj pickupItem = _data != null ? _data.itemScrObj : placedItems[0].data.itemScrObj;
         int maxAmount = pickupItem.maxAmount;
 
         for (int i = placedItems.Count - 1; i >= 0 ; i--)
         {
-            int currentAmount = _itemData != null ? _itemData.amount : 0;
+            int currentAmount = _data != null ? _data.amount : 0;
             if (currentAmount >= maxAmount) return;
 
             PlaceableItem placedItem = placedItems[i];
@@ -130,14 +130,14 @@ public class ItemCursor : MonoBehaviour
 
     private void Return_PickupItem()
     {
-        if (_itemData == null) return;
+        if (_data == null) return;
 
         Inventory_Manager inventory = InGame_Manager.instance.inventory;
         if (inventory.Toggled() == false) return;
 
-        Item_ScrObj returnItem = _itemData.itemScrObj;
+        Item_ScrObj returnItem = _data.itemScrObj;
 
-        ItemData leftOverData = inventory.Add_ItemData(_itemData);
+        ItemData leftOverData = inventory.Add_ItemData(_data);
         if (leftOverData != null && returnItem.itemType != ItemType.place) return;
 
         inventory.slotManager.Update_Visuals();
@@ -147,16 +147,16 @@ public class ItemCursor : MonoBehaviour
 
     private void Place_Item(Tile selectTile)
     {
-        if (_itemData == null)
+        if (_data == null)
         {
             Pickup_Item(selectTile);
             return;
         }
 
-        if (_itemData.itemScrObj.itemType != ItemType.place) return; 
+        if (_data.itemScrObj.itemType != ItemType.place) return; 
 
         List<PlaceableItem> placedItems = selectTile.placedItems;
-        Item_ScrObj currentItem = _itemData.itemScrObj;
+        Item_ScrObj currentItem = _data.itemScrObj;
 
         for (int i = 0; i < placedItems.Count; i++)
         {
@@ -167,8 +167,8 @@ public class ItemCursor : MonoBehaviour
 
             placedItemData.Update_CurrentAmount(placedItemData.amount + 1);
             
-            Update_Data(new(currentItem, _itemData.amount - 1));
-            if (_itemData.amount > 0) return;
+            Update_Data(new(currentItem, _data.amount - 1));
+            if (_data.amount > 0) return;
             Set_Data(null);
             
             return;
@@ -191,26 +191,26 @@ public class ItemCursor : MonoBehaviour
 
         selectTile.Track_PlacingItem(placedItem);
 
-        Update_Data(new(currentItem, _itemData.amount - 1));
-        if (_itemData.amount > 0) return;
+        Update_Data(new(currentItem, _data.amount - 1));
+        if (_data.amount > 0) return;
         Set_Data(null);
     }
     
     private void Place_AllItem(Tile selectTile)
     {
-        if (_itemData == null)
+        if (_data == null)
         {
             Pickup_Item(selectTile);
             return;
         }
 
-        int placeCount = _itemData.amount;
+        int placeCount = _data.amount;
 
         while (placeCount > 0)
         {
             Place_Item(selectTile);
 
-            if (_itemData == null) return;
+            if (_data == null) return;
             placeCount--;
         }
     }
@@ -220,25 +220,25 @@ public class ItemCursor : MonoBehaviour
     {
         Player_Interaction player = InGame_Manager.instance.player.interaction;
 
-        bool isUseableITem = _itemData != null && _itemData.itemScrObj.itemType == ItemType.use;
+        bool itemLoadReady = _data != null && _data.amount > 0 && _data.itemScrObj.itemType == ItemType.use;
 
-        GameObject loadItem = isUseableITem ? _itemData.itemScrObj.itemPrefab : null;
+        GameObject loadItem = itemLoadReady ? _data.itemScrObj.itemPrefab : null;
         player.Load_ItemPrefab(loadItem);
 
         if (loadItem == null || player.currentItemPrefab.TryGetComponent(out UseableItem useItem) == false) return;
-        useItem.Set_Data(_itemData);
+        useItem.Set_Data(_data);
     }
 
     private void Use_Item(Tile selectTile)
     {
-        if (_itemData == null) return;
-        Item_ScrObj currentItem = _itemData.itemScrObj;
+        if (_data == null) return;
+        Item_ScrObj currentItem = _data.itemScrObj;
 
         if (currentItem.itemType != ItemType.use) return;
 
         GameObject currentUseItem = InGame_Manager.instance.player.interaction.currentItemPrefab;
         if (currentUseItem.TryGetComponent(out UseableItem useItem) == false) return;
 
-        useItem.Use(selectTile);
+        useItem.OnUse?.Invoke(selectTile);
     }
 }
