@@ -15,21 +15,37 @@ public class ItemCrafting_Manager : MonoBehaviour
     {
         EventBus_Manager.Register(EventBus.AwakeLoad, Set_Data);
     }
-    
+
     private void OnDestroy()
     {
         EventBus_Manager.UnRegister(EventBus.AwakeLoad, Set_Data);
 
-        Input_Controller input = Input_Controller.instance;
-        input.OnLeftClick -= Craft_Item;
+        _slotManager.OnTargetSlotSelect -= Craft_Item;
+
+        InGame_Manager manager = InGame_Manager.instance;
+        Inventory_Manager inventory = manager.inventory;
+
+        inventory.OnItemAdded -= Update_CraftItems;
+        inventory.slotManager.OnSlotSelect -= Update_CraftItems;
+
+        manager.tilesController.OnTileSelect -= Update_CraftItems;
+        manager.player.movement.OnMovement -= Update_CraftItems;
     }
 
 
     // Component
     private void Set_Data()
     {
-        Input_Controller input = Input_Controller.instance;
-        input.OnLeftClick += Craft_Item;
+        _slotManager.OnTargetSlotSelect += Craft_Item;
+
+        InGame_Manager manager = InGame_Manager.instance;
+        Inventory_Manager inventory = manager.inventory;
+
+        inventory.OnItemAdded += Update_CraftItems;
+        inventory.slotManager.OnSlotSelect += Update_CraftItems;
+
+        manager.tilesController.OnTileSelect += Update_CraftItems;
+        manager.player.movement.OnMovement += Update_CraftItems;
     }
 
 
@@ -54,7 +70,7 @@ public class ItemCrafting_Manager : MonoBehaviour
 
         return allCurrentDatas;
     }
-    
+
     public void Update_CraftItems()
     {
         Item_ScrObj[] allItems = Data_Manager.instance.allItems;
@@ -66,7 +82,7 @@ public class ItemCrafting_Manager : MonoBehaviour
         {
             Item_ScrObj craftItem = allItems[i];
             int craftCount = craftItem.Available_CraftCount(currentItemDatas);
-            
+
             if (craftCount <= 0) continue;
             craftAvailableItemDatas.Add(new(craftItem, craftCount));
         }
@@ -85,18 +101,19 @@ public class ItemCrafting_Manager : MonoBehaviour
             }
             slot.Set_Data(craftAvailableItemDatas[i]);
         }
-
         _slotManager.Update_Visuals();
+
+        Debug.Log("update craft items");
     }
 
-    private void Craft_Item()
+    private void Craft_Item(ItemSlot craftItemSlot)
     {
-        ItemSlot hoveringSlot = _slotManager.hoveringSlot;
-        if (hoveringSlot == null) return;
+        ItemData slotItemData = craftItemSlot.data;
+        if (slotItemData == null) return;
 
         List<ItemData> currentDatas = AllCurrent_ItemDatas();
 
-        Item_ScrObj craftItem = hoveringSlot.data.itemScrObj;
+        Item_ScrObj craftItem = slotItemData.itemScrObj;
         List<ItemData> craftIngredientDatas = new(craftItem.Item_IngredientDatas());
 
         for (int i = 0; i < craftIngredientDatas.Count; i++)
@@ -137,7 +154,5 @@ public class ItemCrafting_Manager : MonoBehaviour
 
         inventory.Add_ItemData(new(craftItem, craftAmount));
         inventorySlotManager.Update_Visuals();
-
-        Update_CraftItems();
     }
 }

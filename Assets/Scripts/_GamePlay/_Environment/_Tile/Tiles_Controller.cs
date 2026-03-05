@@ -9,10 +9,9 @@ public class Tiles_Controller : MonoBehaviour
     public List<Tile> currentTiles => _currentTiles;
 
 
-    public Action<Tile> OnTileSelect;
-    public Action<Tile> OnTileHoldSelect;
-
-    public Action OnTileSelectComplete;
+    public Action<Tile> OnTargetTileSelect;
+    public Action<Tile> OnTargetTileHoldSelect;
+    public Action OnTileSelect;
 
 
     // MonoBehaviour
@@ -105,21 +104,21 @@ public class Tiles_Controller : MonoBehaviour
     public void Select_Tile()
     {
         Tile pointingTile = Current_Tile();
- 
+
         if (pointingTile == null) return;
 
-        OnTileSelect?.Invoke(pointingTile);
-        OnTileSelectComplete?.Invoke();
+        OnTargetTileSelect?.Invoke(pointingTile);
+        OnTileSelect?.Invoke();
     }
 
     public void HoldSelect_Tile()
     {
         Tile pointingTile = Current_Tile();
-        
+
         if (pointingTile == null) return;
 
-        OnTileHoldSelect?.Invoke(pointingTile);
-        OnTileSelectComplete?.Invoke();
+        OnTargetTileHoldSelect?.Invoke(pointingTile);
+        OnTileSelect?.Invoke();
     }
 
 

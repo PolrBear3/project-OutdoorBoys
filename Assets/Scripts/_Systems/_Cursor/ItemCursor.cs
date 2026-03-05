@@ -11,9 +11,11 @@ public class ItemCursor : MonoBehaviour
     [SerializeField] private Cursor _cursor;
     public Cursor cursor => _cursor;
 
-    
+
     private ItemData _data;
     public ItemData data => _data;
+
+
 
 
     // MonoBehaviour
@@ -28,10 +30,10 @@ public class ItemCursor : MonoBehaviour
 
         Tiles_Controller tilesController = InGame_Manager.instance.tilesController;
 
-        tilesController.OnTileSelect -= Place_Item;
-        tilesController.OnTileHoldSelect -= Place_AllItem;
-        tilesController.OnTileSelect -= Use_Item;
-        tilesController.OnTileSelectComplete -= Update_Visuals;
+        tilesController.OnTargetTileSelect -= Place_Item;
+        tilesController.OnTargetTileHoldSelect -= Place_AllItem;
+        tilesController.OnTargetTileSelect -= Use_Item;
+        tilesController.OnTileSelect -= Update_Visuals;
 
         Input_Controller input = Input_Controller.instance;
 
@@ -45,10 +47,10 @@ public class ItemCursor : MonoBehaviour
     {
         Tiles_Controller tilesController = InGame_Manager.instance.tilesController;
 
-        tilesController.OnTileSelect += Place_Item;
-        tilesController.OnTileHoldSelect += Place_AllItem;
-        tilesController.OnTileSelect += Use_Item;
-        tilesController.OnTileSelectComplete += Update_Visuals;
+        tilesController.OnTargetTileSelect += Place_Item;
+        tilesController.OnTargetTileHoldSelect += Place_AllItem;
+        tilesController.OnTargetTileSelect += Use_Item;
+        tilesController.OnTileSelect += Update_Visuals;
 
         Input_Controller input = Input_Controller.instance;
 
@@ -56,7 +58,7 @@ public class ItemCursor : MonoBehaviour
         input.OnRightClick += Update_Visuals;
     }
 
-    
+
     public void Set_Data(ItemData setItemData)
     {
         _data = setItemData != null && setItemData.amount > 0 ? setItemData : null;
@@ -109,7 +111,7 @@ public class ItemCursor : MonoBehaviour
         Item_ScrObj pickupItem = _data != null ? _data.itemScrObj : placedItems[0].data.itemScrObj;
         int maxAmount = pickupItem.maxAmount;
 
-        for (int i = placedItems.Count - 1; i >= 0 ; i--)
+        for (int i = placedItems.Count - 1; i >= 0; i--)
         {
             int currentAmount = _data != null ? _data.amount : 0;
             if (currentAmount >= maxAmount) return;
@@ -153,7 +155,7 @@ public class ItemCursor : MonoBehaviour
             return;
         }
 
-        if (_data.itemScrObj.itemType != ItemType.place) return; 
+        if (_data.itemScrObj.itemType != ItemType.place) return;
 
         List<PlaceableItem> placedItems = selectTile.placedItems;
         Item_ScrObj currentItem = _data.itemScrObj;
@@ -166,25 +168,25 @@ public class ItemCursor : MonoBehaviour
             if (placedItemData.amount >= currentItem.maxAmount) continue;
 
             placedItemData.Update_CurrentAmount(placedItemData.amount + 1);
-            
+
             Update_Data(new(currentItem, _data.amount - 1));
             if (_data.amount > 0) return;
             Set_Data(null);
-            
+
             return;
         }
 
         if (selectTile.placedItems.Count >= 2) return;
         if (selectTile.Placed_ItemCount(currentItem) >= currentItem.maxAmount) return;
-        
+
         if (selectTile.Placed_StackableItems() > 1) return;
         if (currentItem.stackable == false && selectTile.NonStackableItem_Placed()) return;
 
         GameObject spawnedItem = Instantiate(currentItem.itemPrefab, selectTile.placeableItemsPrefabs);
         spawnedItem.transform.localPosition = currentItem.offsetPosition;
-        
+
         PlaceableItem placedItem = spawnedItem.GetComponent<PlaceableItem>();
-        
+
         placedItem.Set_Data(new(currentItem, 1));
         placedItem.Track_CurrentTile(selectTile);
         placedItem.animPlayer.Set_DefaultPosition(currentItem.offsetPosition);
@@ -195,7 +197,7 @@ public class ItemCursor : MonoBehaviour
         if (_data.amount > 0) return;
         Set_Data(null);
     }
-    
+
     private void Place_AllItem(Tile selectTile)
     {
         if (_data == null)

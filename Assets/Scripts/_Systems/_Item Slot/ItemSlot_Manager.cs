@@ -11,8 +11,11 @@ public class ItemSlot_Manager : MonoBehaviour
     private ItemSlot _hoveringSlot;
     public ItemSlot hoveringSlot => _hoveringSlot;
 
+
     public Action<ItemSlot> OnSlotHover;
-    public Action<ItemSlot> OnSlotSelect;
+    public Action<ItemSlot> OnTargetSlotSelect;
+    public Action<ItemSlot> OnTargetSlotHoldSelect;
+    public Action OnSlotSelect;
 
 
     // MonoBehaviour
@@ -20,10 +23,15 @@ public class ItemSlot_Manager : MonoBehaviour
     {
         EventBus_Manager.Register(EventBus.AwakeLoad, Set_Datas);
     }
-    
+
     private void OnDestroy()
     {
         EventBus_Manager.UnRegister(EventBus.AwakeLoad, Set_Datas);
+
+        Input_Controller input = Input_Controller.instance;
+
+        input.OnLeftClick -= Select_HoveringSlot;
+        input.OnHoldLeftClick -= HoldSelect_HoveringSlot;
     }
 
 
@@ -37,6 +45,11 @@ public class ItemSlot_Manager : MonoBehaviour
             slot.Set_Data(this);
             slot.Update_Visuals();
         }
+
+        Input_Controller input = Input_Controller.instance;
+
+        input.OnLeftClick += Select_HoveringSlot;
+        input.OnHoldLeftClick += HoldSelect_HoveringSlot;
     }
 
     public void Refresh_Datas()
@@ -57,7 +70,7 @@ public class ItemSlot_Manager : MonoBehaviour
         {
             ItemSlot slot = _slots[i];
             if (slot.data != null) continue;
-            
+
             emptySlots.Add(slot);
         }
         return emptySlots;
@@ -97,6 +110,22 @@ public class ItemSlot_Manager : MonoBehaviour
     {
         _hoveringSlot = hoveringSlot;
     }
+
+    private void Select_HoveringSlot()
+    {
+        if (_hoveringSlot == null) return;
+
+        OnTargetSlotSelect?.Invoke(_hoveringSlot);
+        OnSlotSelect?.Invoke();
+    }
+    private void HoldSelect_HoveringSlot()
+    {
+        if (_hoveringSlot == null) return;
+
+        OnTargetSlotHoldSelect?.Invoke(_hoveringSlot);
+        OnSlotSelect?.Invoke();
+    }
+
 
     public void Update_Visuals()
     {

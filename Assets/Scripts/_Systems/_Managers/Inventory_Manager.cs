@@ -16,6 +16,9 @@ public class Inventory_Manager : MonoBehaviour
     [SerializeField] private Image _togglePanel;
 
 
+    public Action OnItemAdded;
+
+
     [HideInInspector] public Item_ScrObj loadItem;
     [HideInInspector] public int loadItemAmount;
 
@@ -35,12 +38,10 @@ public class Inventory_Manager : MonoBehaviour
         InGame_Manager manager = InGame_Manager.instance;
 
         manager.player.movement.OnMovement -= Toggle_Update;
-        manager.tilesController.OnTileSelectComplete -= Toggle_Update;
+        manager.tilesController.OnTileSelect -= Toggle_Update;
 
-        Input_Controller input = Input_Controller.instance;
-
-        input.OnLeftClick -= Transfer_Item;
-        input.OnHoldLeftClick -= Transfer_AllItems;
+        _slotManager.OnTargetSlotSelect -= Transfer_Item;
+        _slotManager.OnTargetSlotHoldSelect -= Transfer_AllItems;
     }
 
 
@@ -50,12 +51,10 @@ public class Inventory_Manager : MonoBehaviour
         InGame_Manager manager = InGame_Manager.instance;
 
         manager.player.movement.OnMovement += Toggle_Update;
-        manager.tilesController.OnTileSelectComplete += Toggle_Update;
+        manager.tilesController.OnTileSelect += Toggle_Update;
 
-        Input_Controller input = Input_Controller.instance;
-
-        input.OnLeftClick += Transfer_Item;
-        input.OnHoldLeftClick += Transfer_AllItems;
+        _slotManager.OnTargetSlotSelect += Transfer_Item;
+        _slotManager.OnTargetSlotHoldSelect += Transfer_AllItems;
     }
 
 
@@ -82,13 +81,15 @@ public class Inventory_Manager : MonoBehaviour
         if (addData == null) return addData;
 
         Item_ScrObj dataItem = addData.itemScrObj;
-        List<ItemSlot> emptySlots = _slotManager.EmptySlots();;
+        List<ItemSlot> emptySlots = _slotManager.EmptySlots();
 
         if (dataItem.itemType != ItemType.place)
         {
             if (emptySlots.Count <= 0) return addData;
 
             emptySlots[0].Set_Data(addData);
+
+            OnItemAdded?.Invoke();
             return null;
         }
 
@@ -114,7 +115,11 @@ public class Inventory_Manager : MonoBehaviour
             slotData.Update_CurrentAmount(slotData.amount + loadAmount);
             loadCount -= loadAmount;
 
-            if (loadCount <= 0) return null;
+            if (loadCount <= 0)
+            {
+                OnItemAdded?.Invoke();
+                return null;
+            }
         }
 
         if (emptySlots.Count <= 0) return new(dataItem, loadCount);
@@ -126,70 +131,67 @@ public class Inventory_Manager : MonoBehaviour
             emptySlots[i].Set_Data(new ItemData(dataItem, loadAmount));
             loadCount -= loadAmount;
 
-            if (loadCount <= 0) return null;
+            if (loadCount <= 0)
+            {
+                OnItemAdded?.Invoke();
+                return null;
+            }
         }
+
+        if (loadCount < addData.amount) OnItemAdded?.Invoke();
         return new(dataItem, loadCount);
     }
 
 
-    private void Swap_Items()
+    private void Swap_Items(ItemSlot targetSlot)
     {
-        ItemSlot hoveringSlot = _slotManager.hoveringSlot;
         ItemCursor itemCursor = InGame_Manager.instance.cursor.itemCursor;
-        
-        ItemData swapSlotData = hoveringSlot?.data;
+        ItemData swapSlotData = targetSlot?.data;
+
         if (swapSlotData == null && itemCursor.data == null) return;
 
-        hoveringSlot.Set_Data(itemCursor.data);
-        hoveringSlot.Update_Visuals();
+        targetSlot.Set_Data(itemCursor.data);
+        targetSlot.Update_Visuals();
 
         itemCursor.Set_Data(swapSlotData);
         itemCursor.Update_Visuals();
     }
 
-    private void Transfer_Item()
+    private void Transfer_Item(ItemSlot targetSlot)
     {
-        ItemSlot hoveringSlot = _slotManager.hoveringSlot;
-        if (hoveringSlot == null) return;
-
-        InGame_Manager manager = InGame_Manager.instance;
-
-        ItemData slotItemData = hoveringSlot.data;
+        ItemData slotItemData = targetSlot.data;
         Item_ScrObj pickupItem = slotItemData?.itemScrObj;
 
-        ItemCursor itemCursor = manager.cursor.itemCursor;
+        ItemCursor itemCursor = InGame_Manager.instance.cursor.itemCursor;
         ItemData cursorItemData = itemCursor.data;
 
         bool nonPlaceItem = slotItemData != null && pickupItem.itemType != ItemType.place;
 
         if (nonPlaceItem || cursorItemData != null && pickupItem != cursorItemData.itemScrObj) // different items
         {
-            Swap_Items();
+            Swap_Items(targetSlot);
             return;
         }
         if (cursorItemData != null && cursorItemData.amount >= pickupItem.maxAmount) // amount maxed
         {
-            Swap_Items();
+            Swap_Items(targetSlot);
             return;
         }
         if (slotItemData == null) return;
 
         slotItemData.Update_CurrentAmount(slotItemData.amount - 1);
 
-        hoveringSlot.Set_Data(slotItemData.amount > 0 ? slotItemData : null);
-        hoveringSlot.Update_Visuals();
+        targetSlot.Set_Data(slotItemData.amount > 0 ? slotItemData : null);
+        targetSlot.Update_Visuals();
 
         int currentCursorAmount = cursorItemData != null ? cursorItemData.amount : 0;
 
         itemCursor.Update_Data(new(pickupItem, currentCursorAmount + 1));
         itemCursor.Update_Visuals();
     }
-    private void Transfer_AllItems()
+    private void Transfer_AllItems(ItemSlot targetSlot)
     {
-        ItemSlot hoveringSlot = _slotManager.hoveringSlot;
-        if (hoveringSlot == null) return;
-
-        ItemData slotItemData = hoveringSlot.data;
+        ItemData slotItemData = targetSlot.data;
         Item_ScrObj pickupItem = slotItemData?.itemScrObj;
 
         ItemCursor itemCursor = InGame_Manager.instance.cursor.itemCursor;
@@ -199,22 +201,23 @@ public class Inventory_Manager : MonoBehaviour
 
         if (nonPlaceItem || cursorItemData != null && pickupItem != cursorItemData.itemScrObj) // different items
         {
-            Swap_Items();
+            Swap_Items(targetSlot);
             return;
         }
         if (cursorItemData != null && cursorItemData.amount >= pickupItem.maxAmount) // amount maxed
         {
-            Swap_Items();
+            Swap_Items(targetSlot);
             return;
         }
+        if (slotItemData == null) return;
 
         int currentCursorAmount = cursorItemData != null ? cursorItemData.amount : 0;
         int transferAmount = Mathf.Min(pickupItem.maxAmount - currentCursorAmount, slotItemData.amount);
 
         slotItemData.Update_CurrentAmount(slotItemData.amount - transferAmount);
 
-        hoveringSlot.Set_Data(slotItemData.amount > 0 ? slotItemData : null);
-        hoveringSlot.Update_Visuals();
+        targetSlot.Set_Data(slotItemData.amount > 0 ? slotItemData : null);
+        targetSlot.Update_Visuals();
 
         itemCursor.Update_Data(new(pickupItem, currentCursorAmount + transferAmount));
         itemCursor.Update_Visuals();
@@ -254,7 +257,7 @@ public class Inventory_Manager_Editor : Editor
             if (loadItem == null) return;
 
             Inventory_Manager inventory = InGame_Manager.instance.inventory;
-            
+
             ItemData data = inventory.Add_ItemData(new(loadItem, loadAmount));
             inventory.slotManager.Update_Visuals();
 
