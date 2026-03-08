@@ -6,17 +6,15 @@ public class Tile : MonoBehaviour
 {
     [Space(20)]
     [SerializeField] private EventPointer _pointer;
+    public EventPointer pointer => _pointer;
 
     [SerializeField] private Transform _setPosition;
     public Transform setPosition => _setPosition;
 
     [Space(20)]
     [SerializeField] private SpriteRenderer _tileSpriteRenderer;
-
+    [SerializeField] private SpriteRenderer _rangeIndicator;
     [SerializeField] private SpriteRenderer _pointerRenderer;
-    public SpriteRenderer pointerRenderer => _pointerRenderer;
-
-    [SerializeField] private SpriteRenderer _shadowRenderer;
 
     [Space(20)]
     [SerializeField] private Transform _placeableItemsPrefabs;
@@ -35,7 +33,6 @@ public class Tile : MonoBehaviour
 
     private List<PlaceableItem> _placedItems = new();
     public List<PlaceableItem> placedItems => _placedItems;
-
 
     private bool _pointerToggled;
     public bool pointerToggled => _pointerToggled;
@@ -75,31 +72,29 @@ public class Tile : MonoBehaviour
     }
 
 
-    // EventPointer
-    public void Toggle_Pointer()
-    {
-        Toggle_Pointer(_pointer.pointerDetected);
-    }
-    private void Toggle_Pointer(bool toggle)
-    {
-        Cursor cursor = InGame_Manager.instance.cursor;
-        bool activeToggle = toggle && cursor.PointingTile_InRange(this);
-
-        _pointerToggled = activeToggle;
-        _pointerRenderer.gameObject.SetActive(activeToggle);
-
-        Tile cursorPointTile = activeToggle ? this : null;
-        cursor.Track_PointingTile(cursorPointTile);
-    }
-
-
-    // Alpha
-    public void Toggle_Transparency(bool toggle)
+    // Toggles
+    public void Toggle_Transparency()
     {
         LeanTween.cancel(_tileSpriteRenderer.gameObject);
 
-        float value = toggle ? _transparencyValue : 1f;
+        Tile playerTile = InGame_Manager.instance.player.movement.currentTile;
+        float value = playerTile == this ? _transparencyValue : 1f;
+
         LeanTween.alpha(_tileSpriteRenderer.gameObject, value, _transparencyTransitionTime);
+    }
+
+    public void Toggle_RangeIndicator()
+    {
+
+    }
+
+    public void Toggle_Pointer()
+    {
+        _pointerToggled = InGame_Manager.instance.cursor.PointingTile_InRange(this) && _pointer.pointerDetected;
+        _pointerRenderer.gameObject.SetActive(_pointerToggled);
+
+        Tile cursorPointTile = _pointerToggled ? this : null;
+        InGame_Manager.instance.cursor.Track_PointingTile(cursorPointTile);
     }
 
 
@@ -119,7 +114,7 @@ public class Tile : MonoBehaviour
     }
     public void RemoveUpdate_PlacedItems()
     {
-        for (int i = _placedItems.Count - 1; i >= 0 ; i--)
+        for (int i = _placedItems.Count - 1; i >= 0; i--)
         {
             PlaceableItem placedItem = _placedItems[i];
 

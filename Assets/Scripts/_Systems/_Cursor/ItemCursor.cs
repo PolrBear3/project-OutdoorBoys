@@ -16,8 +16,6 @@ public class ItemCursor : MonoBehaviour
     public ItemData data => _data;
 
 
-
-
     // MonoBehaviour
     private void Awake()
     {

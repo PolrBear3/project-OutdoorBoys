@@ -21,6 +21,7 @@ public class ItemCrafting_Manager : MonoBehaviour
         EventBus_Manager.UnRegister(EventBus.AwakeLoad, Set_Data);
 
         _slotManager.OnTargetSlotSelect -= Craft_Item;
+        _slotManager.OnSlotSelect -= Update_CraftItems;
 
         InGame_Manager manager = InGame_Manager.instance;
         Inventory_Manager inventory = manager.inventory;
@@ -37,6 +38,7 @@ public class ItemCrafting_Manager : MonoBehaviour
     private void Set_Data()
     {
         _slotManager.OnTargetSlotSelect += Craft_Item;
+        _slotManager.OnSlotSelect += Update_CraftItems;
 
         InGame_Manager manager = InGame_Manager.instance;
         Inventory_Manager inventory = manager.inventory;
@@ -71,6 +73,7 @@ public class ItemCrafting_Manager : MonoBehaviour
         return allCurrentDatas;
     }
 
+
     public void Update_CraftItems()
     {
         Item_ScrObj[] allItems = Data_Manager.instance.allItems;
@@ -102,8 +105,6 @@ public class ItemCrafting_Manager : MonoBehaviour
             slot.Set_Data(craftAvailableItemDatas[i]);
         }
         _slotManager.Update_Visuals();
-
-        Debug.Log("update craft items");
     }
 
     private void Craft_Item(ItemSlot craftItemSlot)
@@ -149,10 +150,38 @@ public class ItemCrafting_Manager : MonoBehaviour
         // inventory update
         inventorySlotManager.Refresh_Datas();
 
-        // craft item
+        // add crafted item
         int craftAmount = craftItem.itemType == ItemType.use ? craftItem.maxAmount : 1;
+        Add_CraftedItem(new(craftItem, craftAmount));
+    }
 
-        inventory.Add_ItemData(new(craftItem, craftAmount));
-        inventorySlotManager.Update_Visuals();
+    private void Add_CraftedItem(ItemData craftedItemData)
+    {
+        InGame_Manager manager = InGame_Manager.instance;
+        Inventory_Manager inventory = manager.inventory;
+
+        if (inventory.Toggled() && inventory.Add_ItemData(craftedItemData) == null)
+        {
+            inventory.slotManager.Update_Visuals();
+            return;
+        }
+
+        ItemCursor itemCursor = manager.cursor.itemCursor;
+        ItemData itemCursorData = itemCursor.data;
+
+        if (itemCursorData == null)
+        {
+            itemCursor.Set_Data(craftedItemData);
+            itemCursor.Update_Visuals();
+            return;
+        }
+
+        Item_ScrObj craftedItem = craftedItemData.itemScrObj;
+
+        if (itemCursorData.itemScrObj != craftedItem) return;
+        if (itemCursorData.amount >= craftedItem.maxAmount) return;
+
+        itemCursorData.Update_CurrentAmount(itemCursorData.amount + craftedItemData.amount);
+        itemCursor.Update_Visuals();
     }
 }

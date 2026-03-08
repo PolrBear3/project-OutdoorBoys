@@ -15,7 +15,7 @@ public class Movement_Controller : MonoBehaviour
 
     private Tile _currentTile;
     public Tile currentTile => _currentTile;
-    
+
     private float _currentMoveDuration;
 
     public Action OnMovement;
@@ -58,17 +58,15 @@ public class Movement_Controller : MonoBehaviour
         if (LeanTween.isTweening(gameObject)) return;
 
         Tile previousTile = _currentTile;
-        Vector2 destination = (Vector2)destinationTile.setPosition.position + _offset;
-
         _currentTile = destinationTile;
-        _currentTile.Toggle_Transparency(true);
+
+        Vector2 destination = (Vector2)destinationTile.setPosition.position + _offset;
 
         if (previousTile == null)
         {
             transform.position = destination; // spawn
             return;
         }
-        previousTile.Toggle_Transparency(false);
 
         OnMovement?.Invoke();
 
@@ -103,7 +101,7 @@ public class Movement_Controller : MonoBehaviour
 
         yield return new WaitForSeconds(_currentMoveDuration);
         OnMovementStated(false);
-        
+
         _movementCoroutine = null;
     }
 }

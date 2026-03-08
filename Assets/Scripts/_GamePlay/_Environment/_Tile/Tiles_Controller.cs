@@ -18,13 +18,13 @@ public class Tiles_Controller : MonoBehaviour
     private void Awake()
     {
         EventBus_Manager.Register(EventBus.AwakeLoad, Set_Data);
-        EventBus_Manager.Register(EventBus.StartLoad, Update_DataSprites);
+        EventBus_Manager.Register(EventBus.StartLoad, Load_SetSprites);
     }
 
     private void OnDestroy()
     {
         EventBus_Manager.UnRegister(EventBus.AwakeLoad, Set_Data);
-        EventBus_Manager.UnRegister(EventBus.StartLoad, Update_DataSprites);
+        EventBus_Manager.UnRegister(EventBus.StartLoad, Load_SetSprites);
 
         Input_Controller input = Input_Controller.instance;
 
@@ -33,8 +33,8 @@ public class Tiles_Controller : MonoBehaviour
 
         InGame_Manager manager = InGame_Manager.instance;
 
-        manager.cursor.OnTilePointRangeUpdate -= Update_PointerToggles;
-        manager.player.movement.OnMovement -= Update_PointerToggles;
+        manager.cursor.OnTilePointRangeUpdate -= Refresh_Toggles;
+        manager.player.movement.OnMovement -= Refresh_Toggles;
     }
 
 
@@ -48,8 +48,8 @@ public class Tiles_Controller : MonoBehaviour
 
         InGame_Manager manager = InGame_Manager.instance;
 
-        manager.cursor.OnTilePointRangeUpdate += Update_PointerToggles;
-        manager.player.movement.OnMovement += Update_PointerToggles;
+        manager.cursor.OnTilePointRangeUpdate += Refresh_Toggles;
+        manager.player.movement.OnMovement += Refresh_Toggles;
     }
 
 
@@ -93,7 +93,7 @@ public class Tiles_Controller : MonoBehaviour
     {
         for (int i = 0; i < _currentTiles.Count; i++)
         {
-            if (_currentTiles[i].pointerToggled == false) continue;
+            if (_currentTiles[i].pointer.pointerDetected == false) continue;
             return _currentTiles[i];
         }
         return null;
@@ -101,29 +101,35 @@ public class Tiles_Controller : MonoBehaviour
 
 
     // Select
+    private bool Tile_Selectable(out Tile currentTile)
+    {
+        currentTile = Current_Tile();
+
+        if (currentTile == null) return false;
+        if (currentTile.pointerToggled == false) return false;
+
+        return true;
+    }
+
     public void Select_Tile()
     {
-        Tile pointingTile = Current_Tile();
+        if (Tile_Selectable(out Tile currentTile) == false) return;
 
-        if (pointingTile == null) return;
-
-        OnTargetTileSelect?.Invoke(pointingTile);
+        OnTargetTileSelect?.Invoke(currentTile);
         OnTileSelect?.Invoke();
     }
 
     public void HoldSelect_Tile()
     {
-        Tile pointingTile = Current_Tile();
+        if (Tile_Selectable(out Tile currentTile) == false) return;
 
-        if (pointingTile == null) return;
-
-        OnTargetTileHoldSelect?.Invoke(pointingTile);
+        OnTargetTileHoldSelect?.Invoke(currentTile);
         OnTileSelect?.Invoke();
     }
 
 
     // Update
-    private void Update_DataSprites()
+    private void Load_SetSprites()
     {
         Vector2 generateStartPos = InGame_Manager.instance.tileGenerator.Generate_StartPosition();
 
@@ -134,10 +140,12 @@ public class Tiles_Controller : MonoBehaviour
         }
     }
 
-    private void Update_PointerToggles()
+    private void Refresh_Toggles()
     {
         foreach (Tile tile in _currentTiles)
         {
+            tile.Toggle_Transparency();
+            tile.Toggle_RangeIndicator();
             tile.Toggle_Pointer();
         }
     }
