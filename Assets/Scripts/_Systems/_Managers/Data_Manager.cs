@@ -14,10 +14,9 @@ public class Data_Manager : MonoBehaviour
     [SerializeField] private Item_ScrObj[] _allItems;
     public Item_ScrObj[] allItems => _allItems;
 
-    /*
-    [SerializeField] private UseableItem[] _useableItems;
-    public UseableItem[] useableItems => _useableItems;
-    */
+    [Space(20)]
+    [SerializeField] private AnimalScrObj[] _allAnimals;
+    public AnimalScrObj[] allAnimals => _allAnimals;
 
 
     // MonoBehaviour

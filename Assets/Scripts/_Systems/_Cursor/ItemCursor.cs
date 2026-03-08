@@ -15,6 +15,8 @@ public class ItemCursor : MonoBehaviour
     private ItemData _data;
     public ItemData data => _data;
 
+    public Action OnItemReturn;
+
 
     // MonoBehaviour
     private void Awake()
@@ -132,8 +134,16 @@ public class ItemCursor : MonoBehaviour
     {
         if (_data == null) return;
 
-        Inventory_Manager inventory = InGame_Manager.instance.inventory;
-        if (inventory.Toggled() == false) return;
+        InGame_Manager manager = InGame_Manager.instance;
+        Inventory_Manager inventory = manager.inventory;
+        
+        if (inventory.Toggled() == false)
+        {
+            Place_AllItem(manager.player.movement.currentTile);
+            OnItemReturn?.Invoke();
+            
+            return;
+        }
 
         Item_ScrObj returnItem = _data.itemScrObj;
 

@@ -23,6 +23,9 @@ public class Tile : MonoBehaviour
     [SerializeField] private Transform _droppedItemsPrefabs;
     public Transform droppedItemsPrefabs => _droppedItemsPrefabs;
 
+    [SerializeField] private Transform _otherPrefabs;
+    public Transform otherPrefabs => _otherPrefabs;
+
     [Space(20)]
     [SerializeField][Range(0, 1)] private float _transparencyValue;
     [SerializeField][Range(0, 10)] private float _transparencyTransitionTime;
@@ -73,19 +76,12 @@ public class Tile : MonoBehaviour
 
 
     // Toggles
-    public void Toggle_Transparency()
+    public void Toggle_Transparency(bool toggle)
     {
         LeanTween.cancel(_tileSpriteRenderer.gameObject);
 
-        Tile playerTile = InGame_Manager.instance.player.movement.currentTile;
-        float value = playerTile == this ? _transparencyValue : 1f;
-
+        float value = toggle ? _transparencyValue : 1f;
         LeanTween.alpha(_tileSpriteRenderer.gameObject, value, _transparencyTransitionTime);
-    }
-
-    public void Toggle_RangeIndicator()
-    {
-
     }
 
     public void Toggle_Pointer()

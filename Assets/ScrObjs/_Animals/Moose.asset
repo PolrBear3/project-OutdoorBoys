@@ -1,0 +1,20 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a8ec9eefbc7a64996b2f71d1bf700abc, type: 3}
+  m_Name: Moose
+  m_EditorClassIdentifier: 
+  _prefab: {fileID: 2848068808391517652, guid: 69c2cbe719f5849d6877b02a71467626, type: 3}
+  _spawnTiles:
+  - {fileID: 11400000, guid: 13d5158de20cd4105b5f0b097494ca71, type: 2}
+  - {fileID: 11400000, guid: 8145ed0e845b14bca951ca79c25e2e94, type: 2}
+  _maxHealth: 5
+  _maxMovementDistance: 2

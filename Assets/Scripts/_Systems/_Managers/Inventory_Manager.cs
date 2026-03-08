@@ -39,6 +39,7 @@ public class Inventory_Manager : MonoBehaviour
 
         manager.player.movement.OnMovement -= Toggle_Update;
         manager.tilesController.OnTileSelect -= Toggle_Update;
+        manager.cursor.itemCursor.OnItemReturn -= Toggle_Update;
 
         _slotManager.OnTargetSlotSelect -= Transfer_Item;
         _slotManager.OnTargetSlotHoldSelect -= Transfer_AllItems;
@@ -52,6 +53,7 @@ public class Inventory_Manager : MonoBehaviour
 
         manager.player.movement.OnMovement += Toggle_Update;
         manager.tilesController.OnTileSelect += Toggle_Update;
+        manager.cursor.itemCursor.OnItemReturn += Toggle_Update;
 
         _slotManager.OnTargetSlotSelect += Transfer_Item;
         _slotManager.OnTargetSlotHoldSelect += Transfer_AllItems;

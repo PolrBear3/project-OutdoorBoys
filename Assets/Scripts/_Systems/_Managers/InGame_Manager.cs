@@ -25,6 +25,9 @@ public class InGame_Manager : MonoBehaviour
     [SerializeField] private ItemCrafting_Manager _itemCrafting;
     public ItemCrafting_Manager itemCrafting => _itemCrafting;
 
+    [SerializeField] private Animals_Manager _animals;
+    public Animals_Manager animals => _animals;
+
 
     [Space(20)]
     [SerializeField] private Tile_Generator _tileGenerator;

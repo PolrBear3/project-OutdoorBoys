@@ -100,6 +100,19 @@ public class Tiles_Controller : MonoBehaviour
     }
 
 
+    public int Tile_Count(TileScrObj tileScrObj)
+    {
+        int count = 0;
+        
+        for (int i = 0; i < _currentTiles.Count; i++)
+        {
+            if (_currentTiles[i].data.tileScrObj != tileScrObj) continue;
+            count++;
+        }
+        return count;
+    }
+
+
     // Select
     private bool Tile_Selectable(out Tile currentTile)
     {
@@ -142,10 +155,17 @@ public class Tiles_Controller : MonoBehaviour
 
     private void Refresh_Toggles()
     {
+        InGame_Manager manager = InGame_Manager.instance;
+        
+        Cursor cursor = manager.cursor;
+        Tile playerTile = manager.player.movement.currentTile;
+
         foreach (Tile tile in _currentTiles)
         {
-            tile.Toggle_Transparency();
-            tile.Toggle_RangeIndicator();
+            bool hasItem = cursor.itemCursor.data != null;
+            bool outOfRange = hasItem && cursor.PointingTile_InRange(tile) == false;
+
+            tile.Toggle_Transparency(hasItem == false && playerTile == tile || outOfRange);
             tile.Toggle_Pointer();
         }
     }
