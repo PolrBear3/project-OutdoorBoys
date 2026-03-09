@@ -23,6 +23,8 @@ public class Animal : MonoBehaviour
     // MonoBehaviour
     private void OnDestroy()
     {
+        _movement.OnMovementStated -= Update_Animation;
+
         Movement_Controller playerMovement = InGame_Manager.instance.player.movement;
 
         playerMovement.OnMovement -= Collect_TrailMark;
@@ -33,6 +35,8 @@ public class Animal : MonoBehaviour
     // Data
     public void Set_Data()
     {
+        _movement.OnMovementStated += Update_Animation;
+
         Movement_Controller playerMovement = InGame_Manager.instance.player.movement;
 
         playerMovement.OnMovement += Collect_TrailMark;
@@ -54,10 +58,17 @@ public class Animal : MonoBehaviour
 
     public void Update_Animation()
     {
-        int animationIndex = _data.trailMarkCount > 0 ? 0 : 1;
-        
-        _animation.Set_DefaultPosition(_movement.CurrentTile_OffsetPosition());
-        _animation.Play(animationIndex);
+        bool isOnSight = _data.isOnSight;
+
+        _animation.spriteRenderer.sortingLayerName = isOnSight ? "Default" : "Behind Player";
+
+        if (_data.isOnSight) return;
+        _animation.Play(0);
+    }
+    public void Update_Animation(bool isMoving)
+    {
+        if (_data.isOnSight == false) return;
+        _animation.Play(isMoving ? 2 : 1);
     }
 
 
@@ -75,6 +86,15 @@ public class Animal : MonoBehaviour
         return rangedTiles[UnityEngine.Random.Range(0, rangedTiles.Count)];
     }
 
+    private bool Player_InRange()
+    {
+        Tile playerTile = InGame_Manager.instance.player.movement.currentTile;
+        float distance = playerTile.DistanceTo_TargetTile(_movement.currentTile);
+
+        return distance < _data.animalScrObj.moveDistanceRange;
+    }
+
+
     private void Collect_TrailMark()
     {
         if (_data.isOnSight) return;
@@ -82,7 +102,7 @@ public class Animal : MonoBehaviour
 
         _movement.Update_Offset(Vector2.zero);
         _movement.MoveTo_Tile(MoveDistance_RangeTile());
-        
+
         _data.Decrease_TrailMarkCount(1);
         Update_Animation();
     }
@@ -93,7 +113,7 @@ public class Animal : MonoBehaviour
 
         _movement.Update_MoveDurationValue();
         _movement.Update_Offset();
-        
+
         _data.Update_OnSightTimeCount(1);
 
         if (_data.onSightTimeCount <= 1) return;
@@ -104,10 +124,7 @@ public class Animal : MonoBehaviour
     // Default Actions
     public void RunOff()
     {
-        Tile playerTile = InGame_Manager.instance.player.movement.currentTile;
-        float distance = Utility.Chebyshev_Distance(playerTile.transform.position, _movement.currentTile.transform.position);
-
-        if (distance >= _data.animalScrObj.moveDistanceRange) return;
+        if (Player_InRange() == false) return;
 
         _movement.Update_MoveDurationValue(0);
         _movement.Update_Offset(Vector2.zero);
@@ -119,6 +136,15 @@ public class Animal : MonoBehaviour
 
     public void Escape()
     {
-        
+        if (Player_InRange() == false) return;
+
+        if (_data.onSightTimeCount <= 2)
+        {
+            _movement.MoveTo_Tile(MoveDistance_RangeTile());
+            return;
+        }
+
+        InGame_Manager.instance.animals.spawnedAnimals.Remove(this);
+        Destroy(gameObject);
     }
 }

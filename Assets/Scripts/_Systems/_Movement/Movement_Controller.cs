@@ -64,7 +64,7 @@ public class Movement_Controller : MonoBehaviour
     {
         Update_Offset(_offset);
     }
-    
+
     public Vector2 CurrentTile_OffsetPosition()
     {
         return (Vector2)_currentTile.setPosition.position + _currentOffset;
@@ -102,9 +102,9 @@ public class Movement_Controller : MonoBehaviour
 
         OnMovement?.Invoke();
         OnMovementDistanced?.Invoke(moveDistance);
-        Start_MovementStateUpdate();
+        Start_MovementStateUpdate(moveDistance);
 
-        LeanTween.move(gameObject, destination, _currentMoveDuration); // move
+        LeanTween.move(gameObject, destination, _currentMoveDuration * moveDistance); // move
     }
     public void MoveTo_Tile(Vector2 direction)
     {
@@ -118,20 +118,20 @@ public class Movement_Controller : MonoBehaviour
         MoveTo_Tile(destinationTile);
     }
 
-    private void Start_MovementStateUpdate()
+    private void Start_MovementStateUpdate(float moveDistance)
     {
         if (_movementCoroutine != null)
         {
             StopCoroutine(_movementCoroutine);
             _movementCoroutine = null;
         }
-        _movementCoroutine = StartCoroutine(MovementState_Update());
+        _movementCoroutine = StartCoroutine(MovementState_Update(moveDistance));
     }
-    private IEnumerator MovementState_Update()
+    private IEnumerator MovementState_Update(float moveDistance)
     {
         OnMovementStated?.Invoke(true);
 
-        yield return new WaitForSeconds(_currentMoveDuration);
+        yield return new WaitForSeconds(_currentMoveDuration * moveDistance);
         OnMovementStated?.Invoke(false);
 
         _movementCoroutine = null;

@@ -13,7 +13,7 @@ public class Cursor : MonoBehaviour
     [Space(10)]
     [SerializeField] private ItemCursor _itemCursor;
     public ItemCursor itemCursor => _itemCursor;
-    
+
     [Space(20)]
     [SerializeField] private RectTransform _rect;
 
@@ -58,7 +58,7 @@ public class Cursor : MonoBehaviour
     private void Set_Data()
     {
         Input_Controller input = Input_Controller.instance;
-        
+
         input.OnAnyInput += Toggle_PointerVisibility;
         input.OnCursorControl += Movement_Update;
     }
@@ -94,7 +94,7 @@ public class Cursor : MonoBehaviour
     public void Update_AmountText(int updateAmount)
     {
         _amountText.text = updateAmount.ToString();
-        
+
         if (_amountText.gameObject.activeSelf) return;
         _amountText.gameObject.SetActive(true);
     }
@@ -112,11 +112,8 @@ public class Cursor : MonoBehaviour
     public bool PointingTile_InRange(Tile pointTile)
     {
         Tile playerTile = InGame_Manager.instance.player.movement.currentTile;
-        
-        Vector2 playerTilePos = playerTile.transform.position;
-        Vector2 pointTilePos = pointTile.transform.position;
 
-        return Utility.Chebyshev_Distance(playerTilePos, pointTilePos) <= _tilePointRange;
+        return playerTile.DistanceTo_TargetTile(pointTile) <= _tilePointRange;
     }
 
     public void Track_PointingTile(Tile pointTile)

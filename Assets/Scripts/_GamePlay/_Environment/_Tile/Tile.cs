@@ -75,6 +75,14 @@ public class Tile : MonoBehaviour
     }
 
 
+    public int DistanceTo_TargetTile(Tile targetTile)
+    {
+        if (targetTile == null || targetTile == this) return 0;
+
+        return Utility.Chebyshev_Distance(transform.position, targetTile.transform.position);
+    }
+
+
     // Toggles
     public void Toggle_Transparency(bool toggle)
     {
