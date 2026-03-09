@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 3490125478823233063}
   - component: {fileID: 4065704676414607868}
   m_Layer: 0
-  m_Name: Moose
+  m_Name: Rabbit
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -76,7 +76,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: -1
-  m_Sprite: {fileID: -1560485919, guid: cb01ed2ae3c714d4dba399cd0779d6f1, type: 3}
+  m_Sprite: {fileID: -1913949501, guid: cb01ed2ae3c714d4dba399cd0779d6f1, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -102,7 +102,7 @@ MonoBehaviour:
   _spriteRenderer: {fileID: 5562822433722692784}
   _animationClips:
   - {fileID: 11400000, guid: 5bcc235d95cca4bfc88fedf6d39d1b67, type: 2}
-  - {fileID: 11400000, guid: 35b79301f839a4a73b1527d809d3d472, type: 2}
+  - {fileID: 11400000, guid: b866b34fa447f422b95b42a9a8f15c90, type: 2}
 --- !u!114 &3490125478823233063
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -115,8 +115,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: acb7aef88d14f4350bb47957e960a93f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _offset: {x: 0.05, y: 0.05}
-  _moveDuration: 1
+  _offset: {x: 0, y: 0.05}
+  _moveDuration: 0.25
 --- !u!114 &4065704676414607868
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -136,7 +136,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 4065704676414607868}
         m_TargetAssemblyTypeName: Animal, Assembly-CSharp
-        m_MethodName: RunOff
+        m_MethodName: Escape
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}

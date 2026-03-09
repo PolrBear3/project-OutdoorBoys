@@ -111,6 +111,6 @@ public class Player_Interaction : MonoBehaviour
         Movement_Controller playerMovement = _controller.movement;
         bool isHeavyMovement = currentItemWeight > _controller.data.maxItemCarryWeight / 2;
 
-        playerMovement.Update_MoveDurationValue(isHeavyMovement ? _heavyCarryMovementDuration : 0);
+        playerMovement.Update_MoveDurationValue(isHeavyMovement ? _heavyCarryMovementDuration : playerMovement.moveDuration);
     }
 }

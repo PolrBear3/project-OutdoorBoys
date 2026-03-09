@@ -197,7 +197,6 @@ public class ItemCursor : MonoBehaviour
 
         placedItem.Set_Data(new(currentItem, 1));
         placedItem.Track_CurrentTile(selectTile);
-        placedItem.animPlayer.Set_DefaultPosition(currentItem.offsetPosition);
 
         selectTile.Track_PlacingItem(placedItem);
 

@@ -17,6 +17,6 @@ public class AnimalScrObj : ScriptableObject
     [SerializeField][Range(0, 100)] private int _maxHealth;
     public int maxHealth => _maxHealth;
 
-    [SerializeField][Range(0, 10)] private int _maxMovementDistance;
-    public int maxMovementDistance => _maxMovementDistance;
+    [SerializeField][Range(0, 10)] private int _moveDistanceRange;
+    public int moveDistanceRange => _moveDistanceRange;
 }

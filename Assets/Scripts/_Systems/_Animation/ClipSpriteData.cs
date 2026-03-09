@@ -27,7 +27,7 @@ public class ClipSpriteData
 
     public float DurationTime()
     {
-        return Mathf.Min(0.1f, _durationTime);
+        return Mathf.Max(0.1f, _durationTime);
     }
 
     public float Transform_DurationTime()

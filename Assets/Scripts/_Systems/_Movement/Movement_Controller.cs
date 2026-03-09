@@ -16,6 +16,7 @@ public class Movement_Controller : MonoBehaviour
     private Tile _currentTile;
     public Tile currentTile => _currentTile;
 
+    private Vector2 _currentOffset;
     private float _currentMoveDuration;
 
     public Action OnMovement;
@@ -29,11 +30,15 @@ public class Movement_Controller : MonoBehaviour
     // MonoBehaviour
     private void Awake()
     {
+        Set_Data();
+
         EventBus_Manager.Register(EventBus.AwakeLoad, Set_Data);
     }
 
     private void OnDestroy()
     {
+        InGame_Manager.instance.movements.allMovementControllers.Remove(this);
+
         EventBus_Manager.UnRegister(EventBus.AwakeLoad, Set_Data);
     }
 
@@ -41,13 +46,38 @@ public class Movement_Controller : MonoBehaviour
     // Data
     private void Set_Data()
     {
-        Update_MoveDurationValue(0);
+        if (InGame_Manager.instance?.movements.allMovementControllers.Add(this) == false) return;
+
+        Update_Offset();
+        Update_MoveDurationValue();
     }
+
+
+    public void Update_Offset(Vector2 offSet)
+    {
+        _currentOffset = offSet;
+    }
+    /// <summary>
+    /// Resets to default offset
+    /// </summary>
+    public void Update_Offset()
+    {
+        Update_Offset(_offset);
+    }
+    
+    public Vector2 CurrentTile_OffsetPosition()
+    {
+        return (Vector2)_currentTile.setPosition.position + _currentOffset;
+    }
+
 
     public void Update_MoveDurationValue(float value)
     {
-        value = value <= 0 ? _moveDuration : value;
-        _currentMoveDuration = value;
+        _currentMoveDuration = Mathf.Max(0f, value);
+    }
+    public void Update_MoveDurationValue()
+    {
+        Update_MoveDurationValue(_moveDuration);
     }
 
 
@@ -60,7 +90,7 @@ public class Movement_Controller : MonoBehaviour
         Tile previousTile = _currentTile;
         _currentTile = destinationTile;
 
-        Vector2 destination = (Vector2)destinationTile.setPosition.position + _offset;
+        Vector2 destination = CurrentTile_OffsetPosition();
 
         if (previousTile == null)
         {
@@ -68,18 +98,20 @@ public class Movement_Controller : MonoBehaviour
             return;
         }
 
+        int moveDistance = Utility.Chebyshev_Distance(previousTile.transform.position, _currentTile.transform.position);
+
         OnMovement?.Invoke();
-
-        int moveDistance = Mathf.RoundToInt(Vector2.Distance(destination, previousTile.transform.position));
         OnMovementDistanced?.Invoke(moveDistance);
-
         Start_MovementStateUpdate();
 
         LeanTween.move(gameObject, destination, _currentMoveDuration); // move
     }
     public void MoveTo_Tile(Vector2 direction)
     {
-        Tiles_Controller controller = InGame_Manager.instance.tilesController;
+        InGame_Manager manager = InGame_Manager.instance;
+        if (manager.movements.AlllMovements_Complete() == false) return;
+
+        Tiles_Controller controller = manager.tilesController;
         Tile destinationTile = controller.Current_Tile((Vector2)_currentTile.transform.position + direction);
 
         if (destinationTile == null) return;
@@ -97,10 +129,10 @@ public class Movement_Controller : MonoBehaviour
     }
     private IEnumerator MovementState_Update()
     {
-        OnMovementStated(true);
+        OnMovementStated?.Invoke(true);
 
         yield return new WaitForSeconds(_currentMoveDuration);
-        OnMovementStated(false);
+        OnMovementStated?.Invoke(false);
 
         _movementCoroutine = null;
     }

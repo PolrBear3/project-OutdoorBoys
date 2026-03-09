@@ -20,4 +20,12 @@ public static class Utility
 
         return positions;
     }
+
+    public static int Chebyshev_Distance(Vector2 a, Vector2 b)
+    {
+        float dx = Mathf.Abs(a.x - b.x);
+        float dy = Mathf.Abs(a.y - b.y);
+        
+        return (int)Mathf.Max(dx, dy);
+    }
 }

@@ -10,9 +10,9 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 8f9c661a3761e4420b2248af7d2f7997, type: 3}
-  m_Name: Player_Idle
+  m_Name: Moose Idle
   m_EditorClassIdentifier: 
-  _clipName: Player_Idle
+  _clipName: Moose Idle
+  _defaultSprite: {fileID: -1560485919, guid: cb01ed2ae3c714d4dba399cd0779d6f1, type: 3}
   _loop: 1
-  _defaultSprite: {fileID: 2058226474, guid: cb01ed2ae3c714d4dba399cd0779d6f1, type: 3}
   _clipSpriteDatas: []

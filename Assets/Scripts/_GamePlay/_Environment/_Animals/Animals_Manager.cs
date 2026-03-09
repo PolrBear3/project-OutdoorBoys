@@ -1,15 +1,10 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 
 public class Animals_Manager : MonoBehaviour
 {
-    [Space(20)]
-    [SerializeField] private GameObject _trailMarkRenderer;
-
-
     private List<Animal> _spawnedAnimals = new();
     public List<Animal> spawnedAnimals => _spawnedAnimals;
 
@@ -25,14 +20,15 @@ public class Animals_Manager : MonoBehaviour
         EventBus_Manager.UnRegister(EventBus.StartLoad, Set_Data);
 
         InGame_Manager manager = InGame_Manager.instance;
-        Movement_Controller playerMovement = manager.player.movement;
+        manager.time.OnTimeCount -= Spawn_Animal;
     }
 
 
     // Data
     private void Set_Data()
     {
-        Spawn_Animal();
+        InGame_Manager manager = InGame_Manager.instance;
+        manager.time.OnTimeCount += Spawn_Animal;
     }
 
 
@@ -75,20 +71,30 @@ public class Animals_Manager : MonoBehaviour
 
     private void Spawn_Animal()
     {
-        // decrease spawn according to current spawned amount
-        if (_spawnedAnimals.Count > 0) return;
+        if (_spawnedAnimals.Count > 0) return; // decrease spawn rate according to current spawned amount
 
         AnimalScrObj animalToSpawn = Spawning_Animal();
         if (animalToSpawn == null) return;
 
+        TileScrObj[] spawnTiles = animalToSpawn.spawnTiles;
+        TileScrObj randSpawnTile = spawnTiles[UnityEngine.Random.Range(0, spawnTiles.Length)];
+
         GameObject animalPrefab = Instantiate(animalToSpawn.prefab, transform);
+
         Animal spawnedAnimal = animalPrefab.GetComponent<Animal>();
-
         _spawnedAnimals.Add(spawnedAnimal);
+
+        List<Tile> sortedTiles = InGame_Manager.instance.tilesController.Current_Tiles(randSpawnTile);
+        Tile spawnTile = sortedTiles[UnityEngine.Random.Range(0, sortedTiles.Count)];
+
+        Movement_Controller animalMovement = spawnedAnimal.movement;
+
+        animalMovement.Update_MoveDurationValue(0);
+        animalMovement.Update_Offset(Vector2.zero);
+        animalMovement.MoveTo_Tile(spawnTile);
+
         spawnedAnimal.Set_Data(animalToSpawn);
-
-        // set remaining trail track count
-
-        // set tile
+        spawnedAnimal.Set_Data();
+        spawnedAnimal.Update_Animation();
     }
 }

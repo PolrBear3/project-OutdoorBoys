@@ -25,7 +25,9 @@ public class PlaceableItem : MonoBehaviour
             Destroy(gameObject);
             return;
         }
+        
         _data = setData;
+        _animPlayer.Set_DefaultPosition(_data.itemScrObj.offsetPosition);
     }
 
     public void Track_CurrentTile(Tile setTile)

@@ -17,7 +17,9 @@ public class Time_Manager : MonoBehaviour, ISaveLoadable
     private TimeData _data;
     public TimeData data => _data;
 
+    public Action OnTimeCount;
     public Action<int> OnTimeCountUpdate;
+
     public Action OnNightPhase;
     public Action<int> OnDayCountUpdate;
     
@@ -44,6 +46,8 @@ public class Time_Manager : MonoBehaviour, ISaveLoadable
         if (calculatedTimeCount <= _maxTimeCount)
         {
             _data.Set_Data(calculatedTimeCount, data.dayCount);
+
+            OnTimeCount?.Invoke();
             OnTimeCountUpdate?.Invoke(_data.timeCount);
 
             if (_data.timeCount != _nightPhaseCount) return;
@@ -55,6 +59,8 @@ public class Time_Manager : MonoBehaviour, ISaveLoadable
         int dayUpdateCount = Mathf.FloorToInt(calculatedTimeCount / _maxTimeCount);
 
         _data.Set_Data(calculatedTimeCount % _maxTimeCount - 1, _data.dayCount + dayUpdateCount);
+
+        OnTimeCount?.Invoke();
         OnTimeCountUpdate?.Invoke(_data.timeCount);
 
         for (int i = 0; i < dayUpdateCount; i++)

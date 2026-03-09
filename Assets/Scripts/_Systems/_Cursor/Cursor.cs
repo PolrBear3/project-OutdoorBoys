@@ -116,10 +116,7 @@ public class Cursor : MonoBehaviour
         Vector2 playerTilePos = playerTile.transform.position;
         Vector2 pointTilePos = pointTile.transform.position;
 
-        float xDistance = Mathf.Abs(playerTilePos.x - pointTilePos.x);
-        float ydistance = Mathf.Abs(playerTilePos.y - pointTilePos.y);
-
-        return Mathf.Max(xDistance, ydistance) <= _tilePointRange;
+        return Utility.Chebyshev_Distance(playerTilePos, pointTilePos) <= _tilePointRange;
     }
 
     public void Track_PointingTile(Tile pointTile)

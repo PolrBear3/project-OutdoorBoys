@@ -11,6 +11,9 @@ public class InGame_Manager : MonoBehaviour
     [SerializeField] private InGameUI_Manager _ingameUI;
     public InGameUI_Manager ingameUI => _ingameUI;
 
+    [SerializeField] private MovementControllers_Manager _movements;
+    public MovementControllers_Manager movements => _movements;
+
 
     [Space(20)]
     [SerializeField] private Cursor _cursor;

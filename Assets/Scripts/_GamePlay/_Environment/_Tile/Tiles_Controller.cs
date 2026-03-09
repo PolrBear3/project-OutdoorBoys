@@ -53,6 +53,40 @@ public class Tiles_Controller : MonoBehaviour
     }
 
 
+    public List<Tile> Current_Tiles(TileScrObj sortingTile)
+    {
+        List<Tile> sortedTiles = new();
+
+        for (int i = 0; i < _currentTiles.Count; i++)
+        {
+            Tile currentTile = _currentTiles[i];
+            
+            if (sortingTile != currentTile.data.tileScrObj) continue;
+            sortedTiles.Add(currentTile);
+        }
+
+        if (sortedTiles.Count <= 0) return _currentTiles;
+        return sortedTiles;
+    }
+
+    public List<Tile> Current_Tiles(Tile pivotTile, int rangeDistance)
+    {
+        if (pivotTile == null) return null;
+        
+        List<Tile> innerRangedTiles = new();
+        
+        for (int i = 0; i < _currentTiles.Count; i++)
+        {
+            Tile currentTile = _currentTiles[i];
+            float distance = Utility.Chebyshev_Distance(pivotTile.transform.position, currentTile.transform.position);
+
+            if (distance > rangeDistance) continue;
+            innerRangedTiles.Add(currentTile);
+        }
+        return innerRangedTiles;
+    }
+
+
     public Tile Current_Tile(Vector2 generatedPos)
     {
         for (int i = 0; i < _currentTiles.Count; i++)
