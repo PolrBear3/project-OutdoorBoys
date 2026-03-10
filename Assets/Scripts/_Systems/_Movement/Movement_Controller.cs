@@ -8,6 +8,7 @@ public class Movement_Controller : MonoBehaviour
 {
     [Space(20)]
     [SerializeField] private Vector2 _offset;
+    public Vector2 offset => _offset;
 
     [SerializeField][Range(0, 10)] private float _moveDuration;
     public float moveDuration => _moveDuration;
@@ -17,9 +18,12 @@ public class Movement_Controller : MonoBehaviour
     public Tile currentTile => _currentTile;
 
     private Vector2 _currentOffset;
+    
     private float _currentMoveDuration;
+    public float currentMoveDuration => _currentMoveDuration;
 
     public Action OnMovement;
+    public Action<Vector2> OnMovementDirection;
     public Action<int> OnMovementDistanced;
     public Action<bool> OnMovementStated;
 
@@ -98,10 +102,17 @@ public class Movement_Controller : MonoBehaviour
             return;
         }
 
-        int moveDistance = Utility.Chebyshev_Distance(previousTile.transform.position, _currentTile.transform.position);
-
         OnMovement?.Invoke();
+
+        Vector2 previousTilePos = previousTile.transform.position;
+        Vector2 destinationTilePos = _currentTile.transform.position;
+
+        Vector2 direction = destinationTilePos - previousTilePos;
+        OnMovementDirection?.Invoke(direction);
+        
+        int moveDistance = Utility.Chebyshev_Distance(previousTilePos, destinationTilePos);
         OnMovementDistanced?.Invoke(moveDistance);
+
         Start_MovementStateUpdate(moveDistance);
 
         LeanTween.move(gameObject, destination, _currentMoveDuration * moveDistance); // move

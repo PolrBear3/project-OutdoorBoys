@@ -61,11 +61,6 @@ public class Player_Controller : MonoBehaviour, ISaveLoadable
 
 
     // Data
-    public void Update_Health(int updateValue)
-    { 
-        OnHealthUpdate?.Invoke(_data.Update_Health(updateValue));
-    }
-
     public void Update_Hunger(int updateValue)
     {
         OnHungerUpdate?.Invoke(_data.Update_Hunger(updateValue));

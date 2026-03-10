@@ -6,9 +6,6 @@ using UnityEngine;
 [System.Serializable]
 public class PlayerData
 {
-    [SerializeField][Range(0, 10)] private int _health;
-    public int health => _health;
-
     [SerializeField][Range(0, 10)] private int _hunger;
     public int hunger => _hunger;
 
@@ -20,12 +17,6 @@ public class PlayerData
 
 
     // Data
-    public int Update_Health(int updateValue)
-    {
-        _health = Mathf.Max(0, updateValue);
-        return _health;
-    }
-
     public int Update_Hunger(int updateValue)
     {
         _hunger = Mathf.Max(0, updateValue);

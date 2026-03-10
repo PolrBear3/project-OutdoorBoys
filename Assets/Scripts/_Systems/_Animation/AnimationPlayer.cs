@@ -120,4 +120,11 @@ public class AnimationPlayer : MonoBehaviour
         AnimationClipScrObj playClip = AnimationClip(clipName);
         Play(playClip);
     }
+
+
+    public void Update_Flip(Vector2 direction)
+    {
+        Debug.Log(direction.x);
+        _spriteRenderer.flipX = direction.x < 0;
+    }
 }

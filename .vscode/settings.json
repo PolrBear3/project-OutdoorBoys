@@ -56,6 +56,6 @@
         "temp/": true,
         "Temp/": true
     },
-    "dotnet.defaultSolution": "project_OutdoorBoys.sln",
+    "dotnet.defaultSolution": "project-OutdoorBoys.sln",
     "dotnet.preferCSharpExtension": true
 }

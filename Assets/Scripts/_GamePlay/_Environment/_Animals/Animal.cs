@@ -23,6 +23,7 @@ public class Animal : MonoBehaviour
     // MonoBehaviour
     private void OnDestroy()
     {
+        _movement.OnMovementDirection -= _animation.Update_Flip;
         _movement.OnMovementStated -= Update_Animation;
 
         Movement_Controller playerMovement = InGame_Manager.instance.player.movement;
@@ -35,6 +36,7 @@ public class Animal : MonoBehaviour
     // Data
     public void Set_Data()
     {
+        _movement.OnMovementDirection += _animation.Update_Flip;
         _movement.OnMovementStated += Update_Animation;
 
         Movement_Controller playerMovement = InGame_Manager.instance.player.movement;
@@ -58,30 +60,46 @@ public class Animal : MonoBehaviour
 
     public void Update_Animation()
     {
-        bool isOnSight = _data.isOnSight;
-
-        _animation.spriteRenderer.sortingLayerName = isOnSight ? "Default" : "Behind Player";
-
         if (_data.isOnSight) return;
+
+        SpriteRenderer sr = _animation.spriteRenderer;
+
+        sr.sortingLayerName = "Behind Player";
+        sr.sortingOrder = -1;
+
         _animation.Play(0);
     }
     public void Update_Animation(bool isMoving)
     {
         if (_data.isOnSight == false) return;
+
+        SpriteRenderer sr = _animation.spriteRenderer;
+
+        sr.sortingLayerName = "Default";
+        sr.sortingOrder = 1;
+
         _animation.Play(isMoving ? 2 : 1);
     }
 
 
     // Trail Mark Collecting
-    private Tile MoveDistance_RangeTile()
+    private List<Tile> MoveDistance_RangeTiles()
     {
-        Tiles_Controller tilesController = InGame_Manager.instance.tilesController;
+        InGame_Manager manager = InGame_Manager.instance;
+        Tiles_Controller tilesController = manager.tilesController;
 
         Tile currentTile = _movement.currentTile;
         int distanceRange = _data.animalScrObj.moveDistanceRange;
 
         List<Tile> rangedTiles = tilesController.Current_Tiles(currentTile, distanceRange);
         rangedTiles.Remove(distanceRange > 0 ? currentTile : null);
+
+        return rangedTiles;
+    }
+    private Tile MoveDistance_RangeTile(bool excludePlayerTile)
+    {
+        List<Tile> rangedTiles = MoveDistance_RangeTiles();
+        if (excludePlayerTile) rangedTiles.Remove(InGame_Manager.instance.player.movement.currentTile);
 
         return rangedTiles[UnityEngine.Random.Range(0, rangedTiles.Count)];
     }
@@ -100,20 +118,18 @@ public class Animal : MonoBehaviour
         if (_data.isOnSight) return;
         if (InGame_Manager.instance.player.movement.currentTile != _movement.currentTile) return;
 
-        _movement.Update_Offset(Vector2.zero);
-        _movement.MoveTo_Tile(MoveDistance_RangeTile());
-
         _data.Decrease_TrailMarkCount(1);
-        Update_Animation();
+
+        _movement.Update_Offset(_data.isOnSight ? _movement.offset : Vector2.zero);
+        _movement.MoveTo_Tile(MoveDistance_RangeTile(true));
+
+        if (_data.isOnSight == false) return;
+        _movement.Update_MoveDurationValue();
     }
 
     private void Update_OnSight()
     {
         if (_data.isOnSight == false) return;
-
-        _movement.Update_MoveDurationValue();
-        _movement.Update_Offset();
-
         _data.Update_OnSightTimeCount(1);
 
         if (_data.onSightTimeCount <= 1) return;
@@ -128,7 +144,7 @@ public class Animal : MonoBehaviour
 
         _movement.Update_MoveDurationValue(0);
         _movement.Update_Offset(Vector2.zero);
-        _movement.MoveTo_Tile(MoveDistance_RangeTile());
+        _movement.MoveTo_Tile(MoveDistance_RangeTile(true));
 
         Set_Data(_data.animalScrObj);
         Update_Animation();
@@ -138,13 +154,64 @@ public class Animal : MonoBehaviour
     {
         if (Player_InRange() == false) return;
 
-        if (_data.onSightTimeCount <= 2)
+        // run off
+        if (_movement.currentMoveDuration > 0)
         {
-            _movement.MoveTo_Tile(MoveDistance_RangeTile());
+            _movement.MoveTo_Tile(MoveDistance_RangeTile(true));
+            _movement.Update_MoveDurationValue(0);
+
             return;
         }
 
+        // escape
         InGame_Manager.instance.animals.spawnedAnimals.Remove(this);
         Destroy(gameObject);
+    }
+
+    public void Follow(int maxFollowCount)
+    {
+        int onSightTimeCount = _data.onSightTimeCount;
+        if (onSightTimeCount <= 2) return;
+
+        int actualFollowCount = maxFollowCount + 3;
+
+        // escape
+        if (onSightTimeCount == actualFollowCount)
+        {
+            _movement.MoveTo_Tile(MoveDistance_RangeTile(true));
+            return;
+        }
+        if (onSightTimeCount >= actualFollowCount + 1)
+        {
+            InGame_Manager.instance.animals.spawnedAnimals.Remove(this);
+            Destroy(gameObject);
+            return;
+        }
+
+        // follow
+        Tile playerTile = InGame_Manager.instance.player.movement.currentTile;
+        List<Tile> rangedTiles = MoveDistance_RangeTiles();
+
+        float closestDistance = float.MaxValue;
+        Tile closestTile = null;
+
+        for (int i = 0; i < rangedTiles.Count; i++)
+        {
+            Tile rangedTile = rangedTiles[i];
+
+            float distance = Utility.Chebyshev_Distance(rangedTile.transform.position, playerTile.transform.position);
+            if (distance > closestDistance) continue;
+
+            closestDistance = distance;
+            closestTile = rangedTile;
+        }
+        _movement.MoveTo_Tile(closestTile);
+    }
+
+    public void Attack()
+    {
+        if (InGame_Manager.instance.player.movement.currentTile != _movement.currentTile) return;
+
+        Debug.Log("Game Over by Bear Attack");
     }
 }

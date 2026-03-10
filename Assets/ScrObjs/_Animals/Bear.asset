@@ -10,11 +10,11 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a8ec9eefbc7a64996b2f71d1bf700abc, type: 3}
-  m_Name: Rabbit
+  m_Name: Bear
   m_EditorClassIdentifier: 
-  _prefab: {fileID: 2848068808391517652, guid: 3068ffc36e80a4216ab87381c95f71e6, type: 3}
+  _prefab: {fileID: 2848068808391517652, guid: 6435f4aa5749a4f3a8c5245c56fb3377, type: 3}
   _spawnTiles:
-  - {fileID: 11400000, guid: 13d5158de20cd4105b5f0b097494ca71, type: 2}
-  - {fileID: 11400000, guid: 8145ed0e845b14bca951ca79c25e2e94, type: 2}
-  _maxHealth: 2
-  _moveDistanceRange: 3
+  - {fileID: 11400000, guid: 42f8526c01f614d319724853fb4ec66a, type: 2}
+  - {fileID: 11400000, guid: 621605563892d4d0a95e4d57c264bf5c, type: 2}
+  _maxHealth: 10
+  _moveDistanceRange: 1

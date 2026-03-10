@@ -1,5 +1,7 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -8,6 +10,14 @@ public class ItemCrafting_Manager : MonoBehaviour
     [Space(20)]
     [SerializeField] private ItemSlot_Manager _slotManager;
     [SerializeField] private Image _togglePanel;
+
+    [Space(20)]
+    [SerializeField] private ItemSlot_Manager _ingredientSlotsManager;
+    [SerializeField] private Image _itemInfoPanel;
+
+    [Space(10)]
+    [SerializeField] private TextMeshProUGUI _itemNameText;
+    [SerializeField] private TextMeshProUGUI _itemDescriptionText;
 
 
     // MonoBehaviour
@@ -19,6 +29,9 @@ public class ItemCrafting_Manager : MonoBehaviour
     private void OnDestroy()
     {
         EventBus_Manager.UnRegister(EventBus.AwakeLoad, Set_Data);
+
+        _slotManager.OnSlotHover -= Toggle_ItemInfoPanel;
+        _slotManager.OnSlotHover -= Update_HoveringItemInfo;
 
         _slotManager.OnTargetSlotSelect -= Craft_Item;
         _slotManager.OnSlotSelect -= Update_CraftItems;
@@ -37,6 +50,9 @@ public class ItemCrafting_Manager : MonoBehaviour
     // Component
     private void Set_Data()
     {
+        _slotManager.OnSlotHover += Toggle_ItemInfoPanel;
+        _slotManager.OnSlotHover += Update_HoveringItemInfo;
+        
         _slotManager.OnTargetSlotSelect += Craft_Item;
         _slotManager.OnSlotSelect += Update_CraftItems;
 
@@ -48,6 +64,43 @@ public class ItemCrafting_Manager : MonoBehaviour
 
         manager.tilesController.OnTileSelect += Update_CraftItems;
         manager.player.movement.OnMovement += Update_CraftItems;
+
+        Toggle_ItemInfoPanel(null);
+    }
+
+
+    // Item Info
+    private void Toggle_ItemInfoPanel(ItemSlot hoveringItemSlot)
+    {
+        _itemInfoPanel.gameObject.SetActive(hoveringItemSlot != null && hoveringItemSlot.data != null);
+    }
+
+    private void Update_HoveringItemInfo(ItemSlot hoveringItemSlot)
+    {
+        if (hoveringItemSlot == null) return;
+
+        Item_ScrObj hoveringItem = hoveringItemSlot.data?.itemScrObj;
+        if (hoveringItem == null) return;
+
+        _itemNameText.text = hoveringItem.itemName;
+        _itemDescriptionText.text = hoveringItem.description;
+
+        LayoutRebuilder.ForceRebuildLayoutImmediate(_itemInfoPanel.rectTransform);
+
+        List<ItemData> ingredientDatas = hoveringItem.Item_IngredientDatas();
+        List<ItemSlot> slots = _ingredientSlotsManager.slots;
+
+        for (int i = 0; i < slots.Count; i++)
+        {
+            ItemSlot slot = slots[i];
+            
+            bool hasIngredient = i < ingredientDatas.Count;
+            slot.gameObject.SetActive(hasIngredient);
+
+            if (hasIngredient == false) continue;
+            slot.Set_Data(ingredientDatas[i]);
+        }
+        _ingredientSlotsManager.Update_Visuals();
     }
 
 

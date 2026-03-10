@@ -7,7 +7,6 @@ public class InGameUI_Manager : MonoBehaviour
 {
     [Space(20)]
     [SerializeField] private TextMeshProUGUI _timeText;
-    [SerializeField] private TextMeshProUGUI _healthText;
     [SerializeField] private TextMeshProUGUI _hungerText;
     [SerializeField] private TextMeshProUGUI _temperatureText;
 
@@ -29,7 +28,6 @@ public class InGameUI_Manager : MonoBehaviour
 
         Player_Controller player = manager.player;
 
-        player.OnHealthUpdate -= Update_HealthText;
         player.OnHungerUpdate -= Update_HungerText;
         player.OnTemperatureUpdate -= Update_TemperatureText;
     }
@@ -47,11 +45,9 @@ public class InGameUI_Manager : MonoBehaviour
         Player_Controller player = manager.player;
         PlayerData playerData = player.data;
 
-        Update_HealthText(playerData.health);
         Update_HungerText(playerData.hunger);
         Update_TemperatureText(playerData.temperature);
 
-        player.OnHealthUpdate += Update_HealthText;
         player.OnHungerUpdate += Update_HungerText;
         player.OnTemperatureUpdate += Update_TemperatureText;
     }
@@ -60,7 +56,6 @@ public class InGameUI_Manager : MonoBehaviour
     // Text
     private void Update_TimeText(int timeCount) => _timeText.text = timeCount.ToString();
 
-    private void Update_HealthText(int healthValue) => _healthText.text = healthValue.ToString();
     private void Update_HungerText(int hungerValue) => _hungerText.text = hungerValue.ToString();
     private void Update_TemperatureText(int tempValue) => _temperatureText.text = tempValue.ToString();
 }
