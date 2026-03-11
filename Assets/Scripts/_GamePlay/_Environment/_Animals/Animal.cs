@@ -154,18 +154,43 @@ public class Animal : MonoBehaviour
     {
         if (Player_InRange() == false) return;
 
-        // run off
-        if (_movement.currentMoveDuration > 0)
+        InGame_Manager manager = InGame_Manager.instance;
+
+        // escape
+        if (_movement.currentMoveDuration <= 0)
         {
-            _movement.MoveTo_Tile(MoveDistance_RangeTile(true));
-            _movement.Update_MoveDurationValue(0);
+            manager.animals.spawnedAnimals.Remove(this);
+            Destroy(gameObject);
 
             return;
         }
 
-        // escape
-        InGame_Manager.instance.animals.spawnedAnimals.Remove(this);
-        Destroy(gameObject);
+        // run off
+        List<Tile> rangedTiles = MoveDistance_RangeTiles();
+        float escapeDistance = UnityEngine.Random.Range(1, _data.animalScrObj.moveDistanceRange) - 1;
+
+        Tile farTile = null;
+        float farDistance = float.MinValue;
+
+        for (int i = 0; i < rangedTiles.Count; i++)
+        {
+            Tile rangedTile = rangedTiles[i];
+            Vector2 rangedTilePos = rangedTile.transform.position;
+
+            float rangedTileDistance = Utility.Chebyshev_Distance(_movement.transform.position, rangedTilePos);
+            if (rangedTileDistance != escapeDistance) continue;
+
+            Vector2 playerTilePos = manager.player.movement.currentTile.transform.position;
+            float distanceFromPlayer = Utility.Chebyshev_Distance(rangedTilePos, playerTilePos);
+
+            if (distanceFromPlayer <= farDistance) continue;
+
+            farDistance = distanceFromPlayer;
+            farTile = rangedTile;
+        }
+
+        _movement.MoveTo_Tile(farTile);
+        _movement.Update_MoveDurationValue(0);
     }
 
     public void Follow(int maxFollowCount)

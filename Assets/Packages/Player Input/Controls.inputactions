@@ -29,6 +29,15 @@
                     "id": "2c3d8f18-91bb-4d3a-8fe5-405953bbee32",
                     "expectedControlType": "",
                     "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "HoldLeftClick",
+                    "type": "Button",
+                    "id": "6b3060e9-1a3c-4a6d-8902-c768e526afa3",
+                    "expectedControlType": "",
+                    "processors": "",
                     "interactions": "Tap,Hold(duration=0.5)",
                     "initialStateCheck": false
                 },
@@ -45,6 +54,15 @@
                     "name": "Interact",
                     "type": "Button",
                     "id": "79ce13db-bebc-4367-9f83-5c1ec046eac9",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "HoldInteract",
+                    "type": "Button",
+                    "id": "167a016c-1e1e-4a62-9f8e-8cb46b59cdc5",
                     "expectedControlType": "",
                     "processors": "",
                     "interactions": "Tap,Hold(duration=0.5)",
@@ -147,6 +165,17 @@
                 },
                 {
                     "name": "",
+                    "id": "bb69c969-7a4b-48a4-81ba-8a569352fd32",
+                    "path": "<Keyboard>/space",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";PC",
+                    "action": "HoldInteract",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
                     "id": "96df1c86-edce-49fe-b068-1b58f12d243e",
                     "path": "<Keyboard>/q",
                     "interactions": "",
@@ -197,6 +226,17 @@
                     "processors": "",
                     "groups": ";PC",
                     "action": "LeftClick",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "20af819f-d6ea-425e-b7f1-125015594f0e",
+                    "path": "<Mouse>/leftButton",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";PC",
+                    "action": "HoldLeftClick",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },

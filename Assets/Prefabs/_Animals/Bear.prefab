@@ -51,7 +51,7 @@ MonoBehaviour:
   _animationClips:
   - {fileID: 11400000, guid: 5bcc235d95cca4bfc88fedf6d39d1b67, type: 2}
   - {fileID: 11400000, guid: 124b5ef2bf79241a0bef2c6f2621b4fd, type: 2}
-  - {fileID: 11400000, guid: 124b5ef2bf79241a0bef2c6f2621b4fd, type: 2}
+  - {fileID: 11400000, guid: 234177e968374423185c1d365cc2e894, type: 2}
 --- !u!114 &3490125478823233063
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -65,7 +65,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _offset: {x: 0, y: 0.05}
-  _moveDuration: 0.25
+  _moveDuration: 0.5
 --- !u!114 &4065704676414607868
 MonoBehaviour:
   m_ObjectHideFlags: 0

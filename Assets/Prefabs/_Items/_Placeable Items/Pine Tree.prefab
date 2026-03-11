@@ -101,6 +101,7 @@ MonoBehaviour:
   _spriteRenderer: {fileID: 5977787769705234577}
   _animationClips:
   - {fileID: 11400000, guid: 57845f7ce3bf144b09f657cb30bc9398, type: 2}
+  - {fileID: 11400000, guid: e081c9b46fc884a7e8cfc0c149e8df4b, type: 2}
 --- !u!114 &1531750997209139500
 MonoBehaviour:
   m_ObjectHideFlags: 0

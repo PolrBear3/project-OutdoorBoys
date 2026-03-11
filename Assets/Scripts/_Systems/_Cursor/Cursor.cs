@@ -7,20 +7,19 @@ using TMPro;
 
 public class Cursor : MonoBehaviour
 {
-    [SerializeField] private AnimationPlayerUI _animPlayer;
-    public AnimationPlayerUI animPlayer => _animPlayer;
-
-    [Space(10)]
+    [Space(20)]
     [SerializeField] private ItemCursor _itemCursor;
     public ItemCursor itemCursor => _itemCursor;
 
-    [Space(20)]
     [SerializeField] private RectTransform _rect;
+
+    [Space(20)]
+    [SerializeField] private Image _cursorImage;
 
     [SerializeField] private TextMeshProUGUI _amountText;
     public TextMeshProUGUI amountText => _amountText;
 
-    [Space(20)]
+    [Space(10)]
     [SerializeField] private Sprite _defaultPointerSprite;
 
 
@@ -88,7 +87,7 @@ public class Cursor : MonoBehaviour
     {
         Sprite updateSprite = sprite != null ? sprite : _defaultPointerSprite;
 
-        _animPlayer.image.sprite = updateSprite;
+        _cursorImage.sprite = updateSprite;
     }
 
     public void Update_AmountText(int updateAmount)

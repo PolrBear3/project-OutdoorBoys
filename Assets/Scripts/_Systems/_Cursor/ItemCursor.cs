@@ -148,6 +148,8 @@ public class ItemCursor : MonoBehaviour
         Item_ScrObj returnItem = _data.itemScrObj;
 
         ItemData leftOverData = inventory.Add_ItemData(_data);
+        OnItemReturn?.Invoke();
+
         if (leftOverData != null && returnItem.itemType != ItemType.place) return;
 
         inventory.slotManager.Update_Visuals();

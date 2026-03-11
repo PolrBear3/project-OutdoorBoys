@@ -7,9 +7,9 @@ public class UIMenu_InputController : MonoBehaviour
 {
     public Action<Vector2> OnNavigate;
 
-    public Action OnSelectStart;
     public Action OnSelect;
     public Action OnHoldSelect;
+    public Action OnSelectEnd;
 
     public Action OnExit;
     

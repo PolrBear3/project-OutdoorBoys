@@ -84,7 +84,11 @@ public class Animals_Manager : MonoBehaviour
         Animal spawnedAnimal = animalPrefab.GetComponent<Animal>();
         _spawnedAnimals.Add(spawnedAnimal);
 
-        List<Tile> sortedTiles = InGame_Manager.instance.tilesController.Current_Tiles(randSpawnTile);
+        InGame_Manager manager = InGame_Manager.instance;
+
+        List<Tile> sortedTiles = manager.tilesController.Current_Tiles(randSpawnTile);
+        sortedTiles.Remove(manager.player.movement.currentTile);
+
         Tile spawnTile = sortedTiles[UnityEngine.Random.Range(0, sortedTiles.Count)];
 
         Movement_Controller animalMovement = spawnedAnimal.movement;

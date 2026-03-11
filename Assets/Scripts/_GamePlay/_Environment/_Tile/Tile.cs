@@ -109,11 +109,14 @@ public class Tile : MonoBehaviour
         _data.placedItemDatas.Add(placingItem.data);
     }
 
-    public void Remove_PlacedItem(PlaceableItem placingItem)
+    public void Remove_PlacedItemData(PlaceableItem placingItem)
     {
         _placedItems.Remove(placingItem);
         _data.placedItemDatas.Remove(placingItem.data);
-
+    }
+    public void Remove_PlacedItem(PlaceableItem placingItem)
+    {
+        Remove_PlacedItemData(placingItem);
         Destroy(placingItem.gameObject);
     }
     public void RemoveUpdate_PlacedItems()

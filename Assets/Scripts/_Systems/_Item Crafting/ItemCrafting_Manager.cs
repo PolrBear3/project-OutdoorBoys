@@ -36,14 +36,23 @@ public class ItemCrafting_Manager : MonoBehaviour
         _slotManager.OnTargetSlotSelect -= Craft_Item;
         _slotManager.OnSlotSelect -= Update_CraftItems;
 
+        _slotManager.OnTargetSlotSelect -= Toggle_ItemInfoPanel;
+        _slotManager.OnTargetSlotSelect -= Update_HoveringItemInfo;
+
         InGame_Manager manager = InGame_Manager.instance;
         Inventory_Manager inventory = manager.inventory;
 
         inventory.OnItemAdded -= Update_CraftItems;
         inventory.slotManager.OnSlotSelect -= Update_CraftItems;
 
+        inventory.OnItemAdded -= Toggle_ItemInfoPanel;
+        inventory.OnItemAdded -= Update_HoveringItemInfo;
+
         manager.tilesController.OnTileSelect -= Update_CraftItems;
         manager.player.movement.OnMovement -= Update_CraftItems;
+
+        manager.player.movement.OnMovement -= Toggle_ItemInfoPanel;
+        manager.player.movement.OnMovement -= Update_HoveringItemInfo;
     }
 
 
@@ -52,9 +61,12 @@ public class ItemCrafting_Manager : MonoBehaviour
     {
         _slotManager.OnSlotHover += Toggle_ItemInfoPanel;
         _slotManager.OnSlotHover += Update_HoveringItemInfo;
-        
+
         _slotManager.OnTargetSlotSelect += Craft_Item;
         _slotManager.OnSlotSelect += Update_CraftItems;
+
+        _slotManager.OnTargetSlotSelect += Toggle_ItemInfoPanel;
+        _slotManager.OnTargetSlotSelect += Update_HoveringItemInfo;
 
         InGame_Manager manager = InGame_Manager.instance;
         Inventory_Manager inventory = manager.inventory;
@@ -62,10 +74,16 @@ public class ItemCrafting_Manager : MonoBehaviour
         inventory.OnItemAdded += Update_CraftItems;
         inventory.slotManager.OnSlotSelect += Update_CraftItems;
 
+        inventory.OnItemAdded += Toggle_ItemInfoPanel;
+        inventory.OnItemAdded += Update_HoveringItemInfo;
+
         manager.tilesController.OnTileSelect += Update_CraftItems;
         manager.player.movement.OnMovement += Update_CraftItems;
 
-        Toggle_ItemInfoPanel(null);
+        manager.player.movement.OnMovement += Toggle_ItemInfoPanel;
+        manager.player.movement.OnMovement += Update_HoveringItemInfo;
+
+        Toggle_ItemInfoPanel();
     }
 
 
@@ -73,6 +91,10 @@ public class ItemCrafting_Manager : MonoBehaviour
     private void Toggle_ItemInfoPanel(ItemSlot hoveringItemSlot)
     {
         _itemInfoPanel.gameObject.SetActive(hoveringItemSlot != null && hoveringItemSlot.data != null);
+    }
+    private void Toggle_ItemInfoPanel()
+    {
+        Toggle_ItemInfoPanel(_slotManager.hoveringSlot);
     }
 
     private void Update_HoveringItemInfo(ItemSlot hoveringItemSlot)
@@ -101,6 +123,10 @@ public class ItemCrafting_Manager : MonoBehaviour
             slot.Set_Data(ingredientDatas[i]);
         }
         _ingredientSlotsManager.Update_Visuals();
+    }
+    private void Update_HoveringItemInfo()
+    {
+        Update_HoveringItemInfo(_slotManager.hoveringSlot);
     }
 
 

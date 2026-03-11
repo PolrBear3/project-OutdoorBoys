@@ -18,19 +18,19 @@ MonoBehaviour:
   _clipSpriteDatas:
   - _clipName: shake right
     _clipSprite: {fileID: 0}
-    _durationTime: 0.5
+    _durationTime: 0.1
     _offSetPosition: {x: 0.05, y: 0}
     _rotationValue: -10
-    _transformDurationTime: 0.5
+    _transformDurationTime: 0.1
   - _clipName: shake left
     _clipSprite: {fileID: 0}
-    _durationTime: 1
+    _durationTime: 0.2
     _offSetPosition: {x: -0.05, y: 0}
     _rotationValue: 10
-    _transformDurationTime: 1
+    _transformDurationTime: 0.2
   - _clipName: settle
     _clipSprite: {fileID: 0}
-    _durationTime: 0.5
+    _durationTime: 0.1
     _offSetPosition: {x: 0, y: 0}
     _rotationValue: 0
-    _transformDurationTime: 0.5
+    _transformDurationTime: 0.1

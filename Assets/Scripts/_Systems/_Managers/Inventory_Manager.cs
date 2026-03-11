@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.UI;
@@ -15,6 +16,13 @@ public class Inventory_Manager : MonoBehaviour
 
     [SerializeField] private Image _togglePanel;
 
+    [Space(20)]
+    [SerializeField] private ItemSlot _itemImageSlot;
+    [SerializeField] private Image _itemInfoPanel;
+
+    [Space(10)]
+    [SerializeField] private TextMeshProUGUI _itemNameText;
+    [SerializeField] private TextMeshProUGUI _itemDescriptionText;
 
     public Action OnItemAdded;
 
@@ -35,28 +43,50 @@ public class Inventory_Manager : MonoBehaviour
         EventBus_Manager.UnRegister(EventBus.AwakeLoad, Set_Data);
         EventBus_Manager.UnRegister(EventBus.SubLoad, Toggle_Update);
 
-        InGame_Manager manager = InGame_Manager.instance;
+        OnItemAdded -= Toggle_ItemInfoPanel;
+        OnItemAdded -= Update_HoveringItemInfo;
 
-        manager.player.movement.OnMovement -= Toggle_Update;
-        manager.tilesController.OnTileSelect -= Toggle_Update;
-        manager.cursor.itemCursor.OnItemReturn -= Toggle_Update;
+        _slotManager.OnSlotHover -= Toggle_ItemInfoPanel;
+        _slotManager.OnSlotHover -= Update_HoveringItemInfo;
 
         _slotManager.OnTargetSlotSelect -= Transfer_Item;
         _slotManager.OnTargetSlotHoldSelect -= Transfer_AllItems;
+
+        _slotManager.OnTargetSlotSelect -= Toggle_ItemInfoPanel;
+        _slotManager.OnTargetSlotSelect -= Update_HoveringItemInfo;
+
+        InGame_Manager manager = InGame_Manager.instance;
+        ItemCursor itemCursor = manager.cursor.itemCursor;
+
+        manager.player.movement.OnMovement -= Toggle_Update;
+        manager.tilesController.OnTileSelect -= Toggle_Update;
+        itemCursor.OnItemReturn -= Toggle_Update;
     }
 
 
     // Data
     public void Set_Data()
     {
-        InGame_Manager manager = InGame_Manager.instance;
-
-        manager.player.movement.OnMovement += Toggle_Update;
-        manager.tilesController.OnTileSelect += Toggle_Update;
-        manager.cursor.itemCursor.OnItemReturn += Toggle_Update;
+        OnItemAdded += Toggle_ItemInfoPanel;
+        OnItemAdded += Update_HoveringItemInfo;
+        
+        _slotManager.OnSlotHover += Toggle_ItemInfoPanel;
+        _slotManager.OnSlotHover += Update_HoveringItemInfo;
 
         _slotManager.OnTargetSlotSelect += Transfer_Item;
         _slotManager.OnTargetSlotHoldSelect += Transfer_AllItems;
+
+        _slotManager.OnTargetSlotSelect += Toggle_ItemInfoPanel;
+        _slotManager.OnTargetSlotSelect += Update_HoveringItemInfo;
+
+        InGame_Manager manager = InGame_Manager.instance;
+        ItemCursor itemCursor = manager.cursor.itemCursor;
+
+        manager.player.movement.OnMovement += Toggle_Update;
+        manager.tilesController.OnTileSelect += Toggle_Update;
+        itemCursor.OnItemReturn += Toggle_Update;
+
+        Toggle_ItemInfoPanel();
     }
 
 
@@ -71,6 +101,45 @@ public class Inventory_Manager : MonoBehaviour
     public bool Toggled()
     {
         return _togglePanel.gameObject.activeSelf;
+    }
+
+
+    // Item Info
+    private void Toggle_ItemInfoPanel(ItemSlot hoveringItemSlot)
+    {
+        bool toggle = hoveringItemSlot != null && hoveringItemSlot.data != null;
+        _itemInfoPanel.gameObject.SetActive(toggle);
+
+        if (toggle == false) return;
+
+        Vector2 panelPos = _itemInfoPanel.transform.position;
+        panelPos.x = hoveringItemSlot.itemImage.transform.position.x;
+
+        _itemInfoPanel.transform.position = panelPos;
+    }
+    private void Toggle_ItemInfoPanel()
+    {
+        Toggle_ItemInfoPanel(_slotManager.hoveringSlot);
+    }
+
+    private void Update_HoveringItemInfo(ItemSlot hoveringItemSlot)
+    {
+        if (hoveringItemSlot == null) return;
+
+        Item_ScrObj hoveringItem = hoveringItemSlot.data?.itemScrObj;
+        if (hoveringItem == null) return;
+
+        _itemImageSlot.Set_Data(new ItemData(hoveringItem, 1));
+        _itemImageSlot.Update_Visuals();
+
+        _itemNameText.text = hoveringItem.itemName;
+        _itemDescriptionText.text = hoveringItem.description;
+
+        LayoutRebuilder.ForceRebuildLayoutImmediate(_itemInfoPanel.rectTransform);
+    }
+    private void Update_HoveringItemInfo()
+    {
+        Update_HoveringItemInfo(_slotManager.hoveringSlot);
     }
 
 

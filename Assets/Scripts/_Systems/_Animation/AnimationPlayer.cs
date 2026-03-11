@@ -38,6 +38,11 @@ public class AnimationPlayer : MonoBehaviour
         return _animationClips[clipIndex];
     }
 
+    public bool Animation_Playing()
+    {
+        return _playCoroutine != null;
+    }
+
 
     // Main
     public void Stop()
@@ -124,7 +129,6 @@ public class AnimationPlayer : MonoBehaviour
 
     public void Update_Flip(Vector2 direction)
     {
-        Debug.Log(direction.x);
         _spriteRenderer.flipX = direction.x < 0;
     }
 }

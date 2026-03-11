@@ -25,7 +25,6 @@ public class Input_Controller : MonoBehaviour
     public ControlScheme_ScrObj currentControlScheme => _currentControlScheme;
 
     private List<string> _actionMaps = new();
-    private HashSet<Guid> _inputGateIDs = new();
 
     private List<UIMenu_InputController> _toggledMenuInputs = new();
     public List<UIMenu_InputController> toggledMenuInputs => _toggledMenuInputs;
@@ -42,17 +41,16 @@ public class Input_Controller : MonoBehaviour
     public Action<Vector2> OnMovement;
     public Action<Vector2> OnCursorControl;
 
-    public Action OnLeftClickStart;
     public Action OnLeftClick;
     public Action OnHoldLeftClick;
+    public Action OnLeftClickEnd;
 
-    public Action OnRightClickStart;
     public Action OnRightClick;
     public Action OnHoldRightClick;
 
-    public Action OnInteractStart;
     public Action OnInteract;
     public Action OnHoldInteract;
+    public Action OnInteractEnd;
 
     public Action OnAction1;
     public Action OnAction2;
@@ -206,35 +204,26 @@ public class Input_Controller : MonoBehaviour
 
     public void LeftClick(InputAction.CallbackContext context)
     {
-        Guid actionID = context.action.id;
-
-        if (context.started && _inputGateIDs.Add(actionID))
+        if (context.started)
         {
-            OnLeftClickStart?.Invoke();
-        }
-        
-        if (!context.performed) return;
-        _inputGateIDs.Remove(actionID);
-
-        if (context.interaction is UnityEngine.InputSystem.Interactions.HoldInteraction)
-        {
-            OnHoldLeftClick?.Invoke();
+            OnLeftClick?.Invoke();
             return;
         }
-        OnLeftClick?.Invoke();
+        if (context.canceled == false) return;
+        
+        OnLeftClickEnd?.Invoke();
+    }
+    public void HoldLeftClick(InputAction.CallbackContext context)
+    {
+        if (context.performed == false) return;
+        if (context.interaction is UnityEngine.InputSystem.Interactions.HoldInteraction == false) return;
+        
+        OnHoldLeftClick?.Invoke();
     }
 
     public void RightClick(InputAction.CallbackContext context)
     {
-        Guid actionID = context.action.id;
-
-        if (context.started && _inputGateIDs.Add(actionID))
-        {
-            OnRightClickStart?.Invoke();
-        }
-
         if (!context.performed) return;
-        _inputGateIDs.Remove(actionID);
 
         if (context.interaction is UnityEngine.InputSystem.Interactions.HoldInteraction)
         {
@@ -255,19 +244,21 @@ public class Input_Controller : MonoBehaviour
 
     public void Interact(InputAction.CallbackContext context)
     {
-        Guid actionID = context.action.id;
-        
-        if (context.started && _inputGateIDs.Add(actionID)) OnInteractStart?.Invoke();
-        if (!context.performed) return;
-
-        _inputGateIDs.Remove(actionID);
-
-        if (context.interaction is UnityEngine.InputSystem.Interactions.HoldInteraction)
+        if (context.started)
         {
-            OnHoldInteract?.Invoke();
+            OnInteract?.Invoke();
             return;
         }
-        OnInteract?.Invoke();
+        if (context.canceled == false) return;
+
+        OnInteractEnd?.Invoke();
+    }
+    public void HoldInteract(InputAction.CallbackContext context)
+    {
+        if (context.performed == false) return;
+        if (context.interaction is UnityEngine.InputSystem.Interactions.HoldInteraction == false) return;
+
+        OnHoldInteract?.Invoke();
     }
 
     public void Action1(InputAction.CallbackContext context)
@@ -314,20 +305,15 @@ public class Input_Controller : MonoBehaviour
     public void Select(InputAction.CallbackContext context)
     {
         if (UIMenuInput_Toggled(out UIMenu_InputController recentInput) == false) return;
-
-        Guid actionID = context.action.id;
-
-        if (context.started && _inputGateIDs.Add(actionID)) recentInput.OnSelectStart?.Invoke();
-        if (!context.performed) return;
-
-        _inputGateIDs.Remove(actionID);
-
-        if (context.interaction is UnityEngine.InputSystem.Interactions.HoldInteraction)
+        
+        if (context.started)
         {
-            recentInput.OnHoldSelect?.Invoke();
+            recentInput.OnSelect?.Invoke();
             return;
         }
-        recentInput.OnSelect?.Invoke();
+        if (context.canceled == false) return;
+
+        recentInput.OnSelectEnd?.Invoke();
     }
 
     public void Exit(InputAction.CallbackContext context)
