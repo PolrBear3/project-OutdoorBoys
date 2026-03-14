@@ -126,7 +126,9 @@ public class ItemCursor : MonoBehaviour
             placedItemData.Update_CurrentAmount(placedItemData.amount - pickupAmount);
 
             if (placedItemData.amount > 0) continue;
-            selectTile.Remove_PlacedItem(placedItem);
+
+            selectTile.Remove_PlacedItemData(placedItem);
+            Destroy(placedItem.gameObject);
         }
     }
 
@@ -136,12 +138,12 @@ public class ItemCursor : MonoBehaviour
 
         InGame_Manager manager = InGame_Manager.instance;
         Inventory_Manager inventory = manager.inventory;
-        
+
         if (inventory.Toggled() == false)
         {
             Place_AllItem(manager.player.movement.currentTile);
             OnItemReturn?.Invoke();
-            
+
             return;
         }
 
@@ -186,11 +188,13 @@ public class ItemCursor : MonoBehaviour
             return;
         }
 
+        // move this to tile
         if (selectTile.placedItems.Count >= 2) return;
         if (selectTile.Placed_ItemCount(currentItem) >= currentItem.maxAmount) return;
 
         if (selectTile.Placed_StackableItems() > 1) return;
         if (currentItem.stackable == false && selectTile.NonStackableItem_Placed()) return;
+        //
 
         GameObject spawnedItem = Instantiate(currentItem.itemPrefab, selectTile.placeableItemsPrefabs);
         spawnedItem.transform.localPosition = currentItem.offsetPosition;

@@ -102,31 +102,28 @@ public class Tile : MonoBehaviour
     }
 
 
-    // Item Datas
+    // Current Placed Items
     public void Track_PlacingItem(PlaceableItem placingItem)
     {
         _placedItems.Add(placingItem);
         _data.placedItemDatas.Add(placingItem.data);
     }
 
-    public void Remove_PlacedItemData(PlaceableItem placingItem)
+    public void Remove_PlacedItemData(PlaceableItem PlacedItem)
     {
-        _placedItems.Remove(placingItem);
-        _data.placedItemDatas.Remove(placingItem.data);
+        _placedItems.Remove(PlacedItem);
+        _data.placedItemDatas.Remove(PlacedItem.data);
     }
-    public void Remove_PlacedItem(PlaceableItem placingItem)
-    {
-        Remove_PlacedItemData(placingItem);
-        Destroy(placingItem.gameObject);
-    }
-    public void RemoveUpdate_PlacedItems()
+    public void Remove_EmptyPlacedItems()
     {
         for (int i = _placedItems.Count - 1; i >= 0; i--)
         {
             PlaceableItem placedItem = _placedItems[i];
 
             if (placedItem.data.amount > 0) continue;
-            Remove_PlacedItem(placedItem);
+
+            Remove_PlacedItemData(placedItem);
+            Destroy(placedItem.gameObject);
         }
     }
 

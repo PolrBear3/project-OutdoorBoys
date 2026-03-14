@@ -13,9 +13,6 @@ public class TileData
     private List<ItemData> _placedItemDatas = new();
     public List<ItemData> placedItemDatas => _placedItemDatas;
 
-    private List<ItemData> _droppedItemDatas = new();
-    public List<ItemData> droppedItemDatas => _droppedItemDatas;
-
 
     // Constructors
     public TileData(TileScrObj setTile)

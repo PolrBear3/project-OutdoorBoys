@@ -115,7 +115,7 @@ public class ItemCrafting_Manager : MonoBehaviour
         for (int i = 0; i < slots.Count; i++)
         {
             ItemSlot slot = slots[i];
-            
+
             bool hasIngredient = i < ingredientDatas.Count;
             slot.gameObject.SetActive(hasIngredient);
 
@@ -224,7 +224,7 @@ public class ItemCrafting_Manager : MonoBehaviour
         itemCursor.Update_Visuals();
 
         // placed items update
-        manager.player.movement.currentTile.RemoveUpdate_PlacedItems();
+        manager.player.movement.currentTile.Remove_EmptyPlacedItems();
 
         // inventory update
         inventorySlotManager.Refresh_Datas();

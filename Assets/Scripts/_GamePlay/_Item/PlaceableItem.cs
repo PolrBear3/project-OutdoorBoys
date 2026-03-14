@@ -9,6 +9,8 @@ public class PlaceableItem : MonoBehaviour
     [SerializeField] private AnimationPlayer _animPlayer;
     public AnimationPlayer animPlayer => _animPlayer;
 
+    [SerializeField] private AnimationClipScrObj _removeAnimationClip;
+
 
     private ItemData _data;
     public ItemData data => _data;
@@ -25,7 +27,7 @@ public class PlaceableItem : MonoBehaviour
             Destroy(gameObject);
             return;
         }
-        
+
         _data = setData;
         _animPlayer.Set_DefaultPosition(_data.itemScrObj.offsetPosition);
     }
@@ -38,5 +40,26 @@ public class PlaceableItem : MonoBehaviour
             return;
         }
         _currentTile = setTile;
+    }
+
+
+    // Animation Delay Remove
+    public void AnimationDelay_Remove()
+    {
+        _currentTile.Remove_PlacedItemData(this);
+
+        if (_removeAnimationClip == null)
+        {
+            Destroy(gameObject);
+            return;
+        }
+        StartCoroutine(AnimationDelay_RemoveUpdate());
+    }
+    private IEnumerator AnimationDelay_RemoveUpdate()
+    {
+        _animPlayer.Play(_removeAnimationClip);
+
+        while (_animPlayer.Animation_Playing()) yield return null;
+        Destroy(gameObject);
     }
 }

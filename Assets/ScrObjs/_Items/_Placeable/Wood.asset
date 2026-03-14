@@ -10,17 +10,17 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 069327ba6dded4f16af0714f2c328413, type: 3}
-  m_Name: Pine Tree
+  m_Name: Wood
   m_EditorClassIdentifier: 
-  _inventorySprite: {fileID: -1150653497, guid: bf7ece83f843c4c35977c02f8c40d92d, type: 3}
-  _microSprite: {fileID: -903501210, guid: bf7ece83f843c4c35977c02f8c40d92d, type: 3}
-  _itemName: Pine Tree
+  _inventorySprite: {fileID: -1041514726, guid: bf7ece83f843c4c35977c02f8c40d92d, type: 3}
+  _microSprite: {fileID: 1617338267, guid: bf7ece83f843c4c35977c02f8c40d92d, type: 3}
+  _itemName: Wood
   _description: 
   _itemType: 0
-  _itemPrefab: {fileID: 3637228250238346253, guid: ef1737ce7ac5d4892891d078200388ab, type: 3}
+  _itemPrefab: {fileID: 3637228250238346253, guid: d4708f1d05bc94d4e9729ecd39415cc5, type: 3}
   _offsetPosition: {x: 0, y: 0.3}
-  _maxAmount: 1
-  _itemWeight: 7
-  _stackable: 0
+  _maxAmount: 7
+  _itemWeight: 1
+  _stackable: 1
   _triggerRange: 0
   _itemIngredientDatas: []

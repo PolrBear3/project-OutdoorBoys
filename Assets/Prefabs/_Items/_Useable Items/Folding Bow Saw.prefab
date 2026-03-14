@@ -58,5 +58,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _useableItem: {fileID: 2873364016420352242}
+  _woodItem: {fileID: 11400000, guid: cea7459d8010d4a229cb42a2a5b65381, type: 2}
   _treeItems:
   - {fileID: 11400000, guid: 86e876e6c7e9c467db97ab95dfa547ce, type: 2}
