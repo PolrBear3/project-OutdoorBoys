@@ -62,6 +62,6 @@ public class Saw : MonoBehaviour
 
     private void SetWood_OnDestroy(Tile useTile)
     {
-
+        useTile.Set_PlacingItem(new(_woodItem, 60));
     }
 }

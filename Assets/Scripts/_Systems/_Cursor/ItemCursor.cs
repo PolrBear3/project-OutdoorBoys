@@ -167,46 +167,9 @@ public class ItemCursor : MonoBehaviour
             return;
         }
 
-        if (_data.itemScrObj.itemType != ItemType.place) return;
+        if (selectTile.Set_PlacingItem(new(_data.itemScrObj, 1)) != null) return;
+        _data.Update_CurrentAmount(_data.amount - 1);
 
-        List<PlaceableItem> placedItems = selectTile.placedItems;
-        Item_ScrObj currentItem = _data.itemScrObj;
-
-        for (int i = 0; i < placedItems.Count; i++)
-        {
-            ItemData placedItemData = placedItems[i].data;
-
-            if (currentItem != placedItemData.itemScrObj) continue;
-            if (placedItemData.amount >= currentItem.maxAmount) continue;
-
-            placedItemData.Update_CurrentAmount(placedItemData.amount + 1);
-
-            Update_Data(new(currentItem, _data.amount - 1));
-            if (_data.amount > 0) return;
-            Set_Data(null);
-
-            return;
-        }
-
-        // move this to tile
-        if (selectTile.placedItems.Count >= 2) return;
-        if (selectTile.Placed_ItemCount(currentItem) >= currentItem.maxAmount) return;
-
-        if (selectTile.Placed_StackableItems() > 1) return;
-        if (currentItem.stackable == false && selectTile.NonStackableItem_Placed()) return;
-        //
-
-        GameObject spawnedItem = Instantiate(currentItem.itemPrefab, selectTile.placeableItemsPrefabs);
-        spawnedItem.transform.localPosition = currentItem.offsetPosition;
-
-        PlaceableItem placedItem = spawnedItem.GetComponent<PlaceableItem>();
-
-        placedItem.Set_Data(new(currentItem, 1));
-        placedItem.Track_CurrentTile(selectTile);
-
-        selectTile.Track_PlacingItem(placedItem);
-
-        Update_Data(new(currentItem, _data.amount - 1));
         if (_data.amount > 0) return;
         Set_Data(null);
     }
@@ -219,15 +182,7 @@ public class ItemCursor : MonoBehaviour
             return;
         }
 
-        int placeCount = _data.amount;
-
-        while (placeCount > 0)
-        {
-            Place_Item(selectTile);
-
-            if (_data == null) return;
-            placeCount--;
-        }
+        Set_Data(selectTile.Set_PlacingItem(_data));
     }
 
 

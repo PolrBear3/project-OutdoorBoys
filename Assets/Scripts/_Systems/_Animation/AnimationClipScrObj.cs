@@ -9,10 +9,6 @@ public class AnimationClipScrObj : ScriptableObject
     [SerializeField] private string _clipName;
     public string clipName => _clipName;
 
-    [Space(20)]
-    [SerializeField] private Sprite _defaultSprite;
-    public Sprite defaultSprite => _defaultSprite;
-    
     [SerializeField] private bool _loop;
     public bool loop => _loop;
 

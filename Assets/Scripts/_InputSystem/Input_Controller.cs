@@ -41,16 +41,18 @@ public class Input_Controller : MonoBehaviour
     public Action<Vector2> OnMovement;
     public Action<Vector2> OnCursorControl;
 
+    public Action OnLeftClickStart;
+    public Action OnLeftClickEnd;
     public Action OnLeftClick;
     public Action OnHoldLeftClick;
-    public Action OnLeftClickEnd;
 
     public Action OnRightClick;
     public Action OnHoldRightClick;
 
+    public Action OnInteractStart;
+    public Action OnInteractEnd;
     public Action OnInteract;
     public Action OnHoldInteract;
-    public Action OnInteractEnd;
 
     public Action OnAction1;
     public Action OnAction2;
@@ -206,7 +208,7 @@ public class Input_Controller : MonoBehaviour
     {
         if (context.started)
         {
-            OnLeftClick?.Invoke();
+            OnLeftClickStart?.Invoke();
             return;
         }
         if (context.canceled == false) return;
@@ -216,7 +218,11 @@ public class Input_Controller : MonoBehaviour
     public void HoldLeftClick(InputAction.CallbackContext context)
     {
         if (context.performed == false) return;
-        if (context.interaction is UnityEngine.InputSystem.Interactions.HoldInteraction == false) return;
+        if (context.interaction is UnityEngine.InputSystem.Interactions.HoldInteraction == false)
+        {
+            OnLeftClick?.Invoke();
+            return;
+        }
         
         OnHoldLeftClick?.Invoke();
     }
@@ -246,7 +252,7 @@ public class Input_Controller : MonoBehaviour
     {
         if (context.started)
         {
-            OnInteract?.Invoke();
+            OnInteractStart?.Invoke();
             return;
         }
         if (context.canceled == false) return;
@@ -256,7 +262,11 @@ public class Input_Controller : MonoBehaviour
     public void HoldInteract(InputAction.CallbackContext context)
     {
         if (context.performed == false) return;
-        if (context.interaction is UnityEngine.InputSystem.Interactions.HoldInteraction == false) return;
+        if (context.interaction is UnityEngine.InputSystem.Interactions.HoldInteraction == false)
+        {
+            OnInteract?.Invoke();
+            return;
+        }
 
         OnHoldInteract?.Invoke();
     }

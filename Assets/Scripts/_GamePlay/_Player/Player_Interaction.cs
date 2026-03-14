@@ -6,12 +6,10 @@ public class Player_Interaction : MonoBehaviour
 {
     [SerializeField] private Player_Controller _controller;
 
+
     [Space(20)]
     [SerializeField] private SpriteRenderer _indicationIcon;
     public SpriteRenderer indicationIcon => _indicationIcon;
-
-    [Space(20)]
-    [SerializeField][Range(0, 10)] private float _heavyCarryMovementDuration;
 
     [Space(20)]
     [SerializeField][Range(0, 100)] private int _stayTimeCost;
@@ -107,10 +105,5 @@ public class Player_Interaction : MonoBehaviour
         int currentItemWeight = currentItem != null ? currentItem.Item_Weight() + currentInventoryWeight : 0;
 
         manager.time.Update_Data(moveDistance + currentItemWeight * moveDistance);
-        
-        Movement_Controller playerMovement = _controller.movement;
-        bool isHeavyMovement = currentItemWeight > _controller.data.maxItemCarryWeight / 2;
-
-        playerMovement.Update_MoveDurationValue(isHeavyMovement ? _heavyCarryMovementDuration : playerMovement.moveDuration);
     }
 }

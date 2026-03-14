@@ -18,7 +18,6 @@ public class Tile : MonoBehaviour
 
     [Space(20)]
     [SerializeField] private Transform _placeableItemsPrefabs;
-    public Transform placeableItemsPrefabs => _placeableItemsPrefabs;
 
     [SerializeField] private Transform _droppedItemsPrefabs;
     public Transform droppedItemsPrefabs => _droppedItemsPrefabs;
@@ -108,6 +107,53 @@ public class Tile : MonoBehaviour
         _placedItems.Add(placingItem);
         _data.placedItemDatas.Add(placingItem.data);
     }
+    
+    /// <returns>
+    /// Leftover data
+    /// </returns>
+    public ItemData Set_PlacingItem(ItemData setItemData)
+    {
+        if (setItemData == null) return setItemData;
+        Item_ScrObj setItem = setItemData.itemScrObj;
+
+        if (setItem.itemType != ItemType.place) return setItemData;
+        PlaceableItem placedItem = PlacedItem(setItem);
+
+        int maxAmount = setItem.maxAmount;
+        int setItemAmount = setItemData.amount;
+
+        if (placedItem == null)
+        {
+            // spawn new
+            GameObject spawnedItem = Instantiate(setItem.itemPrefab, _placeableItemsPrefabs);
+            spawnedItem.transform.localPosition = setItem.offsetPosition;
+
+            placedItem = spawnedItem.GetComponent<PlaceableItem>();
+
+            placedItem.Set_Data(new(setItem, Mathf.Min(setItemData.amount, maxAmount)));
+            placedItem.Track_CurrentTile(this);
+
+            Track_PlacingItem(placedItem);
+            
+            int overflowAmount = setItemAmount - maxAmount;
+
+            if (overflowAmount <= 0) return null;
+            return new(setItem, overflowAmount);
+        }
+
+        // update amount
+        int placedItemAmount = placedItem.data.amount;
+        if (placedItemAmount >= maxAmount) return setItemData;
+        
+        int leftSpaceAmount = maxAmount - placedItemAmount;
+        int amountToAdd = Mathf.Min(setItemAmount, leftSpaceAmount);
+
+        placedItem.data.Update_CurrentAmount(placedItemAmount + amountToAdd);
+
+        int leftOverAmount = setItemAmount - amountToAdd;
+        return leftOverAmount > 0 ? new(setItem, leftOverAmount) : null;
+    }
+
 
     public void Remove_PlacedItemData(PlaceableItem PlacedItem)
     {
@@ -128,31 +174,6 @@ public class Tile : MonoBehaviour
     }
 
 
-    public int Placed_StackableItems()
-    {
-        int count = 0;
-
-        for (int i = 0; i < _placedItems.Count; i++)
-        {
-            if (_placedItems[i].data.itemScrObj.stackable == false) continue;
-            count++;
-        }
-
-        return count;
-    }
-
-    public bool NonStackableItem_Placed()
-    {
-        for (int i = 0; i < _placedItems.Count; i++)
-        {
-            if (_placedItems[i].data.itemScrObj.stackable) continue;
-            return true;
-        }
-
-        return false;
-    }
-
-
     public int Placed_ItemCount(Item_ScrObj targetItem)
     {
         int count = 0;
@@ -166,6 +187,20 @@ public class Tile : MonoBehaviour
         }
         return count;
     }
+
+    private int Placed_StackableItemCount()
+    {
+        int count = 0;
+
+        for (int i = 0; i < _placedItems.Count; i++)
+        {
+            if (_placedItems[i].data.itemScrObj.stackable == false) continue;
+            count++;
+        }
+
+        return count;
+    }
+
 
     public List<ItemData> Placed_ItemDatas()
     {
@@ -186,5 +221,28 @@ public class Tile : MonoBehaviour
             return _placedItems[i];
         }
         return null;
+    }
+
+
+    private bool NonStackableItem_Placed()
+    {
+        for (int i = 0; i < _placedItems.Count; i++)
+        {
+            if (_placedItems[i].data.itemScrObj.stackable) continue;
+            return true;
+        }
+
+        return false;
+    }
+
+    public bool ItemPlacing_Available(Item_ScrObj itemToPlace)
+    {
+        if (_placedItems.Count >= 2) return false;
+        if (Placed_ItemCount(itemToPlace) >= itemToPlace.maxAmount) return false;
+
+        if (Placed_StackableItemCount() > 1) return false;
+        if (itemToPlace.stackable == false && NonStackableItem_Placed()) return false;
+
+        return true;
     }
 }

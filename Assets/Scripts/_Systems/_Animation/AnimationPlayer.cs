@@ -9,19 +9,21 @@ public class AnimationPlayer : MonoBehaviour
     [SerializeField] private SpriteRenderer _spriteRenderer;
     public SpriteRenderer spriteRenderer => _spriteRenderer;
 
-    [Space(10)]
     [SerializeField] private AnimationClipScrObj[] _animationClips;
 
-    private Vector2 _defaultPosition;
+
+    private ClipSpriteData _defaultData;
     private Coroutine _playCoroutine;
 
 
-    // Data
-    public void Set_DefaultPosition(Vector2 position)
+    // MonoBehaviour
+    private void Awake()
     {
-        _defaultPosition = position;
+        _defaultData = new(_spriteRenderer.sprite, _spriteRenderer.sortingLayerID, _spriteRenderer.color.a, transform.localPosition);
     }
+    
 
+    // Data
     private AnimationClipScrObj AnimationClip(string clipName)
     {
         for (int i = 0; i < _animationClips.Length; i++)
@@ -52,34 +54,27 @@ public class AnimationPlayer : MonoBehaviour
         StopCoroutine(_playCoroutine);
         _playCoroutine = null;
 
-        LeanTween.cancel(_spriteRenderer.gameObject);
+        GameObject animObject = _spriteRenderer.gameObject;
+        LeanTween.cancel(animObject);
+
+        LeanTween.alpha(animObject, _defaultData.alphaUpdateValue, 0f);
+
+        _spriteRenderer.sprite = _defaultData.clipSprite;
+        _spriteRenderer.sortingOrder = _defaultData.sortingOrderUpdateValue;
+
         Transform transform = _spriteRenderer.transform;
 
-        transform.localPosition = _defaultPosition;
+        transform.localPosition = _defaultData.offSetPosition;
         transform.rotation = Quaternion.identity;
     }
 
 
     public void Play(AnimationClipScrObj clip)
     {
-        if (clip == null) return;
-        ClipSpriteData[] spriteDatas = clip.clipSpriteDatas;
-
         Stop();
 
-        if (spriteDatas.Length <= 1)
-        {
-            for (int i = 0; i < spriteDatas.Length; i++)
-            {
-                if (spriteDatas[i].clipSprite == null) continue;
-
-                _spriteRenderer.sprite = spriteDatas[i].clipSprite;
-                return;
-            }
-
-            _spriteRenderer.sprite = clip.defaultSprite;
-            return;
-        }
+        if (clip == null) return;
+        if (clip.clipSpriteDatas.Length <= 0) return;
 
         _playCoroutine = StartCoroutine(Play_AnimationClip(clip));
     }
@@ -92,14 +87,18 @@ public class AnimationPlayer : MonoBehaviour
             for (int i = 0; i < spriteDatas.Length; i++)
             {
                 ClipSpriteData data = spriteDatas[i];
-
                 Sprite dataSprite = data.clipSprite;
-                _spriteRenderer.sprite = dataSprite != null ? dataSprite : _spriteRenderer.sprite;
-
+                
                 GameObject animObject = _spriteRenderer.gameObject;
+                
+                _spriteRenderer.sprite = dataSprite != null ? dataSprite : _spriteRenderer.sprite;
+                _spriteRenderer.sortingOrder = _defaultData.sortingOrderUpdateValue + data.sortingOrderUpdateValue;
+                
+                LeanTween.alpha(animObject, _defaultData.alphaUpdateValue + data.alphaUpdateValue, data.Alpha_DurationTime());
+
                 float transformDuration = data.Transform_DurationTime();
 
-                LeanTween.moveLocal(animObject, _defaultPosition + data.offSetPosition, transformDuration);
+                LeanTween.moveLocal(animObject, _defaultData.offSetPosition + data.offSetPosition, transformDuration);
                 LeanTween.rotateLocal(animObject, new(0f, 0f, data.rotationValue), transformDuration);
 
                 yield return new WaitForSeconds(spriteDatas[i].DurationTime());

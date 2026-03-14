@@ -13,18 +13,14 @@ MonoBehaviour:
   m_Name: Tree Fall
   m_EditorClassIdentifier: 
   _clipName: Tree Fall
-  _defaultSprite: {fileID: 1495015643, guid: bf7ece83f843c4c35977c02f8c40d92d, type: 3}
   _loop: 0
   _clipSpriteDatas:
   - _clipName: fall
     _clipSprite: {fileID: 1495015643, guid: bf7ece83f843c4c35977c02f8c40d92d, type: 3}
     _durationTime: 1
+    _sortingOrderUpdateValue: 1
+    _alphaUpdateValue: -0.9
+    _alphaDurationTime: 0.7
     _offSetPosition: {x: 0.19, y: -0.19}
     _rotationValue: -90
     _transformDurationTime: 1
-  - _clipName: fall
-    _clipSprite: {fileID: 1495015643, guid: bf7ece83f843c4c35977c02f8c40d92d, type: 3}
-    _durationTime: 0
-    _offSetPosition: {x: 0.19, y: -0.19}
-    _rotationValue: -90
-    _transformDurationTime: 0
