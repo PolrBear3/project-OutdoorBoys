@@ -6,6 +6,7 @@ public class Data_Manager : MonoBehaviour
 {
     public static Data_Manager instance;
 
+
     [Space(20)]
     [SerializeField] private TileScrObj[] _tileScrObjs;
     public TileScrObj[] tileScrObjs => _tileScrObjs;

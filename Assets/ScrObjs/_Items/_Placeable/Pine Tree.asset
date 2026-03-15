@@ -18,9 +18,14 @@ MonoBehaviour:
   _description: 
   _itemType: 0
   _itemPrefab: {fileID: 3637228250238346253, guid: ef1737ce7ac5d4892891d078200388ab, type: 3}
-  _offsetPosition: {x: 0, y: 0.3}
+  _offsetData:
+  - _position: {x: 0, y: 0.5}
+    _rotationValue: 0
+  - _position: {x: -0.25, y: 0.5}
+    _rotationValue: 0
+  - _position: {x: 0.25, y: 0.5}
+    _rotationValue: 0
   _maxAmount: 1
   _itemWeight: 10
-  _stackable: 0
   _triggerRange: 0
   _itemIngredientDatas: []

@@ -120,7 +120,7 @@ public class Movement_Controller : MonoBehaviour
     public void MoveTo_Tile(Vector2 direction)
     {
         InGame_Manager manager = InGame_Manager.instance;
-        if (manager.movements.AlllMovements_Complete() == false) return;
+        if (manager.movements.AllMovements_Complete() == false) return;
 
         Tiles_Controller controller = manager.tilesController;
         Tile destinationTile = controller.Current_Tile((Vector2)_currentTile.transform.position + direction);

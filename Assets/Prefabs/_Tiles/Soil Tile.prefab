@@ -496,3 +496,7 @@ MonoBehaviour:
   _otherPrefabs: {fileID: 7323931616711407242}
   _transparencyValue: 0.3
   _transparencyTransitionTime: 0.25
+  _maxItemPlaceCount: 2
+  _itemOffsetPositions:
+  - {x: -0.25, y: 0}
+  - {x: 0.25, y: 0}

@@ -14,18 +14,14 @@ public struct TileGenerate_ResoulationData
     public Vector2 resolution => _resolution;
 }
 
-public class Tile_Generator : MonoBehaviour
+public class WorldMap_Generator : MonoBehaviour
 {
     [Space(20)]
     [SerializeField] PixelPerfectCamera _pixelCamera;
     [SerializeField] TileGenerate_ResoulationData[] resolutionDatas;
 
     [Space(20)]
-    [SerializeField] private Vector2 _generateSize;
-    [SerializeField][Range(0, 100)] private float _harshGroundDensity;
-
-    [Space(20)]
-    [SerializeField] private Tile_PresetDatas[] _presetDatas;
+    [SerializeField] private WorldMapScrObj _defaultWorldMap;
 
 
     // MonoBehaviour
@@ -33,6 +29,7 @@ public class Tile_Generator : MonoBehaviour
     {
         EventBus_Manager.Register(EventBus.AwakeLoad, Generate_PresetTiles);
         EventBus_Manager.Register(EventBus.AwakeLoad, Generate_Tiles);
+        EventBus_Manager.Register(EventBus.AwakeLoad, Set_MapEventsPrefab);
 
         EventBus_Manager.Register(EventBus.AwakeLoad, Update_Resolution);
     }
@@ -41,7 +38,8 @@ public class Tile_Generator : MonoBehaviour
     {
         EventBus_Manager.UnRegister(EventBus.AwakeLoad, Generate_PresetTiles);
         EventBus_Manager.UnRegister(EventBus.AwakeLoad, Generate_Tiles);
-        
+        EventBus_Manager.UnRegister(EventBus.AwakeLoad, Set_MapEventsPrefab);
+
         EventBus_Manager.UnRegister(EventBus.AwakeLoad, Update_Resolution);
     }
 
@@ -49,7 +47,8 @@ public class Tile_Generator : MonoBehaviour
     // Data
     public Vector2 Converted_GenerateSize()
     {
-        return new(Mathf.RoundToInt(_generateSize.x), Mathf.RoundToInt(_generateSize.y));
+        Vector2 generateSize = _defaultWorldMap.generateSize;
+        return new(Mathf.RoundToInt(generateSize.x), Mathf.RoundToInt(generateSize.y));
     }
 
     public Vector2 Generate_StartPosition()
@@ -90,7 +89,7 @@ public class Tile_Generator : MonoBehaviour
 
         for (int i = 0; i < convertCount; i++)
         {
-            bool isHarshGround = _harshGroundDensity > UnityEngine.Random.Range(0, 100);
+            bool isHarshGround = _defaultWorldMap.harshGroundDensity > UnityEngine.Random.Range(0, 100);
             TileType setType = isHarshGround ? TileType.harshGround : TileType.softGround;
 
             tileTypes.Add(setType);
@@ -170,27 +169,26 @@ public class Tile_Generator : MonoBehaviour
         return tile;
     }
 
-
     private void Generate_PresetTiles()
     {
-        if (_presetDatas.Length <= 0) return;
+        Tile_PresetDatas[] presetTileDatas = _defaultWorldMap.presetTileDatas;
+        if (presetTileDatas.Length <= 0) return;
 
         List<Vector2> generatePositions = new(Generate_Positions());
 
-        for (int i = 0; i < _presetDatas.Length; i++)
+        for (int i = 0; i < presetTileDatas.Length; i++)
         {
-            for (int j = 0; j < _presetDatas[i].generateAmount; j++)
+            for (int j = 0; j < presetTileDatas[i].generateAmount; j++)
             {
                 if (generatePositions.Count <= 0) return;
 
                 int randInex = UnityEngine.Random.Range(0, generatePositions.Count);
                 
-                Generate_Tile(generatePositions[randInex], _presetDatas[i].tileScrObj);
+                Generate_Tile(generatePositions[randInex], presetTileDatas[i].tileScrObj);
                 generatePositions.RemoveAt(randInex);
             }
         }
     }
-
     private void Generate_Tiles()
     {
         Data_Manager dataManager = Data_Manager.instance;
@@ -203,15 +201,26 @@ public class Tile_Generator : MonoBehaviour
     }
 
 
+    private void Set_MapEventsPrefab()
+    {
+        GameObject eventsPrefab = _defaultWorldMap.worldMapEventsPrefab;
+        
+        if (eventsPrefab == null) return;
+        Instantiate(eventsPrefab, transform);
+    }
+
+
     // Camera
     private void Update_Resolution()
     {
         for (int i = 0; i < resolutionDatas.Length; i++)
         {
             TileGenerate_ResoulationData resData = resolutionDatas[i];
+
             Vector2 maxSize = resData.maxGenerateSize;
+            Vector2 generateSize = _defaultWorldMap.generateSize;
             
-            if (_generateSize.x > maxSize.x || _generateSize.y > maxSize.y) continue;
+            if (generateSize.x > maxSize.x || generateSize.y > maxSize.y) continue;
 
             _pixelCamera.refResolutionX = (int)resData.resolution.x;
             _pixelCamera.refResolutionY = (int)resData.resolution.y;

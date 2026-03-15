@@ -8,7 +8,7 @@ public class MovementControllers_Manager : MonoBehaviour
     public HashSet<Movement_Controller> allMovementControllers => _allMovementControllers;
 
 
-    public bool AlllMovements_Complete()
+    public bool AllMovements_Complete()
     {
         if (_allMovementControllers.Count <= 0) return true;
         

@@ -29,6 +29,9 @@ public class Tile : MonoBehaviour
     [SerializeField][Range(0, 1)] private float _transparencyValue;
     [SerializeField][Range(0, 10)] private float _transparencyTransitionTime;
 
+    [Space(20)]
+    [SerializeField][Range(0, 10)] private int _maxItemPlaceCount;
+
 
     private TileData _data;
     public TileData data => _data;
@@ -106,6 +109,8 @@ public class Tile : MonoBehaviour
     {
         _placedItems.Add(placingItem);
         _data.placedItemDatas.Add(placingItem.data);
+
+        Update_PlacedItemOffsets();
     }
     
     /// <returns>
@@ -117,41 +122,62 @@ public class Tile : MonoBehaviour
         Item_ScrObj setItem = setItemData.itemScrObj;
 
         if (setItem.itemType != ItemType.place) return setItemData;
-        PlaceableItem placedItem = PlacedItem(setItem);
 
         int maxAmount = setItem.maxAmount;
         int setItemAmount = setItemData.amount;
 
-        if (placedItem == null)
-        {
-            // spawn new
-            GameObject spawnedItem = Instantiate(setItem.itemPrefab, _placeableItemsPrefabs);
-            spawnedItem.transform.localPosition = setItem.offsetPosition;
-
-            placedItem = spawnedItem.GetComponent<PlaceableItem>();
-
-            placedItem.Set_Data(new(setItem, Mathf.Min(setItemData.amount, maxAmount)));
-            placedItem.Track_CurrentTile(this);
-
-            Track_PlacingItem(placedItem);
-            
-            int overflowAmount = setItemAmount - maxAmount;
-
-            if (overflowAmount <= 0) return null;
-            return new(setItem, overflowAmount);
-        }
+        List<ItemData> samePlacedItemDatas = Placed_ItemDatas(setItem);
 
         // update amount
-        int placedItemAmount = placedItem.data.amount;
-        if (placedItemAmount >= maxAmount) return setItemData;
-        
-        int leftSpaceAmount = maxAmount - placedItemAmount;
-        int amountToAdd = Mathf.Min(setItemAmount, leftSpaceAmount);
+        for (int i = 0; i < samePlacedItemDatas.Count; i++)
+        {
+            int placedItemAmount = samePlacedItemDatas[i].amount;
+            if (placedItemAmount >= maxAmount) continue;
 
-        placedItem.data.Update_CurrentAmount(placedItemAmount + amountToAdd);
+            int leftSpaceAmount = maxAmount - placedItemAmount;
+            int amountToAdd = Mathf.Min(setItemAmount, leftSpaceAmount);
 
-        int leftOverAmount = setItemAmount - amountToAdd;
-        return leftOverAmount > 0 ? new(setItem, leftOverAmount) : null;
+            samePlacedItemDatas[i].Update_CurrentAmount(placedItemAmount + amountToAdd);
+            setItemAmount -= amountToAdd;
+
+            if (setItemAmount <= 0) return null;
+        }
+
+        // spawn new
+        for (int i = 0; i < _maxItemPlaceCount; i++)
+        {
+            if (setItemAmount <= 0) return null;
+            if (_placedItems.Count >= _maxItemPlaceCount) break;
+
+            GameObject spawnedItem = Instantiate(setItem.itemPrefab, _placeableItemsPrefabs);
+            PlaceableItem newPlacedItem = spawnedItem.GetComponent<PlaceableItem>();
+
+            int spawnSetAmount = Mathf.Min(setItemAmount, maxAmount);
+
+            newPlacedItem.Set_Data(new(setItem, spawnSetAmount));
+            setItemAmount -= spawnSetAmount;
+
+            newPlacedItem.Track_CurrentTile(this);
+            Track_PlacingItem(newPlacedItem);
+        }
+
+        return new(setItem, setItemAmount);
+    }
+
+    private void Update_PlacedItemOffsets()
+    {
+        int placedItemCount = _placedItems.Count;
+
+        for (int i = 0; i < placedItemCount; i++)
+        {
+            PlaceableItem placedItem = _placedItems[i];
+            Transform transform = placedItem.transform;
+
+            Offset_PositionData offsetData = placedItem.data.itemScrObj.Offset_Data(i + placedItemCount - 1);
+
+            transform.localPosition = offsetData.position;
+            transform.rotation = Quaternion.Euler(0f, 0f, offsetData.rotationValue);
+        }
     }
 
 
@@ -159,6 +185,8 @@ public class Tile : MonoBehaviour
     {
         _placedItems.Remove(PlacedItem);
         _data.placedItemDatas.Remove(PlacedItem.data);
+
+        Update_PlacedItemOffsets();
     }
     public void Remove_EmptyPlacedItems()
     {
@@ -188,17 +216,25 @@ public class Tile : MonoBehaviour
         return count;
     }
 
-    private int Placed_StackableItemCount()
+    public int ItemPlace_AvailableCount(Item_ScrObj placeItem)
     {
-        int count = 0;
+        if (placeItem == null) return 0;
+        
+        int availableCount = 0;
+        int maxStackAmount = placeItem.maxAmount;
 
-        for (int i = 0; i < _placedItems.Count; i++)
+        List<ItemData> samePlacedItems = new(Placed_ItemDatas(placeItem));
+
+        for (int i = 0; i < samePlacedItems.Count; i++)
         {
-            if (_placedItems[i].data.itemScrObj.stackable == false) continue;
-            count++;
+            int leftSpaceAmount = maxStackAmount - samePlacedItems[i].amount;
+            availableCount += leftSpaceAmount;
         }
+        
+        int newPlaceCount = Mathf.Max(0, _maxItemPlaceCount - _placedItems.Count);
+        availableCount += newPlaceCount * maxStackAmount;
 
-        return count;
+        return availableCount;
     }
 
 
@@ -212,6 +248,19 @@ public class Tile : MonoBehaviour
         }
         return placedDatas;
     }
+    private List<ItemData> Placed_ItemDatas(Item_ScrObj targetItem)
+    {
+        List<ItemData> placedItems = new();
+
+        for (int i = 0; i < _placedItems.Count; i++)
+        {
+            ItemData data = _placedItems[i].data;
+
+            if (targetItem != data.itemScrObj) continue;
+            placedItems.Add(data);
+        }
+        return placedItems;
+    }
 
     public PlaceableItem PlacedItem(Item_ScrObj targetItem)
     {
@@ -221,28 +270,5 @@ public class Tile : MonoBehaviour
             return _placedItems[i];
         }
         return null;
-    }
-
-
-    private bool NonStackableItem_Placed()
-    {
-        for (int i = 0; i < _placedItems.Count; i++)
-        {
-            if (_placedItems[i].data.itemScrObj.stackable) continue;
-            return true;
-        }
-
-        return false;
-    }
-
-    public bool ItemPlacing_Available(Item_ScrObj itemToPlace)
-    {
-        if (_placedItems.Count >= 2) return false;
-        if (Placed_ItemCount(itemToPlace) >= itemToPlace.maxAmount) return false;
-
-        if (Placed_StackableItemCount() > 1) return false;
-        if (itemToPlace.stackable == false && NonStackableItem_Placed()) return false;
-
-        return true;
     }
 }

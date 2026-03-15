@@ -33,8 +33,8 @@ public class InGame_Manager : MonoBehaviour
 
 
     [Space(20)]
-    [SerializeField] private Tile_Generator _tileGenerator;
-    public Tile_Generator tileGenerator => _tileGenerator;
+    [SerializeField] private WorldMap_Generator _worldMapGenerator;
+    public WorldMap_Generator worldMapGenerator => _worldMapGenerator;
 
     [SerializeField] private Tiles_Controller _tilesController;
     public Tiles_Controller tilesController => _tilesController;

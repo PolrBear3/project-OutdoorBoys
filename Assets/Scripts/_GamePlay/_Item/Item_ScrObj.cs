@@ -4,6 +4,16 @@ using UnityEngine;
 
 public enum ItemType { place, use }
 
+[System.Serializable]
+public class Offset_PositionData
+{
+    [SerializeField] private Vector2 _position;
+    public Vector2 position => _position;
+
+    [SerializeField] private float _rotationValue;
+    public float rotationValue => _rotationValue;
+}
+
 [CreateAssetMenu(menuName = "New ScriptableObject/ New Item")]
 public class Item_ScrObj : ScriptableObject
 {
@@ -25,12 +35,11 @@ public class Item_ScrObj : ScriptableObject
     [SerializeField] private ItemType _itemType;
     public ItemType itemType => _itemType;
 
-    [Space(20)]
     [SerializeField] private GameObject _itemPrefab;
     public GameObject itemPrefab => _itemPrefab;
 
-    [SerializeField] private Vector2 _offsetPosition;
-    public Vector2 offsetPosition => _offsetPosition;
+    [Space(20)]
+    [SerializeField] private Offset_PositionData[] _offsetData;
 
     [Space(20)]
     [SerializeField][Range(0, 100)] private int _maxAmount;
@@ -39,10 +48,6 @@ public class Item_ScrObj : ScriptableObject
     [SerializeField][Range(0, 100)] private int _itemWeight;
     public int itemWeight => _itemWeight;
 
-    [Space(20)]
-    [SerializeField] private bool _stackable;
-    public bool stackable => _stackable;
-
     [SerializeField][Range(0, 10)]  private int _triggerRange;
     public int triggerRange => _triggerRange;
 
@@ -50,7 +55,14 @@ public class Item_ScrObj : ScriptableObject
     [SerializeField] private ItemData[] _itemIngredientDatas;
 
 
-    // _itemIngredientDatas
+    // Data
+    public Offset_PositionData Offset_Data(int offsetIndex)
+    {
+        return _offsetData[Mathf.Clamp(offsetIndex, 0, _offsetData.Length - 1)];
+    }
+
+
+    // Ingredients
     public List<ItemData> Item_IngredientDatas()
     {
         List<ItemData> combinedDatas = new();

@@ -18,10 +18,15 @@ MonoBehaviour:
   _description: Can be used for quick shelter
   _itemType: 0
   _itemPrefab: {fileID: 3637228250238346253, guid: f990c87832dc348cba041952eea5503d, type: 3}
-  _offsetPosition: {x: 0, y: 0}
+  _offsetData:
+  - _position: {x: 0, y: 0}
+    _rotationValue: 0
+  - _position: {x: 0, y: 0}
+    _rotationValue: 0
+  - _position: {x: 0, y: 0}
+    _rotationValue: -45
   _maxAmount: 2
   _itemWeight: 1
-  _stackable: 1
   _triggerRange: 1
   _itemIngredientDatas:
   - _itemScrObj: {fileID: 11400000, guid: 86e876e6c7e9c467db97ab95dfa547ce, type: 2}

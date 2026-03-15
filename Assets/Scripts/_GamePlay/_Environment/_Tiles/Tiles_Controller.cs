@@ -87,11 +87,11 @@ public class Tiles_Controller : MonoBehaviour
     }
 
 
-    public Tile Current_Tile(Vector2 generatedPos)
+    public Tile Current_Tile(Vector2 tileGeneratedPos)
     {
         for (int i = 0; i < _currentTiles.Count; i++)
         {
-            if ((Vector2)_currentTiles[i].transform.position != generatedPos) continue;
+            if ((Vector2)_currentTiles[i].transform.position != tileGeneratedPos) continue;
             return _currentTiles[i];
         }
         return null;
@@ -178,7 +178,7 @@ public class Tiles_Controller : MonoBehaviour
     // Update
     private void Load_SetSprites()
     {
-        Vector2 generateStartPos = InGame_Manager.instance.tileGenerator.Generate_StartPosition();
+        Vector2 generateStartPos = InGame_Manager.instance.worldMapGenerator.Generate_StartPosition();
 
         for (int i = 0; i < _currentTiles.Count; i++)
         {
