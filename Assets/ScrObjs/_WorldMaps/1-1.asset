@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 21e98e1b1271248ff99876a7e7247df9, type: 3}
   m_Name: 1-1
   m_EditorClassIdentifier: 
-  _generateSize: {x: 7, y: 7}
+  _generateSize: {x: 5, y: 5}
   _harshGroundDensity: 10
   _presetTileDatas: []
   _worldMapEventsPrefab: {fileID: 353555265533623462, guid: 556217c5b3b7f42f8b49b5cc77927991, type: 3}

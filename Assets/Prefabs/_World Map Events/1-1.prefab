@@ -45,11 +45,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3f0101b7ff8144838bbf4c1880fb7260, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _generateCoolTime: 2
   _generateDatas:
   - _resourceItem: {fileID: 11400000, guid: 86e876e6c7e9c467db97ab95dfa547ce, type: 2}
     _generateTiles:
     - {fileID: 11400000, guid: 13d5158de20cd4105b5f0b097494ca71, type: 2}
     - {fileID: 11400000, guid: 8145ed0e845b14bca951ca79c25e2e94, type: 2}
+    _generateRate: 1
+    _generateAmount: 2
     _maxGenerateAmount: 5
     _generatePointDistance: 2
 --- !u!1 &7200632421969048983
