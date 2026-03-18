@@ -60,7 +60,7 @@ public class Tiles_Controller : MonoBehaviour
         for (int i = 0; i < _currentTiles.Count; i++)
         {
             Tile currentTile = _currentTiles[i];
-            
+
             if (sortingTile != currentTile.data.tileScrObj) continue;
             sortedTiles.Add(currentTile);
         }
@@ -72,9 +72,9 @@ public class Tiles_Controller : MonoBehaviour
     public List<Tile> Current_Tiles(Tile pivotTile, int rangeDistance)
     {
         if (pivotTile == null) return null;
-        
+
         List<Tile> innerRangedTiles = new();
-        
+
         for (int i = 0; i < _currentTiles.Count; i++)
         {
             Tile currentTile = _currentTiles[i];
@@ -137,13 +137,61 @@ public class Tiles_Controller : MonoBehaviour
     public int Tile_Count(TileScrObj tileScrObj)
     {
         int count = 0;
-        
+
         for (int i = 0; i < _currentTiles.Count; i++)
         {
             if (_currentTiles[i].data.tileScrObj != tileScrObj) continue;
             count++;
         }
         return count;
+    }
+
+
+    // Item Data
+    public List<PlaceableItem> Placed_Items()
+    {
+        List<PlaceableItem> placedItems = new();
+
+        foreach (Tile tile in _currentTiles)
+        {
+            List<PlaceableItem> tilePlacedItems = tile.placedItems;
+            if (tilePlacedItems.Count <= 0) continue;
+
+            placedItems.AddRange(tile.placedItems);
+        }
+
+        return placedItems;
+    }
+
+    public List<ItemData> Placed_ItemDatas()
+    {
+        List<PlaceableItem> placedItems = new(Placed_Items());
+        List<ItemData> allPlacedDatas = new();
+
+        for (int i = 0; i < placedItems.Count; i++)
+        {
+            ItemData placedData = placedItems[i].data;
+            if (placedData == null) continue;
+
+            Item_ScrObj placedItem = placedData.itemScrObj;
+            bool amountUpdated = false;
+
+            for (int j = 0; j < allPlacedDatas.Count; j++)
+            {
+                ItemData addedData = allPlacedDatas[j];
+
+                if (placedItem != addedData.itemScrObj) continue;
+                addedData.Update_CurrentAmount(addedData.amount + placedData.amount);
+
+                amountUpdated = true;
+                break;
+            }
+
+            if (amountUpdated) continue;
+            allPlacedDatas.Add(new(placedItem, placedData.amount));
+        }
+
+        return allPlacedDatas;
     }
 
 
@@ -190,7 +238,7 @@ public class Tiles_Controller : MonoBehaviour
     private void Refresh_Toggles()
     {
         InGame_Manager manager = InGame_Manager.instance;
-        
+
         Cursor cursor = manager.cursor;
         Tile playerTile = manager.player.movement.currentTile;
 
