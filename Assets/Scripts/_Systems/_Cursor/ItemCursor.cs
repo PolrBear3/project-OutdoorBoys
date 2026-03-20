@@ -5,7 +5,7 @@ using Unity.Mathematics;
 using Unity.VisualScripting;
 using UnityEngine;
 
-public class ItemCursor : MonoBehaviour
+public class ItemCursor : MonoBehaviour, IItemsSource, IItemsSourceRemove, IItemsSourceAdd
 {
     [Space(20)]
     [SerializeField] private Cursor _cursor;
@@ -39,6 +39,49 @@ public class ItemCursor : MonoBehaviour
 
         input.OnRightClick -= Return_PickupItem;
         input.OnRightClick -= Update_Visuals;
+    }
+
+
+    // IItemsSource
+    public IEnumerable<ItemData> ItemDatas()
+    {
+        yield return data;
+    }
+
+    public int RemoveItem(Item_ScrObj updateItem, int removeAmount)
+    {
+        if (data?.itemScrObj != updateItem) return 0;
+        
+        int currentAmount = _data.amount;
+        int removeCount = Mathf.Min(currentAmount, removeAmount);
+
+        Set_Data(new(updateItem, currentAmount - removeAmount));
+        Update_Visuals();
+
+        return removeCount;
+    }
+
+    public int AddItem(Item_ScrObj addItem, int addAmount)
+    {
+        int maxAmount = addItem.maxAmount;
+        int targetAddAmount = Mathf.Min(addAmount, maxAmount);
+        
+        if (_data == null)
+        {
+            Set_Data(new(addItem, targetAddAmount));
+            Update_Visuals();
+
+            return maxAmount;
+        }
+        if (addItem != _data.itemScrObj) return 0;
+
+        int currentAmount = _data.amount;
+        int updateAmount = currentAmount + Mathf.Min(maxAmount - currentAmount, targetAddAmount);
+
+        Update_Data(new(addItem, updateAmount));
+        Update_Visuals();
+
+        return targetAddAmount;
     }
 
 

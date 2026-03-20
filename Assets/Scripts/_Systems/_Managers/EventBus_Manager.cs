@@ -46,15 +46,4 @@ public static class EventBus_Manager
             _eventBuses[runBus]?.Invoke();
         }
     }
-
-    public static void Run_BusEvent(EventBus runBus)
-    {
-        if (_eventBuses.ContainsKey(runBus) == false)
-        {
-            Debug.Log("Target Bus Empty!");
-            return;
-        }
-
-        _eventBuses[runBus]?.Invoke();
-    }
 }

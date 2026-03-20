@@ -89,38 +89,6 @@ public class ItemSlot_Manager : MonoBehaviour
         }
         return itemDatas;
     }
-    /// <returns>
-    /// Combined item amounts
-    /// </returns>
-    public List<ItemData> Current_ItemDatas()
-    {
-        List<ItemData> itemDatas = new();
-
-        for (int i = 0; i < _slots.Count; i++)
-        {
-            ItemData slotData = _slots[i].data;
-            if (slotData == null) continue;
-
-            Item_ScrObj item = slotData.itemScrObj;
-            bool amountUpdated = false;
-
-            for (int j = 0; j < itemDatas.Count; j++)
-            {
-                ItemData data = itemDatas[j];
-
-                if (item != data.itemScrObj) continue;
-                itemDatas[j].Update_CurrentAmount(data.amount + slotData.amount);
-
-                amountUpdated = true;
-                break;
-            }
-
-            if (amountUpdated) continue;
-            itemDatas.Add(new(item, slotData.amount));
-        }
-
-        return itemDatas;
-    }
 
     public int Total_ItemWeight()
     {

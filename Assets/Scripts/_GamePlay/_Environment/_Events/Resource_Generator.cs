@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 [System.Serializable]
@@ -51,17 +52,22 @@ public class Resource_Generator : MonoBehaviour
     // MonoBehaviour
     private void Awake()
     {
-        InGame_Manager.instance.time.OnTimeCount += Generate;
+        InGame_Manager.instance.time.Register(TimeUpdateBus.AwakeUpdate, Generate);
+    }
+
+    private void Start()
+    {
+        Generate_OnLoad();
     }
 
     private void OnDestroy()
     {
-        InGame_Manager.instance.time.OnTimeCount -= Generate;
+        InGame_Manager.instance.time.UnRegister(TimeUpdateBus.AwakeUpdate, Generate);
     }
 
 
     // Generate
-    private ResourceGenerate_Data GenerateData()
+    private ResourceGenerate_Data Random_GenerateData()
     {
         // get total wieght
         int totalWeight = 0;
@@ -87,6 +93,11 @@ public class Resource_Generator : MonoBehaviour
         return null;
     }
 
+    private bool MaxAmount_Generated(ResourceGenerate_Data generateData)
+    {
+        ItemsSource_Manager ingameItemSources = InGame_Manager.instance.itemSourceManager;
+        return ingameItemSources.ItemData_Count(generateData.resourceItem) >= generateData.maxGenerateAmount;
+    }
     private bool Generate_Available(Tile generateTile, Tile playerTile, ResourceGenerate_Data generateData)
     {
         float checkDistance = Utility.Chebyshev_Distance(generateTile.transform.position, playerTile.transform.position);
@@ -98,17 +109,12 @@ public class Resource_Generator : MonoBehaviour
         return true;
     }
 
-    private void Generate()
+    private bool Generate(ResourceGenerate_Data generateData, int generateAmount)
     {
-        _currentCoolTime++;
-        if (_currentCoolTime <= _generateCoolTime) return;
+        if (generateData == null) return false;
+        if (MaxAmount_Generated(generateData)) return false;
 
         InGame_Manager manager = InGame_Manager.instance;
-
-        ResourceGenerate_Data generateData = GenerateData();
-        Item_ScrObj generateItem = generateData.resourceItem;
-
-        // if generateItem amount is max amount, return ?
 
         Tile playerTile = manager.player.movement.currentTile;
         List<Tile> tiles = new(manager.tilesController.currentTiles);
@@ -119,16 +125,42 @@ public class Resource_Generator : MonoBehaviour
             tiles.RemoveAt(i);
         }
 
-        for (int i = 0; i < generateData.generateAmount; i++)
+        Item_ScrObj generateItem = generateData.resourceItem;
+        bool itemGenerated = false;
+
+        for (int i = 0; i < generateAmount; i++)
         {
-            if (tiles.Count <= 0) return;
+            if (tiles.Count <= 0) break;
+            if (MaxAmount_Generated(generateData)) break;
 
             Tile generateTile = tiles[Random.Range(0, tiles.Count)];
             generateTile.Set_PlacingItem(new(generateItem, 1));
 
+            itemGenerated = true;
+
             if (generateTile.ItemPlace_AvailableCount(generateItem) > 0) continue;
             tiles.Remove(generateTile);
         }
+
+        return itemGenerated;
+    }
+
+    private void Generate_OnLoad()
+    {
+        for (int i = 0; i < _generateDatas.Length; i++)
+        {
+            ResourceGenerate_Data data = _generateDatas[i];
+            Generate(data, Random.Range(0, data.maxGenerateAmount + 1));
+        }
+    }
+    private void Generate()
+    {
+        _currentCoolTime = Mathf.Clamp(_currentCoolTime + 1, 0, _generateCoolTime + 1);
+
+        if (_currentCoolTime <= _generateCoolTime) return;
+
+        ResourceGenerate_Data generateData = Random_GenerateData();
+        Generate(generateData, generateData.generateAmount);
 
         _currentCoolTime = 0;
     }

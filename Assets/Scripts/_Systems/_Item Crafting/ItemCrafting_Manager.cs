@@ -9,6 +9,9 @@ public class ItemCrafting_Manager : MonoBehaviour
 {
     [Space(20)]
     [SerializeField] private ItemSlot_Manager _slotManager;
+    [SerializeField] private ItemsSource_Manager _itemsSourceManager;
+
+    [Space(20)]
     [SerializeField] private Image _togglePanel;
 
     [Space(20)]
@@ -30,134 +33,72 @@ public class ItemCrafting_Manager : MonoBehaviour
     {
         EventBus_Manager.UnRegister(EventBus.AwakeLoad, Set_Data);
 
-        _slotManager.OnSlotHover -= Toggle_ItemInfoPanel;
-        _slotManager.OnSlotHover -= Update_HoveringItemInfo;
-
         _slotManager.OnTargetSlotSelect -= Craft_Item;
-        _slotManager.OnSlotSelect -= Update_CraftItems;
+        _slotManager.OnSlotHover -= Toggle_ItemInfoPanel;
 
+        _slotManager.OnSlotSelect -= Update_CraftItems;
         _slotManager.OnTargetSlotSelect -= Toggle_ItemInfoPanel;
-        _slotManager.OnTargetSlotSelect -= Update_HoveringItemInfo;
 
         InGame_Manager manager = InGame_Manager.instance;
         Inventory_Manager inventory = manager.inventory;
 
-        inventory.OnItemAdded -= Update_CraftItems;
         inventory.slotManager.OnSlotSelect -= Update_CraftItems;
 
+        inventory.OnItemAdded -= Update_CraftItems;
         inventory.OnItemAdded -= Toggle_ItemInfoPanel;
-        inventory.OnItemAdded -= Update_HoveringItemInfo;
 
-        manager.tilesController.OnTileSelect -= Update_CraftItems;
-        manager.player.movement.OnMovement -= Update_CraftItems;
+        Time_Manager time = manager.time;
 
-        manager.player.movement.OnMovement -= Toggle_ItemInfoPanel;
-        manager.player.movement.OnMovement -= Update_HoveringItemInfo;
+        time.UnRegister(TimeUpdateBus.StartUpdate, Update_CraftItems);
+        time.UnRegister(TimeUpdateBus.StartUpdate, Toggle_ItemInfoPanel);
     }
 
 
     // Component
     private void Set_Data()
     {
-        _slotManager.OnSlotHover += Toggle_ItemInfoPanel;
-        _slotManager.OnSlotHover += Update_HoveringItemInfo;
-
         _slotManager.OnTargetSlotSelect += Craft_Item;
-        _slotManager.OnSlotSelect += Update_CraftItems;
+        _slotManager.OnSlotHover += Toggle_ItemInfoPanel;
 
+        _slotManager.OnSlotSelect += Update_CraftItems;
         _slotManager.OnTargetSlotSelect += Toggle_ItemInfoPanel;
-        _slotManager.OnTargetSlotSelect += Update_HoveringItemInfo;
 
         InGame_Manager manager = InGame_Manager.instance;
         Inventory_Manager inventory = manager.inventory;
 
-        inventory.OnItemAdded += Update_CraftItems;
         inventory.slotManager.OnSlotSelect += Update_CraftItems;
-
+        
+        inventory.OnItemAdded += Update_CraftItems;
         inventory.OnItemAdded += Toggle_ItemInfoPanel;
-        inventory.OnItemAdded += Update_HoveringItemInfo;
 
-        manager.tilesController.OnTileSelect += Update_CraftItems;
-        manager.player.movement.OnMovement += Update_CraftItems;
+        Time_Manager time = manager.time;
 
-        manager.player.movement.OnMovement += Toggle_ItemInfoPanel;
-        manager.player.movement.OnMovement += Update_HoveringItemInfo;
+        time.Register(TimeUpdateBus.StartUpdate, Update_CraftItems);
+        time.Register(TimeUpdateBus.StartUpdate, Toggle_ItemInfoPanel);
 
         Toggle_ItemInfoPanel();
     }
 
 
-    // Item Info
-    private void Toggle_ItemInfoPanel(ItemSlot hoveringItemSlot)
-    {
-        _itemInfoPanel.gameObject.SetActive(hoveringItemSlot != null && hoveringItemSlot.data != null);
-    }
-    private void Toggle_ItemInfoPanel()
-    {
-        Toggle_ItemInfoPanel(_slotManager.hoveringSlot);
-    }
-
-    private void Update_HoveringItemInfo(ItemSlot hoveringItemSlot)
-    {
-        if (hoveringItemSlot == null) return;
-
-        Item_ScrObj hoveringItem = hoveringItemSlot.data?.itemScrObj;
-        if (hoveringItem == null) return;
-
-        _itemNameText.text = hoveringItem.itemName;
-        _itemDescriptionText.text = hoveringItem.description;
-
-        LayoutRebuilder.ForceRebuildLayoutImmediate(_itemInfoPanel.rectTransform);
-
-        List<ItemData> ingredientDatas = hoveringItem.Item_IngredientDatas();
-        List<ItemSlot> slots = _ingredientSlotsManager.slots;
-
-        for (int i = 0; i < slots.Count; i++)
-        {
-            ItemSlot slot = slots[i];
-
-            bool hasIngredient = i < ingredientDatas.Count;
-            slot.gameObject.SetActive(hasIngredient);
-
-            if (hasIngredient == false) continue;
-            slot.Set_Data(ingredientDatas[i]);
-        }
-        _ingredientSlotsManager.Update_Visuals();
-    }
-    private void Update_HoveringItemInfo()
-    {
-        Update_HoveringItemInfo(_slotManager.hoveringSlot);
-    }
-
-
     // Craft
-    private List<ItemData> AllCurrent_ItemDatas()
+    private List<ItemData> Ingredient_ItemDatas()
     {
-        InGame_Manager manager = InGame_Manager.instance;
+        List<IItemsSource> itemsSources = new(_itemsSourceManager.itemsSources);
 
-        ItemData carryItemData = manager.cursor.itemCursor.data;
-
-        Inventory_Manager inventory = manager.inventory;
-        List<ItemData> inventoryDatas = inventory.Toggled() ? inventory.slotManager.Slot_ItemDatas() : null;
-
-        Tile playerTile = manager.player.movement.currentTile;
-        List<ItemData> tilePlacedDatas = playerTile.Placed_ItemDatas();
-
-        List<ItemData> allCurrentDatas = new();
-
-        if (carryItemData != null) allCurrentDatas.Add(carryItemData);
-        if (inventoryDatas != null) allCurrentDatas.AddRange(inventoryDatas);
-        if (tilePlacedDatas != null) allCurrentDatas.AddRange(tilePlacedDatas);
-
-        return allCurrentDatas;
+        Inventory_Manager inventory = InGame_Manager.instance.inventory;
+        bool includeInventory = inventory.Toggled();
+        
+        if (includeInventory) return _itemsSourceManager.ItemDatas();
+        if (inventory is IItemsSource inventorySource) itemsSources.Remove(inventorySource);
+        
+        return _itemsSourceManager.ItemDatas(itemsSources);
     }
-
 
     public void Update_CraftItems()
     {
         Item_ScrObj[] allItems = Data_Manager.instance.allItems;
 
-        List<ItemData> currentItemDatas = new(AllCurrent_ItemDatas());
+        List<ItemData> currentItemDatas = Ingredient_ItemDatas();
         List<ItemData> craftAvailableItemDatas = new();
 
         for (int i = 0; i < allItems.Length; i++)
@@ -183,7 +124,32 @@ public class ItemCrafting_Manager : MonoBehaviour
             }
             slot.Set_Data(craftAvailableItemDatas[i]);
         }
+
         _slotManager.Update_Visuals();
+    }
+
+
+    private List<IItemsSourceRemove> IngredientRemove_ItemsSource()
+    {
+        Inventory_Manager inventory = InGame_Manager.instance.inventory;
+        bool includeInventory = inventory.Toggled();
+
+        List<IItemsSourceRemove> itemsSources = new(_itemsSourceManager.itemsRemoveSources);
+        if (includeInventory) return itemsSources;
+
+        if (inventory is IItemsSourceRemove inventorySource) itemsSources.Remove(inventorySource);
+        return itemsSources;
+    }
+    private List<IItemsSourceAdd> AddItems_Source()
+    {
+        Inventory_Manager inventory = InGame_Manager.instance.inventory;
+        bool includeInventory = inventory.Toggled();
+
+        List<IItemsSourceAdd> itemsSources = new(_itemsSourceManager.itemsAddSources);
+        if (includeInventory) return itemsSources;
+
+        if (inventory is IItemsSourceAdd inventorySource) itemsSources.Remove(inventorySource);
+        return itemsSources;
     }
 
     private void Craft_Item(ItemSlot craftItemSlot)
@@ -191,76 +157,65 @@ public class ItemCrafting_Manager : MonoBehaviour
         ItemData slotItemData = craftItemSlot.data;
         if (slotItemData == null) return;
 
-        List<ItemData> currentDatas = AllCurrent_ItemDatas();
-
         Item_ScrObj craftItem = slotItemData.itemScrObj;
+        int craftAmount = craftItem.itemType == ItemType.use ? craftItem.maxAmount : 1;
+
         List<ItemData> craftIngredientDatas = new(craftItem.Item_IngredientDatas());
 
-        for (int i = 0; i < craftIngredientDatas.Count; i++)
+        List<IItemsSourceRemove> craftRemoveSources = IngredientRemove_ItemsSource();
+        List<IItemsSourceAdd> craftAddSources = AddItems_Source();
+
+        // use ingredients
+        foreach (ItemData ingredientData in craftIngredientDatas)
         {
-            int targetCount = craftIngredientDatas[i].amount;
-
-            for (int j = 0; j < currentDatas.Count; j++)
-            {
-                if (craftIngredientDatas[i].itemScrObj != currentDatas[j].itemScrObj) continue;
-
-                int consumeAmount = Mathf.Min(currentDatas[j].amount, targetCount);
-
-                currentDatas[j].Update_CurrentAmount(currentDatas[j].amount - consumeAmount);
-                targetCount -= consumeAmount;
-
-                if (targetCount <= 0) break;
-            }
+            _itemsSourceManager.RemoveItem(craftRemoveSources, ingredientData.itemScrObj, ingredientData.amount);
         }
 
-        InGame_Manager manager = InGame_Manager.instance;
-        ItemCursor itemCursor = manager.cursor.itemCursor;
-
-        Inventory_Manager inventory = manager.inventory;
-        ItemSlot_Manager inventorySlotManager = inventory.slotManager;
-
-        // itemCursor update
-        itemCursor.Set_Data(itemCursor.data);
-        itemCursor.Update_Visuals();
-
-        // placed items update
-        manager.player.movement.currentTile.Remove_EmptyPlacedItems();
-
-        // inventory update
-        inventorySlotManager.Refresh_Datas();
-
-        // add crafted item
-        int craftAmount = craftItem.itemType == ItemType.use ? craftItem.maxAmount : 1;
-        Add_CraftedItem(new(craftItem, craftAmount));
+        // check add item space
+        if (_itemsSourceManager.AddItem(craftAddSources, craftItem, craftAmount) <= 0) return;
+        
+        // return ingredients
+        foreach (ItemData ingredientData in craftIngredientDatas)
+        {
+            _itemsSourceManager.AddItem(craftAddSources, ingredientData.itemScrObj, ingredientData.amount);
+        }
     }
 
-    private void Add_CraftedItem(ItemData craftedItemData)
+
+    // Item Info
+    private void Toggle_ItemInfoPanel(ItemSlot hoveringItemSlot)
     {
-        InGame_Manager manager = InGame_Manager.instance;
-        Inventory_Manager inventory = manager.inventory;
+        bool toggle = hoveringItemSlot != null && hoveringItemSlot.data != null;
+        _itemInfoPanel.gameObject.SetActive(toggle);
 
-        if (inventory.Toggled() && inventory.Add_ItemData(craftedItemData) == null)
+        if (toggle == false) return;
+
+        Item_ScrObj hoveringItem = hoveringItemSlot.data?.itemScrObj;
+        if (hoveringItem == null) return;
+
+        _itemNameText.text = hoveringItem.itemName;
+        _itemDescriptionText.text = hoveringItem.description;
+
+        LayoutRebuilder.ForceRebuildLayoutImmediate(_itemInfoPanel.rectTransform);
+
+        List<ItemData> ingredientDatas = hoveringItem.Item_IngredientDatas();
+        List<ItemSlot> slots = _ingredientSlotsManager.slots;
+
+        for (int i = 0; i < slots.Count; i++)
         {
-            inventory.slotManager.Update_Visuals();
-            return;
+            ItemSlot slot = slots[i];
+
+            bool hasIngredient = i < ingredientDatas.Count;
+            slot.gameObject.SetActive(hasIngredient);
+
+            if (hasIngredient == false) continue;
+            slot.Set_Data(ingredientDatas[i]);
         }
 
-        ItemCursor itemCursor = manager.cursor.itemCursor;
-        ItemData itemCursorData = itemCursor.data;
-
-        if (itemCursorData == null)
-        {
-            itemCursor.Set_Data(craftedItemData);
-            itemCursor.Update_Visuals();
-            return;
-        }
-
-        Item_ScrObj craftedItem = craftedItemData.itemScrObj;
-
-        if (itemCursorData.itemScrObj != craftedItem) return;
-        if (itemCursorData.amount >= craftedItem.maxAmount) return;
-
-        itemCursorData.Update_CurrentAmount(itemCursorData.amount + craftedItemData.amount);
-        itemCursor.Update_Visuals();
+        _ingredientSlotsManager.Update_Visuals();
+    }
+    private void Toggle_ItemInfoPanel()
+    {
+        Toggle_ItemInfoPanel(_slotManager.hoveringSlot);
     }
 }

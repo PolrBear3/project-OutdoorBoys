@@ -4,11 +4,18 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 
+public enum TimeUpdateBus
+{
+    AwakeUpdate = 0,
+    StartUpdate = 1,
+    SubUpdate = 2
+}
+
 public class Time_Manager : MonoBehaviour, ISaveLoadable
 {
     [Space(20)]
-    [SerializeField][Range(0, 1000)] private int _nightPhaseCount;
     [SerializeField][Range(0, 1000)] private int _maxTimeCount;
+    [SerializeField][Range(0, 1000)] private int _nightPhaseCount;
 
     [Space(10)]
     [SerializeField][Range(0, 100)] private float _tikTime;
@@ -17,11 +24,10 @@ public class Time_Manager : MonoBehaviour, ISaveLoadable
     private TimeData _data;
     public TimeData data => _data;
 
-    public Action OnTimeCount;
-    public Action<int> OnTimeCountUpdate;
+    private readonly Dictionary<TimeUpdateBus, Action> _timeUpdateBuses = new();
 
-    public Action OnNightPhase;
-    public Action<int> OnDayCountUpdate;
+    public Action<int> OnTimeCountUpdate;
+    public Action OnNightPhaseUpdate;
     
     private Coroutine _timeTikCoroutine;
 
@@ -38,7 +44,37 @@ public class Time_Manager : MonoBehaviour, ISaveLoadable
     }
 
 
+    // Register
+    public void Register(TimeUpdateBus updateBus, Action targetAction)
+    {
+        if (_timeUpdateBuses.ContainsKey(updateBus) == false)
+        {
+            _timeUpdateBuses.Add(updateBus, targetAction);
+            return;
+        }
+        _timeUpdateBuses[updateBus] += targetAction;
+    }
+
+    public void UnRegister(TimeUpdateBus updateBus, Action targetAction)
+    {
+        _timeUpdateBuses[updateBus] -= targetAction;
+    }
+
+
     // Data
+    public void Run_TimeUpdate()
+    {
+        for (int i = 0; i < _timeUpdateBuses.Count; i++)
+        {
+            TimeUpdateBus runBus = (TimeUpdateBus)i;
+            _timeUpdateBuses[runBus]?.Invoke();
+        }
+        OnTimeCountUpdate?.Invoke(_data.timeCount);
+
+        if (_data.timeCount != _nightPhaseCount) return;
+        OnNightPhaseUpdate?.Invoke();
+    }
+
     public void Update_Data(int updateTimeCount)
     {
         int calculatedTimeCount = data.timeCount + Mathf.Max(0, updateTimeCount);
@@ -46,31 +82,15 @@ public class Time_Manager : MonoBehaviour, ISaveLoadable
         if (calculatedTimeCount <= _maxTimeCount)
         {
             _data.Set_Data(calculatedTimeCount, data.dayCount);
-
-            OnTimeCount?.Invoke();
-            OnTimeCountUpdate?.Invoke(_data.timeCount);
-
-            if (_data.timeCount != _nightPhaseCount) return;
-            OnNightPhase?.Invoke();
-
+            Run_TimeUpdate();
+            
             return;
         }
 
         int dayUpdateCount = Mathf.FloorToInt(calculatedTimeCount / _maxTimeCount);
 
         _data.Set_Data(calculatedTimeCount % _maxTimeCount - 1, _data.dayCount + dayUpdateCount);
-
-        OnTimeCount?.Invoke();
-        OnTimeCountUpdate?.Invoke(_data.timeCount);
-
-        for (int i = 0; i < dayUpdateCount; i++)
-        {
-            OnDayCountUpdate?.Invoke(_data.dayCount);
-            OnNightPhase?.Invoke();
-        }
-
-        if (_data.timeCount < _nightPhaseCount) return;
-        OnNightPhase?.Invoke();
+        Run_TimeUpdate();
     }
 
 

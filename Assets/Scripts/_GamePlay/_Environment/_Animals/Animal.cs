@@ -62,21 +62,11 @@ public class Animal : MonoBehaviour
     {
         if (_data.isOnSight) return;
 
-        SpriteRenderer sr = _animation.spriteRenderer;
-
-        sr.sortingLayerName = "Behind Player";
-        sr.sortingOrder = -1;
-
         _animation.Play(0);
     }
     public void Update_Animation(bool isMoving)
     {
         if (_data.isOnSight == false) return;
-
-        SpriteRenderer sr = _animation.spriteRenderer;
-
-        sr.sortingLayerName = "Default";
-        sr.sortingOrder = 1;
 
         _animation.Play(isMoving ? 2 : 1);
     }

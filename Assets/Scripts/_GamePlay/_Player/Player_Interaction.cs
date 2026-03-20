@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Player_Interaction : MonoBehaviour
+public class Player_Interaction : MonoBehaviour, IItemsSource, IItemsSourceRemove, IItemsSourceAdd
 {
     [SerializeField] private Player_Controller _controller;
 
@@ -37,6 +37,53 @@ public class Player_Interaction : MonoBehaviour
 
         playerMovement.OnMovementDistanced -= UpdateStatus_OnMovement;
         playerMovement.OnMovementStated -= Update_MovementAnimation;
+    }
+
+
+    // IItemsSource
+    public IEnumerable<ItemData> ItemDatas()
+    {
+        List<ItemData> currentTileItemDatas = _controller.movement.currentTile.Placed_ItemDatas();
+
+        foreach (ItemData data in currentTileItemDatas)
+        {
+            yield return data;
+        }
+    }
+
+    public int RemoveItem(Item_ScrObj updateItem, int removeAmount)
+    {
+        int totalRemoveCount = 0;
+        
+        Tile currentTile = _controller.movement.currentTile;
+        List<ItemData> placedItemDatas = currentTile.Placed_ItemDatas(updateItem);
+
+        for (int i = 0; i < placedItemDatas.Count; i++)
+        {
+            ItemData placedData = placedItemDatas[i];
+
+            int placedAmount = placedData.amount;
+            int removeUpdateAmount = Mathf.Min(placedAmount, removeAmount);
+
+            placedData.Update_CurrentAmount(placedAmount - removeUpdateAmount);
+
+            removeAmount -= removeUpdateAmount;
+            totalRemoveCount += removeUpdateAmount;
+
+            if (removeAmount <= 0) break;
+        }
+        currentTile.Remove_EmptyPlacedItems();
+
+        return totalRemoveCount;
+    }
+
+    public int AddItem(Item_ScrObj addItem, int addAmount)
+    {
+        Tile playerTile = _controller.movement.currentTile;
+        int placeAmount = Mathf.Min(addAmount, playerTile.ItemPlace_AvailableCount(addItem));
+
+        playerTile.Set_PlacingItem(new(addItem, placeAmount));
+        return placeAmount;
     }
 
 

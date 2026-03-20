@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 8731621838702089674}
   - component: {fileID: 4536870208008606749}
   m_Layer: 0
-  m_Name: 1-1
+  m_Name: 1-1 World Map Events
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -29,8 +29,7 @@ Transform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
-  m_Children:
-  - {fileID: 2744696127323761593}
+  m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &4536870208008606749
@@ -45,7 +44,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3f0101b7ff8144838bbf4c1880fb7260, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _generateCoolTime: 2
+  _generateCoolTime: 3
   _generateDatas:
   - _resourceItem: {fileID: 11400000, guid: 86e876e6c7e9c467db97ab95dfa547ce, type: 2}
     _generateTiles:
@@ -55,34 +54,3 @@ MonoBehaviour:
     _generateAmount: 2
     _maxGenerateAmount: 5
     _generatePointDistance: 2
---- !u!1 &7200632421969048983
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 2744696127323761593}
-  m_Layer: 0
-  m_Name: Events
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &2744696127323761593
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7200632421969048983}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 8731621838702089674}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}

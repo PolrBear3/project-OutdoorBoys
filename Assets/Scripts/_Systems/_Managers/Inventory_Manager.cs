@@ -6,7 +6,7 @@ using UnityEditor;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class Inventory_Manager : MonoBehaviour
+public class Inventory_Manager : MonoBehaviour, IItemsSource, IItemsSourceRemove, IItemsSourceAdd
 {
     [SerializeField] private Item_ScrObj _inventoryBagpack;
 
@@ -61,6 +61,52 @@ public class Inventory_Manager : MonoBehaviour
         manager.player.movement.OnMovement -= Toggle_Update;
         manager.tilesController.OnTileSelect -= Toggle_Update;
         itemCursor.OnItemReturn -= Toggle_Update;
+    }
+
+
+    // IItemsSource
+    public IEnumerable<ItemData> ItemDatas()
+    {
+        List<ItemData> slotDatas = _slotManager.Slot_ItemDatas();
+        
+        foreach (ItemData data in slotDatas)
+        {
+            yield return data;
+        }
+    }
+
+    public int RemoveItem(Item_ScrObj removeItem, int removeAmount)
+    {
+        int totalRemoveCount = 0;
+
+        List<ItemData> slotsItemDatas = _slotManager.Slot_ItemDatas();
+        for (int i = slotsItemDatas.Count - 1; i >= 0 ; i--)
+        {
+            ItemData data = slotsItemDatas[i];
+
+            if (removeItem != data.itemScrObj) continue;
+
+            int slotAmount = data.amount;
+            int removeUpdateAmount = Mathf.Min(slotAmount, removeAmount);
+
+            data.Update_CurrentAmount(slotAmount - removeUpdateAmount);
+
+            removeAmount -= removeUpdateAmount;
+            totalRemoveCount += removeUpdateAmount;
+        }
+
+        _slotManager.Refresh_Datas();
+        _slotManager.Update_Visuals();
+
+        return totalRemoveCount;
+    }
+
+    public int AddItem(Item_ScrObj addItem, int addAmount)
+    {
+        ItemData leftoverData = Add_ItemData(new(addItem, addAmount));
+        _slotManager.Update_Visuals();
+
+        return leftoverData == null ? addAmount : addAmount - leftoverData.amount;
     }
 
 

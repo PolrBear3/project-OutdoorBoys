@@ -8,13 +8,13 @@ public class Tile : MonoBehaviour
     [SerializeField] private EventPointer _pointer;
     public EventPointer pointer => _pointer;
 
-    [SerializeField] private Transform _setPosition;
-    public Transform setPosition => _setPosition;
+    [SerializeField] private AnimationPlayer _selectorAnimPlayer;
 
     [Space(20)]
     [SerializeField] private SpriteRenderer _tileSpriteRenderer;
-    [SerializeField] private SpriteRenderer _rangeIndicator;
-    [SerializeField] private SpriteRenderer _pointerRenderer;
+
+    [SerializeField] private Transform _setPosition;
+    public Transform setPosition => _setPosition;
 
     [Space(20)]
     [SerializeField] private Transform _placeableItemsPrefabs;
@@ -26,10 +26,6 @@ public class Tile : MonoBehaviour
     public Transform otherPrefabs => _otherPrefabs;
 
     [Space(20)]
-    [SerializeField][Range(0, 1)] private float _transparencyValue;
-    [SerializeField][Range(0, 10)] private float _transparencyTransitionTime;
-
-    [Space(20)]
     [SerializeField][Range(0, 10)] private int _maxItemPlaceCount;
 
 
@@ -39,23 +35,20 @@ public class Tile : MonoBehaviour
     private List<PlaceableItem> _placedItems = new();
     public List<PlaceableItem> placedItems => _placedItems;
 
-    private bool _pointerToggled;
-    public bool pointerToggled => _pointerToggled;
-
 
     // MonoBehaviour
     private void OnDestroy()
     {
-        _pointer.OnEnter -= Toggle_Pointer;
-        _pointer.OnExit -= Toggle_Pointer;
+        _pointer.OnEnter -= Toggle_SelectReady;
+        _pointer.OnExit -= Toggle_SelectReady;
     }
 
 
     // Data
     public TileData Set_Data(TileScrObj setTile)
     {
-        _pointer.OnEnter += Toggle_Pointer;
-        _pointer.OnExit += Toggle_Pointer;
+        _pointer.OnEnter += Toggle_SelectReady;
+        _pointer.OnExit += Toggle_SelectReady;
 
         if (setTile == null) return null;
 
@@ -85,22 +78,21 @@ public class Tile : MonoBehaviour
     }
 
 
-    // Toggles
-    public void Toggle_Transparency(bool toggle)
+    // Select Toggles
+    public void Toggle_SelectPreview(bool toggle)
     {
-        LeanTween.cancel(_tileSpriteRenderer.gameObject);
-
-        float value = toggle ? _transparencyValue : 1f;
-        LeanTween.alpha(_tileSpriteRenderer.gameObject, value, _transparencyTransitionTime);
+        _selectorAnimPlayer.spriteRenderer.gameObject.SetActive(toggle);
     }
 
-    public void Toggle_Pointer()
+    public void Toggle_SelectReady()
     {
-        _pointerToggled = InGame_Manager.instance.cursor.PointingTile_InRange(this) && _pointer.pointerDetected;
-        _pointerRenderer.gameObject.SetActive(_pointerToggled);
+        InGame_Manager manager = InGame_Manager.instance;
 
-        Tile cursorPointTile = _pointerToggled ? this : null;
-        InGame_Manager.instance.cursor.Track_PointingTile(cursorPointTile);
+        bool selectReady = _pointer.pointerDetected && manager.tilesController.Tile_Selectable(this);
+        manager.cursor.Track_PointingTile(selectReady ? this : null);
+        
+        float alphaValue = selectReady ? 1 : 0.5f;
+        LeanTween.alpha(_selectorAnimPlayer.spriteRenderer.gameObject, alphaValue, 0f);
     }
 
 
@@ -153,7 +145,7 @@ public class Tile : MonoBehaviour
             PlaceableItem newPlacedItem = spawnedItem.GetComponent<PlaceableItem>();
 
             int spawnSetAmount = Mathf.Min(setItemAmount, maxAmount);
-
+            
             newPlacedItem.Set_Data(new(setItem, spawnSetAmount));
             setItemAmount -= spawnSetAmount;
 
@@ -218,7 +210,7 @@ public class Tile : MonoBehaviour
 
     public int ItemPlace_AvailableCount(Item_ScrObj placeItem)
     {
-        if (placeItem == null) return 0;
+        if (placeItem == null || placeItem.itemType != ItemType.place) return 0;
         
         int availableCount = 0;
         int maxStackAmount = placeItem.maxAmount;
@@ -248,7 +240,7 @@ public class Tile : MonoBehaviour
         }
         return placedDatas;
     }
-    private List<ItemData> Placed_ItemDatas(Item_ScrObj targetItem)
+    public List<ItemData> Placed_ItemDatas(Item_ScrObj targetItem)
     {
         List<ItemData> placedItems = new();
 

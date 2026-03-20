@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Tiles_Controller : MonoBehaviour
+public class Tiles_Controller : MonoBehaviour, IItemsSource
 {
     private List<Tile> _currentTiles = new();
     public List<Tile> currentTiles => _currentTiles;
@@ -35,6 +35,21 @@ public class Tiles_Controller : MonoBehaviour
 
         manager.cursor.OnTilePointRangeUpdate -= Refresh_Toggles;
         manager.player.movement.OnMovement -= Refresh_Toggles;
+    }
+
+
+    // IItemsSource
+    public IEnumerable<ItemData> ItemDatas()
+    {
+        for (int i = 0; i < _currentTiles.Count; i++)
+        {
+            List<ItemData> placedItemDatas = _currentTiles[i].Placed_ItemDatas();
+            
+            for (int j = 0; j < placedItemDatas.Count; j++)
+            {
+                yield return placedItemDatas[j];
+            }
+        }
     }
 
 
@@ -147,63 +162,22 @@ public class Tiles_Controller : MonoBehaviour
     }
 
 
-    // Item Data
-    public List<PlaceableItem> Placed_Items()
-    {
-        List<PlaceableItem> placedItems = new();
-
-        foreach (Tile tile in _currentTiles)
-        {
-            List<PlaceableItem> tilePlacedItems = tile.placedItems;
-            if (tilePlacedItems.Count <= 0) continue;
-
-            placedItems.AddRange(tile.placedItems);
-        }
-
-        return placedItems;
-    }
-
-    public List<ItemData> Placed_ItemDatas()
-    {
-        List<PlaceableItem> placedItems = new(Placed_Items());
-        List<ItemData> allPlacedDatas = new();
-
-        for (int i = 0; i < placedItems.Count; i++)
-        {
-            ItemData placedData = placedItems[i].data;
-            if (placedData == null) continue;
-
-            Item_ScrObj placedItem = placedData.itemScrObj;
-            bool amountUpdated = false;
-
-            for (int j = 0; j < allPlacedDatas.Count; j++)
-            {
-                ItemData addedData = allPlacedDatas[j];
-
-                if (placedItem != addedData.itemScrObj) continue;
-                addedData.Update_CurrentAmount(addedData.amount + placedData.amount);
-
-                amountUpdated = true;
-                break;
-            }
-
-            if (amountUpdated) continue;
-            allPlacedDatas.Add(new(placedItem, placedData.amount));
-        }
-
-        return allPlacedDatas;
-    }
-
-
     // Select
-    private bool Tile_Selectable(out Tile currentTile)
+    public bool Tile_Selectable(Tile tile)
     {
+        if (tile == null) return false;
+
+        InGame_Manager manager = InGame_Manager.instance;
+
+        Cursor cursor = manager.cursor;
+        Tile playerTile = manager.player.movement.currentTile;
+
+        return playerTile == tile || cursor.itemCursor.data != null && cursor.PointingTile_InRange(tile);
+    }
+    private bool Tile_Selectable(out Tile currentTile)
+    {        
         currentTile = Current_Tile();
-
-        if (currentTile == null) return false;
-        if (currentTile.pointerToggled == false) return false;
-
-        return true;
+        return Tile_Selectable(currentTile);
     }
 
     public void Select_Tile()
@@ -237,18 +211,10 @@ public class Tiles_Controller : MonoBehaviour
 
     private void Refresh_Toggles()
     {
-        InGame_Manager manager = InGame_Manager.instance;
-
-        Cursor cursor = manager.cursor;
-        Tile playerTile = manager.player.movement.currentTile;
-
         foreach (Tile tile in _currentTiles)
         {
-            bool hasItem = cursor.itemCursor.data != null;
-            bool outOfRange = hasItem && cursor.PointingTile_InRange(tile) == false;
-
-            tile.Toggle_Transparency(hasItem == false && playerTile == tile || outOfRange);
-            tile.Toggle_Pointer();
+            tile.Toggle_SelectPreview(Tile_Selectable(tile));
+            tile.Toggle_SelectReady();
         }
     }
 }

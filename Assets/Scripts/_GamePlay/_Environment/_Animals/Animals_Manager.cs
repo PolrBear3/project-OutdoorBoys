@@ -18,9 +18,7 @@ public class Animals_Manager : MonoBehaviour
     private void OnDestroy()
     {
         EventBus_Manager.UnRegister(EventBus.StartLoad, Set_Data);
-
-        InGame_Manager manager = InGame_Manager.instance;
-        manager.time.OnTimeCount -= Spawn_Animal;
+        InGame_Manager.instance.time.UnRegister(TimeUpdateBus.AwakeUpdate, Spawn_Animal);
     }
 
 
@@ -28,7 +26,7 @@ public class Animals_Manager : MonoBehaviour
     private void Set_Data()
     {
         InGame_Manager manager = InGame_Manager.instance;
-        manager.time.OnTimeCount += Spawn_Animal;
+        InGame_Manager.instance.time.Register(TimeUpdateBus.AwakeUpdate, Spawn_Animal);
     }
 
 
