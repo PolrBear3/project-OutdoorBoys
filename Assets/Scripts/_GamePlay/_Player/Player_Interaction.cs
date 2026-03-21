@@ -115,8 +115,6 @@ public class Player_Interaction : MonoBehaviour, IItemsSource, IItemsSourceRemov
     // Actions
     public void Load_ItemPrefab(GameObject itemPrefab)
     {
-        if (itemPrefab == null && _currentItemPrefab == null) return;
-
         if (itemPrefab == null)
         {
             Destroy(_currentItemPrefab);
@@ -124,6 +122,8 @@ public class Player_Interaction : MonoBehaviour, IItemsSource, IItemsSourceRemov
 
             return;
         }
+        if (itemPrefab == null) return;
+
         _currentItemPrefab = Instantiate(itemPrefab, transform);
     }
 

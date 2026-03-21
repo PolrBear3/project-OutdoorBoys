@@ -94,14 +94,20 @@ public class Tile : MonoBehaviour
         _selectorAnimPlayer.spriteRenderer.gameObject.SetActive(toggle);
     }
 
+    public void Toggle_SelectReady(bool toggle)
+    {
+        if (_selectorAnimPlayer.spriteRenderer.gameObject.activeSelf == false) return;
+
+        if (toggle == false)
+        {
+            _selectorAnimPlayer.Stop();
+            return;
+        }
+        _selectorAnimPlayer.Play(0);
+    }
     public void Toggle_SelectReady()
     {
-        InGame_Manager manager = InGame_Manager.instance;
-
-        bool selectReady = _pointer.pointerDetected && manager.tilesController.Tile_Selectable(this);
-        float alphaValue = selectReady ? 1 : 0.5f;
-
-        LeanTween.alpha(_selectorAnimPlayer.spriteRenderer.gameObject, alphaValue, 0f);
+        Toggle_SelectReady(_pointer.pointerDetected && InGame_Manager.instance.tilesController.Tile_Selectable(this));
     }
 
 

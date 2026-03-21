@@ -3,6 +3,28 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+[System.Serializable]
+public class PlaceableItem_DurabilityData
+{
+    private PlaceableItem _placeableItem;
+    public PlaceableItem placeableItem => _placeableItem;
+
+    private int _durabilityCount;
+    public int durabilityCount => _durabilityCount;
+
+    public PlaceableItem_DurabilityData(PlaceableItem item, int durabilityCount)
+    {
+        _placeableItem = item;
+        _durabilityCount = durabilityCount;
+    }
+
+    public int Update_DurabilityCount(int updateCount)
+    {
+        _durabilityCount = Mathf.Max(0, updateCount);
+        return _durabilityCount;
+    }
+}
+
 public class PlaceableItem : MonoBehaviour
 {
     [Space(20)]

@@ -189,7 +189,7 @@ public class Tiles_Controller : MonoBehaviour, IItemsSource
 
     public void Hover_Tile()
     {
-        OnTileHover?.Invoke(Tile_Selectable(out Tile currentTile) ? currentTile : null);
+        OnTileHover?.Invoke(Current_Tile());
     }
 
     public void Select_Tile()
@@ -234,6 +234,7 @@ public class Tiles_Controller : MonoBehaviour, IItemsSource
         foreach (Tile tile in _currentTiles)
         {
             tile.Toggle_SelectPreview(Tile_Selectable(tile));
+            tile.Toggle_SelectReady();
         }
     }
 }

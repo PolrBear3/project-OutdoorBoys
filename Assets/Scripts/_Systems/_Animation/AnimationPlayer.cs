@@ -19,7 +19,12 @@ public class AnimationPlayer : MonoBehaviour
     // MonoBehaviour
     private void Awake()
     {
-        _defaultData = new(_spriteRenderer.sprite, _spriteRenderer.sortingLayerID, _spriteRenderer.color.a, transform.localPosition);
+        _defaultData = new(
+            _spriteRenderer.sprite, 
+            _spriteRenderer.sortingOrder, 
+            _spriteRenderer.color.a, 
+            _spriteRenderer.transform.localPosition
+        );
     }
     
 

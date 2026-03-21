@@ -10,14 +10,14 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 069327ba6dded4f16af0714f2c328413, type: 3}
-  m_Name: Folding Bow Saw
+  m_Name: Saw
   m_EditorClassIdentifier: 
-  _inventorySprite: {fileID: -740112870, guid: bf7ece83f843c4c35977c02f8c40d92d, type: 3}
-  _microSprite: {fileID: -2143257270, guid: bf7ece83f843c4c35977c02f8c40d92d, type: 3}
-  _itemName: Folding Bow Saw
-  _description: Cut down trees faster
+  _inventorySprite: {fileID: 1605057383, guid: bf7ece83f843c4c35977c02f8c40d92d, type: 3}
+  _microSprite: {fileID: 2020677228, guid: bf7ece83f843c4c35977c02f8c40d92d, type: 3}
+  _itemName: Saw
+  _description: Cut down trees
   _itemType: 1
-  _itemPrefab: {fileID: 5769858720269626403, guid: 8ce1b163514ca42b9a1be1e442291502, type: 3}
+  _itemPrefab: {fileID: 5769858720269626403, guid: 7f56d6740dd39410593499d036231c67, type: 3}
   _offsetData: []
   _maxAmount: 50
   _itemWeight: 0

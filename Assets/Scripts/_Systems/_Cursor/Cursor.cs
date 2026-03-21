@@ -30,7 +30,7 @@ public class Cursor : MonoBehaviour
 
     public Action OnTilePointRangeUpdate;
 
-    [SerializeField] private Tile _pointingTile;
+    private Tile _pointingTile;
     public Tile pointingTile => _pointingTile;
 
 
@@ -110,7 +110,7 @@ public class Cursor : MonoBehaviour
 
         OnTilePointRangeUpdate?.Invoke();
     }
-
+    
     public bool PointingTile_InRange(Tile pointTile)
     {
         Tile playerTile = InGame_Manager.instance.player.movement.currentTile;

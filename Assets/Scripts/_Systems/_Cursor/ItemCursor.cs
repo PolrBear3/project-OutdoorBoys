@@ -46,6 +46,7 @@ public class ItemCursor : MonoBehaviour, IItemsSource, IItemsSourceRemove, IItem
     // IItemsSource
     public IEnumerable<ItemData> ItemDatas()
     {
+        if (_data == null) yield break;
         yield return data;
     }
 
@@ -56,7 +57,9 @@ public class ItemCursor : MonoBehaviour, IItemsSource, IItemsSourceRemove, IItem
         int currentAmount = _data.amount;
         int removeCount = Mathf.Min(currentAmount, removeAmount);
 
-        Set_Data(new(updateItem, currentAmount - removeAmount));
+        int setAmount = currentAmount - removeAmount;
+
+        Set_Data(setAmount > 0 ? new(updateItem, setAmount) : null);
         Update_Visuals();
 
         return removeCount;
@@ -106,11 +109,13 @@ public class ItemCursor : MonoBehaviour, IItemsSource, IItemsSourceRemove, IItem
 
     public void Set_Data(ItemData setItemData)
     {
+        ItemData previousData = _data;
         _data = setItemData != null && setItemData.amount > 0 ? setItemData : null;
 
         int updateRange = _data != null ? _data.itemScrObj.triggerRange : 0;
         _cursor.Update_TilePointerRange(updateRange);
 
+        if (_data == previousData) return;
         Load_UseItem();
     }
 
@@ -236,7 +241,6 @@ public class ItemCursor : MonoBehaviour, IItemsSource, IItemsSourceRemove, IItem
     private void Load_UseItem()
     {
         Player_Interaction player = InGame_Manager.instance.player.interaction;
-
         bool itemLoadReady = _data != null && _data.amount > 0 && _data.itemScrObj.itemType == ItemType.use;
 
         GameObject loadItem = itemLoadReady ? _data.itemScrObj.itemPrefab : null;
