@@ -39,6 +39,11 @@ public class Tile : MonoBehaviour
     // MonoBehaviour
     private void OnDestroy()
     {
+        Tiles_Controller tilesController = InGame_Manager.instance.tilesController;
+
+        _pointer.OnEnter -= tilesController.Hover_Tile;
+        _pointer.OnExit -= tilesController.Hover_Tile;
+
         _pointer.OnEnter -= Toggle_SelectReady;
         _pointer.OnExit -= Toggle_SelectReady;
     }
@@ -47,6 +52,11 @@ public class Tile : MonoBehaviour
     // Data
     public TileData Set_Data(TileScrObj setTile)
     {
+        Tiles_Controller tilesController = InGame_Manager.instance.tilesController;
+
+        _pointer.OnEnter += tilesController.Hover_Tile;
+        _pointer.OnExit += tilesController.Hover_Tile;
+
         _pointer.OnEnter += Toggle_SelectReady;
         _pointer.OnExit += Toggle_SelectReady;
 
@@ -89,9 +99,8 @@ public class Tile : MonoBehaviour
         InGame_Manager manager = InGame_Manager.instance;
 
         bool selectReady = _pointer.pointerDetected && manager.tilesController.Tile_Selectable(this);
-        manager.cursor.Track_PointingTile(selectReady ? this : null);
-        
         float alphaValue = selectReady ? 1 : 0.5f;
+
         LeanTween.alpha(_selectorAnimPlayer.spriteRenderer.gameObject, alphaValue, 0f);
     }
 
@@ -104,7 +113,7 @@ public class Tile : MonoBehaviour
 
         Update_PlacedItemOffsets();
     }
-    
+
     /// <returns>
     /// Leftover data
     /// </returns>
@@ -145,7 +154,7 @@ public class Tile : MonoBehaviour
             PlaceableItem newPlacedItem = spawnedItem.GetComponent<PlaceableItem>();
 
             int spawnSetAmount = Mathf.Min(setItemAmount, maxAmount);
-            
+
             newPlacedItem.Set_Data(new(setItem, spawnSetAmount));
             setItemAmount -= spawnSetAmount;
 
@@ -211,7 +220,7 @@ public class Tile : MonoBehaviour
     public int ItemPlace_AvailableCount(Item_ScrObj placeItem)
     {
         if (placeItem == null || placeItem.itemType != ItemType.place) return 0;
-        
+
         int availableCount = 0;
         int maxStackAmount = placeItem.maxAmount;
 
@@ -222,7 +231,7 @@ public class Tile : MonoBehaviour
             int leftSpaceAmount = maxStackAmount - samePlacedItems[i].amount;
             availableCount += leftSpaceAmount;
         }
-        
+
         int newPlaceCount = Mathf.Max(0, _maxItemPlaceCount - _placedItems.Count);
         availableCount += newPlaceCount * maxStackAmount;
 

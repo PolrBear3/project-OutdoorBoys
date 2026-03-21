@@ -49,8 +49,8 @@ public class Inventory_Manager : MonoBehaviour, IItemsSource, IItemsSourceRemove
         _slotManager.OnSlotHover -= Toggle_ItemInfoPanel;
         _slotManager.OnSlotHover -= Update_HoveringItemInfo;
 
-        _slotManager.OnTargetSlotSelect -= Transfer_Item;
-        _slotManager.OnTargetSlotHoldSelect -= Transfer_AllItems;
+        _slotManager.OnTargetSlotSelect -= Transfer_AllItems;
+        _slotManager.OnRightSelect -= Transfer_Item;
 
         _slotManager.OnTargetSlotSelect -= Toggle_ItemInfoPanel;
         _slotManager.OnTargetSlotSelect -= Update_HoveringItemInfo;
@@ -68,7 +68,7 @@ public class Inventory_Manager : MonoBehaviour, IItemsSource, IItemsSourceRemove
     public IEnumerable<ItemData> ItemDatas()
     {
         List<ItemData> slotDatas = _slotManager.Slot_ItemDatas();
-        
+
         foreach (ItemData data in slotDatas)
         {
             yield return data;
@@ -80,7 +80,7 @@ public class Inventory_Manager : MonoBehaviour, IItemsSource, IItemsSourceRemove
         int totalRemoveCount = 0;
 
         List<ItemData> slotsItemDatas = _slotManager.Slot_ItemDatas();
-        for (int i = slotsItemDatas.Count - 1; i >= 0 ; i--)
+        for (int i = slotsItemDatas.Count - 1; i >= 0; i--)
         {
             ItemData data = slotsItemDatas[i];
 
@@ -115,12 +115,12 @@ public class Inventory_Manager : MonoBehaviour, IItemsSource, IItemsSourceRemove
     {
         OnItemAdded += Toggle_ItemInfoPanel;
         OnItemAdded += Update_HoveringItemInfo;
-        
+
         _slotManager.OnSlotHover += Toggle_ItemInfoPanel;
         _slotManager.OnSlotHover += Update_HoveringItemInfo;
 
-        _slotManager.OnTargetSlotSelect += Transfer_Item;
-        _slotManager.OnTargetSlotHoldSelect += Transfer_AllItems;
+        _slotManager.OnTargetSlotSelect += Transfer_AllItems;
+        _slotManager.OnRightSelect += Transfer_Item;
 
         _slotManager.OnTargetSlotSelect += Toggle_ItemInfoPanel;
         _slotManager.OnTargetSlotSelect += Update_HoveringItemInfo;

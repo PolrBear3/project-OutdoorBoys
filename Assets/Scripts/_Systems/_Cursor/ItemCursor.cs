@@ -30,8 +30,9 @@ public class ItemCursor : MonoBehaviour, IItemsSource, IItemsSourceRemove, IItem
 
         Tiles_Controller tilesController = InGame_Manager.instance.tilesController;
 
-        tilesController.OnTargetTileSelect -= Place_Item;
-        tilesController.OnTargetTileHoldSelect -= Place_AllItem;
+        tilesController.OnTargetTileSelect -= Place_AllItem;
+        tilesController.OnTileRightSelect -= Place_Item;
+
         tilesController.OnTargetTileSelect -= Use_Item;
         tilesController.OnTileSelect -= Update_Visuals;
 
@@ -51,7 +52,7 @@ public class ItemCursor : MonoBehaviour, IItemsSource, IItemsSourceRemove, IItem
     public int RemoveItem(Item_ScrObj updateItem, int removeAmount)
     {
         if (data?.itemScrObj != updateItem) return 0;
-        
+
         int currentAmount = _data.amount;
         int removeCount = Mathf.Min(currentAmount, removeAmount);
 
@@ -65,7 +66,7 @@ public class ItemCursor : MonoBehaviour, IItemsSource, IItemsSourceRemove, IItem
     {
         int maxAmount = addItem.maxAmount;
         int targetAddAmount = Mathf.Min(addAmount, maxAmount);
-        
+
         if (_data == null)
         {
             Set_Data(new(addItem, targetAddAmount));
@@ -90,8 +91,9 @@ public class ItemCursor : MonoBehaviour, IItemsSource, IItemsSourceRemove, IItem
     {
         Tiles_Controller tilesController = InGame_Manager.instance.tilesController;
 
-        tilesController.OnTargetTileSelect += Place_Item;
-        tilesController.OnTargetTileHoldSelect += Place_AllItem;
+        tilesController.OnTargetTileSelect += Place_AllItem;
+        tilesController.OnTileRightSelect += Place_Item;
+
         tilesController.OnTargetTileSelect += Use_Item;
         tilesController.OnTileSelect += Update_Visuals;
 
@@ -179,9 +181,10 @@ public class ItemCursor : MonoBehaviour, IItemsSource, IItemsSourceRemove, IItem
     {
         if (_data == null) return;
 
-        InGame_Manager manager = InGame_Manager.instance;
-        Inventory_Manager inventory = manager.inventory;
+        InGame_Manager manager = InGame_Manager.instance; // manager.cursor.pointingTile is null, why?
+        if (manager.tilesController.Tile_Selectable(manager.cursor.pointingTile)) return;
 
+        Inventory_Manager inventory = manager.inventory;
         if (inventory.Toggled() == false)
         {
             Place_AllItem(manager.player.movement.currentTile);
@@ -189,10 +192,11 @@ public class ItemCursor : MonoBehaviour, IItemsSource, IItemsSourceRemove, IItem
 
             return;
         }
+        if (inventory.slotManager.hoveringSlot != null) return;
 
         Item_ScrObj returnItem = _data.itemScrObj;
-
         ItemData leftOverData = inventory.Add_ItemData(_data);
+
         OnItemReturn?.Invoke();
 
         if (leftOverData != null && returnItem.itemType != ItemType.place) return;

@@ -30,7 +30,7 @@ public class Cursor : MonoBehaviour
 
     public Action OnTilePointRangeUpdate;
 
-    private Tile _pointingTile;
+    [SerializeField] private Tile _pointingTile;
     public Tile pointingTile => _pointingTile;
 
 
@@ -50,6 +50,8 @@ public class Cursor : MonoBehaviour
 
         input.OnAnyInput -= Toggle_PointerVisibility;
         input.OnCursorControl -= Movement_Update;
+
+        InGame_Manager.instance.tilesController.OnTileHover -= Track_PointingTile;
     }
 
 
@@ -60,6 +62,8 @@ public class Cursor : MonoBehaviour
 
         input.OnAnyInput += Toggle_PointerVisibility;
         input.OnCursorControl += Movement_Update;
+
+        InGame_Manager.instance.tilesController.OnTileHover += Track_PointingTile;
     }
 
 
@@ -107,7 +111,6 @@ public class Cursor : MonoBehaviour
         OnTilePointRangeUpdate?.Invoke();
     }
 
-
     public bool PointingTile_InRange(Tile pointTile)
     {
         Tile playerTile = InGame_Manager.instance.player.movement.currentTile;
@@ -115,7 +118,8 @@ public class Cursor : MonoBehaviour
         return playerTile.DistanceTo_TargetTile(pointTile) <= _tilePointRange;
     }
 
-    public void Track_PointingTile(Tile pointTile)
+
+    private void Track_PointingTile(Tile pointTile)
     {
         _pointingTile = pointTile;
     }

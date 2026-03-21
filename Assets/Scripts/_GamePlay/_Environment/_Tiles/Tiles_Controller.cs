@@ -9,8 +9,12 @@ public class Tiles_Controller : MonoBehaviour, IItemsSource
     public List<Tile> currentTiles => _currentTiles;
 
 
+    public Action<Tile> OnTileHover;
+
     public Action<Tile> OnTargetTileSelect;
     public Action<Tile> OnTargetTileHoldSelect;
+    public Action<Tile> OnTileRightSelect;
+
     public Action OnTileSelect;
 
 
@@ -30,6 +34,7 @@ public class Tiles_Controller : MonoBehaviour, IItemsSource
 
         input.OnLeftClick -= Select_Tile;
         input.OnHoldLeftClick -= HoldSelect_Tile;
+        input.OnRightClick -= RightSelect_Tile;
 
         InGame_Manager manager = InGame_Manager.instance;
 
@@ -44,7 +49,7 @@ public class Tiles_Controller : MonoBehaviour, IItemsSource
         for (int i = 0; i < _currentTiles.Count; i++)
         {
             List<ItemData> placedItemDatas = _currentTiles[i].Placed_ItemDatas();
-            
+
             for (int j = 0; j < placedItemDatas.Count; j++)
             {
                 yield return placedItemDatas[j];
@@ -60,6 +65,7 @@ public class Tiles_Controller : MonoBehaviour, IItemsSource
 
         input.OnLeftClick += Select_Tile;
         input.OnHoldLeftClick += HoldSelect_Tile;
+        input.OnRightClick += RightSelect_Tile;
 
         InGame_Manager manager = InGame_Manager.instance;
 
@@ -175,9 +181,15 @@ public class Tiles_Controller : MonoBehaviour, IItemsSource
         return playerTile == tile || cursor.itemCursor.data != null && cursor.PointingTile_InRange(tile);
     }
     private bool Tile_Selectable(out Tile currentTile)
-    {        
+    {
         currentTile = Current_Tile();
         return Tile_Selectable(currentTile);
+    }
+
+
+    public void Hover_Tile()
+    {
+        OnTileHover?.Invoke(Tile_Selectable(out Tile currentTile) ? currentTile : null);
     }
 
     public void Select_Tile()
@@ -193,6 +205,14 @@ public class Tiles_Controller : MonoBehaviour, IItemsSource
         if (Tile_Selectable(out Tile currentTile) == false) return;
 
         OnTargetTileHoldSelect?.Invoke(currentTile);
+        OnTileSelect?.Invoke();
+    }
+
+    public void RightSelect_Tile()
+    {
+        if (Tile_Selectable(out Tile currentTile) == false) return;
+
+        OnTileRightSelect?.Invoke(currentTile);
         OnTileSelect?.Invoke();
     }
 
@@ -214,7 +234,6 @@ public class Tiles_Controller : MonoBehaviour, IItemsSource
         foreach (Tile tile in _currentTiles)
         {
             tile.Toggle_SelectPreview(Tile_Selectable(tile));
-            tile.Toggle_SelectReady();
         }
     }
 }

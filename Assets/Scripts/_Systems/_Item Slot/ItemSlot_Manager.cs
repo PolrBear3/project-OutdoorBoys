@@ -13,8 +13,11 @@ public class ItemSlot_Manager : MonoBehaviour
 
 
     public Action<ItemSlot> OnSlotHover;
+
     public Action<ItemSlot> OnTargetSlotSelect;
     public Action<ItemSlot> OnTargetSlotHoldSelect;
+    public Action<ItemSlot> OnRightSelect;
+
     public Action OnSlotSelect;
 
 
@@ -32,6 +35,7 @@ public class ItemSlot_Manager : MonoBehaviour
 
         input.OnLeftClick -= Select_HoveringSlot;
         input.OnHoldLeftClick -= HoldSelect_HoveringSlot;
+        input.OnRightClick -= RightSelect_HoveringSlot;
     }
 
 
@@ -50,6 +54,7 @@ public class ItemSlot_Manager : MonoBehaviour
 
         input.OnLeftClick += Select_HoveringSlot;
         input.OnHoldLeftClick += HoldSelect_HoveringSlot;
+        input.OnRightClick += RightSelect_HoveringSlot;
     }
 
     public void Refresh_Datas()
@@ -123,6 +128,14 @@ public class ItemSlot_Manager : MonoBehaviour
         if (_hoveringSlot == null) return;
 
         OnTargetSlotHoldSelect?.Invoke(_hoveringSlot);
+        OnSlotSelect?.Invoke();
+    }
+
+    private void RightSelect_HoveringSlot()
+    {
+        if (_hoveringSlot == null) return;
+
+        OnRightSelect?.Invoke(_hoveringSlot);
         OnSlotSelect?.Invoke();
     }
 
