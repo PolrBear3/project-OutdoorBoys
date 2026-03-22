@@ -6,13 +6,9 @@ public class Player_Interaction : MonoBehaviour, IItemsSource, IItemsSourceRemov
 {
     [SerializeField] private Player_Controller _controller;
 
-
     [Space(20)]
     [SerializeField] private SpriteRenderer _indicationIcon;
     public SpriteRenderer indicationIcon => _indicationIcon;
-
-    [Space(20)]
-    [SerializeField][Range(0, 100)] private int _stayTimeCost;
 
 
     private GameObject _currentItemPrefab;
@@ -33,8 +29,6 @@ public class Player_Interaction : MonoBehaviour, IItemsSource, IItemsSourceRemov
         Movement_Controller playerMovement = _controller.movement;
 
         input.OnMovement -= playerMovement.MoveTo_Tile;
-        input.OnInteract -= StayOn_Tile;
-
         playerMovement.OnMovementDistanced -= UpdateStatus_OnMovement;
         playerMovement.OnMovementStated -= Update_MovementAnimation;
     }
@@ -54,7 +48,7 @@ public class Player_Interaction : MonoBehaviour, IItemsSource, IItemsSourceRemov
     public int RemoveItem(Item_ScrObj updateItem, int removeAmount)
     {
         int totalRemoveCount = 0;
-        
+
         Tile currentTile = _controller.movement.currentTile;
         List<ItemData> placedItemDatas = currentTile.Placed_ItemDatas(updateItem);
 
@@ -96,8 +90,6 @@ public class Player_Interaction : MonoBehaviour, IItemsSource, IItemsSourceRemov
         Movement_Controller playerMovement = _controller.movement;
 
         input.OnMovement += playerMovement.MoveTo_Tile;
-        input.OnInteract += StayOn_Tile;
-
         playerMovement.OnMovementDistanced += UpdateStatus_OnMovement;
         playerMovement.OnMovementStated += Update_MovementAnimation;
     }
@@ -112,23 +104,7 @@ public class Player_Interaction : MonoBehaviour, IItemsSource, IItemsSourceRemov
     }
 
 
-    // Actions
-    public void Load_ItemPrefab(GameObject itemPrefab)
-    {
-        Destroy(_currentItemPrefab);
-        _currentItemPrefab = null;
-
-        if (itemPrefab == null) return;
-
-        _currentItemPrefab = Instantiate(itemPrefab, transform);
-    }
-
-    private void StayOn_Tile()
-    {
-        InGame_Manager.instance.time.Update_Data(_stayTimeCost);
-    }
-
-
+    // Movement
     private void Update_MovementAnimation(bool isMoving)
     {
         AnimationPlayer animPlayer = _controller.animationPlayer;
@@ -148,5 +124,17 @@ public class Player_Interaction : MonoBehaviour, IItemsSource, IItemsSourceRemov
         int currentItemWeight = currentItem != null ? currentItem.Item_Weight() + currentInventoryWeight : 0;
 
         manager.time.Update_Data(moveDistance + currentItemWeight * moveDistance);
+    }
+
+
+    // Actions
+    public void Load_ItemPrefab(GameObject itemPrefab)
+    {
+        Destroy(_currentItemPrefab);
+        _currentItemPrefab = null;
+
+        if (itemPrefab == null) return;
+
+        _currentItemPrefab = Instantiate(itemPrefab, transform);
     }
 }

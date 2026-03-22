@@ -47,7 +47,7 @@ public class ItemCursor : MonoBehaviour, IItemsSource, IItemsSourceRemove, IItem
     public IEnumerable<ItemData> ItemDatas()
     {
         if (_data == null) yield break;
-        yield return data;
+        yield return _data;
     }
 
     public int RemoveItem(Item_ScrObj updateItem, int removeAmount)
@@ -201,12 +201,11 @@ public class ItemCursor : MonoBehaviour, IItemsSource, IItemsSourceRemove, IItem
         Item_ScrObj returnItem = _data.itemScrObj;
         ItemData leftOverData = inventory.Add_ItemData(_data);
 
+        Set_Data(leftOverData);
         OnItemReturn?.Invoke();
 
         if (leftOverData != null && returnItem.itemType != ItemType.place) return;
-
         inventory.slotManager.Update_Visuals();
-        Set_Data(leftOverData);
     }
 
 
@@ -232,7 +231,6 @@ public class ItemCursor : MonoBehaviour, IItemsSource, IItemsSourceRemove, IItem
             Pickup_Item(selectTile);
             return;
         }
-
         Set_Data(selectTile.Set_PlacingItem(_data));
     }
 

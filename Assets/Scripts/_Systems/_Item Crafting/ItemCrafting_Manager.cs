@@ -36,20 +36,24 @@ public class ItemCrafting_Manager : MonoBehaviour
         _slotManager.OnTargetSlotSelect -= Craft_Item;
         _slotManager.OnSlotHover -= Toggle_ItemInfoPanel;
 
-        _slotManager.OnSlotSelect -= Update_CraftItems;
+        _slotManager.OnSlotSelect -= Update_CraftableItems;
         _slotManager.OnTargetSlotSelect -= Toggle_ItemInfoPanel;
 
         InGame_Manager manager = InGame_Manager.instance;
         Inventory_Manager inventory = manager.inventory;
 
-        inventory.slotManager.OnSlotSelect -= Update_CraftItems;
-
-        inventory.OnItemAdded -= Update_CraftItems;
+        inventory.slotManager.OnSlotSelect -= Update_CraftableItems;
+        inventory.OnItemAdded -= Update_CraftableItems;
         inventory.OnItemAdded -= Toggle_ItemInfoPanel;
+
+        ItemCursor itemCursor = manager.cursor.itemCursor;
+
+        itemCursor.OnItemReturn -= Update_CraftableItems;
+        itemCursor.OnItemReturn -= Toggle_ItemInfoPanel;
 
         Time_Manager time = manager.time;
 
-        time.UnRegister(TimeUpdateBus.StartUpdate, Update_CraftItems);
+        time.UnRegister(TimeUpdateBus.StartUpdate, Update_CraftableItems);
         time.UnRegister(TimeUpdateBus.StartUpdate, Toggle_ItemInfoPanel);
     }
 
@@ -60,20 +64,24 @@ public class ItemCrafting_Manager : MonoBehaviour
         _slotManager.OnTargetSlotSelect += Craft_Item;
         _slotManager.OnSlotHover += Toggle_ItemInfoPanel;
 
-        _slotManager.OnSlotSelect += Update_CraftItems;
+        _slotManager.OnSlotSelect += Update_CraftableItems;
         _slotManager.OnTargetSlotSelect += Toggle_ItemInfoPanel;
 
         InGame_Manager manager = InGame_Manager.instance;
         Inventory_Manager inventory = manager.inventory;
 
-        inventory.slotManager.OnSlotSelect += Update_CraftItems;
-        
-        inventory.OnItemAdded += Update_CraftItems;
+        inventory.slotManager.OnSlotSelect += Update_CraftableItems;
+        inventory.OnItemAdded += Update_CraftableItems;
         inventory.OnItemAdded += Toggle_ItemInfoPanel;
+
+        ItemCursor itemCursor = manager.cursor.itemCursor;
+
+        itemCursor.OnItemReturn += Update_CraftableItems;
+        itemCursor.OnItemReturn += Toggle_ItemInfoPanel;
 
         Time_Manager time = manager.time;
 
-        time.Register(TimeUpdateBus.StartUpdate, Update_CraftItems);
+        time.Register(TimeUpdateBus.StartUpdate, Update_CraftableItems);
         time.Register(TimeUpdateBus.StartUpdate, Toggle_ItemInfoPanel);
 
         Toggle_ItemInfoPanel();
@@ -87,14 +95,14 @@ public class ItemCrafting_Manager : MonoBehaviour
 
         Inventory_Manager inventory = InGame_Manager.instance.inventory;
         bool includeInventory = inventory.Toggled();
-        
+
         if (includeInventory) return _itemsSourceManager.ItemDatas();
         if (inventory is IItemsSource inventorySource) itemsSources.Remove(inventorySource);
-        
+
         return _itemsSourceManager.ItemDatas(itemsSources);
     }
 
-    public void Update_CraftItems()
+    public void Update_CraftableItems()
     {
         Item_ScrObj[] allItems = Data_Manager.instance.allItems;
 
@@ -173,7 +181,7 @@ public class ItemCrafting_Manager : MonoBehaviour
 
         // check add item space
         if (_itemsSourceManager.AddItem(craftAddSources, craftItem, craftAmount) <= 0) return;
-        
+
         // return ingredients
         foreach (ItemData ingredientData in craftIngredientDatas)
         {

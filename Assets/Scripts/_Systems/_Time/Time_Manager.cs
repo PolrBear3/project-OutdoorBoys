@@ -28,8 +28,29 @@ public class Time_Manager : MonoBehaviour, ISaveLoadable
 
     public Action<int> OnTimeCountUpdate;
     public Action OnNightPhaseUpdate;
-    
+
     private Coroutine _timeTikCoroutine;
+
+
+    // MonoBehaviour
+    private void Awake()
+    {
+        EventBus_Manager.Register(EventBus.AwakeLoad, Set_Data);
+    }
+
+    private void OnDestroy()
+    {
+        EventBus_Manager.UnRegister(EventBus.AwakeLoad, Set_Data);
+
+        Input_Controller input = Input_Controller.instance;
+        input.OnInteract -= Toggle_TimeTik;
+
+        InGame_Manager manager = InGame_Manager.instance;
+
+        manager.player.movement.OnMovement -= Stop_TimTik;
+        manager.tilesController.OnTileSelect -= Stop_TimTik;
+        manager.cursor.OnTilePointRangeUpdate -= Stop_TimTik;
+    }
 
 
     // ISaveLoadable
@@ -62,6 +83,19 @@ public class Time_Manager : MonoBehaviour, ISaveLoadable
 
 
     // Data
+    private void Set_Data()
+    {
+        Input_Controller input = Input_Controller.instance;
+        input.OnInteract += Toggle_TimeTik;
+
+        InGame_Manager manager = InGame_Manager.instance;
+
+        manager.player.movement.OnMovement += Stop_TimTik;
+        manager.tilesController.OnTileSelect += Stop_TimTik;
+        manager.cursor.OnTilePointRangeUpdate += Stop_TimTik;
+    }
+
+
     public void Run_TimeUpdate()
     {
         for (int i = 0; i < _timeUpdateBuses.Count; i++)
@@ -83,7 +117,7 @@ public class Time_Manager : MonoBehaviour, ISaveLoadable
         {
             _data.Set_Data(calculatedTimeCount, data.dayCount);
             Run_TimeUpdate();
-            
+
             return;
         }
 
@@ -93,7 +127,6 @@ public class Time_Manager : MonoBehaviour, ISaveLoadable
         Run_TimeUpdate();
     }
 
-
     public bool Is_Night()
     {
         return _data.timeCount >= _nightPhaseCount;
@@ -101,7 +134,7 @@ public class Time_Manager : MonoBehaviour, ISaveLoadable
 
 
     // Time Tik Count
-    public void Toggle_TimeTik(bool toggle)
+    private void Toggle_TimeTik(bool toggle)
     {
         if (_timeTikCoroutine != null)
         {
@@ -114,12 +147,22 @@ public class Time_Manager : MonoBehaviour, ISaveLoadable
     }
     private IEnumerator Run_TimeTik()
     {
-        float restrictedTikTime = Mathf.Min(0.1f, _tikTime);
-        
+        float restrictedTikTime = Mathf.Max(0.1f, _tikTime);
+
         while (true)
         {
             yield return new WaitForSeconds(restrictedTikTime);
             Update_Data(1);
         }
+    }
+
+    private void Toggle_TimeTik()
+    {
+        Toggle_TimeTik(_timeTikCoroutine == null);
+    }
+    private void Stop_TimTik()
+    {
+        if (_timeTikCoroutine == null) return;
+        Toggle_TimeTik(false);
     }
 }
