@@ -109,13 +109,12 @@ public class ItemCursor : MonoBehaviour, IItemsSource, IItemsSourceRemove, IItem
 
     public void Set_Data(ItemData setItemData)
     {
-        ItemData previousData = _data;
+        if (_data == setItemData) return;
         _data = setItemData != null && setItemData.amount > 0 ? setItemData : null;
 
         int updateRange = _data != null ? _data.itemScrObj.triggerRange : 0;
         _cursor.Update_TilePointerRange(updateRange);
 
-        if (_data == previousData) return;
         Load_UseItem();
     }
 
