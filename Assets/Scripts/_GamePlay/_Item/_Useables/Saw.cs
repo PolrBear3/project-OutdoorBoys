@@ -12,21 +12,21 @@ public class Saw : MonoBehaviour
     [SerializeField] private Item_ScrObj[] _treeItems;
 
     [Space(20)]
+    [SerializeField][Range(0, 100)] private int _chopDamage;
     [SerializeField][Range(0, 100)] private int _minWoodDropAmount;
 
-
-    private PlaceableItem_DurabilityData _targetTreeData;
+    private PlaceableItem_DurabilityData _choppingTreeData;
 
 
     // MonoBehaviour
     private void Awake()
     {
-        _useableItem.OnUse += Use_OnTree;
+        _useableItem.OnUse += Chop_Tree;
     }
 
     private void OnDestroy()
     {
-        _useableItem.OnUse -= Use_OnTree;
+        _useableItem.OnUse -= Chop_Tree;
     }
 
 
@@ -48,37 +48,39 @@ public class Saw : MonoBehaviour
         return null;
     }
 
-    private void Update_TargetTree(PlaceableItem targetItem)
+    private void Update_ChoppingTree(PlaceableItem targetItem)
     {
-        if (_targetTreeData != null && _targetTreeData.placeableItem == targetItem) return;
+        if (_choppingTreeData != null && _choppingTreeData.placeableItem == targetItem) return;
         
         if (targetItem == null)
         {
-            _targetTreeData = null;
+            _choppingTreeData = null;
             return;
         }
 
-        _targetTreeData = new(targetItem, targetItem.data.itemScrObj.itemWeight);
+        _choppingTreeData = new(targetItem, targetItem.data.itemScrObj.itemWeight);
     }
 
 
-    private void Use_OnTree(Tile useTile)
+    private void Chop_Tree(Tile useTile)
     {
         PlaceableItem placedTree = PlacedTree(useTile);
         if (placedTree == null) return;
         
-        Update_TargetTree(placedTree);
+        Update_ChoppingTree(placedTree);
 
         _useableItem.Update_UseAmount(1);
         placedTree.animPlayer.Play(0);
 
-        if (_targetTreeData.Update_DurabilityCount(_targetTreeData.durabilityCount - 1) > 0) return;
+        if (_choppingTreeData.Update_DurabilityCount(_choppingTreeData.durabilityCount - _chopDamage) > 0) return;
 
+        Update_ChoppingTree(null);
         placedTree.AnimationDelay_Remove();
-        DropWood_OnDestroy(useTile, placedTree.data.itemScrObj);
+
+        Drop_Wood(useTile, placedTree.data.itemScrObj);
     }
 
-    private void DropWood_OnDestroy(Tile useTile, Item_ScrObj treeItem)
+    private void Drop_Wood(Tile useTile, Item_ScrObj treeItem)
     {
         int treeWeight = treeItem.itemWeight;
         int dropAmount = Random.Range(Mathf.Min(_minWoodDropAmount, treeWeight), treeWeight);

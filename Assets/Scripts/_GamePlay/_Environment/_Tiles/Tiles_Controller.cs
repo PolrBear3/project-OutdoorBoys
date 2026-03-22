@@ -218,14 +218,16 @@ public class Tiles_Controller : MonoBehaviour, IItemsSource
 
 
     // Update
-    private void Load_SetSprites()
+    private bool SetOn_MapBase(Tile tile)
     {
         Vector2 generateStartPos = InGame_Manager.instance.worldMapGenerator.Generate_StartPosition();
-
-        for (int i = 0; i < _currentTiles.Count; i++)
+        return tile.transform.position.y <= -generateStartPos.y;
+    }
+    private void Load_SetSprites()
+    {
+        foreach (Tile tile in _currentTiles)
         {
-            bool setOnBase = _currentTiles[i].transform.position.y <= -generateStartPos.y;
-            _currentTiles[i].Update_SetSprite(setOnBase);
+            tile.Update_SetSprite(SetOn_MapBase(tile));
         }
     }
 

@@ -17,7 +17,16 @@ MonoBehaviour:
   _clipSpriteDatas:
   - _clipName: 
     _clipSprite: {fileID: 957863587, guid: cb01ed2ae3c714d4dba399cd0779d6f1, type: 3}
-    _durationTime: 1
+    _durationTime: 0.5
+    _sortingOrderUpdateValue: -1
+    _alphaUpdateValue: -1
+    _alphaDurationTime: 0
+    _offSetPosition: {x: 0, y: 0}
+    _rotationValue: 0
+    _transformDurationTime: 0
+  - _clipName: 
+    _clipSprite: {fileID: 957863587, guid: cb01ed2ae3c714d4dba399cd0779d6f1, type: 3}
+    _durationTime: 0.5
     _sortingOrderUpdateValue: -1
     _alphaUpdateValue: 0
     _alphaDurationTime: 0
@@ -26,7 +35,7 @@ MonoBehaviour:
     _transformDurationTime: 0
   - _clipName: 
     _clipSprite: {fileID: -2060642343, guid: cb01ed2ae3c714d4dba399cd0779d6f1, type: 3}
-    _durationTime: 1
+    _durationTime: 0.5
     _sortingOrderUpdateValue: -1
     _alphaUpdateValue: 0
     _alphaDurationTime: 0
@@ -35,7 +44,7 @@ MonoBehaviour:
     _transformDurationTime: 0
   - _clipName: 
     _clipSprite: {fileID: -2088202497, guid: cb01ed2ae3c714d4dba399cd0779d6f1, type: 3}
-    _durationTime: 1
+    _durationTime: 0.5
     _sortingOrderUpdateValue: -1
     _alphaUpdateValue: 0
     _alphaDurationTime: 0
@@ -44,7 +53,7 @@ MonoBehaviour:
     _transformDurationTime: 0
   - _clipName: 
     _clipSprite: {fileID: -1280668761, guid: cb01ed2ae3c714d4dba399cd0779d6f1, type: 3}
-    _durationTime: 1
+    _durationTime: 0.5
     _sortingOrderUpdateValue: -1
     _alphaUpdateValue: 0
     _alphaDurationTime: 0
