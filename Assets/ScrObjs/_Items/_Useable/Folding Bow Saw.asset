@@ -18,7 +18,13 @@ MonoBehaviour:
   _description: Cut down trees faster
   _itemType: 1
   _itemPrefab: {fileID: 5769858720269626403, guid: 8ce1b163514ca42b9a1be1e442291502, type: 3}
-  _offsetData: []
+  _offsetData:
+  - _position: {x: -0.15, y: -0.3}
+    _rotationValue: 0
+  - _position: {x: -0.15, y: -0.3}
+    _rotationValue: 0
+  - _position: {x: 0.15, y: -0.3}
+    _rotationValue: 0
   _maxAmount: 50
   _itemWeight: 0
   _triggerRange: 1

@@ -11,6 +11,9 @@ public class ItemCursor : MonoBehaviour, IItemsSource, IItemsSourceRemove, IItem
     [SerializeField] private Cursor _cursor;
     public Cursor cursor => _cursor;
 
+    [Space(20)]
+    [SerializeField] private Item_ScrObj _useableItemDrop;
+
 
     private ItemData _data;
     public ItemData data => _data;
@@ -30,16 +33,20 @@ public class ItemCursor : MonoBehaviour, IItemsSource, IItemsSourceRemove, IItem
 
         Tiles_Controller tilesController = InGame_Manager.instance.tilesController;
 
+        tilesController.OnTargetTileSelect -= Use_Item;
+
         tilesController.OnTargetTileSelect -= Place_AllItem;
         tilesController.OnTileRightSelect -= Place_Item;
 
-        tilesController.OnTargetTileSelect -= Use_Item;
         tilesController.OnTileSelect -= Update_Visuals;
 
         Input_Controller input = Input_Controller.instance;
 
-        input.OnRightClick -= Return_PickupItem;
+        input.OnRightClick -= Return_CurrentItem;
+        input.OnHoldRightClick -= Place_UseItem;
+
         input.OnRightClick -= Update_Visuals;
+        input.OnHoldRightClick -= Update_Visuals;
     }
 
 
@@ -94,16 +101,20 @@ public class ItemCursor : MonoBehaviour, IItemsSource, IItemsSourceRemove, IItem
     {
         Tiles_Controller tilesController = InGame_Manager.instance.tilesController;
 
+        tilesController.OnTargetTileSelect += Use_Item;
+
         tilesController.OnTargetTileSelect += Place_AllItem;
         tilesController.OnTileRightSelect += Place_Item;
 
-        tilesController.OnTargetTileSelect += Use_Item;
         tilesController.OnTileSelect += Update_Visuals;
 
         Input_Controller input = Input_Controller.instance;
 
-        input.OnRightClick += Return_PickupItem;
+        input.OnRightClick += Return_CurrentItem;
+        input.OnHoldRightClick += Place_UseItem;
+
         input.OnRightClick += Update_Visuals;
+        input.OnHoldRightClick += Update_Visuals;
     }
 
 
@@ -157,16 +168,30 @@ public class ItemCursor : MonoBehaviour, IItemsSource, IItemsSourceRemove, IItem
         List<PlaceableItem> placedItems = selectTile.placedItems;
         if (placedItems.Count <= 0) return;
 
-        Item_ScrObj pickupItem = _data != null ? _data.itemScrObj : placedItems[0].data.itemScrObj;
+        PlaceableItem firstPlacedItem = placedItems[0];
+        ItemData firstPlacedItemData = firstPlacedItem.data;
+
+        Item_ScrObj pickupItem = _data != null ? _data.itemScrObj : firstPlacedItemData.itemScrObj;
+
+        if (pickupItem.itemType == ItemType.use)
+        {
+            Set_Data(firstPlacedItemData);
+            
+            selectTile.Remove_PlacedItemData(firstPlacedItem);
+            Destroy(firstPlacedItem.gameObject);
+
+            return;
+        }
+
         int maxAmount = pickupItem.maxAmount;
+        int currentAmount = _data != null ? _data.amount : 0;
 
         for (int i = placedItems.Count - 1; i >= 0; i--)
         {
-            int currentAmount = _data != null ? _data.amount : 0;
-            if (currentAmount >= maxAmount) return;
-
             PlaceableItem placedItem = placedItems[i];
+
             if (pickupItem != placedItem.data.itemScrObj) continue;
+            if (currentAmount >= maxAmount) return;
 
             ItemData placedItemData = placedItem.data;
             int pickupAmount = Mathf.Min(maxAmount - currentAmount, placedItemData.amount);
@@ -181,11 +206,11 @@ public class ItemCursor : MonoBehaviour, IItemsSource, IItemsSourceRemove, IItem
         }
     }
 
-    private void Return_PickupItem()
+    private void Return_CurrentItem()
     {
         if (_data == null) return;
 
-        InGame_Manager manager = InGame_Manager.instance; // manager.cursor.pointingTile is null, why?
+        InGame_Manager manager = InGame_Manager.instance;
         if (manager.tilesController.Tile_Selectable(manager.cursor.pointingTile)) return;
 
         Inventory_Manager inventory = manager.inventory;
@@ -231,7 +256,28 @@ public class ItemCursor : MonoBehaviour, IItemsSource, IItemsSourceRemove, IItem
             Pickup_Item(selectTile);
             return;
         }
+        
         Set_Data(selectTile.Set_PlacingItem(_data));
+    }
+
+    private void Place_UseItem()
+    {
+        Item_ScrObj currentUseItem = _data?.itemScrObj;
+        if (currentUseItem == null || currentUseItem.itemType != ItemType.use) return;
+
+        Tile playerTile = InGame_Manager.instance.player.movement.currentTile;
+        if (playerTile.ItemPlaceCount_Available() == false) return;
+
+        GameObject spawnedDrop = Instantiate(_useableItemDrop.itemPrefab, playerTile.placeableItemsPrefabs);
+        PlaceableItem placedDrop = spawnedDrop.GetComponent<PlaceableItem>();
+
+        placedDrop.Set_Data(new(currentUseItem, _data.amount));
+        placedDrop.Track_CurrentTile(playerTile);
+        placedDrop.animPlayer.spriteRenderer.sprite = currentUseItem.microSprite;
+
+        Set_Data(null);
+
+        playerTile.Track_PlacingItem(placedDrop);
     }
 
 

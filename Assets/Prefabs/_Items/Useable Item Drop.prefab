@@ -70,10 +70,10 @@ SpriteRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
-  m_SortingLayerID: 0
-  m_SortingLayer: 0
-  m_SortingOrder: 0
-  m_Sprite: {fileID: -1041514726, guid: bf7ece83f843c4c35977c02f8c40d92d, type: 3}
+  m_SortingLayerID: 678841433
+  m_SortingLayer: -1
+  m_SortingOrder: 1
+  m_Sprite: {fileID: 951127381, guid: bf7ece83f843c4c35977c02f8c40d92d, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -96,7 +96,7 @@ GameObject:
   - component: {fileID: 3045259509940891077}
   - component: {fileID: 1531750997209139500}
   m_Layer: 0
-  m_Name: Wood
+  m_Name: Useable Item Drop
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -131,8 +131,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _spriteRenderer: {fileID: 5921556619054699056}
-  _animationClips:
-  - {fileID: 11400000, guid: f7a2d73dd65204e07bdfd514451a5f04, type: 2}
+  _animationClips: []
 --- !u!114 &1531750997209139500
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -146,5 +145,5 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _animPlayer: {fileID: 3045259509940891077}
-  _placeAnimationClip: {fileID: 11400000, guid: f7a2d73dd65204e07bdfd514451a5f04, type: 2}
+  _placeAnimationClip: {fileID: 0}
   _removeAnimationClip: {fileID: 0}

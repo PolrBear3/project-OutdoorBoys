@@ -58,6 +58,7 @@ public class Item_ScrObj : ScriptableObject
     // Data
     public Offset_PositionData Offset_Data(int offsetIndex)
     {
+        if (_offsetData.Length <= 0) return null;
         return _offsetData[Mathf.Clamp(offsetIndex, 0, _offsetData.Length - 1)];
     }
 

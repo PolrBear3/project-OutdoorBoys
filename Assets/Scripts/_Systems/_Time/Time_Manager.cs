@@ -29,6 +29,9 @@ public class Time_Manager : MonoBehaviour, ISaveLoadable
     public Action<int> OnTimeCountUpdate;
     public Action OnNightPhaseUpdate;
 
+    public Action<int> OnDayCountUpdate;
+
+
     private Coroutine _timeTikCoroutine;
 
 
@@ -124,6 +127,8 @@ public class Time_Manager : MonoBehaviour, ISaveLoadable
         int dayUpdateCount = Mathf.FloorToInt(calculatedTimeCount / _maxTimeCount);
 
         _data.Set_Data(calculatedTimeCount % _maxTimeCount - 1, _data.dayCount + dayUpdateCount);
+        OnDayCountUpdate?.Invoke(_data.dayCount);
+
         Run_TimeUpdate();
     }
 

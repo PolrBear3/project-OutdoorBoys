@@ -18,6 +18,7 @@ public class Tile : MonoBehaviour
 
     [Space(20)]
     [SerializeField] private Transform _placeableItemsPrefabs;
+    public Transform placeableItemsPrefabs => _placeableItemsPrefabs;
 
     [SerializeField] private Transform _droppedItemsPrefabs;
     public Transform droppedItemsPrefabs => _droppedItemsPrefabs;
@@ -181,6 +182,7 @@ public class Tile : MonoBehaviour
             Transform transform = placedItem.transform;
 
             Offset_PositionData offsetData = placedItem.data.itemScrObj.Offset_Data(i + placedItemCount - 1);
+            if (offsetData == null) continue;
 
             transform.localPosition = offsetData.position;
             transform.rotation = Quaternion.Euler(0f, 0f, offsetData.rotationValue);
@@ -221,6 +223,11 @@ public class Tile : MonoBehaviour
             count += placedItemData.amount;
         }
         return count;
+    }
+
+    public bool ItemPlaceCount_Available()
+    {
+        return _placedItems.Count < _maxItemPlaceCount;
     }
 
     public int ItemPlace_AvailableCount(Item_ScrObj placeItem)
