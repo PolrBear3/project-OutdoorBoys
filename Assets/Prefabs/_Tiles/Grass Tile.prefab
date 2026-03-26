@@ -126,7 +126,7 @@ MonoBehaviour:
   _tileSpriteRenderer: {fileID: 7983665138181794005}
   _setPosition: {fileID: 7814872349304713908}
   _placeableItemsPrefabs: {fileID: 5872425443383930396}
-  _droppedItemsPrefabs: {fileID: 927571649526369382}
+  _droppedItemsPrefabs: {fileID: 0}
   _otherPrefabs: {fileID: 9030660435136214807}
   _useableItemDrop: {fileID: 11400000, guid: 38f3d32e30dd248c99301e476ece34c4, type: 2}
   _maxItemPlaceCount: 2
@@ -271,15 +271,11 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
-    m_RemovedGameObjects: []
+    m_RemovedGameObjects:
+    - {fileID: 8057525965960160638, guid: 82d596386d4b0418d98992122df261ff, type: 3}
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 82d596386d4b0418d98992122df261ff, type: 3}
---- !u!4 &927571649526369382 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 8321486549520935524, guid: 82d596386d4b0418d98992122df261ff, type: 3}
-  m_PrefabInstance: {fileID: 9197685715614098946}
-  m_PrefabAsset: {fileID: 0}
 --- !u!4 &2331418964722433689 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 6917075339042576539, guid: 82d596386d4b0418d98992122df261ff, type: 3}

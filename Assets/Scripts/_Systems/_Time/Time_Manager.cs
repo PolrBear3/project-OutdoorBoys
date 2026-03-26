@@ -24,7 +24,7 @@ public class Time_Manager : MonoBehaviour, ISaveLoadable
     private TimeData _data;
     public TimeData data => _data;
 
-    private readonly Dictionary<TimeUpdateBus, Action> _timeUpdateBuses = new();
+    private Dictionary<TimeUpdateBus, Action> _timeUpdateBuses = new();
 
     public Action OnTimeUpdate;
     public Action<int> OnTimeCountUpdate;
@@ -68,23 +68,6 @@ public class Time_Manager : MonoBehaviour, ISaveLoadable
     public void Load_Data()
     {
         _data = ES3.Load(SaveKeys.Time_SaveKeys.Data, new TimeData(0, 0));
-    }
-
-
-    // Register
-    public void Register(TimeUpdateBus updateBus, Action targetAction)
-    {
-        if (_timeUpdateBuses.ContainsKey(updateBus) == false)
-        {
-            _timeUpdateBuses.Add(updateBus, targetAction);
-            return;
-        }
-        _timeUpdateBuses[updateBus] += targetAction;
-    }
-
-    public void UnRegister(TimeUpdateBus updateBus, Action targetAction)
-    {
-        _timeUpdateBuses[updateBus] -= targetAction;
     }
 
 
@@ -145,7 +128,29 @@ public class Time_Manager : MonoBehaviour, ISaveLoadable
     }
 
 
+    // Data Update
+    public void Register(TimeUpdateBus updateBus, Action targetAction)
+    {
+        if (_timeUpdateBuses.ContainsKey(updateBus) == false)
+        {
+            _timeUpdateBuses.Add(updateBus, targetAction);
+            return;
+        }
+        _timeUpdateBuses[updateBus] += targetAction;
+    }
+
+    public void UnRegister(TimeUpdateBus updateBus, Action targetAction)
+    {
+        _timeUpdateBuses[updateBus] -= targetAction;
+    }
+
+
     // Time Tik Count
+    private bool TimeTik_Running()
+    {
+        return _timeTikCoroutine != null;
+    }
+
     private void Toggle_TimeTik(bool toggle)
     {
         if (_timeTikCoroutine != null)
@@ -155,6 +160,8 @@ public class Time_Manager : MonoBehaviour, ISaveLoadable
         }
 
         if (toggle == false) return;
+        if (InGame_Manager.instance.movements.AllMovements_Complete() == false) return;
+
         _timeTikCoroutine = StartCoroutine(Run_TimeTik());
     }
     private IEnumerator Run_TimeTik()

@@ -13,6 +13,10 @@ public class Animal : MonoBehaviour
     public Movement_Controller movement => _movement;
 
     [Space(20)]
+    [SerializeField] private AnimationClipScrObj _deceasedAnimationClip;
+    [SerializeField] private ItemData[] _dropItems;
+
+    [Space(20)]
     public UnityEvent OnSightActions;
 
 
@@ -60,6 +64,7 @@ public class Animal : MonoBehaviour
         _data = new(setAnimal, health, randCollectCount);
     }
 
+
     public void Update_Animation()
     {
         if (_data.isOnSight) return;
@@ -70,11 +75,15 @@ public class Animal : MonoBehaviour
     {
         if (_data.isOnSight == false) return;
 
-        _animation.Play(isMoving ? 2 : 1);
+        if (isMoving == false)
+        {
+            _animation.Stop();
+            return;
+        }
+        _animation.Play(1);
     }
 
 
-    // Trail Mark Collecting
     private List<Tile> MoveDistance_RangeTiles()
     {
         InGame_Manager manager = InGame_Manager.instance;
@@ -105,6 +114,7 @@ public class Animal : MonoBehaviour
     }
 
 
+    // State Updates
     private void Collect_TrailMark()
     {
         if (_data.isOnSight) return;
@@ -134,10 +144,35 @@ public class Animal : MonoBehaviour
         OnSightActions?.Invoke();
     }
 
+    public void Update_DeceasedState()
+    {
+        if (_data.health > 0) return;
+        
+        Animals_Manager manager = InGame_Manager.instance.animals;
+        manager.spawnedAnimals.Remove(this);
+
+        Tile currentTile = _movement.currentTile;
+        for (int i = 0; i < _dropItems.Length; i++)
+        {
+            currentTile.Set_Item(_dropItems[i]);
+        }
+
+        StartCoroutine(DeceasedState_Update());
+    }
+    private IEnumerator DeceasedState_Update()
+    {
+        _animation.Play(_deceasedAnimationClip);
+        while (_animation.Animation_Playing()) yield return null;
+
+        Destroy(gameObject);
+        yield break;
+    }
+
 
     // Default Actions
     public void RunOff_Sight()
     {
+        if (_data.health <= 0) return;
         if (Player_InRange() == false) return;
 
         _movement.Update_MoveDurationValue(0);
@@ -150,6 +185,7 @@ public class Animal : MonoBehaviour
 
     public void RunOff_fromPlayer()
     {
+        if (_data.health <= 0) return;
         if (Player_InRange() == false) return;
 
         List<Tile> rangedTiles = MoveDistance_RangeTiles();
@@ -187,6 +223,7 @@ public class Animal : MonoBehaviour
 
     public void Escape(int delayCount)
     {
+        if (_data.health <= 0) return;
         if (Player_InRange() == false) return;
         if (_data.onSightTimeCount <= delayCount) return;
 
@@ -196,6 +233,8 @@ public class Animal : MonoBehaviour
 
     public void Follow(int maxFollowCount)
     {
+        if (_data.health <= 0) return;
+
         int onSightTimeCount = _data.onSightTimeCount;
 
         if (onSightTimeCount <= 1) return;
@@ -224,6 +263,7 @@ public class Animal : MonoBehaviour
 
     public void Attack()
     {
+        if (_data.health <= 0) return;
         if (InGame_Manager.instance.player.movement.currentTile != _movement.currentTile) return;
 
         Debug.Log("Game Over by Bear Attack");

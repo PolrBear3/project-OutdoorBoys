@@ -134,7 +134,6 @@ MonoBehaviour:
   _spriteRenderer: {fileID: 8246435973526762554}
   _animationClips:
   - {fileID: 11400000, guid: 5bcc235d95cca4bfc88fedf6d39d1b67, type: 2}
-  - {fileID: 11400000, guid: 35b79301f839a4a73b1527d809d3d472, type: 2}
 --- !u!114 &3490125478823233063
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -163,6 +162,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _animation: {fileID: 178274691860591808}
   _movement: {fileID: 3490125478823233063}
+  _deceasedAnimationClip: {fileID: 11400000, guid: f31ad7f4760c24191b7851b6e2ea4bb3, type: 2}
+  _dropItems:
+  - _itemScrObj: {fileID: 11400000, guid: fba43ae9d93594cddbc2a132e3fd3b95, type: 2}
+    _amount: 3
   OnSightActions:
     m_PersistentCalls:
       m_Calls:

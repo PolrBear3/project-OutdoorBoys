@@ -8,6 +8,11 @@ public class Animals_Manager : MonoBehaviour
     private List<Animal> _spawnedAnimals = new();
     public List<Animal> spawnedAnimals => _spawnedAnimals;
 
+    [Space(20)]
+    [SerializeField][Range(0, 10)] private int _spawnCoolTime;
+
+    private int _currentSpawnCoolTime;
+
 
     // MonoBehaviour
     private void Awake()
@@ -85,7 +90,14 @@ public class Animals_Manager : MonoBehaviour
 
     private void Spawn_Animal()
     {
-        if (_spawnedAnimals.Count > 0) return; // decrease spawn rate according to current spawned amount
+        if (_spawnedAnimals.Count > 0) return;
+
+        if (_currentSpawnCoolTime < _spawnCoolTime)
+        {
+            _currentSpawnCoolTime++;
+            return;
+        }
+        _currentSpawnCoolTime = 0;
 
         AnimalScrObj animalToSpawn = Spawning_Animal();
         if (animalToSpawn == null) return;

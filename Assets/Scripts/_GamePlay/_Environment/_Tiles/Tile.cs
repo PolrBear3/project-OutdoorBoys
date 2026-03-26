@@ -130,11 +130,12 @@ public class Tile : MonoBehaviour
         if (setItemData == null) return setItemData;
         Item_ScrObj setItem = setItemData.itemScrObj;
 
+        int setItemAmount = setItemData.amount;
+        if (setItemAmount <= 0) return setItemData;
+
         if (setItem.itemType != ItemType.place) return setItemData;
 
         int maxAmount = setItem.maxAmount;
-        int setItemAmount = setItemData.amount;
-
         List<ItemData> samePlacedItemDatas = Placed_ItemDatas(setItem);
 
         // update amount
@@ -179,7 +180,7 @@ public class Tile : MonoBehaviour
     {
         if (_placedItems.Count >= _maxItemPlaceCount) return false;
 
-        if (setItemData == null) return false;
+        if (setItemData == null || setItemData.amount <= 0) return false;
         Item_ScrObj setItem = setItemData.itemScrObj;
 
         if (setItem.itemType != ItemType.use) return false;
@@ -194,6 +195,20 @@ public class Tile : MonoBehaviour
         Track_PlacingItem(placedUseItem);
 
         return true;
+    }
+    /// <summary>
+    /// Sets item according to item type
+    /// </summary>
+    public void Set_Item(ItemData setItemData)
+    {
+        if (setItemData == null) return;
+
+        if (setItemData.itemScrObj.itemType == ItemType.place)
+        {
+            Set_PlacingItem(setItemData);
+            return;
+        }
+        Set_UseItem(setItemData);
     }
 
     private void Update_PlacedItemOffsets()

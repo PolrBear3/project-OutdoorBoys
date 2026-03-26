@@ -21,6 +21,10 @@ MonoBehaviour:
   _offsetData:
   - _position: {x: 0, y: -0.2}
     _rotationValue: 0
+  - _position: {x: -0.1, y: -0.1}
+    _rotationValue: 0
+  - _position: {x: 0.1, y: -0.3}
+    _rotationValue: 0
   _maxAmount: 1
   _itemWeight: 3
   _triggerRange: 1

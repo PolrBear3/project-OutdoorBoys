@@ -25,7 +25,7 @@ MonoBehaviour:
     _rotationValue: 0
   - _position: {x: 0.15, y: -0.3}
     _rotationValue: 0
-  _maxAmount: 10
+  _maxAmount: 100
   _itemWeight: 0
   _triggerRange: 0
   _itemIngredientDatas: []

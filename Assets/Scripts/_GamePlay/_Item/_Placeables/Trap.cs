@@ -6,6 +6,12 @@ public class Trap : MonoBehaviour
 {
     [SerializeField] private PlaceableItem _placeableItem;
 
+    [Space(20)]
+    [SerializeField][Range(0, 100)] private int _damage;
+
+    [Space(10)]
+    [SerializeField] private AnimalScrObj[] _activatePriorities;
+
 
     // MonoBehaviour
     private void Awake()
@@ -20,16 +26,41 @@ public class Trap : MonoBehaviour
 
 
     // Main
+    private Animal Activate_TargetAnimal()
+    {
+        List<Animal> currentAnimals = InGame_Manager.instance.animals.SpwnedAnimals(_placeableItem.currentTile);
+        if (currentAnimals.Count <= 0) return null;
+
+        for (int i = 0; i < _activatePriorities.Length; i++)
+        {
+            for (int j = 0; j < currentAnimals.Count; j++)
+            {
+                Animal currentAnimal = currentAnimals[j];
+                
+                if (currentAnimal.data.animalScrObj != _activatePriorities[i]) continue;
+                return currentAnimal;
+            }
+        }
+        return null;
+    }
+    
     private void Activate()
     {
-        Tile currentTile = _placeableItem.currentTile;
-        List<Animal> currentAnimals = InGame_Manager.instance.animals.SpwnedAnimals(currentTile);
-
-        if (currentAnimals.Count <= 0) return;
-
-        Animal activateAnimal = currentAnimals[Random.Range(0, currentAnimals.Count)];
-        // ?
+        Animal activateAnimal = Activate_TargetAnimal();
+        if (activateAnimal == null) return;
+        
+        StartCoroutine(Activate_Update(activateAnimal));
+    }
+    private IEnumerator Activate_Update(Animal activateAnimal)
+    {
+        MovementControllers_Manager movementsManager = InGame_Manager.instance.movements;
+        while (movementsManager.AllMovements_Complete() == false) yield return null;
 
         _placeableItem.AnimationDelay_Remove();
+        
+        AnimalData data = activateAnimal.data;
+
+        data.Update_Health(data.health - _damage);
+        activateAnimal.Update_DeceasedState();
     }
 }

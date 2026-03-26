@@ -30,10 +30,9 @@ public class ItemCursor : MonoBehaviour, IItemsSource, IItemsSourceRemove, IItem
 
         Tiles_Controller tilesController = InGame_Manager.instance.tilesController;
 
-        tilesController.OnTargetTileSelect -= Use_Item;
-
         tilesController.OnTargetTileSelect -= Place_AllItem;
         tilesController.OnTileRightSelect -= Place_Item;
+        tilesController.OnTargetTileSelect -= Use_Item;
 
         tilesController.OnTileSelect -= Update_Visuals;
 
@@ -98,10 +97,9 @@ public class ItemCursor : MonoBehaviour, IItemsSource, IItemsSourceRemove, IItem
     {
         Tiles_Controller tilesController = InGame_Manager.instance.tilesController;
 
-        tilesController.OnTargetTileSelect += Use_Item;
-
         tilesController.OnTargetTileSelect += Place_AllItem;
         tilesController.OnTileRightSelect += Place_Item;
+        tilesController.OnTargetTileSelect += Use_Item;
 
         tilesController.OnTileSelect += Update_Visuals;
 
@@ -181,13 +179,13 @@ public class ItemCursor : MonoBehaviour, IItemsSource, IItemsSourceRemove, IItem
         }
 
         int maxAmount = pickupItem.maxAmount;
-        int currentAmount = _data != null ? _data.amount : 0;
 
         for (int i = placedItems.Count - 1; i >= 0; i--)
         {
             PlaceableItem placedItem = placedItems[i];
-
             if (pickupItem != placedItem.data.itemScrObj) continue;
+
+            int currentAmount = _data != null ? _data.amount : 0;
             if (currentAmount >= maxAmount) return;
 
             ItemData placedItemData = placedItem.data;

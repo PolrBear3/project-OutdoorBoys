@@ -8,7 +8,7 @@ public class ItemData
     [SerializeField] private Item_ScrObj _itemScrObj;
     public Item_ScrObj itemScrObj => _itemScrObj;
     
-    [SerializeField][Range(1, 100)] private int _amount;
+    [SerializeField][Range(0, 100)] private int _amount;
     public int amount => _amount;
 
 
