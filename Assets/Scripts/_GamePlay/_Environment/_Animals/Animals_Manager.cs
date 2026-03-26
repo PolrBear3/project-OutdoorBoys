@@ -8,13 +8,13 @@ public class Animals_Manager : MonoBehaviour
     private List<Animal> _spawnedAnimals = new();
     public List<Animal> spawnedAnimals => _spawnedAnimals;
 
-    
+
     // MonoBehaviour
     private void Awake()
     {
         EventBus_Manager.Register(EventBus.StartLoad, Set_Data);
     }
-    
+
     private void OnDestroy()
     {
         EventBus_Manager.UnRegister(EventBus.StartLoad, Set_Data);
@@ -29,12 +29,28 @@ public class Animals_Manager : MonoBehaviour
         InGame_Manager.instance.time.Register(TimeUpdateBus.AwakeUpdate, Spawn_Animal);
     }
 
+    public List<Animal> SpwnedAnimals(Tile searchTile)
+    {
+        if (searchTile == null) return null;
 
-    // Animals
+        List<Animal> animalsOntile = new();
+
+        for (int i = 0; i < _spawnedAnimals.Count; i++)
+        {
+            Animal spawnedAnimal = _spawnedAnimals[i];
+
+            if (searchTile != spawnedAnimal.movement.currentTile) continue;
+            animalsOntile.Add(spawnedAnimal);
+        }
+        return animalsOntile;
+    }
+
+
+    // Spawn
     private AnimalScrObj Spawning_Animal()
     {
         Tiles_Controller tilesController = InGame_Manager.instance.tilesController;
-        
+
         AnimalScrObj[] allAnimals = Data_Manager.instance.allAnimals;
 
         Dictionary<AnimalScrObj, int> spawnWeightDatas = new();
@@ -64,7 +80,7 @@ public class Animals_Manager : MonoBehaviour
             if (randValue >= cumulativeWeight) continue;
             return data.Key;
         }
-        return allAnimals[UnityEngine.Random.Range(0, allAnimals.Length)];   
+        return allAnimals[UnityEngine.Random.Range(0, allAnimals.Length)];
     }
 
     private void Spawn_Animal()

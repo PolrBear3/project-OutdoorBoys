@@ -9,7 +9,7 @@ public class AnimalData
     public AnimalScrObj animalScrObj => _animalScrObj;
 
     private int _health;
-    public int health => _health;    
+    public int health => _health;
 
     private int _trailMarkCount;
     public int trailMarkCount => _trailMarkCount;
@@ -39,7 +39,7 @@ public class AnimalData
 
     public void Decrease_TrailMarkCount(int decreaseValue)
     {
-        _trailMarkCount -= decreaseValue;
+        _trailMarkCount = Mathf.Max(0, _trailMarkCount - decreaseValue);
         _isOnSight = _trailMarkCount <= 0;
     }
 

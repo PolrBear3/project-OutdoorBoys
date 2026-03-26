@@ -11,9 +11,6 @@ public class ItemCursor : MonoBehaviour, IItemsSource, IItemsSourceRemove, IItem
     [SerializeField] private Cursor _cursor;
     public Cursor cursor => _cursor;
 
-    [Space(20)]
-    [SerializeField] private Item_ScrObj _useableItemDrop;
-
 
     private ItemData _data;
     public ItemData data => _data;
@@ -176,7 +173,7 @@ public class ItemCursor : MonoBehaviour, IItemsSource, IItemsSourceRemove, IItem
         if (pickupItem.itemType == ItemType.use)
         {
             Set_Data(firstPlacedItemData);
-            
+
             selectTile.Remove_PlacedItemData(firstPlacedItem);
             Destroy(firstPlacedItem.gameObject);
 
@@ -256,28 +253,14 @@ public class ItemCursor : MonoBehaviour, IItemsSource, IItemsSourceRemove, IItem
             Pickup_Item(selectTile);
             return;
         }
-        
+
         Set_Data(selectTile.Set_PlacingItem(_data));
     }
 
     private void Place_UseItem()
     {
-        Item_ScrObj currentUseItem = _data?.itemScrObj;
-        if (currentUseItem == null || currentUseItem.itemType != ItemType.use) return;
-
-        Tile playerTile = InGame_Manager.instance.player.movement.currentTile;
-        if (playerTile.ItemPlaceCount_Available() == false) return;
-
-        GameObject spawnedDrop = Instantiate(_useableItemDrop.itemPrefab, playerTile.placeableItemsPrefabs);
-        PlaceableItem placedDrop = spawnedDrop.GetComponent<PlaceableItem>();
-
-        placedDrop.Set_Data(new(currentUseItem, _data.amount));
-        placedDrop.Track_CurrentTile(playerTile);
-        placedDrop.animPlayer.spriteRenderer.sprite = currentUseItem.microSprite;
-
+        if (InGame_Manager.instance.player.movement.currentTile.Set_UseItem(_data) == false) return;
         Set_Data(null);
-
-        playerTile.Track_PlacingItem(placedDrop);
     }
 
 

@@ -212,6 +212,7 @@ MonoBehaviour:
   _placeableItemsPrefabs: {fileID: 3808215792558618091}
   _droppedItemsPrefabs: {fileID: 7600367829977552785}
   _otherPrefabs: {fileID: 1798574611002535136}
+  _useableItemDrop: {fileID: 11400000, guid: 38f3d32e30dd248c99301e476ece34c4, type: 2}
   _maxItemPlaceCount: 2
 --- !u!1001 &1874119393420295669
 PrefabInstance:

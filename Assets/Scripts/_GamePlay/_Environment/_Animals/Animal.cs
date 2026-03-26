@@ -19,6 +19,8 @@ public class Animal : MonoBehaviour
     private AnimalData _data;
     public AnimalData data => _data;
 
+    private bool _onSightFlag;
+
 
     // MonoBehaviour
     private void OnDestroy()
@@ -53,7 +55,7 @@ public class Animal : MonoBehaviour
         int health = _data == null ? setAnimal.maxHealth : _data.health;
 
         int distanceFromPlayer = Utility.Chebyshev_Distance(currentTilePos.position, playerTilePos.position);
-        int randCollectCount = UnityEngine.Random.Range(1, distanceFromPlayer);
+        int randCollectCount = UnityEngine.Random.Range(1, distanceFromPlayer + 1);
 
         _data = new(setAnimal, health, randCollectCount);
     }
@@ -99,7 +101,7 @@ public class Animal : MonoBehaviour
         Tile playerTile = InGame_Manager.instance.player.movement.currentTile;
         float distance = playerTile.DistanceTo_TargetTile(_movement.currentTile);
 
-        return distance < _data.animalScrObj.moveDistanceRange;
+        return distance <= _data.animalScrObj.moveDistanceRange;
     }
 
 
@@ -114,21 +116,27 @@ public class Animal : MonoBehaviour
         _movement.MoveTo_Tile(MoveDistance_RangeTile(true));
 
         if (_data.isOnSight == false) return;
+        _onSightFlag = true;
+
         _movement.Update_MoveDurationValue();
     }
 
     private void Update_OnSight()
     {
+        if (_onSightFlag)
+        {
+            _onSightFlag = false;
+            return;
+        }
         if (_data.isOnSight == false) return;
-        _data.Update_OnSightTimeCount(1);
 
-        if (_data.onSightTimeCount <= 1) return;
+        _data.Update_OnSightTimeCount(1);
         OnSightActions?.Invoke();
     }
 
 
     // Default Actions
-    public void RunOff()
+    public void RunOff_Sight()
     {
         if (Player_InRange() == false) return;
 
@@ -140,24 +148,14 @@ public class Animal : MonoBehaviour
         Update_Animation();
     }
 
-    public void Escape()
+    public void RunOff_fromPlayer()
     {
         if (Player_InRange() == false) return;
 
-        InGame_Manager manager = InGame_Manager.instance;
-
-        // escape
-        if (_movement.currentMoveDuration <= 0)
-        {
-            manager.animals.spawnedAnimals.Remove(this);
-            Destroy(gameObject);
-
-            return;
-        }
-
-        // run off
         List<Tile> rangedTiles = MoveDistance_RangeTiles();
-        float escapeDistance = UnityEngine.Random.Range(1, _data.animalScrObj.moveDistanceRange) - 1;
+
+        Tile playerTile = InGame_Manager.instance.player.movement.currentTile;
+        float runOffDistance = UnityEngine.Random.Range(1, _data.animalScrObj.moveDistanceRange);
 
         Tile farTile = null;
         float farDistance = float.MinValue;
@@ -165,50 +163,51 @@ public class Animal : MonoBehaviour
         for (int i = 0; i < rangedTiles.Count; i++)
         {
             Tile rangedTile = rangedTiles[i];
+            if (rangedTile == playerTile) continue;
+
             Vector2 rangedTilePos = rangedTile.transform.position;
 
             float rangedTileDistance = Utility.Chebyshev_Distance(_movement.transform.position, rangedTilePos);
-            if (rangedTileDistance != escapeDistance) continue;
+            if (rangedTileDistance > runOffDistance) continue;
 
-            Vector2 playerTilePos = manager.player.movement.currentTile.transform.position;
-            float distanceFromPlayer = Utility.Chebyshev_Distance(rangedTilePos, playerTilePos);
-
+            float distanceFromPlayer = Utility.Chebyshev_Distance(rangedTilePos, playerTile.transform.position);
             if (distanceFromPlayer <= farDistance) continue;
 
             farDistance = distanceFromPlayer;
             farTile = rangedTile;
         }
-
         _movement.MoveTo_Tile(farTile);
-        _movement.Update_MoveDurationValue(0);
+    }
+    public void RunOff_fromPlayer(int maxRunOffCount)
+    {
+        if (_data.onSightTimeCount > maxRunOffCount) return;
+
+        RunOff_fromPlayer();
+    }
+
+    public void Escape(int delayCount)
+    {
+        if (Player_InRange() == false) return;
+        if (_data.onSightTimeCount <= delayCount) return;
+
+        InGame_Manager.instance.animals.spawnedAnimals.Remove(this);
+        Destroy(gameObject);
     }
 
     public void Follow(int maxFollowCount)
     {
         int onSightTimeCount = _data.onSightTimeCount;
-        if (onSightTimeCount <= 2) return;
 
-        int actualFollowCount = maxFollowCount + 3;
+        if (onSightTimeCount <= 1) return;
+        if (onSightTimeCount > maxFollowCount + 1) return;
 
-        // escape
-        if (onSightTimeCount == actualFollowCount)
-        {
-            _movement.MoveTo_Tile(MoveDistance_RangeTile(true));
-            return;
-        }
-        if (onSightTimeCount >= actualFollowCount + 1)
-        {
-            InGame_Manager.instance.animals.spawnedAnimals.Remove(this);
-            Destroy(gameObject);
-            return;
-        }
-
-        // follow
         Tile playerTile = InGame_Manager.instance.player.movement.currentTile;
+        if (playerTile == _movement.currentTile) return;
+
         List<Tile> rangedTiles = MoveDistance_RangeTiles();
 
-        float closestDistance = float.MaxValue;
         Tile closestTile = null;
+        float closestDistance = float.MaxValue;
 
         for (int i = 0; i < rangedTiles.Count; i++)
         {

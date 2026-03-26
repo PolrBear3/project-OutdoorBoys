@@ -27,6 +27,7 @@ public class Tile : MonoBehaviour
     public Transform otherPrefabs => _otherPrefabs;
 
     [Space(20)]
+    [SerializeField] private Item_ScrObj _useableItemDrop;
     [SerializeField][Range(0, 10)] private int _maxItemPlaceCount;
 
 
@@ -171,6 +172,29 @@ public class Tile : MonoBehaviour
 
         return new(setItem, setItemAmount);
     }
+    /// <returns>
+    /// Check if item set successfully
+    /// </returns>
+    public bool Set_UseItem(ItemData setItemData)
+    {
+        if (_placedItems.Count >= _maxItemPlaceCount) return false;
+
+        if (setItemData == null) return false;
+        Item_ScrObj setItem = setItemData.itemScrObj;
+
+        if (setItem.itemType != ItemType.use) return false;
+
+        GameObject spawnedDrop = Instantiate(_useableItemDrop.itemPrefab, _placeableItemsPrefabs);
+        PlaceableItem placedUseItem = spawnedDrop.GetComponent<PlaceableItem>();
+
+        placedUseItem.Set_Data(new(setItem, setItemData.amount));
+        placedUseItem.Track_CurrentTile(this);
+        placedUseItem.animPlayer.spriteRenderer.sprite = setItem.microSprite;
+
+        Track_PlacingItem(placedUseItem);
+
+        return true;
+    }
 
     private void Update_PlacedItemOffsets()
     {
@@ -223,11 +247,6 @@ public class Tile : MonoBehaviour
             count += placedItemData.amount;
         }
         return count;
-    }
-
-    public bool ItemPlaceCount_Available()
-    {
-        return _placedItems.Count < _maxItemPlaceCount;
     }
 
     public int ItemPlace_AvailableCount(Item_ScrObj placeItem)

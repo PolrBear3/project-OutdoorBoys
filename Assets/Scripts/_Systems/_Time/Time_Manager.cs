@@ -26,9 +26,12 @@ public class Time_Manager : MonoBehaviour, ISaveLoadable
 
     private readonly Dictionary<TimeUpdateBus, Action> _timeUpdateBuses = new();
 
+    public Action OnTimeUpdate;
     public Action<int> OnTimeCountUpdate;
+
     public Action OnNightPhaseUpdate;
 
+    public Action OnDayUpdate;
     public Action<int> OnDayCountUpdate;
 
 
@@ -106,6 +109,8 @@ public class Time_Manager : MonoBehaviour, ISaveLoadable
             TimeUpdateBus runBus = (TimeUpdateBus)i;
             _timeUpdateBuses[runBus]?.Invoke();
         }
+
+        OnTimeUpdate?.Invoke();
         OnTimeCountUpdate?.Invoke(_data.timeCount);
 
         if (_data.timeCount != _nightPhaseCount) return;
@@ -127,6 +132,8 @@ public class Time_Manager : MonoBehaviour, ISaveLoadable
         int dayUpdateCount = Mathf.FloorToInt(calculatedTimeCount / _maxTimeCount);
 
         _data.Set_Data(calculatedTimeCount % _maxTimeCount - 1, _data.dayCount + dayUpdateCount);
+
+        OnDayUpdate?.Invoke();
         OnDayCountUpdate?.Invoke(_data.dayCount);
 
         Run_TimeUpdate();
