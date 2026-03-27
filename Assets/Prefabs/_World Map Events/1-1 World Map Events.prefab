@@ -52,5 +52,5 @@ MonoBehaviour:
     - {fileID: 11400000, guid: 8145ed0e845b14bca951ca79c25e2e94, type: 2}
     _generateRate: 1
     _generateAmount: 2
-    _maxGenerateAmount: 5
+    _maxGenerateAmount: 10
     _generatePointDistance: 2

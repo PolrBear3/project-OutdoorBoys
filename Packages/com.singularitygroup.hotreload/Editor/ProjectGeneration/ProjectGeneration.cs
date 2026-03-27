@@ -419,7 +419,7 @@ namespace SingularityGroup.HotReload.Editor.ProjectGeneration {
                 assembly.CompilerOptions.AllowUnsafeCode | responseFilesData.Any(x => x.Unsafe),
                 GenerateNoWarn(otherResponseFilesData["nowarn"].Distinct().ToList()),
                 config.excludeAllAnalyzers ? "" : GenerateAnalyserItemGroup(RetrieveRoslynAnalyzers(assembly, otherResponseFilesData)),
-                config.excludeAllAnalyzers ? "" : GenerateAnalyserAdditionalFiles(otherResponseFilesData["additionalfile"].SelectMany(x=>x.Split(';')).Distinct().ToArray()),
+                config.excludeAllAnalyzers ? "" : GenerateAnalyserAdditionalFiles(RetrieveRoslynAdditionalFiles(assembly, otherResponseFilesData)),
                 config.excludeAllAnalyzers ? "" : GenerateRoslynAnalyzerRulesetPath(assembly, otherResponseFilesData),
                 GenerateWarningLevel(otherResponseFilesData["warn"].Concat(otherResponseFilesData["w"]).Distinct()),
                 GenerateWarningAsError(otherResponseFilesData["warnaserror"], otherResponseFilesData["warnaserror-"],
@@ -434,6 +434,30 @@ namespace SingularityGroup.HotReload.Editor.ProjectGeneration {
                 throw new NotSupportedException(
                     string.Format(Translations.Utility.FailedCreateCSharpProject, arguments.Length));
             }
+        }
+
+        private static string[] RetrieveRoslynAdditionalFiles(ProjectPart assembly, ILookup<string, string> otherResponseFilesData) {
+            // return otherResponseFilesData["additionalfile"].SelectMany(x => x.Split(';')).Distinct().ToArray();
+            string[] additionalFilePathsFromCompilationPipeline;
+      #if UNITY_2021_3 // https://github.com/JetBrains/resharper-unity/issues/2401
+            var type = assembly.CompilerOptions.GetType();
+            var propertyInfo = type.GetProperty("RoslynAdditionalFilePaths");
+            if (propertyInfo != null && propertyInfo.GetValue(assembly.CompilerOptions) is string[] value)
+            {
+              additionalFilePathsFromCompilationPipeline = value;
+            } else {
+                additionalFilePathsFromCompilationPipeline = Array.Empty<string>();
+            }
+      #elif UNITY_2022_2_OR_NEWER // https://docs.unity3d.com/2021.3/Documentation/ScriptReference/Compilation.ScriptCompilerOptions.RoslynAdditionalFilePaths.html
+            additionalFilePathsFromCompilationPipeline = assembly.CompilerOptions.RoslynAdditionalFilePaths;
+      #else
+            additionalFilePathsFromCompilationPipeline = Array.Empty<string>();
+      #endif
+            return otherResponseFilesData["additionalfile"]
+                .SelectMany(x => x.Split(';'))
+                .Concat(additionalFilePathsFromCompilationPipeline)
+                .Select(MakeAbsolutePath)
+                .Distinct().ToArray();
         }
 
         string[] RetrieveRoslynAnalyzers(ProjectPart assembly, ILookup<string, string> otherResponseFilesData) {

@@ -15,6 +15,8 @@ public class ItemCursor : MonoBehaviour, IItemsSource, IItemsSourceRemove, IItem
     private ItemData _data;
     public ItemData data => _data;
 
+    private int _itemPickupFlag = -1;
+
     public Action OnItemReturn;
 
 
@@ -175,6 +177,7 @@ public class ItemCursor : MonoBehaviour, IItemsSource, IItemsSourceRemove, IItem
             selectTile.Remove_PlacedItemData(firstPlacedItem);
             Destroy(firstPlacedItem.gameObject);
 
+            _itemPickupFlag = Time.frameCount;
             return;
         }
 
@@ -276,9 +279,10 @@ public class ItemCursor : MonoBehaviour, IItemsSource, IItemsSourceRemove, IItem
 
     private void Use_Item(Tile selectTile)
     {
+        if (_itemPickupFlag == Time.frameCount) return;
         if (_data == null) return;
-        Item_ScrObj currentItem = _data.itemScrObj;
 
+        Item_ScrObj currentItem = _data.itemScrObj;
         if (currentItem.itemType != ItemType.use) return;
 
         GameObject currentUseItem = InGame_Manager.instance.player.interaction.currentItemPrefab;

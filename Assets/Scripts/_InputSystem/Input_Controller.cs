@@ -41,8 +41,7 @@ public class Input_Controller : MonoBehaviour
     public Action<Vector2> OnMovement;
     public Action<Vector2> OnCursorControl;
 
-    public Action OnLeftClickStart;
-    public Action OnLeftClickEnd;
+    public Action<bool> OnLeftClickStated;
     public Action OnLeftClick;
     public Action OnHoldLeftClick;
 
@@ -208,12 +207,12 @@ public class Input_Controller : MonoBehaviour
     {
         if (context.started)
         {
-            OnLeftClickStart?.Invoke();
+            OnLeftClickStated?.Invoke(true);
             return;
         }
         if (context.canceled == false) return;
-        
-        OnLeftClickEnd?.Invoke();
+
+        OnLeftClickStated?.Invoke(false);
     }
     public void HoldLeftClick(InputAction.CallbackContext context)
     {

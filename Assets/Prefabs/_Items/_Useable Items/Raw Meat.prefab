@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6202383651998061352}
   - component: {fileID: 2873364016420352242}
+  - component: {fileID: 8570170425162867595}
   m_Layer: 0
   m_Name: Raw Meat
   m_TagString: Untagged
@@ -44,3 +45,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1d7b415f5701a4ae888e036e1ae5a777, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &8570170425162867595
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5769858720269626403}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e449df9648c0748f2ac27c70a4d6053b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _useableItem: {fileID: 2873364016420352242}
+  _healthUpdateValue: 1
+  _tempUpdateValue: 2

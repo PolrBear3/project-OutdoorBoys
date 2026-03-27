@@ -14,6 +14,23 @@ public struct TileGenerate_ResoulationData
     public Vector2 resolution => _resolution;
 }
 
+[System.Serializable]
+public class BackgroundRenderer_Data
+{
+    [Space(10)]
+    [SerializeField][Range(0, 10)] private float _animationSpeed;
+    public float animationSpeed => _animationSpeed;
+
+    [SerializeField]private Color _colorA;
+    public Color colorA => _colorA;
+
+    [SerializeField] private Color _colorB;
+    public Color colorB => _colorB;
+
+    [SerializeField] private Color _colorC;
+    public Color colorC => _colorC;
+}
+
 public class WorldMap_Generator : MonoBehaviour
 {
     [Space(20)]
@@ -21,7 +38,18 @@ public class WorldMap_Generator : MonoBehaviour
     [SerializeField] TileGenerate_ResoulationData[] resolutionDatas;
 
     [Space(20)]
+    [SerializeField] private Renderer _backgroundRenderer;
+    [SerializeField] private BackgroundRenderer_Data _defaultBackgroundRendererData;
+
+    [Space(20)]
+    [SerializeField] private Transform _tileMapShadow;
+    [SerializeField] private Vector3 _tileMapShadowOffset;
+
+    [Space(20)]
     [SerializeField] private WorldMapScrObj _defaultWorldMap;
+
+
+    private MaterialPropertyBlock _backgroundMaterialblock;
 
 
     // MonoBehaviour
@@ -32,6 +60,8 @@ public class WorldMap_Generator : MonoBehaviour
         EventBus_Manager.Register(EventBus.AwakeLoad, Set_MapEventsPrefab);
 
         EventBus_Manager.Register(EventBus.AwakeLoad, Update_Resolution);
+        EventBus_Manager.Register(EventBus.AwakeLoad, Load_BackgroundRenderer);
+        EventBus_Manager.Register(EventBus.AwakeLoad, Load_TileMapShadow);
     }
 
     private void OnDestroy()
@@ -41,6 +71,8 @@ public class WorldMap_Generator : MonoBehaviour
         EventBus_Manager.UnRegister(EventBus.AwakeLoad, Set_MapEventsPrefab);
 
         EventBus_Manager.UnRegister(EventBus.AwakeLoad, Update_Resolution);
+        EventBus_Manager.UnRegister(EventBus.AwakeLoad, Load_BackgroundRenderer);
+        EventBus_Manager.UnRegister(EventBus.AwakeLoad, Load_TileMapShadow);
     }
 
 
@@ -227,5 +259,36 @@ public class WorldMap_Generator : MonoBehaviour
             
             return;
         }
+    }
+
+
+    // Environment Visuals
+    private void Load_BackgroundRenderer(BackgroundRenderer_Data loadData)
+    {
+        _backgroundRenderer.GetPropertyBlock(_backgroundMaterialblock);
+
+        _backgroundMaterialblock.SetFloat("_Speed", loadData.animationSpeed);
+        _backgroundMaterialblock.SetColor("_ColorA", loadData.colorA);
+        _backgroundMaterialblock.SetColor("_ColorB", loadData.colorB);
+        _backgroundMaterialblock.SetColor("_ColorC", loadData.colorC);
+
+        _backgroundRenderer.SetPropertyBlock(_backgroundMaterialblock);
+    }
+    private void Load_BackgroundRenderer()
+    {
+        _backgroundMaterialblock = new MaterialPropertyBlock();
+        Load_BackgroundRenderer(_defaultBackgroundRendererData);
+    }
+
+    private void Load_TileMapShadow()
+    {
+        Vector2 currentMapSize = Converted_GenerateSize();
+        Vector3 shadowScale = _tileMapShadow.localScale;
+
+        shadowScale.x = currentMapSize.x;
+        shadowScale.y = currentMapSize.y;
+
+        _tileMapShadow.localScale = shadowScale;
+        _tileMapShadow.position += _tileMapShadowOffset;
     }
 }

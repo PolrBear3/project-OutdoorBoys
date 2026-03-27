@@ -21,6 +21,7 @@ public class Cursor : MonoBehaviour
 
     [Space(10)]
     [SerializeField] private Sprite _defaultPointerSprite;
+    [SerializeField] private Sprite _pressedPointerSprite;
 
 
     private bool _pointerVisible;
@@ -49,6 +50,7 @@ public class Cursor : MonoBehaviour
         Input_Controller input = Input_Controller.instance;
 
         input.OnAnyInput -= Toggle_PointerVisibility;
+        input.OnLeftClickStated -= Update_PointerSprite;
         input.OnCursorControl -= Movement_Update;
 
         InGame_Manager.instance.tilesController.OnTileHover -= Track_PointingTile;
@@ -61,6 +63,7 @@ public class Cursor : MonoBehaviour
         Input_Controller input = Input_Controller.instance;
 
         input.OnAnyInput += Toggle_PointerVisibility;
+        input.OnLeftClickStated += Update_PointerSprite;
         input.OnCursorControl += Movement_Update;
 
         InGame_Manager.instance.tilesController.OnTileHover += Track_PointingTile;
@@ -89,9 +92,13 @@ public class Cursor : MonoBehaviour
 
     public void Update_PointerSprite(Sprite sprite)
     {
-        Sprite updateSprite = sprite != null ? sprite : _defaultPointerSprite;
+        _cursorImage.sprite = sprite != null ? sprite : _defaultPointerSprite;
+    }
+    private void Update_PointerSprite(bool isPressed)
+    {
+        if (_itemCursor.data != null) return;
 
-        _cursorImage.sprite = updateSprite;
+        _cursorImage.sprite = isPressed ? _pressedPointerSprite : _defaultPointerSprite;
     }
 
     public void Update_AmountText(int updateAmount)
