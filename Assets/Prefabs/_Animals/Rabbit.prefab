@@ -83,13 +83,14 @@ MonoBehaviour:
   _dropItems:
   - _itemScrObj: {fileID: 11400000, guid: fba43ae9d93594cddbc2a132e3fd3b95, type: 2}
     _amount: 1
+  _followItems: []
   OnSightActions:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 4065704676414607868}
         m_TargetAssemblyTypeName: Animal, Assembly-CSharp
-        m_MethodName: RunOff_fromPlayer
-        m_Mode: 1
+        m_MethodName: RunOff
+        m_Mode: 3
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine

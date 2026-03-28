@@ -4,52 +4,10 @@ using Unity.Mathematics;
 using UnityEngine;
 using UnityEngine.Experimental.Rendering.Universal;
 
-[System.Serializable]
-public struct TileGenerate_ResoulationData
-{
-    [SerializeField] private Vector2 _maxGenerateSize;
-    public Vector2 maxGenerateSize => _maxGenerateSize;
-
-    [SerializeField] private Vector2 _resolution;
-    public Vector2 resolution => _resolution;
-}
-
-[System.Serializable]
-public class BackgroundRenderer_Data
-{
-    [Space(10)]
-    [SerializeField][Range(0, 10)] private float _animationSpeed;
-    public float animationSpeed => _animationSpeed;
-
-    [SerializeField]private Color _colorA;
-    public Color colorA => _colorA;
-
-    [SerializeField] private Color _colorB;
-    public Color colorB => _colorB;
-
-    [SerializeField] private Color _colorC;
-    public Color colorC => _colorC;
-}
-
 public class WorldMap_Generator : MonoBehaviour
 {
     [Space(20)]
-    [SerializeField] PixelPerfectCamera _pixelCamera;
-    [SerializeField] TileGenerate_ResoulationData[] resolutionDatas;
-
-    [Space(20)]
-    [SerializeField] private Renderer _backgroundRenderer;
-    [SerializeField] private BackgroundRenderer_Data _defaultBackgroundRendererData;
-
-    [Space(20)]
-    [SerializeField] private Transform _tileMapShadow;
-    [SerializeField] private Vector3 _tileMapShadowOffset;
-
-    [Space(20)]
-    [SerializeField] private WorldMapScrObj _defaultWorldMap;
-
-
-    private MaterialPropertyBlock _backgroundMaterialblock;
+    [SerializeField] private WorldMapScrObj _loadWorldMap;
 
 
     // MonoBehaviour
@@ -58,10 +16,6 @@ public class WorldMap_Generator : MonoBehaviour
         EventBus_Manager.Register(EventBus.AwakeLoad, Generate_PresetTiles);
         EventBus_Manager.Register(EventBus.AwakeLoad, Generate_Tiles);
         EventBus_Manager.Register(EventBus.AwakeLoad, Set_MapEventsPrefab);
-
-        EventBus_Manager.Register(EventBus.AwakeLoad, Update_Resolution);
-        EventBus_Manager.Register(EventBus.AwakeLoad, Load_BackgroundRenderer);
-        EventBus_Manager.Register(EventBus.AwakeLoad, Load_TileMapShadow);
     }
 
     private void OnDestroy()
@@ -69,17 +23,13 @@ public class WorldMap_Generator : MonoBehaviour
         EventBus_Manager.UnRegister(EventBus.AwakeLoad, Generate_PresetTiles);
         EventBus_Manager.UnRegister(EventBus.AwakeLoad, Generate_Tiles);
         EventBus_Manager.UnRegister(EventBus.AwakeLoad, Set_MapEventsPrefab);
-
-        EventBus_Manager.UnRegister(EventBus.AwakeLoad, Update_Resolution);
-        EventBus_Manager.UnRegister(EventBus.AwakeLoad, Load_BackgroundRenderer);
-        EventBus_Manager.UnRegister(EventBus.AwakeLoad, Load_TileMapShadow);
     }
 
 
     // Data
     public Vector2 Converted_GenerateSize()
     {
-        Vector2 generateSize = _defaultWorldMap.generateSize;
+        Vector2 generateSize = _loadWorldMap.generateSize;
         return new(Mathf.RoundToInt(generateSize.x), Mathf.RoundToInt(generateSize.y));
     }
 
@@ -121,7 +71,7 @@ public class WorldMap_Generator : MonoBehaviour
 
         for (int i = 0; i < convertCount; i++)
         {
-            bool isHarshGround = _defaultWorldMap.harshGroundDensity > UnityEngine.Random.Range(0, 100);
+            bool isHarshGround = _loadWorldMap.harshGroundDensity > UnityEngine.Random.Range(0, 100);
             TileType setType = isHarshGround ? TileType.harshGround : TileType.softGround;
 
             tileTypes.Add(setType);
@@ -203,7 +153,7 @@ public class WorldMap_Generator : MonoBehaviour
 
     private void Generate_PresetTiles()
     {
-        Tile_PresetDatas[] presetTileDatas = _defaultWorldMap.presetTileDatas;
+        Tile_PresetDatas[] presetTileDatas = _loadWorldMap.presetTileDatas;
         if (presetTileDatas.Length <= 0) return;
 
         List<Vector2> generatePositions = new(Generate_Positions());
@@ -232,63 +182,11 @@ public class WorldMap_Generator : MonoBehaviour
         }
     }
 
-
     private void Set_MapEventsPrefab()
     {
-        GameObject eventsPrefab = _defaultWorldMap.worldMapEventsPrefab;
+        GameObject eventsPrefab = _loadWorldMap.worldMapEventsPrefab;
         
         if (eventsPrefab == null) return;
         Instantiate(eventsPrefab, transform);
-    }
-
-
-    // Camera
-    private void Update_Resolution()
-    {
-        for (int i = 0; i < resolutionDatas.Length; i++)
-        {
-            TileGenerate_ResoulationData resData = resolutionDatas[i];
-
-            Vector2 maxSize = resData.maxGenerateSize;
-            Vector2 generateSize = _defaultWorldMap.generateSize;
-            
-            if (generateSize.x > maxSize.x || generateSize.y > maxSize.y) continue;
-
-            _pixelCamera.refResolutionX = (int)resData.resolution.x;
-            _pixelCamera.refResolutionY = (int)resData.resolution.y;
-            
-            return;
-        }
-    }
-
-
-    // Environment Visuals
-    private void Load_BackgroundRenderer(BackgroundRenderer_Data loadData)
-    {
-        _backgroundRenderer.GetPropertyBlock(_backgroundMaterialblock);
-
-        _backgroundMaterialblock.SetFloat("_Speed", loadData.animationSpeed);
-        _backgroundMaterialblock.SetColor("_ColorA", loadData.colorA);
-        _backgroundMaterialblock.SetColor("_ColorB", loadData.colorB);
-        _backgroundMaterialblock.SetColor("_ColorC", loadData.colorC);
-
-        _backgroundRenderer.SetPropertyBlock(_backgroundMaterialblock);
-    }
-    private void Load_BackgroundRenderer()
-    {
-        _backgroundMaterialblock = new MaterialPropertyBlock();
-        Load_BackgroundRenderer(_defaultBackgroundRendererData);
-    }
-
-    private void Load_TileMapShadow()
-    {
-        Vector2 currentMapSize = Converted_GenerateSize();
-        Vector3 shadowScale = _tileMapShadow.localScale;
-
-        shadowScale.x = currentMapSize.x;
-        shadowScale.y = currentMapSize.y;
-
-        _tileMapShadow.localScale = shadowScale;
-        _tileMapShadow.position += _tileMapShadowOffset;
     }
 }

@@ -34,7 +34,7 @@ Material:
     - _Speed: 0
     - _UVScale: 32
     m_Colors:
-    - _ColorA: {r: 0.09803922, g: 0.2, b: 0.1764706, a: 1}
-    - _ColorB: {r: 0.14509805, g: 0.3372549, b: 0.18039216, a: 1}
-    - _ColorC: {r: 0.65882355, g: 0.7921569, b: 0.34509805, a: 1}
+    - _ColorA: {r: 1, g: 0, b: 0.48071098, a: 1}
+    - _ColorB: {r: 0.5638943, g: 0, b: 1, a: 1}
+    - _ColorC: {r: 1, g: 1, b: 1, a: 1}
   m_BuildTextureStacks: []

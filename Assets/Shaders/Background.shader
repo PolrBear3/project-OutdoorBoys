@@ -2,6 +2,8 @@ Shader "Unlit/Background"
 {
     Properties
     {
+        _MainTex ("Sprite Texture", 2D) = "white" {}
+
         _PixelSize ("Pixel Size", Float) = 8
         _Speed ("Animation Speed", Float) = 0.1
         _UVScale ("UV Scale", Float) = 1.0
@@ -9,13 +11,24 @@ Shader "Unlit/Background"
 
         _ColorA ("Color A", Color) = (0.212, 0.0, 0.212, 1)
         _ColorB ("Color B", Color) = (0.8, 0.25, 0.5, 1)
-        _ColorC ("Color C", Color) = (1.0, 0.85, 0.95, 1)       
+        _ColorC ("Color C", Color) = (1.0, 0.85, 0.95, 1)
     }
 
     SubShader
     {
-        Tags { "RenderType"="Opaque" }
+        Tags
+        {
+            "Queue"="Transparent"
+            "RenderType"="Transparent"
+            "IgnoreProjector"="True"
+            "PreviewType"="Plane"
+            "CanUseSpriteAtlas"="True"
+        }
+
         LOD 100
+        Blend SrcAlpha OneMinusSrcAlpha
+        Cull Off
+        ZWrite Off
 
         Pass
         {
@@ -30,15 +43,20 @@ Shader "Unlit/Background"
             {
                 float4 vertex : POSITION;
                 float2 uv     : TEXCOORD0;
+                fixed4 color  : COLOR;
             };
 
             struct v2f
             {
                 float2 uv         : TEXCOORD0;
                 float4 screenPos  : TEXCOORD1;
+                fixed4 color      : COLOR;
                 UNITY_FOG_COORDS(2)
                 float4 vertex     : SV_POSITION;
             };
+
+            sampler2D _MainTex;
+            float4 _MainTex_ST;
 
             float _PixelSize;
             float _Speed;
@@ -109,14 +127,17 @@ Shader "Unlit/Background"
             {
                 v2f o;
                 o.vertex = UnityObjectToClipPos(v.vertex);
-                o.uv = v.uv;
+                o.uv = TRANSFORM_TEX(v.uv, _MainTex);
                 o.screenPos = ComputeScreenPos(o.vertex);
+                o.color = v.color;
                 UNITY_TRANSFER_FOG(o, o.vertex);
                 return o;
             }
 
             fixed4 frag(v2f i) : SV_Target
             {
+                fixed4 spriteTex = tex2D(_MainTex, i.uv);
+
                 float2 screenUV = i.screenPos.xy / i.screenPos.w;
                 float2 fragCoord = screenUV * _ScreenParams.xy;
 
@@ -125,6 +146,12 @@ Shader "Unlit/Background"
 
                 float shade = pattern(uv);
                 fixed4 col = colormap(shade) * _Brightness;
+
+                // keep sprite shape
+                col.a *= spriteTex.a;
+
+                // optional: keep sprite tint/color support
+                col *= i.color;
 
                 UNITY_APPLY_FOG(i.fogCoord, col);
                 return col;

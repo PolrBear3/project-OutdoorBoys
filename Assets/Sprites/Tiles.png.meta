@@ -399,7 +399,7 @@ TextureImporter:
         width: 16
         height: 16
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -420,7 +420,7 @@ TextureImporter:
         width: 16
         height: 16
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -428,6 +428,27 @@ TextureImporter:
       bones: []
       spriteID: 29766133d87dc4598ba5bfd7db481f7e
       internalID: -2042424934
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Tiles_16
+      rect:
+        serializedVersion: 2
+        x: 64
+        y: 48
+        width: 16
+        height: 16
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: e3c7d7725124f48e09fb8eba78a18b83
+      internalID: 234224092
       vertices: []
       indices: 
       edges: []
@@ -451,6 +472,7 @@ TextureImporter:
       Tiles_13: -1139502263
       Tiles_14: 1070028804
       Tiles_15: -2042424934
+      Tiles_16: 234224092
       Tiles_2: 90284084
       Tiles_3: -1687050794
       Tiles_4: 134214964

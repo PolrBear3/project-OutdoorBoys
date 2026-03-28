@@ -89,7 +89,6 @@ public class Tiles_Controller : MonoBehaviour, IItemsSource
         if (sortedTiles.Count <= 0) return _currentTiles;
         return sortedTiles;
     }
-
     public List<Tile> Current_Tiles(Tile pivotTile, int rangeDistance)
     {
         if (pivotTile == null) return null;
@@ -106,6 +105,19 @@ public class Tiles_Controller : MonoBehaviour, IItemsSource
         }
         return innerRangedTiles;
     }
+    public List<Tile> Current_Tiles(Item_ScrObj targetItem)
+    {
+        List<Tile> itemExistTiles = new();
+        
+        for (int i = 0; i < _currentTiles.Count; i++)
+        {
+            Tile currentTile = _currentTiles[i];
+
+            if (currentTile.PlacedItem(targetItem) == null) continue;
+            itemExistTiles.Add(currentTile);
+        }
+        return itemExistTiles;
+    }
 
 
     public Tile Current_Tile(Vector2 tileGeneratedPos)
@@ -117,7 +129,6 @@ public class Tiles_Controller : MonoBehaviour, IItemsSource
         }
         return null;
     }
-
     /// <returns>
     /// random type matching tile, random tile among all current tiles if no matching tiles were found
     /// </returns>
@@ -140,7 +151,6 @@ public class Tiles_Controller : MonoBehaviour, IItemsSource
         int matchRandIndex = UnityEngine.Random.Range(0, matchTypeTiles.Count);
         return matchTypeTiles[matchRandIndex];
     }
-
     /// <returns>
     /// pointer toggled tile
     /// </returns>

@@ -36,6 +36,9 @@ public class InGame_Manager : MonoBehaviour
 
 
     [Space(20)]
+    [SerializeField] private EnvironmentVisuals_Manager _environmentVisuals;
+    public EnvironmentVisuals_Manager environmentVisuals => _environmentVisuals;
+
     [SerializeField] private WorldMap_Generator _worldMapGenerator;
     public WorldMap_Generator worldMapGenerator => _worldMapGenerator;
 
