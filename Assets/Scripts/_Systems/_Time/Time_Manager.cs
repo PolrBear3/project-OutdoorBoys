@@ -146,11 +146,6 @@ public class Time_Manager : MonoBehaviour, ISaveLoadable
 
 
     // Time Tik Count
-    private bool TimeTik_Running()
-    {
-        return _timeTikCoroutine != null;
-    }
-
     private void Toggle_TimeTik(bool toggle)
     {
         if (_timeTikCoroutine != null)

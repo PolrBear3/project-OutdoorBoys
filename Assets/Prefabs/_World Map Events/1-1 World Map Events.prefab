@@ -54,3 +54,10 @@ MonoBehaviour:
     _generateAmount: 2
     _maxGenerateAmount: 10
     _generatePointDistance: 2
+  - _resourceItem: {fileID: 11400000, guid: 85f6c95d406fa44a1890666516ac97b7, type: 2}
+    _generateTiles:
+    - {fileID: 11400000, guid: 621605563892d4d0a95e4d57c264bf5c, type: 2}
+    _generateRate: 1
+    _generateAmount: 2
+    _maxGenerateAmount: 10
+    _generatePointDistance: 2

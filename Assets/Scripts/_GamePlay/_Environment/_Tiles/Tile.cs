@@ -136,19 +136,24 @@ public class Tile : MonoBehaviour
         if (setItem.itemType != ItemType.place) return setItemData;
 
         int maxAmount = setItem.maxAmount;
-        List<ItemData> samePlacedItemDatas = Placed_ItemDatas(setItem);
+        List<PlaceableItem> samePlacedItems = PlacedItems(setItem);
 
         // update amount
-        for (int i = 0; i < samePlacedItemDatas.Count; i++)
+        for (int i = 0; i < samePlacedItems.Count; i++)
         {
-            int placedItemAmount = samePlacedItemDatas[i].amount;
+            PlaceableItem placedItem = samePlacedItems[i];
+            ItemData placedItemData = placedItem.data;
+            
+            int placedItemAmount = placedItemData.amount;
             if (placedItemAmount >= maxAmount) continue;
 
             int leftSpaceAmount = maxAmount - placedItemAmount;
             int amountToAdd = Mathf.Min(setItemAmount, leftSpaceAmount);
 
-            samePlacedItemDatas[i].Update_CurrentAmount(placedItemAmount + amountToAdd);
+            placedItemData.Update_CurrentAmount(placedItemAmount + amountToAdd);
             setItemAmount -= amountToAdd;
+
+            placedItem.Play_PlaceAnimation();
 
             if (setItemAmount <= 0) return null;
         }
@@ -166,6 +171,8 @@ public class Tile : MonoBehaviour
 
             newPlacedItem.Set_Data(new(setItem, spawnSetAmount));
             setItemAmount -= spawnSetAmount;
+
+            newPlacedItem.Play_PlaceAnimation();
 
             newPlacedItem.Track_CurrentTile(this);
             Track_PlacingItem(newPlacedItem);
@@ -266,7 +273,8 @@ public class Tile : MonoBehaviour
 
     public int ItemPlace_AvailableCount(Item_ScrObj placeItem)
     {
-        if (placeItem == null || placeItem.itemType != ItemType.place) return 0;
+        if (placeItem == null) return 0;
+        if (placeItem.itemType == ItemType.use) return (_maxItemPlaceCount - _placedItems.Count) * placeItem.maxAmount;
 
         int availableCount = 0;
         int maxStackAmount = placeItem.maxAmount;
@@ -285,6 +293,51 @@ public class Tile : MonoBehaviour
         return availableCount;
     }
 
+
+    public PlaceableItem PlacedItem(Item_ScrObj targetItem)
+    {
+        for (int i = 0; i < _placedItems.Count; i++)
+        {
+            PlaceableItem placedItem = _placedItems[i];
+
+            if (targetItem != placedItem.data.itemScrObj) continue;
+            return placedItem;
+        }
+        return null;
+    }
+    public List<PlaceableItem> PlacedItems(Item_ScrObj targetItem)
+    {
+        if (targetItem == null) return null;
+        
+        List<PlaceableItem> placedItems = new();
+
+        for (int i = 0; i < _placedItems.Count; i++)
+        {
+            PlaceableItem placedItem = _placedItems[i];
+            
+            if (targetItem != placedItem.data.itemScrObj) continue;
+            placedItems.Add(placedItem);
+        }
+        return placedItems;
+    }
+    public List<PlaceableItem> PlacedItems(List<Item_ScrObj> targetItems)
+    {
+        if (targetItems.Count <= 0) return null;
+
+        List<PlaceableItem> placedItems = new();
+
+        for (int i = 0; i < _placedItems.Count; i++)
+        {
+            PlaceableItem placedItem = _placedItems[i];
+
+            for (int j = 0; j < targetItems.Count; j++)
+            {
+                if (placedItem.data.itemScrObj != targetItems[j]) continue;
+                placedItems.Add(placedItem);
+            }
+        }
+        return placedItems;
+    }
 
     public List<ItemData> Placed_ItemDatas()
     {
@@ -308,15 +361,5 @@ public class Tile : MonoBehaviour
             placedItems.Add(data);
         }
         return placedItems;
-    }
-
-    public PlaceableItem PlacedItem(Item_ScrObj targetItem)
-    {
-        for (int i = 0; i < _placedItems.Count; i++)
-        {
-            if (targetItem != _placedItems[i].data.itemScrObj) continue;
-            return _placedItems[i];
-        }
-        return null;
     }
 }

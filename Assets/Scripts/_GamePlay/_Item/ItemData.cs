@@ -31,7 +31,7 @@ public class ItemData
     {
         int singleWeight = _itemScrObj.itemWeight;
 
-        if (_itemScrObj.itemType != ItemType.place) return singleWeight;
+        if (_itemScrObj.itemType == ItemType.use) return singleWeight;
         return singleWeight * _amount;
     }
 }

@@ -105,6 +105,7 @@ public class Item_ScrObj : ScriptableObject
             ItemData ingredientData = ingredientDatas[i];
             Item_ScrObj ingredientItem = ingredientData.itemScrObj;
 
+            bool isUseItem = ingredientItem.itemType == ItemType.use;
             int haveAmount = 0;
 
             for (int j = 0; j < checkItemDatas.Count; j++)
@@ -112,12 +113,22 @@ public class Item_ScrObj : ScriptableObject
                 ItemData checkItemData = checkItemDatas[j];
                 if (checkItemData?.itemScrObj != ingredientItem) continue;
 
-                haveAmount += checkItemData.amount;
+                int checkItemAmount = checkItemData.amount;
+                
+                if (isUseItem == false)
+                {
+                    haveAmount += checkItemAmount;
+                    continue;
+                }
+
+                // counts only max amount useable items as 1 (change for gameplay)
+                if (checkItemAmount < ingredientItem.maxAmount) continue;
+                haveAmount ++;
             }
 
             if (haveAmount < ingredientData.amount) return 0;
             int craftByThisIngredient = haveAmount / ingredientData.amount;
-
+            
             if (craftByThisIngredient >= maxCraftCount) continue;
             maxCraftCount = craftByThisIngredient;
         }

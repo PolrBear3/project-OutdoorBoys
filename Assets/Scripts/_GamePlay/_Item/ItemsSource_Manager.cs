@@ -63,16 +63,19 @@ public class ItemsSource_Manager : MonoBehaviour
     // IItemsSource
     public int ItemData_Count(Item_ScrObj targetItem)
     {
+        bool isUseItem = targetItem.itemType == ItemType.use;
+        int count = 0;
+        
         List<ItemData> itemDatas = ItemDatas();
 
         for (int i = 0; i < itemDatas.Count; i++)
         {
             ItemData data = itemDatas[i];
-
             if (targetItem != data.itemScrObj) continue;
-            return data.amount;
+
+            count += isUseItem ? 1 : data.amount;
         }
-        return 0;
+        return count;
     }
     
     public List<ItemData> ItemDatas(List<IItemsSource> itemSources)
@@ -87,25 +90,7 @@ public class ItemsSource_Manager : MonoBehaviour
             foreach (ItemData data in datas)
             {
                 if (data == null) continue;
-
-                Item_ScrObj item = data.itemScrObj;
-                int amount = data.amount;
-
-                bool amountUpdate = false;
-
-                for (int i = 0; i < sourcesDatas.Count; i++)
-                {
-                    ItemData currentData = sourcesDatas[i];
-                    if (item != currentData.itemScrObj) continue;
-
-                    amountUpdate = true;
-                    currentData.Update_CurrentAmount(currentData.amount + amount);
-
-                    break;
-                }
-
-                if (amountUpdate) continue;
-                sourcesDatas.Add(new(item, amount));
+                sourcesDatas.Add(new(data.itemScrObj, data.amount));
             }
         }
         return sourcesDatas;

@@ -10,9 +10,9 @@ GameObject:
   m_Component:
   - component: {fileID: 6202383651998061352}
   - component: {fileID: 2873364016420352242}
-  - component: {fileID: 3493398022924315214}
+  - component: {fileID: 1740682548530431483}
   m_Layer: 0
-  m_Name: Folding Bow Saw
+  m_Name: Flint
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -45,7 +45,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1d7b415f5701a4ae888e036e1ae5a777, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &3493398022924315214
+--- !u!114 &1740682548530431483
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -54,12 +54,12 @@ MonoBehaviour:
   m_GameObject: {fileID: 5769858720269626403}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b29504a536134477eaa6a0774bf406ec, type: 3}
+  m_Script: {fileID: 11500000, guid: 03a53a4533bed4457a8a9d9ba847def4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   _useableItem: {fileID: 2873364016420352242}
-  _woodDropItem: {fileID: 11400000, guid: cea7459d8010d4a229cb42a2a5b65381, type: 2}
-  _treeItems:
+  _activateWoodItems:
+  - {fileID: 11400000, guid: cea7459d8010d4a229cb42a2a5b65381, type: 2}
+  _activateTreeItems:
   - {fileID: 11400000, guid: 86e876e6c7e9c467db97ab95dfa547ce, type: 2}
-  _chopDamage: 3
-  _minWoodDropAmount: 1
+  _heatSustainTime: 3

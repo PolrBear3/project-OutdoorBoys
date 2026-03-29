@@ -8,7 +8,7 @@ public class Saw : MonoBehaviour
     public UseableItem useableItem => _useableItem;
 
     [Space(20)]
-    [SerializeField] private Item_ScrObj _woodItem;
+    [SerializeField] private Item_ScrObj _woodDropItem;
     [SerializeField] private Item_ScrObj[] _treeItems;
 
     [Space(20)]
@@ -85,6 +85,6 @@ public class Saw : MonoBehaviour
         int treeWeight = treeItem.itemWeight;
         int dropAmount = Random.Range(Mathf.Min(_minWoodDropAmount, treeWeight), treeWeight);
         
-        useTile.Set_PlacingItem(new(_woodItem, dropAmount));
+        useTile.Set_PlacingItem(new(_woodDropItem, dropAmount));
     }
 }

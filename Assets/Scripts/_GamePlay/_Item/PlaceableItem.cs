@@ -53,7 +53,6 @@ public class PlaceableItem : MonoBehaviour
             return;
         }
         _data = setData;
-        Play_PlaceAnimation();
     }
 
     public void Track_CurrentTile(Tile setTile)
@@ -68,7 +67,7 @@ public class PlaceableItem : MonoBehaviour
 
 
     // Animations
-    private void Play_PlaceAnimation()
+    public void Play_PlaceAnimation()
     {
         if (_placeAnimationClip == null) return;
         _animPlayer.Play(_placeAnimationClip);

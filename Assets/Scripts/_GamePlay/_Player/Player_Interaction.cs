@@ -47,27 +47,46 @@ public class Player_Interaction : MonoBehaviour, IItemsSource, IItemsSourceRemov
 
     public int RemoveItem(Item_ScrObj updateItem, int removeAmount)
     {
+        Tile currentTile = _controller.movement.currentTile;
+        List<PlaceableItem> placedItems = currentTile.PlacedItems(updateItem);
+        
+        if (placedItems.Count <= 0) return 0;
+
+        bool isUseItem = updateItem.itemType == ItemType.use;
         int totalRemoveCount = 0;
 
-        Tile currentTile = _controller.movement.currentTile;
-        List<ItemData> placedItemDatas = currentTile.Placed_ItemDatas(updateItem);
-
-        for (int i = 0; i < placedItemDatas.Count; i++)
+        for (int i = 0; i < placedItems.Count; i++)
         {
-            ItemData placedData = placedItemDatas[i];
-
+            PlaceableItem placedItem = placedItems[i];
+            ItemData placedData = placedItem.data;
+            
             int placedAmount = placedData.amount;
-            int removeUpdateAmount = Mathf.Min(placedAmount, removeAmount);
 
-            placedData.Update_CurrentAmount(placedAmount - removeUpdateAmount);
+            if (isUseItem == false)
+            {
+                int removeUpdateAmount = Mathf.Min(placedAmount, removeAmount);
 
-            removeAmount -= removeUpdateAmount;
-            totalRemoveCount += removeUpdateAmount;
+                placedData.Update_CurrentAmount(placedAmount - removeUpdateAmount);
+
+                removeAmount -= removeUpdateAmount;
+                totalRemoveCount += removeUpdateAmount;
+
+                if (removeAmount <= 0) break;
+                continue;
+            }
+
+            // counts only max amount useable items as 1 (change for gameplay)
+            if (placedAmount < updateItem.maxAmount) continue;
+
+            placedItem.data.Update_CurrentAmount(0);
+
+            removeAmount--;
+            totalRemoveCount++;
 
             if (removeAmount <= 0) break;
         }
-        currentTile.Remove_EmptyPlacedItems();
 
+        currentTile.Remove_EmptyPlacedItems();
         return totalRemoveCount;
     }
 
@@ -76,7 +95,7 @@ public class Player_Interaction : MonoBehaviour, IItemsSource, IItemsSourceRemov
         Tile playerTile = _controller.movement.currentTile;
         int placeAmount = Mathf.Min(addAmount, playerTile.ItemPlace_AvailableCount(addItem));
 
-        playerTile.Set_PlacingItem(new(addItem, placeAmount));
+        playerTile.Set_Item(new(addItem, placeAmount));
         return placeAmount;
     }
 

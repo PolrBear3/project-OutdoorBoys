@@ -78,21 +78,38 @@ public class Inventory_Manager : MonoBehaviour, IItemsSource, IItemsSourceRemove
     public int RemoveItem(Item_ScrObj removeItem, int removeAmount)
     {
         int totalRemoveCount = 0;
-
-        List<ItemData> slotsItemDatas = _slotManager.Slot_ItemDatas();
-        for (int i = slotsItemDatas.Count - 1; i >= 0; i--)
+        List<ItemSlot> itemSlots = _slotManager.slots;
+        
+        for (int i = itemSlots.Count - 1; i >= 0; i--)
         {
-            ItemData data = slotsItemDatas[i];
+            ItemSlot slot = itemSlots[i];
 
-            if (removeItem != data.itemScrObj) continue;
+            ItemData data = slot.data;
+            if (data == null) continue;
 
-            int slotAmount = data.amount;
-            int removeUpdateAmount = Mathf.Min(slotAmount, removeAmount);
+            Item_ScrObj slotItem = data.itemScrObj;
+            if (removeItem != slotItem) continue;
+            
+            if (removeItem.itemType != ItemType.use)
+            {
+                int slotAmount = data.amount;
+                int removeUpdateAmount = Mathf.Min(slotAmount, removeAmount);
 
-            data.Update_CurrentAmount(slotAmount - removeUpdateAmount);
+                data.Update_CurrentAmount(slotAmount - removeUpdateAmount);
 
-            removeAmount -= removeUpdateAmount;
-            totalRemoveCount += removeUpdateAmount;
+                removeAmount -= removeUpdateAmount;
+                totalRemoveCount += removeUpdateAmount;
+
+                continue;
+            }
+
+            // counts only max amount useable items as 1 (change for gameplay)
+            if (data.amount < slotItem.maxAmount) continue;
+
+            slot.Clear_Data();
+
+            removeAmount--;
+            totalRemoveCount++;
         }
 
         _slotManager.Refresh_Datas();
@@ -102,7 +119,7 @@ public class Inventory_Manager : MonoBehaviour, IItemsSource, IItemsSourceRemove
     }
 
     public int AddItem(Item_ScrObj addItem, int addAmount)
-    {
+    { 
         ItemData leftoverData = Add_ItemData(new(addItem, addAmount));
         _slotManager.Update_Visuals();
 

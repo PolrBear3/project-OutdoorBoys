@@ -57,17 +57,31 @@ public class ItemCursor : MonoBehaviour, IItemsSource, IItemsSourceRemove, IItem
 
     public int RemoveItem(Item_ScrObj updateItem, int removeAmount)
     {
-        if (data?.itemScrObj != updateItem) return 0;
+        if (_data == null) return 0;
+        
+        Item_ScrObj currentItem = _data.itemScrObj;
+        if (currentItem != updateItem) return 0;
 
-        int currentAmount = _data.amount;
-        int removeCount = Mathf.Min(currentAmount, removeAmount);
+        if (currentItem.itemType != ItemType.use)
+        {
+            int currentAmount = _data.amount;
+            int removeCount = Mathf.Min(currentAmount, removeAmount);
 
-        int setAmount = currentAmount - removeAmount;
+            int setAmount = currentAmount - removeAmount;
 
-        Set_Data(setAmount > 0 ? new(updateItem, setAmount) : null);
+            Set_Data(setAmount > 0 ? new(updateItem, setAmount) : null);
+            Update_Visuals();
+
+            return removeCount;
+        }
+
+        // counts only max amount useable items as 1 (change for gameplay)
+        if (_data.amount < currentItem.maxAmount) return 0;
+
+        Set_Data(null);
         Update_Visuals();
 
-        return removeCount;
+        return 1;
     }
 
     public int AddItem(Item_ScrObj addItem, int addAmount)
