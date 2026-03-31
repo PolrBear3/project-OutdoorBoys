@@ -53,9 +53,6 @@ public class EnvironmentVisuals_Manager : MonoBehaviour
     [SerializeField] private Vector3 _tileMapShadowOffset;
 
 
-    private MaterialPropertyBlock _backgroundMaterialblock;
-
-
     // MonoBehaviour
     private void Awake()
     {

@@ -133,7 +133,7 @@ public class Tile : MonoBehaviour
         int setItemAmount = setItemData.amount;
         if (setItemAmount <= 0) return setItemData;
 
-        if (setItem.itemType != ItemType.place) return setItemData;
+        if (setItem.itemType == ItemType.use) return setItemData;
 
         int maxAmount = setItem.maxAmount;
         List<PlaceableItem> samePlacedItems = PlacedItems(setItem);
@@ -210,7 +210,7 @@ public class Tile : MonoBehaviour
     {
         if (setItemData == null) return;
 
-        if (setItemData.itemScrObj.itemType == ItemType.place)
+        if (setItemData.itemScrObj.itemType != ItemType.use)
         {
             Set_PlacingItem(setItemData);
             return;

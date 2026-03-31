@@ -5,7 +5,10 @@ using UnityEngine;
 [System.Serializable]
 public class WarpRenderer_Data
 {
-    [Space(10)]
+    [SerializeField][Range(0, 10)] private float _loadDuration;
+    public float loadDuration => _loadDuration;
+
+    [Space(20)]
     [SerializeField][Range(0, 50)] private float _pixelSize;
     public float pixelSize => _pixelSize;
 
@@ -31,6 +34,8 @@ public class WarpRenderer_Controller : MonoBehaviour
     [SerializeField] private WarpRenderer_Data _defaultData;
 
 
+    private WarpRenderer_Data _currentData;
+
     private MaterialPropertyBlock _materialBlock;
     private Coroutine _loadCoroutine;
 
@@ -43,59 +48,49 @@ public class WarpRenderer_Controller : MonoBehaviour
 
 
     // Load
-    private void Load_Renderer(WarpRenderer_Data loadData)
+    public void Load_Renderer(WarpRenderer_Data loadData)
     {
-        if (loadData == null) return;
+        if (loadData == null || loadData == _currentData) return;
 
-        _renderer.GetPropertyBlock(_materialBlock);
+        if (loadData.loadDuration <= 0)
+        {
+            _currentData = loadData;
 
-        _materialBlock.SetFloat("_PixelSize", loadData.pixelSize);
-        _materialBlock.SetFloat("_Speed", loadData.animationSpeed);
+            _materialBlock.SetFloat("_PixelSize", loadData.pixelSize);
+            _materialBlock.SetFloat("_Speed", loadData.animationSpeed);
+            _materialBlock.SetColor("_ColorA", loadData.colorA);
+            _materialBlock.SetColor("_ColorB", loadData.colorB);
+            _materialBlock.SetColor("_ColorC", loadData.colorC);
 
-        _materialBlock.SetColor("_ColorA", loadData.colorA);
-        _materialBlock.SetColor("_ColorB", loadData.colorB);
-        _materialBlock.SetColor("_ColorC", loadData.colorC);
+            _renderer.SetPropertyBlock(_materialBlock);
 
-        _renderer.SetPropertyBlock(_materialBlock);
-    }
-
-    public void Load_Renderer(WarpRenderer_Data loadData, float loadDuration)
-    {
-        if (loadData == null) return;
+            return;
+        }
 
         if (_loadCoroutine != null)
         {
             StopCoroutine(_loadCoroutine);
             _loadCoroutine = null;
         }
-        _loadCoroutine = StartCoroutine(Renderer_LoadUpdate(loadData, loadDuration));
+        _loadCoroutine = StartCoroutine(Renderer_LoadUpdate(loadData));
     }
-    private IEnumerator Renderer_LoadUpdate(WarpRenderer_Data loadData, float loadDuration)
+    private IEnumerator Renderer_LoadUpdate(WarpRenderer_Data loadData)
     {
-        float startPixel = _materialBlock.GetFloat("_PixelSize");
-        float startSpeed = _materialBlock.GetFloat("_Speed");
-
-        Color startA = _materialBlock.GetColor("_ColorA");
-        Color startB = _materialBlock.GetColor("_ColorB");
-        Color startC = _materialBlock.GetColor("_ColorC");
-
         float time = 0f;
+
         while (time < 1f)
         {
-            time += Time.deltaTime / loadDuration;
+            time += Time.deltaTime / loadData.loadDuration;
 
-            float pixelSize = Mathf.Lerp(startPixel, loadData.pixelSize, time);
-            float animSpeed = Mathf.Lerp(startSpeed, loadData.animationSpeed, time);
+            float pixelSize = Mathf.Lerp(_currentData.pixelSize, loadData.pixelSize, time);
+            float animSpeed = Mathf.Lerp(_currentData.animationSpeed, loadData.animationSpeed, time);
 
-            Color colorA = Color.Lerp(startA, loadData.colorA, time);
-            Color colorB = Color.Lerp(startB, loadData.colorB, time);
-            Color colorC = Color.Lerp(startC, loadData.colorC, time);
-
-            _renderer.GetPropertyBlock(_materialBlock);
+            Color colorA = Color.Lerp(_currentData.colorA, loadData.colorA, time);
+            Color colorB = Color.Lerp(_currentData.colorB, loadData.colorB, time);
+            Color colorC = Color.Lerp(_currentData.colorC, loadData.colorC, time);
 
             _materialBlock.SetFloat("_PixelSize", pixelSize);
             _materialBlock.SetFloat("_Speed", animSpeed);
-
             _materialBlock.SetColor("_ColorA", colorA);
             _materialBlock.SetColor("_ColorB", colorB);
             _materialBlock.SetColor("_ColorC", colorC);
@@ -104,14 +99,15 @@ public class WarpRenderer_Controller : MonoBehaviour
 
             yield return null;
         }
+        _currentData = loadData;
 
         _loadCoroutine = null;
-        yield break;
     }
 
     private void Load_Renderer()
     {
         _materialBlock = new MaterialPropertyBlock();
+        _renderer.GetPropertyBlock(_materialBlock);
 
         Load_Renderer(_defaultData);
     }

@@ -91,6 +91,14 @@ public class Animal : MonoBehaviour
     }
 
 
+    private Animals_Manager AnimalManager()
+    {
+        GameObject eventsPrefab = InGame_Manager.instance.worldMapGenerator.currentMapEventsPrefab;
+
+        if (eventsPrefab.TryGetComponent(out Animals_Manager manager) == false) return null;
+        return manager;
+    }
+
     private List<Tile> MoveDistance_RangeTiles()
     {
         InGame_Manager manager = InGame_Manager.instance;
@@ -150,8 +158,10 @@ public class Animal : MonoBehaviour
     public void Update_DeceasedState()
     {
         if (_data.health > 0) return;
-        
-        Animals_Manager manager = InGame_Manager.instance.animals;
+
+        Animals_Manager manager = AnimalManager();
+        if (manager == null) return;
+
         manager.spawnedAnimals.Remove(this);
 
         Tile currentTile = _movement.currentTile;
@@ -232,7 +242,10 @@ public class Animal : MonoBehaviour
         if (_data.health <= 0) return;
         if (_data.onSightTimeCount <= delayCount) return;
 
-        InGame_Manager.instance.animals.spawnedAnimals.Remove(this);
+        Animals_Manager manager = AnimalManager();
+        if (manager == null) return;
+
+        manager.spawnedAnimals.Remove(this);
         Destroy(gameObject);
     }
 

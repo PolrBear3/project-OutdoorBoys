@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 8731621838702089674}
   - component: {fileID: 4536870208008606749}
+  - component: {fileID: 3786407175532632579}
   m_Layer: 0
   m_Name: 1-1 World Map Events
   m_TagString: Untagged
@@ -61,3 +62,20 @@ MonoBehaviour:
     _generateAmount: 2
     _maxGenerateAmount: 10
     _generatePointDistance: 2
+--- !u!114 &3786407175532632579
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 353555265533623462}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c1e676827eeb74b24a682e23caa5d358, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _spawnAnimals:
+  - {fileID: 11400000, guid: b90a3b7935e344a6dbde6f8144181129, type: 2}
+  - {fileID: 11400000, guid: c78b5f27455724331954b6c0efe32af4, type: 2}
+  - {fileID: 11400000, guid: 3865eb48a70924336bd951d0826621c7, type: 2}
+  _spawnCoolTime: 1

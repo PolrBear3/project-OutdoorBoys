@@ -28,7 +28,10 @@ public class Trap : MonoBehaviour
     // Main
     private Animal Activate_TargetAnimal()
     {
-        List<Animal> currentAnimals = InGame_Manager.instance.animals.SpwnedAnimals(_placeableItem.currentTile);
+        GameObject eventsPrefab = InGame_Manager.instance.worldMapGenerator.currentMapEventsPrefab;
+        if (eventsPrefab.TryGetComponent(out Animals_Manager manager) == false) return null;
+
+        List<Animal> currentAnimals = manager.SpwnedAnimals(_placeableItem.currentTile);
         if (currentAnimals.Count <= 0) return null;
 
         for (int i = 0; i < _activatePriorities.Length; i++)

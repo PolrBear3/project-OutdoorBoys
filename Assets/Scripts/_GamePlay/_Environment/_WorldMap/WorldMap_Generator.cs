@@ -7,29 +7,53 @@ using UnityEngine.Experimental.Rendering.Universal;
 public class WorldMap_Generator : MonoBehaviour
 {
     [Space(20)]
-    [SerializeField] private WorldMapScrObj _loadWorldMap;
+    [SerializeField] private WorldMapScrObj _defaultWorldMap;
+
+
+    private WorldMapScrObj _currentWorldMap;
+
+    private GameObject _currentMapEventsPrefab;
+    public GameObject currentMapEventsPrefab => _currentMapEventsPrefab;
 
 
     // MonoBehaviour
     private void Awake()
     {
+        EventBus_Manager.Register(EventBus.AwakeLoad, Load_WorldMapData);
+
         EventBus_Manager.Register(EventBus.AwakeLoad, Generate_PresetTiles);
         EventBus_Manager.Register(EventBus.AwakeLoad, Generate_Tiles);
+
         EventBus_Manager.Register(EventBus.AwakeLoad, Set_MapEventsPrefab);
+        EventBus_Manager.Register(EventBus.AwakeLoad, Set_Background);
     }
 
     private void OnDestroy()
     {
+        EventBus_Manager.UnRegister(EventBus.AwakeLoad, Load_WorldMapData);
+
         EventBus_Manager.UnRegister(EventBus.AwakeLoad, Generate_PresetTiles);
         EventBus_Manager.UnRegister(EventBus.AwakeLoad, Generate_Tiles);
+
         EventBus_Manager.UnRegister(EventBus.AwakeLoad, Set_MapEventsPrefab);
+        EventBus_Manager.UnRegister(EventBus.AwakeLoad, Set_Background);
     }
 
 
-    // Data
+    // Datas
+    public void Load_WorldMapData(WorldMapScrObj loadData)
+    {
+        _currentWorldMap = loadData;
+    }
+    private void Load_WorldMapData()
+    {
+        Load_WorldMapData(_defaultWorldMap);
+    }
+
+
     public Vector2 Converted_GenerateSize()
     {
-        Vector2 generateSize = _loadWorldMap.generateSize;
+        Vector2 generateSize = _currentWorldMap.generateSize;
         return new(Mathf.RoundToInt(generateSize.x), Mathf.RoundToInt(generateSize.y));
     }
 
@@ -64,14 +88,14 @@ public class WorldMap_Generator : MonoBehaviour
     }
 
 
-    // Pre Load Data
+    // Pre Load Datas
     private List<TileType> DensityConverted_TileTypes(int convertCount)
     {
         List<TileType> tileTypes = new();
 
         for (int i = 0; i < convertCount; i++)
         {
-            bool isHarshGround = _loadWorldMap.harshGroundDensity > UnityEngine.Random.Range(0, 100);
+            bool isHarshGround = _currentWorldMap.harshGroundDensity > UnityEngine.Random.Range(0, 100);
             TileType setType = isHarshGround ? TileType.harshGround : TileType.softGround;
 
             tileTypes.Add(setType);
@@ -123,7 +147,7 @@ public class WorldMap_Generator : MonoBehaviour
     }
 
 
-    // Generate
+    // Load
     private Tile Generate_Tile(Vector2 generatePos, TileScrObj generateTile)
     {
         Tiles_Controller tilesController = InGame_Manager.instance.tilesController;
@@ -153,7 +177,7 @@ public class WorldMap_Generator : MonoBehaviour
 
     private void Generate_PresetTiles()
     {
-        Tile_PresetDatas[] presetTileDatas = _loadWorldMap.presetTileDatas;
+        Tile_PresetDatas[] presetTileDatas = _currentWorldMap.presetTileDatas;
         if (presetTileDatas.Length <= 0) return;
 
         List<Vector2> generatePositions = new(Generate_Positions());
@@ -184,9 +208,13 @@ public class WorldMap_Generator : MonoBehaviour
 
     private void Set_MapEventsPrefab()
     {
-        GameObject eventsPrefab = _loadWorldMap.worldMapEventsPrefab;
+        GameObject eventsPrefab = _currentWorldMap.worldMapEventsPrefab;
         
         if (eventsPrefab == null) return;
-        Instantiate(eventsPrefab, transform);
+        _currentMapEventsPrefab = Instantiate(eventsPrefab, transform);
+    }
+    private void Set_Background()
+    {
+        InGame_Manager.instance.environmentVisuals.backgroundRenderer.Load_Renderer(_currentWorldMap.backgroundWarpRenderData);
     }
 }

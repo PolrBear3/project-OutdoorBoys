@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public enum ItemType { place, use }
+public enum ItemType { place, use, nonpickable }
 
 [System.Serializable]
 public class Offset_PositionData

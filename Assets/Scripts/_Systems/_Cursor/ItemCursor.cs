@@ -179,9 +179,18 @@ public class ItemCursor : MonoBehaviour, IItemsSource, IItemsSourceRemove, IItem
         List<PlaceableItem> placedItems = selectTile.placedItems;
         if (placedItems.Count <= 0) return;
 
-        PlaceableItem firstPlacedItem = placedItems[0];
-        ItemData firstPlacedItemData = firstPlacedItem.data;
+        PlaceableItem firstPlacedItem = null;
+        for (int i = 0; i < placedItems.Count; i++)
+        {
+            if (placedItems[i].data.itemScrObj.itemType == ItemType.nonpickable) continue;
 
+            firstPlacedItem = placedItems[i];
+            break;
+        }
+
+        if (_data == null && firstPlacedItem == null) return;
+
+        ItemData firstPlacedItemData = firstPlacedItem.data;
         Item_ScrObj pickupItem = _data != null ? _data.itemScrObj : firstPlacedItemData.itemScrObj;
 
         if (pickupItem.itemType == ItemType.use)

@@ -12,7 +12,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 21e98e1b1271248ff99876a7e7247df9, type: 3}
   m_Name: 1-1
   m_EditorClassIdentifier: 
+  _worldMapEventsPrefab: {fileID: 353555265533623462, guid: 556217c5b3b7f42f8b49b5cc77927991, type: 3}
   _generateSize: {x: 8, y: 5}
   _harshGroundDensity: 10
   _presetTileDatas: []
-  _worldMapEventsPrefab: {fileID: 353555265533623462, guid: 556217c5b3b7f42f8b49b5cc77927991, type: 3}
+  _backgroundWarpRenderData:
+    _loadDuration: 1
+    _pixelSize: 4
+    _animationSpeed: 0.4
+    _colorA: {r: 0.09803922, g: 0.2, b: 0.1764706, a: 1}
+    _colorB: {r: 0.14509805, g: 0.3372549, b: 0.18039216, a: 1}
+    _colorC: {r: 0.65882355, g: 0.7921569, b: 0.34509805, a: 1}

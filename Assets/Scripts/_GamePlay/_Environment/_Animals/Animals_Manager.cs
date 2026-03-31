@@ -5,6 +5,9 @@ using UnityEngine;
 
 public class Animals_Manager : MonoBehaviour
 {
+    [Space(20)]
+    [SerializeField] private AnimalScrObj[] _spawnAnimals;
+
     private List<Animal> _spawnedAnimals = new();
     public List<Animal> spawnedAnimals => _spawnedAnimals;
 
@@ -54,16 +57,18 @@ public class Animals_Manager : MonoBehaviour
     // Spawn
     private AnimalScrObj Spawning_Animal()
     {
+        if (_spawnAnimals.Length <= 0) return null;
+        
         Tiles_Controller tilesController = InGame_Manager.instance.tilesController;
-
-        AnimalScrObj[] allAnimals = Data_Manager.instance.allAnimals;
 
         Dictionary<AnimalScrObj, int> spawnWeightDatas = new();
         int totalWeight = 0;
 
-        for (int i = 0; i < allAnimals.Length; i++)
+        for (int i = 0; i < _spawnAnimals.Length; i++)
         {
-            TileScrObj[] spawnTiles = allAnimals[i].spawnTiles;
+            AnimalScrObj spawnAnimal = _spawnAnimals[i];
+
+            TileScrObj[] spawnTiles = spawnAnimal.spawnTiles;
             int spawnTileCount = 0;
 
             foreach (TileScrObj tile in spawnTiles)
@@ -71,7 +76,7 @@ public class Animals_Manager : MonoBehaviour
                 spawnTileCount += tilesController.Tile_Count(tile);
             }
 
-            spawnWeightDatas.Add(allAnimals[i], spawnTileCount);
+            spawnWeightDatas.Add(spawnAnimal, spawnTileCount);
             totalWeight += spawnTileCount;
         }
 
@@ -85,7 +90,7 @@ public class Animals_Manager : MonoBehaviour
             if (randValue >= cumulativeWeight) continue;
             return data.Key;
         }
-        return allAnimals[UnityEngine.Random.Range(0, allAnimals.Length)];
+        return _spawnAnimals[UnityEngine.Random.Range(0, _spawnAnimals.Length)];
     }
 
     private void Spawn_Animal()
