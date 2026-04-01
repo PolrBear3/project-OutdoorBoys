@@ -1,0 +1,49 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8f9c661a3761e4420b2248af7d2f7997, type: 3}
+  m_Name: Fire Idle
+  m_EditorClassIdentifier: 
+  _clipName: Fire Idle
+  _loop: 1
+  _clipSpriteDatas:
+  - _clipSprite: {fileID: -1481301437, guid: bf7ece83f843c4c35977c02f8c40d92d, type: 3}
+    _durationTime: 0.1
+    _sortingOrderUpdateValue: 0
+    _alphaUpdateValue: 0
+    _alphaDurationTime: 0
+    _offSetPosition: {x: 0, y: 0}
+    _rotationValue: 0
+    _transformDurationTime: 0
+  - _clipSprite: {fileID: 758638610, guid: bf7ece83f843c4c35977c02f8c40d92d, type: 3}
+    _durationTime: 0.1
+    _sortingOrderUpdateValue: 0
+    _alphaUpdateValue: 0
+    _alphaDurationTime: 0
+    _offSetPosition: {x: 0, y: 0}
+    _rotationValue: 0
+    _transformDurationTime: 0
+  - _clipSprite: {fileID: -1275598243, guid: bf7ece83f843c4c35977c02f8c40d92d, type: 3}
+    _durationTime: 0.1
+    _sortingOrderUpdateValue: 0
+    _alphaUpdateValue: 0
+    _alphaDurationTime: 0
+    _offSetPosition: {x: 0, y: 0}
+    _rotationValue: 0
+    _transformDurationTime: 0
+  - _clipSprite: {fileID: -484231228, guid: bf7ece83f843c4c35977c02f8c40d92d, type: 3}
+    _durationTime: 0.1
+    _sortingOrderUpdateValue: 0
+    _alphaUpdateValue: 0
+    _alphaDurationTime: 0
+    _offSetPosition: {x: 0, y: 0}
+    _rotationValue: 0
+    _transformDurationTime: 0

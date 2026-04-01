@@ -172,10 +172,10 @@ public class Tile : MonoBehaviour
             newPlacedItem.Set_Data(new(setItem, spawnSetAmount));
             setItemAmount -= spawnSetAmount;
 
-            newPlacedItem.Play_PlaceAnimation();
-
             newPlacedItem.Track_CurrentTile(this);
             Track_PlacingItem(newPlacedItem);
+            
+            newPlacedItem.Play_PlaceAnimation();
         }
 
         return new(setItem, setItemAmount);

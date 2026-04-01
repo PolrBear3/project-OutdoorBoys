@@ -5,9 +5,6 @@ using UnityEngine;
 [System.Serializable]
 public class ClipSpriteData
 {
-    [SerializeField] private string _clipName;
-    
-
     [Space(20)]
     [SerializeField] private Sprite _clipSprite;
     public Sprite clipSprite => _clipSprite;
@@ -48,7 +45,7 @@ public class ClipSpriteData
     // Duration Time
     public float DurationTime()
     {
-        return Mathf.Max(0.1f, _durationTime);
+        return Mathf.Max(0.01f, _durationTime);
     }
 
     public float Transform_DurationTime()
