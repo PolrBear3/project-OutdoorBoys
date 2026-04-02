@@ -100,6 +100,7 @@ public class Inventory_Manager : MonoBehaviour, IItemsSource, IItemsSourceRemove
                 removeAmount -= removeUpdateAmount;
                 totalRemoveCount += removeUpdateAmount;
 
+                if (removeAmount <= 0) break;
                 continue;
             }
 
@@ -110,6 +111,8 @@ public class Inventory_Manager : MonoBehaviour, IItemsSource, IItemsSourceRemove
 
             removeAmount--;
             totalRemoveCount++;
+
+            if (removeAmount <= 0) break;
         }
 
         _slotManager.Refresh_Datas();

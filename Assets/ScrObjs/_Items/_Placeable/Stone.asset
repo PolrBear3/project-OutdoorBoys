@@ -17,7 +17,7 @@ MonoBehaviour:
   _itemName: Stone
   _description: 
   _itemType: 0
-  _itemPrefab: {fileID: 3637228250238346253, guid: 7773233a6fc674220984e00997383a2c, type: 3}
+  _itemPrefab: {fileID: 3637228250238346253, guid: 8599511860dc247cdb3c6506c628081b, type: 3}
   _offsetData:
   - _position: {x: 0, y: 0.5}
     _rotationValue: 0

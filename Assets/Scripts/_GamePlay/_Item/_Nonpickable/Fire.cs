@@ -7,10 +7,14 @@ public class Fire : MonoBehaviour
     [SerializeField] private PlaceableItem _placeableItem;
 
     [Space(20)]
+    [SerializeField] private ItemData[] _burnUpdateItems;
     [SerializeField][Range(0, 100)] private int _burnDecreaseValue;
 
-    [Space(10)]
-    [SerializeField] private ItemData[] _burnUpdateItems;
+    [Space(20)]
+    [SerializeField] private Item_ScrObj _coalItem;
+    [SerializeField][Range(0, 100)] private int _coalGenerateAmount;
+
+    private int _coalGeneratedCount;
 
 
     // MonoBehaviour
@@ -64,12 +68,15 @@ public class Fire : MonoBehaviour
             ItemData itemData = _placeableItem.data;
             itemData.Update_CurrentAmount(itemData.amount - _burnDecreaseValue);
 
+            _coalGeneratedCount += _coalGenerateAmount;
             return;
         }
 
-        // drop coal item ?
+        Tile currentTile = _placeableItem.currentTile;
 
-        _placeableItem.currentTile.Remove_PlacedItemData(_placeableItem);
+        currentTile.Remove_PlacedItemData(_placeableItem);
+        currentTile.Set_Item(new(_coalItem, _coalGeneratedCount));
+
         Destroy(_placeableItem.gameObject);
     }
 }

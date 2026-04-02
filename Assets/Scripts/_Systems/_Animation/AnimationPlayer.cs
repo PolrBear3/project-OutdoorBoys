@@ -73,7 +73,6 @@ public class AnimationPlayer : MonoBehaviour
         transform.rotation = Quaternion.identity;
     }
 
-
     public void Play(AnimationClipScrObj clip)
     {
         Stop();

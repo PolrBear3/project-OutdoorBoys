@@ -10,20 +10,20 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 069327ba6dded4f16af0714f2c328413, type: 3}
-  m_Name: Wood
+  m_Name: Coal
   m_EditorClassIdentifier: 
-  _inventorySprite: {fileID: -1041514726, guid: bf7ece83f843c4c35977c02f8c40d92d, type: 3}
-  _microSprite: {fileID: 1617338267, guid: bf7ece83f843c4c35977c02f8c40d92d, type: 3}
-  _itemName: Wood
+  _inventorySprite: {fileID: 1907964634, guid: bf7ece83f843c4c35977c02f8c40d92d, type: 3}
+  _microSprite: {fileID: 1441565944, guid: bf7ece83f843c4c35977c02f8c40d92d, type: 3}
+  _itemName: Coal
   _description: 
   _itemType: 0
-  _itemPrefab: {fileID: 3637228250238346253, guid: e512f6af3be464692ab97c29239f1346, type: 3}
+  _itemPrefab: {fileID: 3637228250238346253, guid: 9f084356ee3874130b7fccbd801bb11c, type: 3}
   _offsetData:
   - _position: {x: 0, y: 0.5}
     _rotationValue: 0
-  - _position: {x: -0.25, y: 0.5}
+  - _position: {x: -0.2, y: 0.5}
     _rotationValue: 0
-  - _position: {x: 0.25, y: 0.5}
+  - _position: {x: 0.2, y: 0.5}
     _rotationValue: 0
   _maxAmount: 10
   _itemWeight: 1
