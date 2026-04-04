@@ -49,11 +49,11 @@ public class Inventory_Manager : MonoBehaviour, IItemsSource, IItemsSourceRemove
         _slotManager.OnSlotHover -= Toggle_ItemInfoPanel;
         _slotManager.OnSlotHover -= Update_HoveringItemInfo;
 
-        _slotManager.OnTargetSlotSelect -= Transfer_AllItems;
-        _slotManager.OnRightSelect -= Transfer_Item;
+        _slotManager.OnSlotSelect -= Transfer_AllItems;
+        _slotManager.OnSlotRightSelect -= Transfer_Item;
 
-        _slotManager.OnTargetSlotSelect -= Toggle_ItemInfoPanel;
-        _slotManager.OnTargetSlotSelect -= Update_HoveringItemInfo;
+        _slotManager.OnSlotSelect -= Toggle_ItemInfoPanel;
+        _slotManager.OnSlotSelect -= Update_HoveringItemInfo;
 
         InGame_Manager manager = InGame_Manager.instance;
         ItemCursor itemCursor = manager.cursor.itemCursor;
@@ -79,7 +79,7 @@ public class Inventory_Manager : MonoBehaviour, IItemsSource, IItemsSourceRemove
     {
         int totalRemoveCount = 0;
         List<ItemSlot> itemSlots = _slotManager.slots;
-        
+
         for (int i = itemSlots.Count - 1; i >= 0; i--)
         {
             ItemSlot slot = itemSlots[i];
@@ -89,7 +89,7 @@ public class Inventory_Manager : MonoBehaviour, IItemsSource, IItemsSourceRemove
 
             Item_ScrObj slotItem = data.itemScrObj;
             if (removeItem != slotItem) continue;
-            
+
             if (removeItem.itemType != ItemType.use)
             {
                 int slotAmount = data.amount;
@@ -122,7 +122,7 @@ public class Inventory_Manager : MonoBehaviour, IItemsSource, IItemsSourceRemove
     }
 
     public int AddItem(Item_ScrObj addItem, int addAmount)
-    { 
+    {
         ItemData leftoverData = Add_ItemData(new(addItem, addAmount));
         _slotManager.Update_Visuals();
 
@@ -139,11 +139,11 @@ public class Inventory_Manager : MonoBehaviour, IItemsSource, IItemsSourceRemove
         _slotManager.OnSlotHover += Toggle_ItemInfoPanel;
         _slotManager.OnSlotHover += Update_HoveringItemInfo;
 
-        _slotManager.OnTargetSlotSelect += Transfer_AllItems;
-        _slotManager.OnRightSelect += Transfer_Item;
+        _slotManager.OnSlotSelect += Transfer_AllItems;
+        _slotManager.OnSlotRightSelect += Transfer_Item;
 
-        _slotManager.OnTargetSlotSelect += Toggle_ItemInfoPanel;
-        _slotManager.OnTargetSlotSelect += Update_HoveringItemInfo;
+        _slotManager.OnSlotSelect += Toggle_ItemInfoPanel;
+        _slotManager.OnSlotSelect += Update_HoveringItemInfo;
 
         InGame_Manager manager = InGame_Manager.instance;
         ItemCursor itemCursor = manager.cursor.itemCursor;

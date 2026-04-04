@@ -33,11 +33,11 @@ public class ItemCrafting_Manager : MonoBehaviour
     {
         EventBus_Manager.UnRegister(EventBus.AwakeLoad, Set_Data);
 
-        _slotManager.OnTargetSlotSelect -= Craft_Item;
         _slotManager.OnSlotHover -= Toggle_ItemInfoPanel;
 
+        _slotManager.OnSlotSelect -= Craft_Item;
         _slotManager.OnSlotSelect -= Update_CraftableItems;
-        _slotManager.OnTargetSlotSelect -= Toggle_ItemInfoPanel;
+        _slotManager.OnSlotSelect -= Toggle_ItemInfoPanel;
 
         InGame_Manager manager = InGame_Manager.instance;
         Inventory_Manager inventory = manager.inventory;
@@ -61,11 +61,11 @@ public class ItemCrafting_Manager : MonoBehaviour
     // Component
     private void Set_Data()
     {
-        _slotManager.OnTargetSlotSelect += Craft_Item;
         _slotManager.OnSlotHover += Toggle_ItemInfoPanel;
 
+        _slotManager.OnSlotSelect += Craft_Item;
         _slotManager.OnSlotSelect += Update_CraftableItems;
-        _slotManager.OnTargetSlotSelect += Toggle_ItemInfoPanel;
+        _slotManager.OnSlotSelect += Toggle_ItemInfoPanel;
 
         InGame_Manager manager = InGame_Manager.instance;
         Inventory_Manager inventory = manager.inventory;
@@ -135,6 +135,10 @@ public class ItemCrafting_Manager : MonoBehaviour
 
         _slotManager.Update_Visuals();
     }
+    private void Update_CraftableItems(ItemSlot _)
+    {
+        Update_CraftableItems();
+    }
 
 
     private List<IItemsSourceRemove> IngredientRemove_ItemsSource()
@@ -194,7 +198,9 @@ public class ItemCrafting_Manager : MonoBehaviour
     private void Toggle_ItemInfoPanel(ItemSlot hoveringItemSlot)
     {
         bool toggle = hoveringItemSlot != null && hoveringItemSlot.data != null;
+
         _itemInfoPanel.gameObject.SetActive(toggle);
+        _ingredientSlotsManager.Clear_CurrentSlots();
 
         if (toggle == false) return;
 
@@ -207,19 +213,10 @@ public class ItemCrafting_Manager : MonoBehaviour
         LayoutRebuilder.ForceRebuildLayoutImmediate(_itemInfoPanel.rectTransform);
 
         List<ItemData> ingredientDatas = hoveringItem.Item_IngredientDatas();
-        List<ItemSlot> slots = _ingredientSlotsManager.slots;
-
-        for (int i = 0; i < slots.Count; i++)
+        foreach (ItemData data in ingredientDatas)
         {
-            ItemSlot slot = slots[i];
-
-            bool hasIngredient = i < ingredientDatas.Count;
-            slot.gameObject.SetActive(hasIngredient);
-
-            if (hasIngredient == false) continue;
-            slot.Set_Data(ingredientDatas[i]);
+            _ingredientSlotsManager.Add_NewSlot(data);
         }
-
         _ingredientSlotsManager.Update_Visuals();
     }
     private void Toggle_ItemInfoPanel()

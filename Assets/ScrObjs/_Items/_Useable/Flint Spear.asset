@@ -31,5 +31,7 @@ MonoBehaviour:
   _itemIngredientDatas:
   - _itemScrObj: {fileID: 11400000, guid: f55dcbf1eafcd4c538d85b96297658cd, type: 2}
     _amount: 1
+  - _itemScrObj: {fileID: 11400000, guid: 61796550184fa4a80a822586dc68a405, type: 2}
+    _amount: 2
   - _itemScrObj: {fileID: 11400000, guid: cea7459d8010d4a229cb42a2a5b65381, type: 2}
     _amount: 10

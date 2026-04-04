@@ -5,20 +5,22 @@ using UnityEngine;
 
 public class ItemSlot_Manager : MonoBehaviour
 {
+    [Space(20)]
+    [SerializeField] private GameObject _slotPrefab;
+    [SerializeField][Range(0, 10)] private int _maxSlotAddAmount;
+
+    [Space(10)]
     [SerializeField] private List<ItemSlot> _slots;
     public List<ItemSlot> slots => _slots;
+
 
     private ItemSlot _hoveringSlot;
     public ItemSlot hoveringSlot => _hoveringSlot;
 
-
     public Action<ItemSlot> OnSlotHover;
-
-    public Action<ItemSlot> OnTargetSlotSelect;
-    public Action<ItemSlot> OnTargetSlotHoldSelect;
-    public Action<ItemSlot> OnRightSelect;
-
-    public Action OnSlotSelect;
+    public Action<ItemSlot> OnSlotSelect;
+    public Action<ItemSlot> OnSlotHoldSelect;
+    public Action<ItemSlot> OnSlotRightSelect;
 
 
     // MonoBehaviour
@@ -110,7 +112,31 @@ public class ItemSlot_Manager : MonoBehaviour
     }
 
 
-    // Component
+    // New Slots
+    public ItemSlot Add_NewSlot(ItemData addItemData)
+    {
+        if (_slots.Count >= _maxSlotAddAmount) return null;
+
+        GameObject addedSlot = Instantiate(_slotPrefab, transform);
+        if (addedSlot.TryGetComponent(out ItemSlot newSlot) == false) return null;
+
+        _slots.Add(newSlot);
+        newSlot.Set_Data(addItemData);
+
+        return newSlot;
+    }
+
+    public void Clear_CurrentSlots()
+    {
+        foreach (ItemSlot currentSlot in _slots)
+        {
+            Destroy(currentSlot.gameObject);
+        }
+        _slots.Clear();
+    }
+
+
+    // Slot Hover
     public void Update_HoveringSlot(ItemSlot hoveringSlot)
     {
         _hoveringSlot = hoveringSlot;
@@ -119,27 +145,22 @@ public class ItemSlot_Manager : MonoBehaviour
     private void Select_HoveringSlot()
     {
         if (_hoveringSlot == null) return;
-
-        OnTargetSlotSelect?.Invoke(_hoveringSlot);
-        OnSlotSelect?.Invoke();
+        OnSlotSelect?.Invoke(_hoveringSlot);
     }
     private void HoldSelect_HoveringSlot()
     {
         if (_hoveringSlot == null) return;
-
-        OnTargetSlotHoldSelect?.Invoke(_hoveringSlot);
-        OnSlotSelect?.Invoke();
+        OnSlotHoldSelect?.Invoke(_hoveringSlot);
     }
 
     private void RightSelect_HoveringSlot()
     {
         if (_hoveringSlot == null) return;
-
-        OnRightSelect?.Invoke(_hoveringSlot);
-        OnSlotSelect?.Invoke();
+        OnSlotRightSelect?.Invoke(_hoveringSlot);
     }
 
 
+    // Visuals
     public void Update_Visuals()
     {
         for (int i = 0; i < _slots.Count; i++)
