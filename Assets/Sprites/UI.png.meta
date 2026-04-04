@@ -181,7 +181,7 @@ TextureImporter:
         width: 16
         height: 16
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -189,6 +189,48 @@ TextureImporter:
       bones: []
       spriteID: af4a2cf31c7c94e098f9d385066f7ac1
       internalID: 1258320460
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_4
+      rect:
+        serializedVersion: 2
+        x: 16
+        y: 32
+        width: 16
+        height: 16
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: d53c5a4d2d0c64919bac514815fc3134
+      internalID: -103093361
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_5
+      rect:
+        serializedVersion: 2
+        x: 32
+        y: 32
+        width: 16
+        height: 16
+      alignment: 9
+      pivot: {x: 0.1875, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 735caa5f346cb4587ab8b388e980dc7b
+      internalID: 674899101
       vertices: []
       indices: 
       edges: []
@@ -208,6 +250,8 @@ TextureImporter:
       UI_1: -800630590
       UI_2: 252274216
       UI_3: 1258320460
+      UI_4: -103093361
+      UI_5: 674899101
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

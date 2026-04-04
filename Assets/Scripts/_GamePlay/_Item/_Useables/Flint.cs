@@ -9,6 +9,9 @@ public class Flint : MonoBehaviour
     public UseableItem useableItem => _useableItem;
 
     [Space(20)]
+    [SerializeField] private FillBar_Controller _fillBarController;
+
+    [Space(20)]
     [SerializeField] private Item_ScrObj _stoneItem;
     [SerializeField] private Item_ScrObj _fireItem;
 
@@ -45,6 +48,9 @@ public class Flint : MonoBehaviour
 
         if (_targetRockData != null && _targetRockData.placeableItem == targetRockItem) return;
         _targetRockData = new(targetRockItem, 0);
+
+        _fillBarController.Set_FillBar(targetRockItem.transform);
+        _fillBarController.Update_CurrentBarFill(_fireActivationCount, _targetRockData.durabilityCount);
     }
 
     private void Update_HeatSustainTime()
@@ -58,10 +64,18 @@ public class Flint : MonoBehaviour
     }
     private IEnumerator HeatSustain_Update()
     {
-        yield return new WaitForSeconds(_heatSustainTime);
+        while (_targetRockData != null && _targetRockData.durabilityCount > 0)
+        {
+            yield return new WaitForSeconds(_heatSustainTime);
+
+            _targetRockData.Update_DurabilityCount(_targetRockData.durabilityCount - 1);
+            _fillBarController.Update_CurrentBarFill(_fireActivationCount, _targetRockData.durabilityCount);
+        }
 
         _targetRockData = null;
         _heatSustainCoroutine = null;
+
+        _fillBarController.Refresh_CurrentFillBar();
     }
 
 
@@ -86,7 +100,9 @@ public class Flint : MonoBehaviour
         if (placedRockItem == null) return;
 
         Update_TargetRock(placedRockItem);
+        
         _targetRockData.Update_DurabilityCount(_targetRockData.durabilityCount + 1);
+        _fillBarController.Update_CurrentBarFill(_fireActivationCount, _targetRockData.durabilityCount);
 
         if (_targetRockData.durabilityCount < _fireActivationCount)
         {
@@ -98,8 +114,6 @@ public class Flint : MonoBehaviour
 
         rockItemData.Update_CurrentAmount(rockItemData.amount - 1);
         useTile.Remove_EmptyPlacedItems();
-
-        // fire spark animation ?
 
         PlaceableItem placedWoodItem = PlacedWood(useTile);
         if (placedWoodItem == null) return;

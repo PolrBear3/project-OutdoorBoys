@@ -7,6 +7,10 @@ public class Fire : MonoBehaviour
     [SerializeField] private PlaceableItem _placeableItem;
 
     [Space(20)]
+    [SerializeField] private FillBar_Controller _fillBarController;
+    [SerializeField][Range(0, 100)] private int _fillBarDecreasePoint;
+
+    [Space(20)]
     [SerializeField] private ItemData[] _burnUpdateItems;
     [SerializeField][Range(0, 100)] private int _burnDecreaseValue;
 
@@ -20,18 +24,36 @@ public class Fire : MonoBehaviour
     // MonoBehaviour
     private void Awake()
     {
-        Time_Manager time = InGame_Manager.instance.time;
+        InGame_Manager manager = InGame_Manager.instance;
+        Time_Manager time = manager.time;
 
         time.OnTimeUpdate += UpdatePlaced_BurnItems;
         time.OnTimeUpdate += Update_BurningState;
+
+        manager.tilesController.OnTileHover += Toggle_FillBar;
     }
-    
+
+    private void Start()
+    {
+        _fillBarController.Set_FillBar(transform);
+    }
+
     private void OnDestroy()
     {
-        Time_Manager time = InGame_Manager.instance.time;
+        InGame_Manager manager = InGame_Manager.instance;
+        Time_Manager time = manager.time;
 
         time.OnTimeUpdate -= UpdatePlaced_BurnItems;
         time.OnTimeUpdate -= Update_BurningState;
+
+        manager.tilesController.OnTileHover -= Toggle_FillBar;
+    }
+
+
+    // Visuals
+    private void Toggle_FillBar(Tile hoveringTile)
+    {
+        _fillBarController.Toggle(hoveringTile == _placeableItem.currentTile);
     }
 
 
@@ -51,7 +73,9 @@ public class Fire : MonoBehaviour
                 if (placedItem.data.itemScrObj != updateItem.itemScrObj) continue;
 
                 ItemData itemData = _placeableItem.data;
+
                 itemData.Update_CurrentAmount(itemData.amount + (placedItem.data.amount * updateItem.amount));
+                _fillBarController.Update_CurrentBarFill(_fillBarDecreasePoint, itemData.amount);
 
                 currentTile.Remove_PlacedItemData(placedItem);
                 Destroy(placedItem.gameObject);
@@ -66,7 +90,9 @@ public class Fire : MonoBehaviour
         if (_placeableItem.data.amount > 0)
         {
             ItemData itemData = _placeableItem.data;
+
             itemData.Update_CurrentAmount(itemData.amount - _burnDecreaseValue);
+            _fillBarController.Update_CurrentBarFill(_fillBarDecreasePoint, itemData.amount);
 
             _coalGeneratedCount += _coalGenerateAmount;
             return;

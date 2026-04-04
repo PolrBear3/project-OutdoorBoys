@@ -9,6 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6202383651998061352}
+  - component: {fileID: 4102059880458969063}
   - component: {fileID: 2873364016420352242}
   - component: {fileID: 1740682548530431483}
   m_Layer: 0
@@ -33,6 +34,21 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &4102059880458969063
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5769858720269626403}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f1c9aaee5b8e745968cb1ebba2fa87f7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _fillBarPrefab: {fileID: 3122773858983555742, guid: b154050f99b494edda6fb24a64dbeae8, type: 3}
+  _setOffSet: {x: 0, y: 0.65}
+  _fillColor: {r: 0.8117647, g: 0.34117648, b: 0.23529412, a: 1}
 --- !u!114 &2873364016420352242
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -58,6 +74,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _useableItem: {fileID: 2873364016420352242}
+  _fillBarController: {fileID: 4102059880458969063}
   _stoneItem: {fileID: 11400000, guid: 85f6c95d406fa44a1890666516ac97b7, type: 2}
   _fireItem: {fileID: 11400000, guid: 7eec0f9b59d3341c48ea66ddd607fcce, type: 2}
   _activateWoodItems:

@@ -8,6 +8,9 @@ public class Saw : MonoBehaviour
     public UseableItem useableItem => _useableItem;
 
     [Space(20)]
+    [SerializeField] private FillBar_Controller _fillBarController;
+
+    [Space(20)]
     [SerializeField] private Item_ScrObj _woodDropItem;
     [SerializeField] private Item_ScrObj[] _treeItems;
 
@@ -58,21 +61,30 @@ public class Saw : MonoBehaviour
             return;
         }
 
-        _choppingTreeData = new(targetItem, targetItem.data.itemScrObj.itemWeight);
+        int maxDurability = targetItem.data.itemScrObj.itemWeight;
+        _choppingTreeData = new(targetItem, maxDurability);
+
+        _fillBarController.Set_FillBar(targetItem.transform);
+        _fillBarController.Update_CurrentBarFill(maxDurability, maxDurability);
     }
-
-
     private void Chop_Tree(Tile useTile)
     {
         PlaceableItem placedTree = PlacedTree(useTile);
         if (placedTree == null) return;
-        
+
         Update_ChoppingTree(placedTree);
 
         _useableItem.Update_UseAmount(1);
         placedTree.animPlayer.Play(0);
 
-        if (_choppingTreeData.Update_DurabilityCount(_choppingTreeData.durabilityCount - _chopDamage) > 0) return;
+        int currentDurability = _choppingTreeData.Update_DurabilityCount(_choppingTreeData.durabilityCount - _chopDamage);
+
+        if (currentDurability > 0)
+        {
+            _fillBarController.Update_CurrentBarFill(placedTree.data.itemScrObj.itemWeight, currentDurability);
+            return;
+        }
+        _fillBarController.Refresh_CurrentFillBar();
 
         Update_ChoppingTree(null);
         placedTree.AnimationDelay_Remove();

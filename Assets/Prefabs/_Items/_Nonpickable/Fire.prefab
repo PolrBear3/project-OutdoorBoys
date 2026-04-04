@@ -73,7 +73,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: -1275598243, guid: bf7ece83f843c4c35977c02f8c40d92d, type: 3}
+  m_Sprite: {fileID: 758638610, guid: bf7ece83f843c4c35977c02f8c40d92d, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -179,6 +179,7 @@ GameObject:
   - component: {fileID: 4520642281758493457}
   - component: {fileID: 3045259509940891077}
   - component: {fileID: 2191419684246612499}
+  - component: {fileID: 8267873137990113261}
   - component: {fileID: 1531750997209139500}
   - component: {fileID: 3029350795489526820}
   m_Layer: 0
@@ -239,6 +240,21 @@ MonoBehaviour:
     _colorA: {r: 0.8117647, g: 0.34117648, b: 0.23529412, a: 1}
     _colorB: {r: 0.87058824, g: 0.61960787, b: 0.25490198, a: 1}
     _colorC: {r: 0.92156863, g: 0.92941177, b: 0.9137255, a: 1}
+--- !u!114 &8267873137990113261
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3637228250238346253}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f1c9aaee5b8e745968cb1ebba2fa87f7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _fillBarPrefab: {fileID: 3122773858983555742, guid: b154050f99b494edda6fb24a64dbeae8, type: 3}
+  _setOffSet: {x: 0, y: 0.685}
+  _fillColor: {r: 0.8117647, g: 0.34117648, b: 0.23529412, a: 1}
 --- !u!114 &1531750997209139500
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -267,6 +283,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _placeableItem: {fileID: 1531750997209139500}
+  _fillBarController: {fileID: 8267873137990113261}
+  _fillBarDecreasePoint: 5
   _burnUpdateItems:
   - _itemScrObj: {fileID: 11400000, guid: cea7459d8010d4a229cb42a2a5b65381, type: 2}
     _amount: 1
