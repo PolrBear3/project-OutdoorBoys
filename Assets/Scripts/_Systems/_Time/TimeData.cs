@@ -6,10 +6,10 @@ using UnityEngine;
 [System.Serializable]
 public class TimeData
 {
-    [SerializeField] private int _timeCount;
+    private int _timeCount;
     public int timeCount => _timeCount;
 
-    [SerializeField] private int _dayCount;
+    private int _dayCount;
     public int dayCount => _dayCount;
 
 

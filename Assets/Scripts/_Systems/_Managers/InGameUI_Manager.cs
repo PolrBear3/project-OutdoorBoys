@@ -19,15 +19,16 @@ public class InGameUI_Manager : MonoBehaviour
     {
         EventBus_Manager.Register(EventBus.AwakeLoad, Set_Data);
     }
-    
+
     private void OnDestroy()
     {
         EventBus_Manager.UnRegister(EventBus.AwakeLoad, Set_Data);
 
         InGame_Manager manager = InGame_Manager.instance;
         Time_Manager time = manager.time;
-        
-        time.OnTimeCountUpdate -= Update_TimeText;
+
+        time.OnTimeCount -= Update_TimeText;
+        time.OnDayCount -= Update_DayText;
 
         Player_Controller player = manager.player;
 
@@ -45,10 +46,10 @@ public class InGameUI_Manager : MonoBehaviour
         TimeData timeData = time.data;
 
         Update_TimeText(timeData.timeCount);
-        time.OnTimeCountUpdate += Update_TimeText;
+        time.OnTimeCount += Update_TimeText;
 
         Update_DayText(timeData.dayCount);
-        time.OnDayCountUpdate += Update_DayText;
+        time.OnDayCount += Update_DayText;
 
         Player_Controller player = manager.player;
         PlayerData playerData = player.data;
@@ -62,7 +63,11 @@ public class InGameUI_Manager : MonoBehaviour
 
 
     // Text
-    private void Update_TimeText(int timeCount) => _timeText.text = timeCount.ToString();
+    private void Update_TimeText(int timeCount)
+    {
+        int timeCountUpdateValue = InGame_Manager.instance.time.TimeCount_ValueUpdateSum();
+        _timeText.text = timeCount + " (" + "+" + timeCountUpdateValue + ")".ToString();
+    }
     private void Update_DayText(int dayCount) => _dayText.text = "Day " + dayCount.ToString();
 
     private void Update_HungerText(int hungerValue) => _hungerText.text = hungerValue.ToString();

@@ -11,6 +11,26 @@ public enum TimeUpdateBus
     SubUpdate = 2
 }
 
+public class TimeCount_UpdateData
+{
+    private object _obj;
+    public object obj => _obj;
+
+    private int _updateValue;
+    public int updateValue => _updateValue;
+
+    public TimeCount_UpdateData(object obj, int value)
+    {
+        _obj = obj;
+        _updateValue = value;
+    }
+
+    public void Set_UpdateValue(int setValue)
+    {
+        _updateValue = Mathf.Max(0, setValue);
+    }
+}
+
 public class Time_Manager : MonoBehaviour, ISaveLoadable
 {
     [Space(20)]
@@ -24,16 +44,14 @@ public class Time_Manager : MonoBehaviour, ISaveLoadable
     private TimeData _data;
     public TimeData data => _data;
 
+    private List<TimeCount_UpdateData> _countUpdateDatas = new();
     private Dictionary<TimeUpdateBus, Action> _timeUpdateBuses = new();
 
-    public Action OnTimeUpdate;
-    public Action<int> OnTimeCountUpdate;
-
+    public Action<int> OnTimeCount;
     public Action OnNightPhaseUpdate;
 
+    public Action<int> OnDayCount;
     public Action OnDayUpdate;
-    public Action<int> OnDayCountUpdate;
-
 
     private Coroutine _timeTikCoroutine;
 
@@ -85,7 +103,12 @@ public class Time_Manager : MonoBehaviour, ISaveLoadable
     }
 
 
-    public void Run_TimeUpdate()
+    public bool Is_Night()
+    {
+        return _data.timeCount >= _nightPhaseCount;
+    }
+
+    private void Run_TimeUpdates()
     {
         for (int i = 0; i < _timeUpdateBuses.Count; i++)
         {
@@ -93,21 +116,44 @@ public class Time_Manager : MonoBehaviour, ISaveLoadable
             _timeUpdateBuses[runBus]?.Invoke();
         }
 
-        OnTimeUpdate?.Invoke();
-        OnTimeCountUpdate?.Invoke(_data.timeCount);
+        OnTimeCount?.Invoke(_data.timeCount);
 
         if (_data.timeCount != _nightPhaseCount) return;
         OnNightPhaseUpdate?.Invoke();
     }
 
-    public void Update_Data(int updateTimeCount)
+
+    public int TimeCount_ValueUpdateSum()
     {
-        int calculatedTimeCount = data.timeCount + Mathf.Max(0, updateTimeCount);
+        int sum = 0;
+
+        foreach (TimeCount_UpdateData data in _countUpdateDatas)
+        {
+            sum += data.updateValue;
+        }
+        return sum;
+    }
+
+    public void Track_TimeCountData(TimeCount_UpdateData dataToTrack)
+    {
+        for (int i = 0; i < _countUpdateDatas.Count; i++)
+        {
+            TimeCount_UpdateData data = _countUpdateDatas[i];
+            if (dataToTrack.obj != data.obj) continue;
+
+            data.Set_UpdateValue(dataToTrack.updateValue);
+            return;
+        }
+        _countUpdateDatas.Add(dataToTrack);
+    }
+    public void Count_Time()
+    {
+        int calculatedTimeCount = data.timeCount + Mathf.Max(0, TimeCount_ValueUpdateSum());
 
         if (calculatedTimeCount <= _maxTimeCount)
         {
             _data.Set_Data(calculatedTimeCount, data.dayCount);
-            Run_TimeUpdate();
+            Run_TimeUpdates();
 
             return;
         }
@@ -117,14 +163,9 @@ public class Time_Manager : MonoBehaviour, ISaveLoadable
         _data.Set_Data(calculatedTimeCount % _maxTimeCount - 1, _data.dayCount + dayUpdateCount);
 
         OnDayUpdate?.Invoke();
-        OnDayCountUpdate?.Invoke(_data.dayCount);
+        OnDayCount?.Invoke(_data.dayCount);
 
-        Run_TimeUpdate();
-    }
-
-    public bool Is_Night()
-    {
-        return _data.timeCount >= _nightPhaseCount;
+        Run_TimeUpdates();
     }
 
 
@@ -166,7 +207,7 @@ public class Time_Manager : MonoBehaviour, ISaveLoadable
         while (true)
         {
             yield return new WaitForSeconds(restrictedTikTime);
-            Update_Data(1);
+            Count_Time();
         }
     }
 

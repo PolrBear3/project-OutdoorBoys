@@ -10,6 +10,9 @@ public class Player_Interaction : MonoBehaviour, IItemsSource, IItemsSourceRemov
     [SerializeField] private SpriteRenderer _indicationIcon;
     public SpriteRenderer indicationIcon => _indicationIcon;
 
+    [Space(20)]
+    [SerializeField][Range(0, 10)] private int _movementTimeCost;
+
 
     private GameObject _currentItemPrefab;
     public GameObject currentItemPrefab => _currentItemPrefab;
@@ -21,6 +24,11 @@ public class Player_Interaction : MonoBehaviour, IItemsSource, IItemsSourceRemov
         EventBus_Manager.Register(EventBus.AwakeLoad, Set_Data);
     }
 
+    private void Start()
+    {
+        Update_IndicationIcon(null);
+    }
+
     private void OnDestroy()
     {
         EventBus_Manager.UnRegister(EventBus.AwakeLoad, Set_Data);
@@ -29,7 +37,8 @@ public class Player_Interaction : MonoBehaviour, IItemsSource, IItemsSourceRemov
         Movement_Controller playerMovement = _controller.movement;
 
         input.OnMovement -= playerMovement.MoveTo_Tile;
-        playerMovement.OnMovementDistanced -= UpdateStatus_OnMovement;
+
+        playerMovement.OnMovement -= InGame_Manager.instance.time.Count_Time;
         playerMovement.OnMovementStated -= Update_MovementAnimation;
     }
 
@@ -49,7 +58,7 @@ public class Player_Interaction : MonoBehaviour, IItemsSource, IItemsSourceRemov
     {
         Tile currentTile = _controller.movement.currentTile;
         List<PlaceableItem> placedItems = currentTile.PlacedItems(updateItem);
-        
+
         if (placedItems.Count <= 0) return 0;
 
         bool isUseItem = updateItem.itemType == ItemType.use;
@@ -59,7 +68,7 @@ public class Player_Interaction : MonoBehaviour, IItemsSource, IItemsSourceRemov
         {
             PlaceableItem placedItem = placedItems[i];
             ItemData placedData = placedItem.data;
-            
+
             int placedAmount = placedData.amount;
 
             if (isUseItem == false)
@@ -103,13 +112,12 @@ public class Player_Interaction : MonoBehaviour, IItemsSource, IItemsSourceRemov
     // Data
     private void Set_Data()
     {
-        Update_IndicationIcon(null);
-
         Input_Controller input = Input_Controller.instance;
         Movement_Controller playerMovement = _controller.movement;
 
         input.OnMovement += playerMovement.MoveTo_Tile;
-        playerMovement.OnMovementDistanced += UpdateStatus_OnMovement;
+
+        playerMovement.OnMovement += InGame_Manager.instance.time.Count_Time;
         playerMovement.OnMovementStated += Update_MovementAnimation;
     }
 
@@ -123,7 +131,7 @@ public class Player_Interaction : MonoBehaviour, IItemsSource, IItemsSourceRemov
     }
 
 
-    // Movement
+    // Maint
     private void Update_MovementAnimation(bool isMoving)
     {
         AnimationPlayer animPlayer = _controller.animationPlayer;
@@ -132,7 +140,7 @@ public class Player_Interaction : MonoBehaviour, IItemsSource, IItemsSourceRemov
         animPlayer.Play(animIndexNum);
     }
 
-    private void UpdateStatus_OnMovement(int moveDistance)
+    public void Update_MovementTimeCost()
     {
         InGame_Manager manager = InGame_Manager.instance;
 
@@ -142,11 +150,10 @@ public class Player_Interaction : MonoBehaviour, IItemsSource, IItemsSourceRemov
         int currentInventoryWeight = hasInventoryBagpack ? manager.inventory.slotManager.Total_ItemWeight() : 0;
         int currentItemWeight = currentItem != null ? currentItem.Item_Weight() + currentInventoryWeight : 0;
 
-        manager.time.Update_Data(moveDistance + currentItemWeight * moveDistance);
+        int timeCost = Mathf.Max(1, _movementTimeCost + currentItemWeight * _movementTimeCost);
+        manager.time.Track_TimeCountData(new(this, timeCost));
     }
 
-
-    // Actions
     public void Load_ItemPrefab(GameObject itemPrefab)
     {
         Destroy(_currentItemPrefab);

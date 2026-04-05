@@ -16,12 +16,12 @@ public class Trap : MonoBehaviour
     // MonoBehaviour
     private void Awake()
     {
-        InGame_Manager.instance.time.OnTimeUpdate += Activate;
+        InGame_Manager.instance.time.OnTimeCount += Activate;
     }
 
     private void OnDestroy()
     {
-        InGame_Manager.instance.time.OnTimeUpdate -= Activate;
+        InGame_Manager.instance.time.OnTimeCount -= Activate;
     }
 
 
@@ -39,19 +39,19 @@ public class Trap : MonoBehaviour
             for (int j = 0; j < currentAnimals.Count; j++)
             {
                 Animal currentAnimal = currentAnimals[j];
-                
+
                 if (currentAnimal.data.animalScrObj != _activatePriorities[i]) continue;
                 return currentAnimal;
             }
         }
         return null;
     }
-    
-    private void Activate()
+
+    private void Activate(int _)
     {
         Animal activateAnimal = Activate_TargetAnimal();
         if (activateAnimal == null) return;
-        
+
         StartCoroutine(Activate_Update(activateAnimal));
     }
     private IEnumerator Activate_Update(Animal activateAnimal)
@@ -60,7 +60,7 @@ public class Trap : MonoBehaviour
         while (movementsManager.AllMovements_Complete() == false) yield return null;
 
         _placeableItem.AnimationDelay_Remove();
-        
+
         AnimalData data = activateAnimal.data;
 
         data.Update_Health(data.health - _damage);

@@ -27,8 +27,8 @@ public class Fire : MonoBehaviour
         InGame_Manager manager = InGame_Manager.instance;
         Time_Manager time = manager.time;
 
-        time.OnTimeUpdate += UpdatePlaced_BurnItems;
-        time.OnTimeUpdate += Update_BurningState;
+        time.OnTimeCount += UpdatePlaced_BurnItems;
+        time.OnTimeCount += Update_BurningState;
 
         manager.tilesController.OnTileHover += Toggle_FillBar;
     }
@@ -43,8 +43,8 @@ public class Fire : MonoBehaviour
         InGame_Manager manager = InGame_Manager.instance;
         Time_Manager time = manager.time;
 
-        time.OnTimeUpdate -= UpdatePlaced_BurnItems;
-        time.OnTimeUpdate -= Update_BurningState;
+        time.OnTimeCount -= UpdatePlaced_BurnItems;
+        time.OnTimeCount -= Update_BurningState;
 
         manager.tilesController.OnTileHover -= Toggle_FillBar;
     }
@@ -58,7 +58,7 @@ public class Fire : MonoBehaviour
 
 
     // Main
-    private void UpdatePlaced_BurnItems()
+    private void UpdatePlaced_BurnItems(int _)
     {
         Tile currentTile = _placeableItem.currentTile;
         List<PlaceableItem> placedBurnItems = currentTile.placedItems;
@@ -85,7 +85,7 @@ public class Fire : MonoBehaviour
         }
     }
 
-    private void Update_BurningState()
+    private void Update_BurningState(int _)
     {
         if (_placeableItem.data.amount > 0)
         {

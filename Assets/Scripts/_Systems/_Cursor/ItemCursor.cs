@@ -58,7 +58,7 @@ public class ItemCursor : MonoBehaviour, IItemsSource, IItemsSourceRemove, IItem
     public int RemoveItem(Item_ScrObj updateItem, int removeAmount)
     {
         if (_data == null) return 0;
-        
+
         Item_ScrObj currentItem = _data.itemScrObj;
         if (currentItem != updateItem) return 0;
 
@@ -291,6 +291,8 @@ public class ItemCursor : MonoBehaviour, IItemsSource, IItemsSourceRemove, IItem
     private void Load_UseItem()
     {
         Player_Interaction player = InGame_Manager.instance.player.interaction;
+        player.Update_MovementTimeCost();
+
         bool itemLoadReady = _data != null && _data.amount > 0 && _data.itemScrObj.itemType == ItemType.use;
 
         GameObject loadItem = itemLoadReady ? _data.itemScrObj.itemPrefab : null;
