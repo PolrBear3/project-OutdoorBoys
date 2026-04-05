@@ -187,8 +187,12 @@ public class Tiles_Controller : MonoBehaviour, IItemsSource
 
         Cursor cursor = manager.cursor;
         Tile playerTile = manager.player.movement.currentTile;
+        ItemData currentItemData = cursor.itemCursor.data;
 
-        return playerTile == tile || cursor.itemCursor.data != null && cursor.PointingTile_InRange(tile);
+        if (currentItemData == null) return tile == playerTile;
+        if (cursor.PointingTile_InRange(tile) == false) return false;
+
+        return currentItemData.itemScrObj.Select_Available(currentItemData, tile);
     }
     private bool Tile_Selectable(out Tile currentTile)
     {

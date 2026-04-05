@@ -6,13 +6,13 @@ using UnityEngine;
 [System.Serializable]
 public class PlayerData
 {
-    [SerializeField][Range(0, 10)] private int _hunger;
+    [ES3Serializable][SerializeField][Range(0, 10)] private int _hunger;
     public int hunger => _hunger;
 
-    [SerializeField][Range(0, 10)] private int _temperature;
+    [ES3Serializable][SerializeField][Range(0, 10)] private int _temperature;
     public int temperature => _temperature;
 
-    [SerializeField][Range(0, 500)] private int _maxItemCarryWeight;
+    [ES3Serializable][SerializeField][Range(0, 500)] private int _maxItemCarryWeight;
     public int maxItemCarryWeight => _maxItemCarryWeight;
 
 

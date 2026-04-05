@@ -129,7 +129,9 @@ public class Tile : MonoBehaviour
     public ItemData Set_PlacingItem(ItemData setItemData)
     {
         if (setItemData == null) return setItemData;
+
         Item_ScrObj setItem = setItemData.itemScrObj;
+        if (setItem.Place_Available(setItemData, this) == false) return setItemData;
 
         int setItemAmount = setItemData.amount;
         if (setItemAmount <= 0) return setItemData;

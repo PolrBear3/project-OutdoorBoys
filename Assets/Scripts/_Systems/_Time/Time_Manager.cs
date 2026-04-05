@@ -11,23 +11,23 @@ public enum TimeUpdateBus
     SubUpdate = 2
 }
 
-public class TimeCount_UpdateData
+public class TimeCountData
 {
     private object _obj;
     public object obj => _obj;
 
-    private int _updateValue;
-    public int updateValue => _updateValue;
+    private int _countValue;
+    public int countValue => _countValue;
 
-    public TimeCount_UpdateData(object obj, int value)
+    public TimeCountData(object obj, int value)
     {
         _obj = obj;
-        _updateValue = value;
+        _countValue = value;
     }
 
-    public void Set_UpdateValue(int setValue)
+    public void Set_CountValue(int setValue)
     {
-        _updateValue = Mathf.Max(0, setValue);
+        _countValue = Mathf.Max(0, setValue);
     }
 }
 
@@ -44,8 +44,10 @@ public class Time_Manager : MonoBehaviour, ISaveLoadable
     private TimeData _data;
     public TimeData data => _data;
 
-    private List<TimeCount_UpdateData> _countUpdateDatas = new();
+    private List<TimeCountData> _countUpdateDatas = new();
     private Dictionary<TimeUpdateBus, Action> _timeUpdateBuses = new();
+
+    public Action OnTimeCountDataUpdate;
 
     public Action<int> OnTimeCount;
     public Action OnNightPhaseUpdate;
@@ -123,32 +125,35 @@ public class Time_Manager : MonoBehaviour, ISaveLoadable
     }
 
 
-    public int TimeCount_ValueUpdateSum()
+    public int Total_TimeCountSum()
     {
         int sum = 0;
 
-        foreach (TimeCount_UpdateData data in _countUpdateDatas)
+        foreach (TimeCountData data in _countUpdateDatas)
         {
-            sum += data.updateValue;
+            sum += data.countValue;
         }
         return sum;
     }
 
-    public void Track_TimeCountData(TimeCount_UpdateData dataToTrack)
+    public void Track_TimeCountData(TimeCountData dataToTrack)
     {
         for (int i = 0; i < _countUpdateDatas.Count; i++)
         {
-            TimeCount_UpdateData data = _countUpdateDatas[i];
+            TimeCountData data = _countUpdateDatas[i];
             if (dataToTrack.obj != data.obj) continue;
 
-            data.Set_UpdateValue(dataToTrack.updateValue);
+            data.Set_CountValue(dataToTrack.countValue);
+            OnTimeCountDataUpdate?.Invoke();
+            
             return;
         }
         _countUpdateDatas.Add(dataToTrack);
+        OnTimeCountDataUpdate?.Invoke();
     }
     public void Count_Time()
     {
-        int calculatedTimeCount = data.timeCount + Mathf.Max(0, TimeCount_ValueUpdateSum());
+        int calculatedTimeCount = data.timeCount + Mathf.Max(0, Total_TimeCountSum());
 
         if (calculatedTimeCount <= _maxTimeCount)
         {

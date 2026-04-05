@@ -28,6 +28,7 @@ public class InGameUI_Manager : MonoBehaviour
         Time_Manager time = manager.time;
 
         time.OnTimeCount -= Update_TimeText;
+        time.OnTimeCountDataUpdate -= Update_TimeText;
         time.OnDayCount -= Update_DayText;
 
         Player_Controller player = manager.player;
@@ -47,6 +48,7 @@ public class InGameUI_Manager : MonoBehaviour
 
         Update_TimeText(timeData.timeCount);
         time.OnTimeCount += Update_TimeText;
+        time.OnTimeCountDataUpdate += Update_TimeText;
 
         Update_DayText(timeData.dayCount);
         time.OnDayCount += Update_DayText;
@@ -65,9 +67,14 @@ public class InGameUI_Manager : MonoBehaviour
     // Text
     private void Update_TimeText(int timeCount)
     {
-        int timeCountUpdateValue = InGame_Manager.instance.time.TimeCount_ValueUpdateSum();
+        int timeCountUpdateValue = InGame_Manager.instance.time.Total_TimeCountSum();
         _timeText.text = timeCount + " (" + "+" + timeCountUpdateValue + ")".ToString();
     }
+    private void Update_TimeText()
+    {
+        Update_TimeText(InGame_Manager.instance.time.data.timeCount);
+    }
+
     private void Update_DayText(int dayCount) => _dayText.text = "Day " + dayCount.ToString();
 
     private void Update_HungerText(int hungerValue) => _hungerText.text = hungerValue.ToString();

@@ -48,8 +48,15 @@ public class Item_ScrObj : ScriptableObject
     [SerializeField][Range(0, 100)] private int _itemWeight;
     public int itemWeight => _itemWeight;
 
-    [SerializeField][Range(0, 10)]  private int _triggerRange;
+    [SerializeField][Range(0, 10)] private int _triggerRange;
     public int triggerRange => _triggerRange;
+
+    [Space(20)]
+    [SerializeField] private ItemRule_ScrObj[] _placeRestrictions;
+    public ItemRule_ScrObj[] placeRestrictions => _placeRestrictions;
+
+    [SerializeField] private ItemRule_ScrObj[] _selectRestrictions;
+    public ItemRule_ScrObj[] selectRestrictions => _selectRestrictions;
 
     [Space(20)]
     [SerializeField] private ItemData[] _itemIngredientDatas;
@@ -60,6 +67,30 @@ public class Item_ScrObj : ScriptableObject
     {
         if (_offsetData.Length <= 0) return null;
         return _offsetData[Mathf.Clamp(offsetIndex, 0, _offsetData.Length - 1)];
+    }
+
+
+    // Restrictions
+    public bool Place_Available(ItemData currentData, Tile targetTile)
+    {
+        if (_placeRestrictions.Length <= 0) return true;
+        
+        for (int i = 0; i < _placeRestrictions.Length; i++)
+        {
+            if (_placeRestrictions[i].Available(currentData, targetTile) == false) return false;
+        }
+        return true;
+    }
+
+    public bool Select_Available(ItemData currentData, Tile targetTile)
+    {
+        if (_selectRestrictions.Length <= 0) return true;
+
+        for (int i = 0; i < _selectRestrictions.Length; i++)
+        {
+            if (_selectRestrictions[i].Available(currentData, targetTile) == false) return false;
+        }
+        return true;
     }
 
 

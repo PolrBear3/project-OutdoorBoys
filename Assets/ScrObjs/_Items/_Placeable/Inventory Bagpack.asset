@@ -28,4 +28,7 @@ MonoBehaviour:
   _maxAmount: 1
   _itemWeight: 0
   _triggerRange: 0
+  _placeRestrictions:
+  - {fileID: 11400000, guid: ce54e4e0d72924f0c9ece991976d94f8, type: 2}
+  _selectRestrictions: []
   _itemIngredientDatas: []
