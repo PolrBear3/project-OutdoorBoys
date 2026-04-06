@@ -17,8 +17,8 @@ public class AnimalData
     private bool _isOnSight;
     public bool isOnSight => _isOnSight;
 
-    private int _onSightTimeCount;
-    public int onSightTimeCount => _onSightTimeCount;
+    private int _onSightCount;
+    public int onSightcount => _onSightCount;
 
 
     // Constructors
@@ -43,8 +43,8 @@ public class AnimalData
         _isOnSight = _trailMarkCount <= 0;
     }
 
-    public void Update_OnSightTimeCount(int updateValue)
+    public void Update_OnSightCount(int updateValue)
     {
-        _onSightTimeCount += updateValue;
+        _onSightCount = Mathf.Max(0, _onSightCount + updateValue);
     }
 }

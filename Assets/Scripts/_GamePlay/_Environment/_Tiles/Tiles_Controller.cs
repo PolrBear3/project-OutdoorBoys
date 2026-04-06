@@ -119,6 +119,32 @@ public class Tiles_Controller : MonoBehaviour, IItemsSource
         return itemExistTiles;
     }
 
+    public List<Tile> Current_EdgedTiles()
+    {
+        InGame_Manager manager = InGame_Manager.instance;
+
+        Vector2 size = manager.worldMapGenerator.Converted_GenerateSize();
+        Vector2 start = manager.worldMapGenerator.Generate_StartPosition();
+
+        float minX = start.x;
+        float maxX = start.x + size.x - 1;
+
+        float maxY = start.y;
+        float minY = start.y - size.y + 1;
+
+        List<Tile> edgedTiles = new();
+        
+        for (int i = 0; i < _currentTiles.Count; i++)
+        {
+            Tile tile = _currentTiles[i];
+            Vector2 pos = tile.transform.position;
+
+            if (pos.x != minX && pos.x != maxX && pos.y != minY && pos.y != maxY) continue;
+            edgedTiles.Add(tile);
+        }
+        return edgedTiles;
+    }
+
 
     public Tile Current_Tile(Vector2 tileGeneratedPos)
     {
@@ -163,7 +189,6 @@ public class Tiles_Controller : MonoBehaviour, IItemsSource
         }
         return null;
     }
-
 
     public int Tile_Count(TileScrObj tileScrObj)
     {

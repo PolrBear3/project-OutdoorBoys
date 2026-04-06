@@ -4,13 +4,15 @@ using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
 
+public enum MovementState { stunned, knockback }
+
 public class Movement_Controller : MonoBehaviour
 {
     [Space(20)]
     [SerializeField] private Vector2 _offset;
     public Vector2 offset => _offset;
 
-    [SerializeField][Range(0, 10)] private float _moveDuration;
+    [SerializeField][Range(0, 1)] private float _moveDuration;
     public float moveDuration => _moveDuration;
 
 
@@ -21,6 +23,9 @@ public class Movement_Controller : MonoBehaviour
     
     private float _currentMoveDuration;
     public float currentMoveDuration => _currentMoveDuration;
+
+    private Dictionary<MovementState, int> _currentStateDatas = new();
+
 
     public Action OnMovement;
     public Action<Vector2> OnMovementDirection;
@@ -57,6 +62,11 @@ public class Movement_Controller : MonoBehaviour
     }
 
 
+    public Vector2 CurrentTile_OffsetPosition()
+    {
+        return (Vector2)_currentTile.setPosition.position + _currentOffset;
+    }
+
     public void Update_Offset(Vector2 offSet)
     {
         _currentOffset = offSet;
@@ -69,9 +79,20 @@ public class Movement_Controller : MonoBehaviour
         Update_Offset(_offset);
     }
 
-    public Vector2 CurrentTile_OffsetPosition()
+
+    public int CurrentState_Count(MovementState checkState)
     {
-        return (Vector2)_currentTile.setPosition.position + _currentOffset;
+        return _currentStateDatas.TryGetValue(checkState, out int count) ? count : 0;
+    }
+
+    public void Update_CurrentState(MovementState updateState, int updateCount)
+    {
+        if (updateCount <= 0)
+        {
+            _currentStateDatas.Remove(updateState);
+            return;
+        }
+        _currentStateDatas[updateState] = updateCount;
     }
 
 

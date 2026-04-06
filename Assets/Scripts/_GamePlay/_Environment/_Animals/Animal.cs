@@ -12,15 +12,15 @@ public class Animal : MonoBehaviour
     [SerializeField] private Movement_Controller _movement;
     public Movement_Controller movement => _movement;
 
+    [SerializeField] private FillBar_Controller _healthFillBar;
+
+
     [Space(20)]
     [SerializeField] private AnimationClipScrObj _deceasedAnimationClip;
 
     [Space(20)]
     [SerializeField] private ItemData[] _dropItems;
     [SerializeField] private Item_ScrObj[] _followItems;
-
-    [Space(20)]
-    [SerializeField][Range(0, 10)] private int _actionDelayTime;
 
     [Space(10)]
     public UnityEvent OnSightActions;
@@ -39,10 +39,15 @@ public class Animal : MonoBehaviour
         _movement.OnMovementDirection -= _animation.Update_Flip;
         _movement.OnMovementStated -= Update_Animation;
 
-        Movement_Controller playerMovement = InGame_Manager.instance.player.movement;
+        InGame_Manager manager = InGame_Manager.instance;
 
-        playerMovement.OnMovement -= Collect_TrailMark;
-        playerMovement.OnMovement -= Update_OnSight;
+        manager.tilesController.OnTileHover -= Toggle_FillBar;
+        _movement.OnMovement -= Toggle_FillBar;
+
+        Time_Manager time = manager.time;
+
+        time.UnRegister(TimeUpdateBus.AwakeUpdate, Collect_TrailMark);
+        time.UnRegister(TimeUpdateBus.AwakeUpdate, Update_OnSight);
     }
 
 
@@ -52,10 +57,15 @@ public class Animal : MonoBehaviour
         _movement.OnMovementDirection += _animation.Update_Flip;
         _movement.OnMovementStated += Update_Animation;
 
-        Movement_Controller playerMovement = InGame_Manager.instance.player.movement;
+        InGame_Manager manager = InGame_Manager.instance;
 
-        playerMovement.OnMovement += Collect_TrailMark;
-        playerMovement.OnMovement += Update_OnSight;
+        manager.tilesController.OnTileHover += Toggle_FillBar;
+        _movement.OnMovement += Toggle_FillBar;
+
+        Time_Manager time = manager.time;
+
+        time.Register(TimeUpdateBus.AwakeUpdate, Collect_TrailMark);
+        time.Register(TimeUpdateBus.AwakeUpdate, Update_OnSight);
     }
 
     public void Set_Data(AnimalScrObj setAnimal)
@@ -69,6 +79,8 @@ public class Animal : MonoBehaviour
         int randCollectCount = UnityEngine.Random.Range(1, distanceFromPlayer + 1);
 
         _data = new(setAnimal, health, randCollectCount);
+
+        _healthFillBar.Refresh_CurrentFillBar();
     }
 
 
@@ -129,6 +141,21 @@ public class Animal : MonoBehaviour
     }
 
 
+    // Visuals
+    private void Toggle_FillBar(Tile hoveringTile)
+    {
+        bool toggle = hoveringTile == _movement.currentTile;
+        _healthFillBar.Toggle(toggle);
+
+        if (toggle == false) return;
+        _healthFillBar.Update_CurrentBarFill(_data.animalScrObj.maxHealth, _data.health);
+    }
+    private void Toggle_FillBar()
+    {
+        Toggle_FillBar(InGame_Manager.instance.cursor.pointingTile);
+    }
+
+
     // State Updates
     private void Collect_TrailMark()
     {
@@ -144,6 +171,9 @@ public class Animal : MonoBehaviour
         _onSightFlag = Time.frameCount;
 
         _movement.Update_MoveDurationValue();
+
+        _healthFillBar.Set_FillBar(transform);
+        _healthFillBar.Toggle(false);
     }
 
     private void Update_OnSight()
@@ -151,8 +181,8 @@ public class Animal : MonoBehaviour
         if (_data.isOnSight == false) return;
         if (_onSightFlag == Time.frameCount) return;
 
-        _data.Update_OnSightTimeCount(1);
         OnSightActions?.Invoke();
+        _data.Update_OnSightCount(Player_InRange() ? 1 : -1);
     }
 
     public void Update_DeceasedState()
@@ -183,6 +213,17 @@ public class Animal : MonoBehaviour
 
 
     // Default Actions
+    public void Update_StunnedMovementState()
+    {
+        int stunnedStateCount = _movement.CurrentState_Count(MovementState.stunned);
+        
+        if (stunnedStateCount <= 0) return;
+        _movement.Update_CurrentState(MovementState.stunned, stunnedStateCount - 1);
+
+        _movementFlag = Time.frameCount;
+    }
+
+
     public void RunOff()
     {
         if (_movementFlag == Time.frameCount) return;
@@ -219,12 +260,13 @@ public class Animal : MonoBehaviour
     }
     public void RunOff(int maxRunOffCount)
     {
-        if (_data.onSightTimeCount > maxRunOffCount) return;
+        if (_data.onSightcount > maxRunOffCount) return;
         RunOff();
     }
 
     public void RunOff_Sight()
     {
+        if (_movementFlag == Time.frameCount) return;
         if (_data.health <= 0) return;
         if (Player_InRange() == false) return;
 
@@ -237,10 +279,29 @@ public class Animal : MonoBehaviour
     }
 
 
+    public void Roam()
+    {
+        if (_movementFlag == Time.frameCount) return;
+        if (_data.health <= 0) return;
+        if (Player_InRange()) return;
+
+        Tile playerTile = InGame_Manager.instance.player.movement.currentTile;
+        List<Tile> rangedTiles = MoveDistance_RangeTiles();
+
+        for (int i = rangedTiles.Count - 1; i >= 0 ; i--)
+        {
+            if (playerTile.DistanceTo_TargetTile(rangedTiles[i]) > _data.animalScrObj.moveDistanceRange) continue;
+            rangedTiles.RemoveAt(i);
+        }
+
+        _movement.MoveTo_Tile(rangedTiles[UnityEngine.Random.Range(0, rangedTiles.Count)]);
+        _movementFlag = Time.frameCount;
+    }
+
     public void Escape(int delayCount)
     {
         if (_data.health <= 0) return;
-        if (_data.onSightTimeCount <= delayCount) return;
+        if (_data.onSightcount <= delayCount) return;
 
         Animals_Manager manager = AnimalManager();
         if (manager == null) return;
@@ -249,15 +310,11 @@ public class Animal : MonoBehaviour
         Destroy(gameObject);
     }
 
-    public void Follow(int maxFollowCount)
+    public void Follow()
     {
         if (_movementFlag == Time.frameCount) return;
         if (_data.health <= 0) return;
-
-        int onSightTimeCount = _data.onSightTimeCount;
-
-        if (onSightTimeCount <= _actionDelayTime) return;
-        if (onSightTimeCount > maxFollowCount + _actionDelayTime) return;
+        if (_data.onSightcount <= 0) return;
 
         Tile playerTile = InGame_Manager.instance.player.movement.currentTile;
         if (playerTile == _movement.currentTile) return;
@@ -311,7 +368,7 @@ public class Animal : MonoBehaviour
     public void Follow_Item()
     {
         if (_movementFlag == Time.frameCount) return;
-        if (_data.onSightTimeCount <= _actionDelayTime) return;
+        if (_data.onSightcount <= 0) return;
 
         Tile currentTile = _movement.currentTile;
         for (int i = 0; i < _followItems.Length; i++)
@@ -351,7 +408,7 @@ public class Animal : MonoBehaviour
     }
     public void Follow_Item(int maxFollowCount)
     {
-        if (_data.onSightTimeCount > maxFollowCount + _actionDelayTime) return;
+        if (_data.onSightcount > maxFollowCount) return;
         Follow_Item();
     }
 

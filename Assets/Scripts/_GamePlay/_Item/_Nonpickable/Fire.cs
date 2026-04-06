@@ -53,7 +53,11 @@ public class Fire : MonoBehaviour
     // Visuals
     private void Toggle_FillBar(Tile hoveringTile)
     {
-        _fillBarController.Toggle(hoveringTile == _placeableItem.currentTile);
+        bool toggle = hoveringTile != null && hoveringTile == _placeableItem.currentTile;
+        _fillBarController.Toggle(toggle);
+
+        if (toggle == false) return;
+        _fillBarController.Update_CurrentBarFill(_fillBarDecreasePoint, _placeableItem.data.amount);
     }
 
 

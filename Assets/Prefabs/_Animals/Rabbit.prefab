@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1742694073595841622}
   - component: {fileID: 178274691860591808}
+  - component: {fileID: -496978484732062263}
   - component: {fileID: 3490125478823233063}
   - component: {fileID: 4065704676414607868}
   m_Layer: 0
@@ -51,6 +52,21 @@ MonoBehaviour:
   _animationClips:
   - {fileID: 11400000, guid: 5bcc235d95cca4bfc88fedf6d39d1b67, type: 2}
   - {fileID: 11400000, guid: d237aec74730340df8f669064ff49e99, type: 2}
+--- !u!114 &-496978484732062263
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2848068808391517652}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f1c9aaee5b8e745968cb1ebba2fa87f7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _fillBarPrefab: {fileID: 3122773858983555742, guid: b154050f99b494edda6fb24a64dbeae8, type: 3}
+  _setOffSet: {x: 0, y: 0.65}
+  _fillColor: {r: 0.64705884, g: 0.1882353, b: 0.1882353, a: 1}
 --- !u!114 &3490125478823233063
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -79,14 +95,40 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _animation: {fileID: 178274691860591808}
   _movement: {fileID: 3490125478823233063}
+  _healthFillBar: {fileID: -496978484732062263}
   _deceasedAnimationClip: {fileID: 11400000, guid: f31ad7f4760c24191b7851b6e2ea4bb3, type: 2}
   _dropItems:
   - _itemScrObj: {fileID: 11400000, guid: fba43ae9d93594cddbc2a132e3fd3b95, type: 2}
     _amount: 1
   _followItems: []
+  _actionDelayTime: 0
   OnSightActions:
     m_PersistentCalls:
       m_Calls:
+      - m_Target: {fileID: 4065704676414607868}
+        m_TargetAssemblyTypeName: Animal, Assembly-CSharp
+        m_MethodName: Update_StunnedMovementState
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 3
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 4065704676414607868}
+        m_TargetAssemblyTypeName: Animal, Assembly-CSharp
+        m_MethodName: Roam
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 3
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
       - m_Target: {fileID: 4065704676414607868}
         m_TargetAssemblyTypeName: Animal, Assembly-CSharp
         m_MethodName: RunOff

@@ -16,12 +16,12 @@ public class Trap : MonoBehaviour
     // MonoBehaviour
     private void Awake()
     {
-        InGame_Manager.instance.time.OnTimeCount += Activate;
+        InGame_Manager.instance.time.Register(TimeUpdateBus.StartUpdate, Activate);
     }
 
     private void OnDestroy()
     {
-        InGame_Manager.instance.time.OnTimeCount -= Activate;
+        InGame_Manager.instance.time.UnRegister(TimeUpdateBus.StartUpdate, Activate);
     }
 
 
@@ -47,10 +47,12 @@ public class Trap : MonoBehaviour
         return null;
     }
 
-    private void Activate(int _)
+    private void Activate()
     {
         Animal activateAnimal = Activate_TargetAnimal();
+        
         if (activateAnimal == null) return;
+        if (activateAnimal.data.isOnSight == false) return;
 
         StartCoroutine(Activate_Update(activateAnimal));
     }
@@ -59,11 +61,14 @@ public class Trap : MonoBehaviour
         MovementControllers_Manager movementsManager = InGame_Manager.instance.movements;
         while (movementsManager.AllMovements_Complete() == false) yield return null;
 
-        _placeableItem.AnimationDelay_Remove();
-
         AnimalData data = activateAnimal.data;
 
         data.Update_Health(data.health - _damage);
         activateAnimal.Update_DeceasedState();
+
+        Movement_Controller movement = activateAnimal.movement;
+        activateAnimal.movement.Update_CurrentState(MovementState.stunned, movement.CurrentState_Count(MovementState.stunned) + 1);
+
+        _placeableItem.AnimationDelay_Remove();
     }
 }

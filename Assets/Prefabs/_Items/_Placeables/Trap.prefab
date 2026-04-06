@@ -77,7 +77,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _placeableItem: {fileID: 1531750997209139500}
-  _damage: 2
+  _damage: 1
   _activatePriorities:
   - {fileID: 11400000, guid: 3865eb48a70924336bd951d0826621c7, type: 2}
   - {fileID: 11400000, guid: b90a3b7935e344a6dbde6f8144181129, type: 2}
