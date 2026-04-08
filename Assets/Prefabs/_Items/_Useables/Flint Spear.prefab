@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6202383651998061352}
   - component: {fileID: 2873364016420352242}
+  - component: {fileID: 5705671923637979890}
   m_Layer: 0
   m_Name: Flint Spear
   m_TagString: Untagged
@@ -44,3 +45,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1d7b415f5701a4ae888e036e1ae5a777, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &5705671923637979890
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5769858720269626403}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 14cace335e5674592a2cb481d839b777, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _useableItem: {fileID: 2873364016420352242}
+  _projectilePrefab: {fileID: 4345176530762021143, guid: 1325e84b6c464463a90d6a708c7a152f, type: 3}
+  _launchAnimClip: {fileID: 0}

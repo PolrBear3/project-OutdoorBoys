@@ -55,6 +55,8 @@ public class Time_Manager : MonoBehaviour, ISaveLoadable
     public Action<int> OnDayCount;
     public Action OnDayUpdate;
 
+    public Action<bool> OnTikToggle;
+
     private Coroutine _timeTikCoroutine;
 
 
@@ -145,7 +147,7 @@ public class Time_Manager : MonoBehaviour, ISaveLoadable
 
             data.Set_CountValue(dataToTrack.countValue);
             OnTimeCountDataUpdate?.Invoke();
-            
+
             return;
         }
         _countUpdateDatas.Add(dataToTrack);
@@ -200,6 +202,8 @@ public class Time_Manager : MonoBehaviour, ISaveLoadable
             _timeTikCoroutine = null;
         }
 
+        OnTikToggle?.Invoke(toggle);
+
         if (toggle == false) return;
         if (InGame_Manager.instance.movements.AllMovements_Complete() == false) return;
 
@@ -220,7 +224,7 @@ public class Time_Manager : MonoBehaviour, ISaveLoadable
     {
         Toggle_TimeTik(_timeTikCoroutine == null);
     }
-    private void Stop_TimTik()
+    public void Stop_TimTik()
     {
         if (_timeTikCoroutine == null) return;
         Toggle_TimeTik(false);

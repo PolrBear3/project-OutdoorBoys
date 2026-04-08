@@ -232,12 +232,17 @@ public class ItemCursor : MonoBehaviour, IItemsSource, IItemsSourceRemove, IItem
         if (_data == null) return;
 
         InGame_Manager manager = InGame_Manager.instance;
-        if (manager.tilesController.Tile_Selectable(manager.cursor.pointingTile)) return;
+
+        Tiles_Controller tilesController = manager.tilesController;
+        if (tilesController.Tile_Selectable(manager.cursor.pointingTile)) return;
+
+        Tile playerTile = manager.player.movement.currentTile;
+        if (tilesController.Tile_Selectable(playerTile) == false) return;
 
         Inventory_Manager inventory = manager.inventory;
         if (inventory.Toggled() == false)
         {
-            Place_AllItem(manager.player.movement.currentTile);
+            Place_AllItem(playerTile);
             OnItemReturn?.Invoke();
 
             return;
@@ -283,7 +288,12 @@ public class ItemCursor : MonoBehaviour, IItemsSource, IItemsSourceRemove, IItem
 
     private void Place_UseItem()
     {
-        if (InGame_Manager.instance.player.movement.currentTile.Set_UseItem(_data) == false) return;
+        InGame_Manager manager = InGame_Manager.instance;
+
+        Tile playerTile = manager.player.movement.currentTile;
+        if (manager.tilesController.Tile_Selectable(playerTile) == false) return;
+
+        if (playerTile.Set_UseItem(_data) == false) return;
         Set_Data(null);
     }
 

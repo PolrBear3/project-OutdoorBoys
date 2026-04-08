@@ -216,7 +216,7 @@ public class Animal : MonoBehaviour
     public void Update_StunnedMovementState()
     {
         int stunnedStateCount = _movement.CurrentState_Count(MovementState.stunned);
-        
+
         if (stunnedStateCount <= 0) return;
         _movement.Update_CurrentState(MovementState.stunned, stunnedStateCount - 1);
 
@@ -288,7 +288,7 @@ public class Animal : MonoBehaviour
         Tile playerTile = InGame_Manager.instance.player.movement.currentTile;
         List<Tile> rangedTiles = MoveDistance_RangeTiles();
 
-        for (int i = rangedTiles.Count - 1; i >= 0 ; i--)
+        for (int i = rangedTiles.Count - 1; i >= 0; i--)
         {
             if (playerTile.DistanceTo_TargetTile(rangedTiles[i]) > _data.animalScrObj.moveDistanceRange) continue;
             rangedTiles.RemoveAt(i);
@@ -301,7 +301,7 @@ public class Animal : MonoBehaviour
     public void Escape(int delayCount)
     {
         if (_data.health <= 0) return;
-        if (_data.onSightcount <= delayCount) return;
+        if (_data.onSightcount < delayCount) return;
 
         Animals_Manager manager = AnimalManager();
         if (manager == null) return;
@@ -310,14 +310,18 @@ public class Animal : MonoBehaviour
         Destroy(gameObject);
     }
 
-    public void Follow()
+    public void Follow(int agroRange)
     {
         if (_movementFlag == Time.frameCount) return;
         if (_data.health <= 0) return;
-        if (_data.onSightcount <= 0) return;
 
-        Tile playerTile = InGame_Manager.instance.player.movement.currentTile;
-        if (playerTile == _movement.currentTile) return;
+        InGame_Manager manager = InGame_Manager.instance;
+
+        Tile currentTile = _movement.currentTile;
+        Tile playerTile = manager.player.movement.currentTile;
+
+        if (playerTile == currentTile) return;
+        if (playerTile.DistanceTo_TargetTile(currentTile) > agroRange) return;
 
         List<Tile> rangedTiles = MoveDistance_RangeTiles();
 
@@ -337,8 +341,10 @@ public class Animal : MonoBehaviour
 
         _movement.MoveTo_Tile(closestTile);
         _movementFlag = Time.frameCount;
+
+        manager.time.Stop_TimTik();
     }
-    
+
 
     private Tile FollowItem_Tile()
     {
@@ -374,7 +380,7 @@ public class Animal : MonoBehaviour
         for (int i = 0; i < _followItems.Length; i++)
         {
             if (currentTile.PlacedItem(_followItems[i]) == null) continue;
-            
+
             _movementFlag = Time.frameCount;
             return;
         }
@@ -417,6 +423,7 @@ public class Animal : MonoBehaviour
     {
         if (_data.health <= 0) return;
         if (InGame_Manager.instance.player.movement.currentTile != _movement.currentTile) return;
+        if (AnimalManager().spawnedAnimals.Contains(this) == false) return;
 
         Debug.Log("Game Over by Bear Attack");
     }

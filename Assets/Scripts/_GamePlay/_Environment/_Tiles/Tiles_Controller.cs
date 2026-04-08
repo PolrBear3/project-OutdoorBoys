@@ -108,7 +108,7 @@ public class Tiles_Controller : MonoBehaviour, IItemsSource
     public List<Tile> Current_Tiles(Item_ScrObj targetItem)
     {
         List<Tile> itemExistTiles = new();
-        
+
         for (int i = 0; i < _currentTiles.Count; i++)
         {
             Tile currentTile = _currentTiles[i];
@@ -133,7 +133,7 @@ public class Tiles_Controller : MonoBehaviour, IItemsSource
         float minY = start.y - size.y + 1;
 
         List<Tile> edgedTiles = new();
-        
+
         for (int i = 0; i < _currentTiles.Count; i++)
         {
             Tile tile = _currentTiles[i];
@@ -209,6 +209,7 @@ public class Tiles_Controller : MonoBehaviour, IItemsSource
         if (tile == null) return false;
 
         InGame_Manager manager = InGame_Manager.instance;
+        if (manager.movements.AllMovements_Complete() == false) return false;
 
         Cursor cursor = manager.cursor;
         Tile playerTile = manager.player.movement.currentTile;
