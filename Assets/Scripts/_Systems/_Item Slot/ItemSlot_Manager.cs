@@ -141,21 +141,31 @@ public class ItemSlot_Manager : MonoBehaviour
     {
         _hoveringSlot = hoveringSlot;
     }
+    
+    private bool SlotSelect_Available(ItemSlot slot)
+    {
+        if (slot == null) return false;
+        if (InGame_Manager.instance.movements.AllMovements_Complete() == false) return false;
+
+        return true;
+    }
+
 
     private void Select_HoveringSlot()
     {
-        if (_hoveringSlot == null) return;
+        if (SlotSelect_Available(_hoveringSlot) == false) return;
         OnSlotSelect?.Invoke(_hoveringSlot);
     }
+
     private void HoldSelect_HoveringSlot()
     {
-        if (_hoveringSlot == null) return;
+        if (SlotSelect_Available(_hoveringSlot) == false) return;
         OnSlotHoldSelect?.Invoke(_hoveringSlot);
     }
 
     private void RightSelect_HoveringSlot()
     {
-        if (_hoveringSlot == null) return;
+        if (SlotSelect_Available(_hoveringSlot) == false) return;
         OnSlotRightSelect?.Invoke(_hoveringSlot);
     }
 

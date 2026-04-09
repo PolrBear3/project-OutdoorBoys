@@ -51,9 +51,9 @@ MonoBehaviour:
     _generateTiles:
     - {fileID: 11400000, guid: 13d5158de20cd4105b5f0b097494ca71, type: 2}
     - {fileID: 11400000, guid: 8145ed0e845b14bca951ca79c25e2e94, type: 2}
-    _generateRate: 1
+    _generateRate: 2
     _generateAmount: 2
-    _maxGenerateAmount: 10
+    _maxGenerateAmount: 20
     _generatePointDistance: 2
   - _resourceItem: {fileID: 11400000, guid: 85f6c95d406fa44a1890666516ac97b7, type: 2}
     _generateTiles:
@@ -75,5 +75,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _spawnAnimals:
+  - {fileID: 11400000, guid: b90a3b7935e344a6dbde6f8144181129, type: 2}
   - {fileID: 11400000, guid: 3865eb48a70924336bd951d0826621c7, type: 2}
+  - {fileID: 11400000, guid: c78b5f27455724331954b6c0efe32af4, type: 2}
   _spawnCoolTime: 1

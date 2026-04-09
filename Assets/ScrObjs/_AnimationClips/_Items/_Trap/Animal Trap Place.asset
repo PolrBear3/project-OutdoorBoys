@@ -10,9 +10,9 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 8f9c661a3761e4420b2248af7d2f7997, type: 3}
-  m_Name: Trap Place
+  m_Name: Animal Trap Place
   m_EditorClassIdentifier: 
-  _clipName: Trap Place
+  _clipName: Animal Trap Place
   _loop: 0
   _clipSpriteDatas:
   - _clipSprite: {fileID: -1361509600, guid: bf7ece83f843c4c35977c02f8c40d92d, type: 3}

@@ -10,11 +10,11 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 069327ba6dded4f16af0714f2c328413, type: 3}
-  m_Name: Trap
+  m_Name: Animal Trap
   m_EditorClassIdentifier: 
   _inventorySprite: {fileID: 656074368, guid: bf7ece83f843c4c35977c02f8c40d92d, type: 3}
   _microSprite: {fileID: -767490444, guid: bf7ece83f843c4c35977c02f8c40d92d, type: 3}
-  _itemName: Trap
+  _itemName: Animal Trap
   _description: 
   _itemType: 0
   _itemPrefab: {fileID: 3637228250238346253, guid: 2bc4ff21ecd184446983d642708a9ab1, type: 3}

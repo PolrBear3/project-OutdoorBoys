@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Trap : MonoBehaviour
+public class AnimalTrap : MonoBehaviour
 {
     [SerializeField] private PlaceableItem _placeableItem;
 
@@ -39,6 +39,7 @@ public class Trap : MonoBehaviour
             for (int j = 0; j < currentAnimals.Count; j++)
             {
                 Animal currentAnimal = currentAnimals[j];
+                if (currentAnimal.Deceased()) continue;
 
                 if (currentAnimal.data.animalScrObj != _activatePriorities[i]) continue;
                 return currentAnimal;
@@ -49,22 +50,18 @@ public class Trap : MonoBehaviour
 
     private void Activate()
     {
-        Animal activateAnimal = Activate_TargetAnimal();
-        
-        if (activateAnimal == null) return;
-        if (activateAnimal.data.isOnSight == false) return;
-
-        StartCoroutine(Activate_Update(activateAnimal));
+        StartCoroutine(Activate_Delay());
     }
-    private IEnumerator Activate_Update(Animal activateAnimal)
+    private IEnumerator Activate_Delay()
     {
         MovementControllers_Manager movementsManager = InGame_Manager.instance.movements;
         while (movementsManager.AllMovements_Complete() == false) yield return null;
 
-        AnimalData data = activateAnimal.data;
-
-        data.Update_Health(data.health - _damage);
-        activateAnimal.Update_DeceasedState();
+        Animal activateAnimal = Activate_TargetAnimal();
+        if (activateAnimal == null || activateAnimal.data.isOnSight == false) yield break;
+        
+        if (activateAnimal.TryGetComponent(out IDamageable damageable) == false) yield break;
+        damageable.InflictDamage(_damage);
 
         Movement_Controller movement = activateAnimal.movement;
         activateAnimal.movement.Update_CurrentState(MovementState.stunned, movement.CurrentState_Count(MovementState.stunned) + 1);

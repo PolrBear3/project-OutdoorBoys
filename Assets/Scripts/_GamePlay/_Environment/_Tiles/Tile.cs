@@ -116,14 +116,13 @@ public class Tile : MonoBehaviour
 
 
     // Current Placed Items
-    public void Track_PlacingItem(PlaceableItem placingItem)
+    private void Track_PlacingItem(PlaceableItem placingItem)
     {
         _placedItems.Add(placingItem);
         _data.placedItemDatas.Add(placingItem.data);
 
         Update_PlacedItemOffsets();
     }
-
     /// <returns>
     /// Leftover data
     /// </returns>
@@ -184,6 +183,7 @@ public class Tile : MonoBehaviour
 
         return new(setItem, setItemAmount);
     }
+    
     /// <returns>
     /// Check if item set successfully
     /// </returns>
@@ -207,20 +207,33 @@ public class Tile : MonoBehaviour
 
         return true;
     }
+
     /// <summary>
     /// Sets item according to item type
     /// </summary>
-    public void Set_Item(ItemData setItemData)
+    /// <returns>
+    /// Leftover data
+    /// </returns>
+    public ItemData Set_Item(ItemData setItemData)
     {
-        if (setItemData == null) return;
+        if (setItemData == null) return setItemData;
 
         if (setItemData.itemScrObj.itemType != ItemType.use)
         {
-            Set_PlacingItem(setItemData);
-            return;
+            return Set_PlacingItem(setItemData);
         }
-        Set_UseItem(setItemData);
+        
+        if (Set_UseItem(setItemData)) return null;
+        return setItemData;
     }
+    public void SetPreserve_Item(ItemData setItemData)
+    {
+        ItemData leftOverData = Set_Item(setItemData);
+
+        if (leftOverData == null) return;
+        _data.Preserve_ItemData(leftOverData);
+    }
+
 
     private void Update_PlacedItemOffsets()
     {
@@ -244,6 +257,17 @@ public class Tile : MonoBehaviour
     {
         _placedItems.Remove(PlacedItem);
         _data.placedItemDatas.Remove(PlacedItem.data);
+
+        List<ItemData> preservedDatas = new(_data.preservedItemDatas);
+        _data.preservedItemDatas.Clear();
+
+        for (int i = 0; i < preservedDatas.Count; i++)
+        {
+            ItemData leftOverData = Set_Item(preservedDatas[i]);
+
+            if (leftOverData == null) continue;
+            _data.Preserve_ItemData(leftOverData);
+        }
 
         Update_PlacedItemOffsets();
     }

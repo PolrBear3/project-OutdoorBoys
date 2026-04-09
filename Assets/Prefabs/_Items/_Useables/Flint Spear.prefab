@@ -75,4 +75,6 @@ MonoBehaviour:
   _useableItem: {fileID: 2873364016420352242}
   _projectileLauncher: {fileID: 3483682622669112312}
   _weaponType: 0
-  _damageValue: 10
+  _damageValue: 3
+  _obstacleItems:
+  - {fileID: 11400000, guid: 86e876e6c7e9c467db97ab95dfa547ce, type: 2}

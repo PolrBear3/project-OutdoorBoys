@@ -144,12 +144,18 @@ public class Animal : MonoBehaviour, IDamageable
         return rangedTiles[UnityEngine.Random.Range(0, rangedTiles.Count)];
     }
 
+
     private bool Player_InRange()
     {
         Tile playerTile = InGame_Manager.instance.player.movement.tileTrackerData.CurrentTile();
         float distance = playerTile.DistanceTo_TargetTile(_movement.tileTrackerData.CurrentTile());
 
         return distance <= _data.animalScrObj.moveDistanceRange;
+    }
+
+    public bool Deceased()
+    {
+        return _data.health <= 0 || AnimalManager().spawnedAnimals.Contains(this) == false;
     }
 
 
@@ -209,13 +215,16 @@ public class Animal : MonoBehaviour, IDamageable
         Tile currentTile = _movement.tileTrackerData.CurrentTile();
         for (int i = 0; i < _dropItems.Length; i++)
         {
-            currentTile.Set_Item(_dropItems[i]);
+            currentTile.SetPreserve_Item(_dropItems[i]);
         }
 
         StartCoroutine(DeceasedState_Update());
     }
     private IEnumerator DeceasedState_Update()
     {
+        MovementControllers_Manager movementsManager = InGame_Manager.instance.movements;
+        while (movementsManager.AllMovements_Complete() == false) yield return null;
+
         _animation.Play(_deceasedAnimationClip);
         while (_animation.Animation_Playing()) yield return null;
 
@@ -239,8 +248,8 @@ public class Animal : MonoBehaviour, IDamageable
     public void RunOff()
     {
         if (_movementFlag == Time.frameCount) return;
-        if (_data.health <= 0) return;
         if (Player_InRange() == false) return;
+        if (Deceased()) return;
 
         List<Tile> rangedTiles = MoveDistance_RangeTiles();
 
@@ -276,26 +285,12 @@ public class Animal : MonoBehaviour, IDamageable
         RunOff();
     }
 
-    public void RunOff_Sight()
-    {
-        if (_movementFlag == Time.frameCount) return;
-        if (_data.health <= 0) return;
-        if (Player_InRange() == false) return;
-
-        _movement.Update_MoveDurationValue(0);
-        _movement.Update_Offset(Vector2.zero);
-        _movement.MoveTo_Tile(MoveDistance_RangeTile(true));
-
-        Set_Data(_data.animalScrObj);
-        Update_Animation();
-    }
-
 
     public void Roam()
     {
         if (_movementFlag == Time.frameCount) return;
-        if (_data.health <= 0) return;
         if (Player_InRange()) return;
+        if (Deceased()) return;
 
         Tile playerTile = InGame_Manager.instance.player.movement.tileTrackerData.CurrentTile();
         List<Tile> rangedTiles = MoveDistance_RangeTiles();
@@ -312,8 +307,8 @@ public class Animal : MonoBehaviour, IDamageable
 
     public void Escape(int delayCount)
     {
-        if (_data.health <= 0) return;
         if (_data.onSightcount < delayCount) return;
+        if (Deceased()) return;
 
         Animals_Manager manager = AnimalManager();
         if (manager == null) return;
@@ -325,7 +320,7 @@ public class Animal : MonoBehaviour, IDamageable
     public void Follow(int agroRange)
     {
         if (_movementFlag == Time.frameCount) return;
-        if (_data.health <= 0) return;
+        if (Deceased()) return;
 
         InGame_Manager manager = InGame_Manager.instance;
 
@@ -433,10 +428,16 @@ public class Animal : MonoBehaviour, IDamageable
 
     public void Attack()
     {
-        if (_data.health <= 0) return;
         if (InGame_Manager.instance.player.movement.tileTrackerData.CurrentTile() != _movement.tileTrackerData.CurrentTile()) return;
-        if (AnimalManager().spawnedAnimals.Contains(this) == false) return;
 
+        StartCoroutine(AttackDelay());
+    }
+    private IEnumerator AttackDelay()
+    {
+        MovementControllers_Manager movementsManager = InGame_Manager.instance.movements;
+        while (movementsManager.AllMovements_Complete() == false) yield return null;
+
+        if (Deceased()) yield break;
         Debug.Log("Game Over by Bear Attack");
     }
 }
