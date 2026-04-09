@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 
-public class Animal : MonoBehaviour
+public class Animal : MonoBehaviour, IDamageable
 {
     [Space(20)]
     [SerializeField] private AnimationPlayer _animation;
@@ -51,6 +51,18 @@ public class Animal : MonoBehaviour
     }
 
 
+    // IDamageable
+    public int InflictDamage(int damageValue)
+    {
+        if (_data.isOnSight == false) return _data.health;
+        
+        _data.Update_Health(_data.health - damageValue);
+        Update_DeceasedState();
+
+        return _data.health;
+    }
+
+
     // Data
     public void Set_Data()
     {
@@ -70,8 +82,8 @@ public class Animal : MonoBehaviour
 
     public void Set_Data(AnimalScrObj setAnimal)
     {
-        Transform currentTilePos = _movement.currentTile.transform;
-        Transform playerTilePos = InGame_Manager.instance.player.movement.currentTile.transform;
+        Transform currentTilePos = _movement.tileTrackerData.CurrentTile().transform;
+        Transform playerTilePos = InGame_Manager.instance.player.movement.tileTrackerData.CurrentTile().transform;
 
         int health = _data == null ? setAnimal.maxHealth : _data.health;
 
@@ -116,7 +128,7 @@ public class Animal : MonoBehaviour
         InGame_Manager manager = InGame_Manager.instance;
         Tiles_Controller tilesController = manager.tilesController;
 
-        Tile currentTile = _movement.currentTile;
+        Tile currentTile = _movement.tileTrackerData.CurrentTile();
         int distanceRange = _data.animalScrObj.moveDistanceRange;
 
         List<Tile> rangedTiles = tilesController.Current_Tiles(currentTile, distanceRange);
@@ -127,15 +139,15 @@ public class Animal : MonoBehaviour
     private Tile MoveDistance_RangeTile(bool excludePlayerTile)
     {
         List<Tile> rangedTiles = MoveDistance_RangeTiles();
-        if (excludePlayerTile) rangedTiles.Remove(InGame_Manager.instance.player.movement.currentTile);
+        if (excludePlayerTile) rangedTiles.Remove(InGame_Manager.instance.player.movement.tileTrackerData.CurrentTile());
 
         return rangedTiles[UnityEngine.Random.Range(0, rangedTiles.Count)];
     }
 
     private bool Player_InRange()
     {
-        Tile playerTile = InGame_Manager.instance.player.movement.currentTile;
-        float distance = playerTile.DistanceTo_TargetTile(_movement.currentTile);
+        Tile playerTile = InGame_Manager.instance.player.movement.tileTrackerData.CurrentTile();
+        float distance = playerTile.DistanceTo_TargetTile(_movement.tileTrackerData.CurrentTile());
 
         return distance <= _data.animalScrObj.moveDistanceRange;
     }
@@ -144,7 +156,7 @@ public class Animal : MonoBehaviour
     // Visuals
     private void Toggle_FillBar(Tile hoveringTile)
     {
-        bool toggle = hoveringTile == _movement.currentTile;
+        bool toggle = hoveringTile == _movement.tileTrackerData.CurrentTile();
         _healthFillBar.Toggle(toggle);
 
         if (toggle == false) return;
@@ -160,7 +172,7 @@ public class Animal : MonoBehaviour
     private void Collect_TrailMark()
     {
         if (_data.isOnSight) return;
-        if (InGame_Manager.instance.player.movement.currentTile != _movement.currentTile) return;
+        if (InGame_Manager.instance.player.movement.tileTrackerData.CurrentTile() != _movement.tileTrackerData.CurrentTile()) return;
 
         _data.Decrease_TrailMarkCount(1);
 
@@ -194,7 +206,7 @@ public class Animal : MonoBehaviour
 
         manager.spawnedAnimals.Remove(this);
 
-        Tile currentTile = _movement.currentTile;
+        Tile currentTile = _movement.tileTrackerData.CurrentTile();
         for (int i = 0; i < _dropItems.Length; i++)
         {
             currentTile.Set_Item(_dropItems[i]);
@@ -232,7 +244,7 @@ public class Animal : MonoBehaviour
 
         List<Tile> rangedTiles = MoveDistance_RangeTiles();
 
-        Tile playerTile = InGame_Manager.instance.player.movement.currentTile;
+        Tile playerTile = InGame_Manager.instance.player.movement.tileTrackerData.CurrentTile();
         float runOffDistance = UnityEngine.Random.Range(1, _data.animalScrObj.moveDistanceRange);
 
         Tile farTile = null;
@@ -285,7 +297,7 @@ public class Animal : MonoBehaviour
         if (_data.health <= 0) return;
         if (Player_InRange()) return;
 
-        Tile playerTile = InGame_Manager.instance.player.movement.currentTile;
+        Tile playerTile = InGame_Manager.instance.player.movement.tileTrackerData.CurrentTile();
         List<Tile> rangedTiles = MoveDistance_RangeTiles();
 
         for (int i = rangedTiles.Count - 1; i >= 0; i--)
@@ -317,8 +329,8 @@ public class Animal : MonoBehaviour
 
         InGame_Manager manager = InGame_Manager.instance;
 
-        Tile currentTile = _movement.currentTile;
-        Tile playerTile = manager.player.movement.currentTile;
+        Tile currentTile = _movement.tileTrackerData.CurrentTile();
+        Tile playerTile = manager.player.movement.tileTrackerData.CurrentTile();
 
         if (playerTile == currentTile) return;
         if (playerTile.DistanceTo_TargetTile(currentTile) > agroRange) return;
@@ -342,13 +354,13 @@ public class Animal : MonoBehaviour
         _movement.MoveTo_Tile(closestTile);
         _movementFlag = Time.frameCount;
 
-        manager.time.Stop_TimTik();
+        // manager.time.Stop_TimTik();
     }
 
 
     private Tile FollowItem_Tile()
     {
-        Tile currentTile = _movement.currentTile;
+        Tile currentTile = _movement.tileTrackerData.CurrentTile();
 
         for (int i = 0; i < _followItems.Length; i++)
         {
@@ -376,7 +388,7 @@ public class Animal : MonoBehaviour
         if (_movementFlag == Time.frameCount) return;
         if (_data.onSightcount <= 0) return;
 
-        Tile currentTile = _movement.currentTile;
+        Tile currentTile = _movement.tileTrackerData.CurrentTile();
         for (int i = 0; i < _followItems.Length; i++)
         {
             if (currentTile.PlacedItem(_followItems[i]) == null) continue;
@@ -422,7 +434,7 @@ public class Animal : MonoBehaviour
     public void Attack()
     {
         if (_data.health <= 0) return;
-        if (InGame_Manager.instance.player.movement.currentTile != _movement.currentTile) return;
+        if (InGame_Manager.instance.player.movement.tileTrackerData.CurrentTile() != _movement.tileTrackerData.CurrentTile()) return;
         if (AnimalManager().spawnedAnimals.Contains(this) == false) return;
 
         Debug.Log("Game Over by Bear Attack");

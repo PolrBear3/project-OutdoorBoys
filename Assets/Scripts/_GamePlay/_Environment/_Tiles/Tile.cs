@@ -18,16 +18,6 @@ public class Tile : MonoBehaviour
     public Transform setPosition => _setPosition;
 
     [Space(20)]
-    [SerializeField] private Transform _placeableItemsPrefabs;
-    public Transform placeableItemsPrefabs => _placeableItemsPrefabs;
-
-    [SerializeField] private Transform _droppedItemsPrefabs;
-    public Transform droppedItemsPrefabs => _droppedItemsPrefabs;
-
-    [SerializeField] private Transform _otherPrefabs;
-    public Transform otherPrefabs => _otherPrefabs;
-
-    [Space(20)]
     [SerializeField] private Item_ScrObj _useableItemDrop;
     [SerializeField][Range(0, 10)] private int _maxItemPlaceCount;
 
@@ -90,6 +80,17 @@ public class Tile : MonoBehaviour
         return Utility.Chebyshev_Distance(transform.position, targetTile.transform.position);
     }
 
+    public List<GameObject> All_CurrentPrefabs()
+    {
+        List<GameObject> prefabs = new();
+
+        foreach (Transform child in setPosition)
+        {
+            prefabs.Add(child.gameObject);
+        }
+        return prefabs;
+    }
+
 
     // Select Toggles
     public void Toggle_SelectPreview(bool toggle)
@@ -110,7 +111,7 @@ public class Tile : MonoBehaviour
     }
     public void Toggle_SelectReady()
     {
-        Toggle_SelectReady(_pointer.pointerDetected && InGame_Manager.instance.tilesController.Tile_Selectable(this));
+        Toggle_SelectReady(_pointer.pointerDetected && InGame_Manager.instance.tilesController.Tile_Pointable(this));
     }
 
 
@@ -167,7 +168,7 @@ public class Tile : MonoBehaviour
             if (setItemAmount <= 0) return null;
             if (_placedItems.Count >= _maxItemPlaceCount) break;
 
-            GameObject spawnedItem = Instantiate(setItem.itemPrefab, _placeableItemsPrefabs);
+            GameObject spawnedItem = Instantiate(setItem.itemPrefab, _setPosition);
             PlaceableItem newPlacedItem = spawnedItem.GetComponent<PlaceableItem>();
 
             int spawnSetAmount = Mathf.Min(setItemAmount, maxAmount);
@@ -195,7 +196,7 @@ public class Tile : MonoBehaviour
 
         if (setItem.itemType != ItemType.use) return false;
 
-        GameObject spawnedDrop = Instantiate(_useableItemDrop.itemPrefab, _placeableItemsPrefabs);
+        GameObject spawnedDrop = Instantiate(_useableItemDrop.itemPrefab, _setPosition);
         PlaceableItem placedUseItem = spawnedDrop.GetComponent<PlaceableItem>();
 
         placedUseItem.Set_Data(new(setItem, setItemData.amount));

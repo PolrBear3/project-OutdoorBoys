@@ -16,8 +16,8 @@ public class Movement_Controller : MonoBehaviour
     public float moveDuration => _moveDuration;
 
 
-    private Tile _currentTile;
-    public Tile currentTile => _currentTile;
+    private TileTrackerData _tileTrackerData;
+    public TileTrackerData tileTrackerData => _tileTrackerData;
 
     private Vector2 _currentOffset;
     
@@ -55,6 +55,8 @@ public class Movement_Controller : MonoBehaviour
     // Data
     private void Set_Data()
     {
+        _tileTrackerData = new();
+
         if (InGame_Manager.instance?.movements.allMovementControllers.Add(this) == false) return;
 
         Update_Offset();
@@ -64,7 +66,7 @@ public class Movement_Controller : MonoBehaviour
 
     public Vector2 CurrentTile_OffsetPosition()
     {
-        return (Vector2)_currentTile.setPosition.position + _currentOffset;
+        return (Vector2)_tileTrackerData.CurrentTile().setPosition.position + _currentOffset;
     }
 
     public void Update_Offset(Vector2 offSet)
@@ -112,21 +114,25 @@ public class Movement_Controller : MonoBehaviour
         if (destinationTile == null) return;
         if (LeanTween.isTweening(gameObject)) return;
 
-        Tile previousTile = _currentTile;
-        _currentTile = destinationTile;
+        Tile previousTile = _tileTrackerData.CurrentTile();
+        _tileTrackerData.TrackTile(destinationTile);
 
         Vector2 destination = CurrentTile_OffsetPosition();
 
         if (previousTile == null)
         {
             transform.position = destination; // spawn
+            transform.SetParent(destinationTile.setPosition);
             return;
         }
 
         OnMovement?.Invoke();
 
+        Tile currentTile = _tileTrackerData.CurrentTile();
+        transform.SetParent(currentTile.setPosition);
+
         Vector2 previousTilePos = previousTile.transform.position;
-        Vector2 destinationTilePos = _currentTile.transform.position;
+        Vector2 destinationTilePos = currentTile.transform.position;
 
         Vector2 direction = destinationTilePos - previousTilePos;
         OnMovementDirection?.Invoke(direction);
@@ -144,7 +150,7 @@ public class Movement_Controller : MonoBehaviour
         if (manager.movements.AllMovements_Complete() == false) return;
 
         Tiles_Controller controller = manager.tilesController;
-        Tile destinationTile = controller.Current_Tile((Vector2)_currentTile.transform.position + direction);
+        Tile destinationTile = controller.Current_Tile((Vector2)_tileTrackerData.CurrentTile().transform.position + direction);
 
         if (destinationTile == null) return;
         MoveTo_Tile(destinationTile);

@@ -159,7 +159,7 @@ public class Inventory_Manager : MonoBehaviour, IItemsSource, IItemsSourceRemove
     // Toggle
     private void Toggle_Update()
     {
-        Tile playerTile = InGame_Manager.instance.player.movement.currentTile;
+        Tile playerTile = InGame_Manager.instance.player.movement.tileTrackerData.CurrentTile();
 
         _togglePanel.gameObject.SetActive(playerTile.Placed_ItemCount(_inventoryBagpack) > 0);
     }

@@ -46,7 +46,8 @@ public class Player_Interaction : MonoBehaviour, IItemsSource, IItemsSourceRemov
     // IItemsSource
     public IEnumerable<ItemData> ItemDatas()
     {
-        List<ItemData> currentTileItemDatas = _controller.movement.currentTile.Placed_ItemDatas();
+        Tile currentTile = _controller.movement.tileTrackerData.CurrentTile();
+        List<ItemData> currentTileItemDatas = currentTile.Placed_ItemDatas();
 
         foreach (ItemData data in currentTileItemDatas)
         {
@@ -56,7 +57,7 @@ public class Player_Interaction : MonoBehaviour, IItemsSource, IItemsSourceRemov
 
     public int RemoveItem(Item_ScrObj updateItem, int removeAmount)
     {
-        Tile currentTile = _controller.movement.currentTile;
+        Tile currentTile = _controller.movement.tileTrackerData.CurrentTile();
         List<PlaceableItem> placedItems = currentTile.PlacedItems(updateItem);
 
         if (placedItems.Count <= 0) return 0;
@@ -101,7 +102,7 @@ public class Player_Interaction : MonoBehaviour, IItemsSource, IItemsSourceRemov
 
     public int AddItem(Item_ScrObj addItem, int addAmount)
     {
-        Tile playerTile = _controller.movement.currentTile;
+        Tile playerTile = _controller.movement.tileTrackerData.CurrentTile();
         int placeAmount = Mathf.Min(addAmount, playerTile.ItemPlace_AvailableCount(addItem));
 
         playerTile.Set_Item(new(addItem, placeAmount));

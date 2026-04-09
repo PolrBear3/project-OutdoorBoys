@@ -236,7 +236,7 @@ public class ItemCursor : MonoBehaviour, IItemsSource, IItemsSourceRemove, IItem
         Tiles_Controller tilesController = manager.tilesController;
         if (tilesController.Tile_Selectable(manager.cursor.pointingTile)) return;
 
-        Tile playerTile = manager.player.movement.currentTile;
+        Tile playerTile = manager.player.movement.tileTrackerData.CurrentTile();
         if (tilesController.Tile_Selectable(playerTile) == false) return;
 
         Inventory_Manager inventory = manager.inventory;
@@ -290,7 +290,7 @@ public class ItemCursor : MonoBehaviour, IItemsSource, IItemsSourceRemove, IItem
     {
         InGame_Manager manager = InGame_Manager.instance;
 
-        Tile playerTile = manager.player.movement.currentTile;
+        Tile playerTile = manager.player.movement.tileTrackerData.CurrentTile();
         if (manager.tilesController.Tile_Selectable(playerTile) == false) return;
 
         if (playerTile.Set_UseItem(_data) == false) return;
@@ -320,9 +320,12 @@ public class ItemCursor : MonoBehaviour, IItemsSource, IItemsSourceRemove, IItem
         Item_ScrObj currentItem = _data.itemScrObj;
         if (currentItem.itemType != ItemType.use) return;
 
-        GameObject currentUseItem = InGame_Manager.instance.player.interaction.currentItemPrefab;
+        InGame_Manager manager = InGame_Manager.instance;
+
+        GameObject currentUseItem = manager.player.interaction.currentItemPrefab;
         if (currentUseItem.TryGetComponent(out UseableItem useItem) == false) return;
 
+        manager.time.Count_Time();
         useItem.OnUse?.Invoke(selectTile);
     }
 }

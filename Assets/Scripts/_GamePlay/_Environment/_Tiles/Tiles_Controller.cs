@@ -204,20 +204,27 @@ public class Tiles_Controller : MonoBehaviour, IItemsSource
 
 
     // Select
-    public bool Tile_Selectable(Tile tile)
+    public bool Tile_Pointable(Tile tile)
     {
         if (tile == null) return false;
 
         InGame_Manager manager = InGame_Manager.instance;
+        Cursor cursor = manager.cursor;
+
+        if (cursor.PointingTile_InRange(tile) == false) return false;
+        return true;
+    }
+    public bool Tile_Selectable(Tile tile)
+    {
+        if (Tile_Pointable(tile) == false) return false;
+
+        InGame_Manager manager = InGame_Manager.instance;
         if (manager.movements.AllMovements_Complete() == false) return false;
 
-        Cursor cursor = manager.cursor;
-        Tile playerTile = manager.player.movement.currentTile;
-        ItemData currentItemData = cursor.itemCursor.data;
+        Tile playerTile = manager.player.movement.tileTrackerData.CurrentTile();
+        ItemData currentItemData = manager.cursor.itemCursor.data;
 
         if (currentItemData == null) return tile == playerTile;
-        if (cursor.PointingTile_InRange(tile) == false) return false;
-
         return currentItemData.itemScrObj.Select_Available(currentItemData, tile);
     }
     private bool Tile_Selectable(out Tile currentTile)
@@ -275,7 +282,7 @@ public class Tiles_Controller : MonoBehaviour, IItemsSource
     {
         foreach (Tile tile in _currentTiles)
         {
-            tile.Toggle_SelectPreview(Tile_Selectable(tile));
+            tile.Toggle_SelectPreview(Tile_Pointable(tile));
             tile.Toggle_SelectReady();
         }
     }

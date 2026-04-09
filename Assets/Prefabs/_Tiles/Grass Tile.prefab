@@ -125,9 +125,6 @@ MonoBehaviour:
   _selectorAnimPlayer: {fileID: 3338854046074833511}
   _tileSpriteRenderer: {fileID: 7983665138181794005}
   _setPosition: {fileID: 7814872349304713908}
-  _placeableItemsPrefabs: {fileID: 5872425443383930396}
-  _droppedItemsPrefabs: {fileID: 0}
-  _otherPrefabs: {fileID: 9030660435136214807}
   _useableItemDrop: {fileID: 11400000, guid: 38f3d32e30dd248c99301e476ece34c4, type: 2}
   _maxItemPlaceCount: 2
 --- !u!1 &8546303340712209901
@@ -273,17 +270,13 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects:
     - {fileID: 8057525965960160638, guid: 82d596386d4b0418d98992122df261ff, type: 3}
+    - {fileID: 8810866128385075814, guid: 82d596386d4b0418d98992122df261ff, type: 3}
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 82d596386d4b0418d98992122df261ff, type: 3}
 --- !u!4 &2331418964722433689 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 6917075339042576539, guid: 82d596386d4b0418d98992122df261ff, type: 3}
-  m_PrefabInstance: {fileID: 9197685715614098946}
-  m_PrefabAsset: {fileID: 0}
---- !u!4 &5872425443383930396 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 3376492175440316446, guid: 82d596386d4b0418d98992122df261ff, type: 3}
   m_PrefabInstance: {fileID: 9197685715614098946}
   m_PrefabAsset: {fileID: 0}
 --- !u!4 &7814872349304713908 stripped
@@ -294,10 +287,5 @@ Transform:
 --- !u!212 &8606364343245360271 stripped
 SpriteRenderer:
   m_CorrespondingSourceObject: {fileID: 633684460308966029, guid: 82d596386d4b0418d98992122df261ff, type: 3}
-  m_PrefabInstance: {fileID: 9197685715614098946}
-  m_PrefabAsset: {fileID: 0}
---- !u!4 &9030660435136214807 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 213894306017775893, guid: 82d596386d4b0418d98992122df261ff, type: 3}
   m_PrefabInstance: {fileID: 9197685715614098946}
   m_PrefabAsset: {fileID: 0}

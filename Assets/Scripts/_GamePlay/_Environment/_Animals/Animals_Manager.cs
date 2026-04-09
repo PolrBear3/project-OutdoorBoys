@@ -47,7 +47,7 @@ public class Animals_Manager : MonoBehaviour
         {
             Animal spawnedAnimal = _spawnedAnimals[i];
 
-            if (searchTile != spawnedAnimal.movement.currentTile) continue;
+            if (searchTile != spawnedAnimal.movement.tileTrackerData.CurrentTile()) continue;
             animalsOntile.Add(spawnedAnimal);
         }
         return animalsOntile;
@@ -118,7 +118,7 @@ public class Animals_Manager : MonoBehaviour
         InGame_Manager manager = InGame_Manager.instance;
 
         List<Tile> sortedTiles = manager.tilesController.Current_Tiles(randSpawnTile);
-        sortedTiles.Remove(manager.player.movement.currentTile);
+        sortedTiles.Remove(manager.player.movement.tileTrackerData.CurrentTile());
 
         Tile spawnTile = sortedTiles[UnityEngine.Random.Range(0, sortedTiles.Count)];
 
