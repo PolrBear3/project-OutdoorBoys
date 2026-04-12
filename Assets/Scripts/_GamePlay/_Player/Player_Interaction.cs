@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -10,12 +11,10 @@ public class Player_Interaction : MonoBehaviour, IItemsSource, IItemsSourceRemov
     [SerializeField] private SpriteRenderer _indicationIcon;
     public SpriteRenderer indicationIcon => _indicationIcon;
 
-    [Space(20)]
-    [SerializeField][Range(0, 10)] private int _movementTimeCost;
-
-
     private GameObject _currentItemPrefab;
     public GameObject currentItemPrefab => _currentItemPrefab;
+
+    public Action OnMoveAvailableCheck;
 
 
     // MonoBehaviour
@@ -34,12 +33,16 @@ public class Player_Interaction : MonoBehaviour, IItemsSource, IItemsSourceRemov
         EventBus_Manager.UnRegister(EventBus.AwakeLoad, Set_Data);
 
         Input_Controller input = Input_Controller.instance;
+        
+        input.OnMovement -= MoveTo_Tile;
+
+        Time_Manager time = InGame_Manager.instance.time;
         Movement_Controller playerMovement = _controller.movement;
 
-        input.OnMovement -= playerMovement.MoveTo_Tile;
+        playerMovement.OnMovement -= time.Count_Time;
+        playerMovement.OnMovementActive -= Update_MovementAnimation;
 
-        playerMovement.OnMovement -= InGame_Manager.instance.time.Count_Time;
-        playerMovement.OnMovementStated -= Update_MovementAnimation;
+        time.OnTimeCount -= Charge_Stamina;
     }
 
 
@@ -114,45 +117,16 @@ public class Player_Interaction : MonoBehaviour, IItemsSource, IItemsSourceRemov
     private void Set_Data()
     {
         Input_Controller input = Input_Controller.instance;
+
+        input.OnMovement += MoveTo_Tile;
+
+        Time_Manager time = InGame_Manager.instance.time;
         Movement_Controller playerMovement = _controller.movement;
 
-        input.OnMovement += playerMovement.MoveTo_Tile;
+        playerMovement.OnMovement += time.Count_Time;
+        playerMovement.OnMovementActive += Update_MovementAnimation;
 
-        playerMovement.OnMovement += InGame_Manager.instance.time.Count_Time;
-        playerMovement.OnMovementStated += Update_MovementAnimation;
-    }
-
-    public void Update_IndicationIcon(Sprite iconSprite)
-    {
-        bool updateAvailable = iconSprite != null;
-        _indicationIcon.gameObject.SetActive(updateAvailable);
-
-        if (updateAvailable == false) return;
-        _indicationIcon.sprite = iconSprite;
-    }
-
-
-    // Maint
-    private void Update_MovementAnimation(bool isMoving)
-    {
-        AnimationPlayer animPlayer = _controller.animationPlayer;
-
-        int animIndexNum = isMoving ? 1 : 0;
-        animPlayer.Play(animIndexNum);
-    }
-
-    public void Update_MovementTimeCost()
-    {
-        InGame_Manager manager = InGame_Manager.instance;
-
-        ItemData currentItem = manager.cursor.itemCursor.data;
-        bool hasInventoryBagpack = currentItem != null && currentItem.itemScrObj == _controller.inventoryBagpack;
-
-        int currentInventoryWeight = hasInventoryBagpack ? manager.inventory.slotManager.Total_ItemWeight() : 0;
-        int currentItemWeight = currentItem != null ? currentItem.Item_Weight() + currentInventoryWeight : 0;
-
-        int timeCost = Mathf.Max(1, _movementTimeCost + currentItemWeight * _movementTimeCost);
-        manager.time.Track_TimeCountData(new(this, timeCost));
+        time.OnTimeCount += Charge_Stamina;
     }
 
     public void Load_ItemPrefab(GameObject itemPrefab)
@@ -163,5 +137,65 @@ public class Player_Interaction : MonoBehaviour, IItemsSource, IItemsSourceRemov
         if (itemPrefab == null) return;
 
         _currentItemPrefab = Instantiate(itemPrefab, transform);
+    }
+
+
+    // Visuals
+    public void Update_IndicationIcon(Sprite iconSprite)
+    {
+        bool updateAvailable = iconSprite != null;
+        _indicationIcon.gameObject.SetActive(updateAvailable);
+
+        if (updateAvailable == false) return;
+        _indicationIcon.sprite = iconSprite;
+    }
+
+    private void Update_MovementAnimation(bool isMoving)
+    {
+        AnimationPlayer animPlayer = _controller.animationPlayer;
+
+        int animIndexNum = isMoving ? 1 : 0;
+        animPlayer.Play(animIndexNum);
+    }
+
+
+    // Movement & Stamina
+    private bool MoveAvailable_UpdateStamina()
+    {
+        InGame_Manager manager = InGame_Manager.instance;
+
+        Player_Controller player = manager.player;
+        PlayerData playerData = player.data;
+
+        int currentStamina = playerData.currentStamina;
+        if (currentStamina <= 0) return false;
+
+        ItemData currentItem = manager.cursor.itemCursor.data;
+        bool hasInventoryBagpack = currentItem != null && currentItem.itemScrObj == _controller.inventoryBagpack;
+
+        int currentInventoryWeight = hasInventoryBagpack ? manager.inventory.slotManager.Total_ItemWeight() : 0;
+        int currentItemWeight = currentItem != null ? currentItem.Item_Weight() + currentInventoryWeight : 0;
+
+        int calculatedStamina = playerData.currentStamina - Mathf.Max(1, currentItemWeight);
+        if (calculatedStamina < 0) return false;
+
+        player.Update_CurrentStamina(calculatedStamina);
+        return true;
+    }
+    private void MoveTo_Tile(Vector2 direction)
+    {
+        OnMoveAvailableCheck?.Invoke();
+        if (MoveAvailable_UpdateStamina() == false) return;
+
+        _controller.movement.MoveTo_Tile(direction);
+    }
+
+    private void Charge_Stamina(int _)
+    {
+        Time_Manager time = InGame_Manager.instance.time;
+        if (time.timeTikCoroutine == null) return;
+
+        int chargeValue = 1; // move this to upgrade settings
+        _controller.Update_CurrentStamina(_controller.data.currentStamina + chargeValue);
     }
 }

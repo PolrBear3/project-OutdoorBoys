@@ -12,8 +12,11 @@ public class PlayerData
     [ES3Serializable][SerializeField][Range(0, 10)] private int _temperature;
     public int temperature => _temperature;
 
-    [ES3Serializable][SerializeField][Range(0, 500)] private int _maxItemCarryWeight;
-    public int maxItemCarryWeight => _maxItemCarryWeight;
+    [ES3Serializable][SerializeField][Range(0, 500)] private int _maxStamina;
+    public int maxStamina => _maxStamina;
+
+    [ES3Serializable] private int _currentStamina;
+    public int currentStamina => _currentStamina;
 
 
     // Data
@@ -29,9 +32,14 @@ public class PlayerData
         return _temperature;
     }
 
-    public int Update_MaxItemCarryWeight(int updateValue)
+    public int Update_MaxStamina(int updateValue)
     {
-        _maxItemCarryWeight = Mathf.Max(0, updateValue);
-        return _maxItemCarryWeight;
+        _maxStamina = Mathf.Max(0, updateValue);
+        return _maxStamina;
+    }
+    public int Update_CurrentStamina(int updateValue)
+    {
+        _currentStamina = Mathf.Clamp(updateValue, 0, _maxStamina);
+        return _currentStamina;
     }
 }

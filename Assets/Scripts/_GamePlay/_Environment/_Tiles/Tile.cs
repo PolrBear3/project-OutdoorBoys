@@ -333,6 +333,17 @@ public class Tile : MonoBehaviour
         }
         return null;
     }
+    
+    public List<PlaceableItem> PlacedItems()
+    {
+        List<PlaceableItem> placedItems = new();
+
+        foreach (PlaceableItem item in _placedItems)
+        {
+            placedItems.Add(item);
+        }
+        return placedItems;
+    }
     public List<PlaceableItem> PlacedItems(Item_ScrObj targetItem)
     {
         if (targetItem == null) return null;

@@ -14,6 +14,10 @@ public class WorldMapScrObj : ScriptableObject
     public Vector2 generateSize => _generateSize;
 
     [Space(20)]
+    [SerializeField][Range(0, 100)] private int _timeUpdateValue;
+    public int timeUpdateValue => _timeUpdateValue;
+
+    [Space(20)]
     [SerializeField][Range(0, 100)] private float _harshGroundDensity;
     public float harshGroundDensity => _harshGroundDensity;
 

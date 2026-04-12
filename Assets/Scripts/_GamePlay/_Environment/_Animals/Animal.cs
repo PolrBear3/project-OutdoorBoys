@@ -37,7 +37,7 @@ public class Animal : MonoBehaviour, IDamageable
     private void OnDestroy()
     {
         _movement.OnMovementDirection -= _animation.Update_Flip;
-        _movement.OnMovementStated -= Update_Animation;
+        _movement.OnMovementActive -= Update_Animation;
 
         InGame_Manager manager = InGame_Manager.instance;
 
@@ -67,7 +67,7 @@ public class Animal : MonoBehaviour, IDamageable
     public void Set_Data()
     {
         _movement.OnMovementDirection += _animation.Update_Flip;
-        _movement.OnMovementStated += Update_Animation;
+        _movement.OnMovementActive += Update_Animation;
 
         InGame_Manager manager = InGame_Manager.instance;
 

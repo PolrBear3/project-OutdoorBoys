@@ -29,8 +29,7 @@ public class Movement_Controller : MonoBehaviour
 
     public Action OnMovement;
     public Action<Vector2> OnMovementDirection;
-    public Action<int> OnMovementDistanced;
-    public Action<bool> OnMovementStated;
+    public Action<bool> OnMovementActive;
 
     private Coroutine _movementCoroutine;
     public Coroutine movementCoroutine => _movementCoroutine;
@@ -138,8 +137,6 @@ public class Movement_Controller : MonoBehaviour
         OnMovementDirection?.Invoke(direction);
         
         int moveDistance = Utility.Chebyshev_Distance(previousTilePos, destinationTilePos);
-        OnMovementDistanced?.Invoke(moveDistance);
-
         Start_MovementStateUpdate(moveDistance);
 
         LeanTween.move(gameObject, destination, _currentMoveDuration * moveDistance); // move
@@ -152,7 +149,7 @@ public class Movement_Controller : MonoBehaviour
         Tiles_Controller controller = manager.tilesController;
         Tile destinationTile = controller.Current_Tile((Vector2)_tileTrackerData.CurrentTile().transform.position + direction);
 
-        if (destinationTile == null) return;
+        if (destinationTile == null || destinationTile == _tileTrackerData.CurrentTile()) return;
         MoveTo_Tile(destinationTile);
     }
 
@@ -167,10 +164,10 @@ public class Movement_Controller : MonoBehaviour
     }
     private IEnumerator MovementState_Update(float moveDistance)
     {
-        OnMovementStated?.Invoke(true);
+        OnMovementActive?.Invoke(true);
 
         yield return new WaitForSeconds(_currentMoveDuration * moveDistance);
-        OnMovementStated?.Invoke(false);
+        OnMovementActive?.Invoke(false);
 
         _movementCoroutine = null;
     }

@@ -21,17 +21,21 @@ public class Tile_Indicator : MonoBehaviour
 
 
     // Main
-    public List<Vector2> Default_TilePositions()
+    public List<Vector2> Available_DefaultPositions(Tile pivotTile)
     {
+        Tiles_Controller tilesController = InGame_Manager.instance.tilesController;
         List<Vector2> tilePositions = new();
 
         foreach (Vector2 position in _defaultTilePositions)
         {
+            Tile checkTile = tilesController.Current_Tile((Vector2)pivotTile.transform.position + position);
+            
+            if (checkTile == null) continue;
             tilePositions.Add(position);
         }
         return tilePositions;
     }
-
+    
     public List<Tile> Current_IndicateTiles()
     {
         List<Tile> currentTiles = new();

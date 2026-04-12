@@ -10,14 +10,14 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 069327ba6dded4f16af0714f2c328413, type: 3}
-  m_Name: Raw Meat
+  m_Name: Cooked Chunk of Meat
   m_EditorClassIdentifier: 
-  _inventorySprite: {fileID: -990562413, guid: bf7ece83f843c4c35977c02f8c40d92d, type: 3}
-  _microSprite: {fileID: 827019706, guid: bf7ece83f843c4c35977c02f8c40d92d, type: 3}
-  _itemName: Raw Meat
-  _description: Chunk of meat from an animal
+  _inventorySprite: {fileID: -1164706450, guid: bf7ece83f843c4c35977c02f8c40d92d, type: 3}
+  _microSprite: {fileID: -699544037, guid: bf7ece83f843c4c35977c02f8c40d92d, type: 3}
+  _itemName: Cooked Chunk of Meat
+  _description: Cooked chunk of meat from an animal
   _itemType: 1
-  _itemPrefab: {fileID: 5769858720269626403, guid: 8696a1a78746a4c938879e819e495c06, type: 3}
+  _itemPrefab: {fileID: 5769858720269626403, guid: a5d11f869598944c4b6d19801e21651e, type: 3}
   _offsetData:
   - _position: {x: -0.15, y: -0.3}
     _rotationValue: 0
@@ -28,6 +28,6 @@ MonoBehaviour:
   _maxAmount: 50
   _itemWeight: 0
   _triggerRange: 0
-  _itemIngredientDatas:
-  - _itemScrObj: {fileID: 11400000, guid: f55dcbf1eafcd4c538d85b96297658cd, type: 2}
-    _amount: 2
+  _placeRestrictions: []
+  _selectRestrictions: []
+  _itemIngredientDatas: []

@@ -19,17 +19,16 @@ public class Player_Controller : MonoBehaviour, ISaveLoadable
     [SerializeField] private Item_ScrObj _inventoryBagpack;
     public Item_ScrObj inventoryBagpack => _inventoryBagpack;
 
-
     [Space(20)]
     [SerializeField] private PlayerData _defaultData;
+
 
     private PlayerData _data;
     public PlayerData data => _data;
 
-
-    public Action<int> OnHealthUpdate;
     public Action<int> OnHungerUpdate;
     public Action<int> OnTemperatureUpdate;
+    public Action<int, int> OnStaminaUpdate;
 
 
     // MonoBehaviour
@@ -57,6 +56,9 @@ public class Player_Controller : MonoBehaviour, ISaveLoadable
     public void Load_Data()
     {
         _data = ES3.Load(SaveKeys.Player_SaveKeys.Data, _defaultData);
+
+        if (ES3.KeyExists(SaveKeys.Player_SaveKeys.Data)) return;
+        _data.Update_CurrentStamina(_data.maxStamina);
     }
 
 
@@ -69,6 +71,15 @@ public class Player_Controller : MonoBehaviour, ISaveLoadable
     public void Update_Temperature(int updateValue)
     {
         OnTemperatureUpdate?.Invoke(_data.Update_Temperature(updateValue));
+    }
+
+    public void Update_MaxStamina(int updateValue)
+    {
+        OnStaminaUpdate?.Invoke(_data.Update_MaxStamina(updateValue), _data.currentStamina);
+    }
+    public void Update_CurrentStamina(int updateValue)
+    {
+        OnStaminaUpdate?.Invoke(_data.maxStamina, _data.Update_CurrentStamina(updateValue));
     }
 
 
@@ -89,10 +100,9 @@ public class Player_Controller : MonoBehaviour, ISaveLoadable
     private void Set_InventoryBagpack()
     {
         ItemCursor itemCursor = InGame_Manager.instance.cursor.itemCursor;
-        
         ItemData itemData = _inventoryBagpack != null ? new(_inventoryBagpack, 1) : null;
+
         itemCursor.Set_Data(itemData);
-        
         itemCursor.Update_Visuals();
     }
 }

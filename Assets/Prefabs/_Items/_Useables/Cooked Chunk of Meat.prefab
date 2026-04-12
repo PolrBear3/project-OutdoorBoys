@@ -10,10 +10,9 @@ GameObject:
   m_Component:
   - component: {fileID: 6202383651998061352}
   - component: {fileID: 2873364016420352242}
-  - component: {fileID: 5631418347883325040}
-  - component: {fileID: 3493398022924315214}
+  - component: {fileID: 8570170425162867595}
   m_Layer: 0
-  m_Name: Saw
+  m_Name: Cooked Chunk of Meat
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -46,7 +45,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1d7b415f5701a4ae888e036e1ae5a777, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &5631418347883325040
+--- !u!114 &8570170425162867595
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -55,28 +54,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 5769858720269626403}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f1c9aaee5b8e745968cb1ebba2fa87f7, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _fillBarPrefab: {fileID: 3122773858983555742, guid: b154050f99b494edda6fb24a64dbeae8, type: 3}
-  _setOffSet: {x: 0, y: 0.65}
-  _fillColor: {r: 0.6784314, g: 0.46666667, b: 0.34117648, a: 1}
---- !u!114 &3493398022924315214
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5769858720269626403}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b29504a536134477eaa6a0774bf406ec, type: 3}
+  m_Script: {fileID: 11500000, guid: e449df9648c0748f2ac27c70a4d6053b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   _useableItem: {fileID: 2873364016420352242}
-  _fillBarController: {fileID: 5631418347883325040}
-  _woodDropItem: {fileID: 11400000, guid: cea7459d8010d4a229cb42a2a5b65381, type: 2}
-  _treeItems:
-  - {fileID: 11400000, guid: 86e876e6c7e9c467db97ab95dfa547ce, type: 2}
-  _chopDamage: 1
-  _minWoodDropAmount: 1
+  _healthUpdateValue: 5
+  _tempUpdateValue: 5

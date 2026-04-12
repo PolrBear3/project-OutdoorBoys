@@ -12,6 +12,7 @@ public class InGameUI_Manager : MonoBehaviour
     [Space(10)]
     [SerializeField] private TextMeshProUGUI _hungerText;
     [SerializeField] private TextMeshProUGUI _temperatureText;
+    [SerializeField] private TextMeshProUGUI _staminaText;
 
 
     // MonoBehaviour
@@ -28,13 +29,13 @@ public class InGameUI_Manager : MonoBehaviour
         Time_Manager time = manager.time;
 
         time.OnTimeCount -= Update_TimeText;
-        time.OnTimeCountDataUpdate -= Update_TimeText;
         time.OnDayCount -= Update_DayText;
 
         Player_Controller player = manager.player;
 
         player.OnHungerUpdate -= Update_HungerText;
         player.OnTemperatureUpdate -= Update_TemperatureText;
+        player.OnStaminaUpdate -= Update_StaminaText;
     }
 
 
@@ -48,7 +49,6 @@ public class InGameUI_Manager : MonoBehaviour
 
         Update_TimeText(timeData.timeCount);
         time.OnTimeCount += Update_TimeText;
-        time.OnTimeCountDataUpdate += Update_TimeText;
 
         Update_DayText(timeData.dayCount);
         time.OnDayCount += Update_DayText;
@@ -58,25 +58,24 @@ public class InGameUI_Manager : MonoBehaviour
 
         Update_HungerText(playerData.hunger);
         Update_TemperatureText(playerData.temperature);
+        Update_StaminaText(playerData.maxStamina, playerData.currentStamina);
 
         player.OnHungerUpdate += Update_HungerText;
         player.OnTemperatureUpdate += Update_TemperatureText;
+        player.OnStaminaUpdate += Update_StaminaText;
     }
 
 
     // Text
     private void Update_TimeText(int timeCount)
     {
-        int timeCountUpdateValue = InGame_Manager.instance.time.Total_TimeCountSum();
+        int timeCountUpdateValue = InGame_Manager.instance.time.data.timeCountValue;
         _timeText.text = timeCount + " (" + "+" + timeCountUpdateValue + ")".ToString();
     }
-    private void Update_TimeText()
-    {
-        Update_TimeText(InGame_Manager.instance.time.data.timeCount);
-    }
-
+    
     private void Update_DayText(int dayCount) => _dayText.text = "Day " + dayCount.ToString();
 
-    private void Update_HungerText(int hungerValue) => _hungerText.text = hungerValue.ToString();
-    private void Update_TemperatureText(int tempValue) => _temperatureText.text = tempValue.ToString();
+    private void Update_HungerText(int currentValue) => _hungerText.text = currentValue.ToString();
+    private void Update_TemperatureText(int currentValue) => _temperatureText.text = currentValue.ToString();
+    private void Update_StaminaText(int maxValue, int currentValue) => _staminaText.text = maxValue + "/" + currentValue.ToString();
 }

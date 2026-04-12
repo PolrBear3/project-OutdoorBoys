@@ -11,26 +11,6 @@ public enum TimeUpdateBus
     SubUpdate = 2
 }
 
-public class TimeCountData
-{
-    private object _obj;
-    public object obj => _obj;
-
-    private int _countValue;
-    public int countValue => _countValue;
-
-    public TimeCountData(object obj, int value)
-    {
-        _obj = obj;
-        _countValue = value;
-    }
-
-    public void Set_CountValue(int setValue)
-    {
-        _countValue = Mathf.Max(0, setValue);
-    }
-}
-
 public class Time_Manager : MonoBehaviour, ISaveLoadable
 {
     [Space(20)]
@@ -44,10 +24,7 @@ public class Time_Manager : MonoBehaviour, ISaveLoadable
     private TimeData _data;
     public TimeData data => _data;
 
-    private List<TimeCountData> _countUpdateDatas = new();
     private Dictionary<TimeUpdateBus, Action> _timeUpdateBuses = new();
-
-    public Action OnTimeCountDataUpdate;
 
     public Action<int> OnTimeCount;
     public Action OnNightPhaseUpdate;
@@ -58,6 +35,7 @@ public class Time_Manager : MonoBehaviour, ISaveLoadable
     public Action<bool> OnTikToggle;
 
     private Coroutine _timeTikCoroutine;
+    public Coroutine timeTikCoroutine => _timeTikCoroutine;
 
 
     // MonoBehaviour
@@ -75,7 +53,7 @@ public class Time_Manager : MonoBehaviour, ISaveLoadable
 
         InGame_Manager manager = InGame_Manager.instance;
 
-        manager.player.movement.OnMovement -= Stop_TimTik;
+        manager.player.interaction.OnMoveAvailableCheck -= Stop_TimTik;
         manager.tilesController.OnTileSelect -= Stop_TimTik;
         manager.cursor.OnTilePointRangeUpdate -= Stop_TimTik;
     }
@@ -101,7 +79,7 @@ public class Time_Manager : MonoBehaviour, ISaveLoadable
 
         InGame_Manager manager = InGame_Manager.instance;
 
-        manager.player.movement.OnMovement += Stop_TimTik;
+        manager.player.interaction.OnMoveAvailableCheck += Stop_TimTik;
         manager.tilesController.OnTileSelect += Stop_TimTik;
         manager.cursor.OnTilePointRangeUpdate += Stop_TimTik;
     }
@@ -126,36 +104,9 @@ public class Time_Manager : MonoBehaviour, ISaveLoadable
         OnNightPhaseUpdate?.Invoke();
     }
 
-
-    public int Total_TimeCountSum()
-    {
-        int sum = 0;
-
-        foreach (TimeCountData data in _countUpdateDatas)
-        {
-            sum += data.countValue;
-        }
-        return sum;
-    }
-
-    public void Track_TimeCountData(TimeCountData dataToTrack)
-    {
-        for (int i = 0; i < _countUpdateDatas.Count; i++)
-        {
-            TimeCountData data = _countUpdateDatas[i];
-            if (dataToTrack.obj != data.obj) continue;
-
-            data.Set_CountValue(dataToTrack.countValue);
-            OnTimeCountDataUpdate?.Invoke();
-
-            return;
-        }
-        _countUpdateDatas.Add(dataToTrack);
-        OnTimeCountDataUpdate?.Invoke();
-    }
     public void Count_Time()
     {
-        int calculatedTimeCount = data.timeCount + Mathf.Max(0, Total_TimeCountSum());
+        int calculatedTimeCount = data.timeCount + Mathf.Max(0, _data.timeCountValue);
 
         if (calculatedTimeCount <= _maxTimeCount)
         {
@@ -224,7 +175,7 @@ public class Time_Manager : MonoBehaviour, ISaveLoadable
     {
         Toggle_TimeTik(_timeTikCoroutine == null);
     }
-    public void Stop_TimTik()
+    private void Stop_TimTik()
     {
         if (_timeTikCoroutine == null) return;
         Toggle_TimeTik(false);
