@@ -1,0 +1,104 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+public class Tile_Indicator : MonoBehaviour
+{
+    [Space(20)]
+    [SerializeField] private GameObject _indicatorPrefab;
+
+    [Space(20)]
+    [SerializeField] private Sprite _indicatorSprite;
+    [SerializeField] private Color _indicatorColor;
+
+    [Space(20)]
+    [SerializeField] private Vector2[] _defaultTilePositions;
+    public Vector2[] defaultTilePositions => _defaultTilePositions;
+
+
+    private Dictionary<Tile, SpriteRenderer> _currentIndicateDatas = new();
+    public Dictionary<Tile, SpriteRenderer> currentIndicateDatas => _currentIndicateDatas;
+
+
+    // Main
+    public List<Vector2> Default_TilePositions()
+    {
+        List<Vector2> tilePositions = new();
+
+        foreach (Vector2 position in _defaultTilePositions)
+        {
+            tilePositions.Add(position);
+        }
+        return tilePositions;
+    }
+
+    public List<Tile> Current_IndicateTiles()
+    {
+        List<Tile> currentTiles = new();
+
+        foreach (var indicator in _currentIndicateDatas)
+        {
+            currentTiles.Add(indicator.Key);
+        }
+        return currentTiles;
+    }
+
+
+    public void Set_Indicators(Tile pivotTile, List<Vector2> setPositions)
+    {
+        Clear_CurrentIndicators();
+
+        Tiles_Controller tilesController = InGame_Manager.instance.tilesController;
+
+        for (int i = 0; i < setPositions.Count; i++)
+        {
+            Vector2 pivotTilePos = pivotTile.transform.position;
+            Tile setPositionTile = tilesController.Current_Tile(pivotTilePos + setPositions[i]);
+
+            if (setPositionTile == null) continue;
+
+            GameObject setIndicator = Instantiate(_indicatorPrefab, setPositionTile.transform);
+            setIndicator.transform.SetParent(transform);
+
+            if (setIndicator.TryGetComponent(out SpriteRenderer sr) == false)
+            {
+                Destroy(setIndicator);
+                continue;
+            }
+            _currentIndicateDatas[setPositionTile] = sr;
+
+            sr.sprite = _indicatorSprite != null ? _indicatorSprite : sr.sprite;
+            sr.color = _indicatorColor;
+        }
+    }
+    public void Set_Indicators(Tile pivotTile)
+    {
+        List<Vector2> defaultPositions = new();
+
+        foreach (Vector2 positions in _defaultTilePositions)
+        {
+            defaultPositions.Add(positions);
+        }
+        Set_Indicators(pivotTile, defaultPositions);
+    }
+
+    public void Clear_CurrentIndicators()
+    {
+        foreach (var indicator in _currentIndicateDatas)
+        {
+            Destroy(indicator.Value.gameObject);
+        }
+        _currentIndicateDatas.Clear();
+    }
+
+
+    public void Toggle_CurrentIndicators(bool toggle)
+    {
+        if (_currentIndicateDatas.Count <= 0) return;
+
+        foreach (var indication in _currentIndicateDatas)
+        {
+            indication.Value.gameObject.SetActive(toggle);
+        }
+    }
+}

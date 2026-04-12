@@ -180,6 +180,7 @@ GameObject:
   - component: {fileID: 3045259509940891077}
   - component: {fileID: 2191419684246612499}
   - component: {fileID: 8267873137990113261}
+  - component: {fileID: 885117779970919883}
   - component: {fileID: 1531750997209139500}
   - component: {fileID: 3029350795489526820}
   m_Layer: 0
@@ -255,6 +256,31 @@ MonoBehaviour:
   _fillBarPrefab: {fileID: 3122773858983555742, guid: b154050f99b494edda6fb24a64dbeae8, type: 3}
   _setOffSet: {x: 0, y: 0.685}
   _fillColor: {r: 0.8117647, g: 0.34117648, b: 0.23529412, a: 1}
+--- !u!114 &885117779970919883
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3637228250238346253}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 29610638bf7fa4efd941027cc0309360, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _indicatorPrefab: {fileID: 2646137999372282548, guid: c115b03e5a02a4522895db5f253285dd, type: 3}
+  _indicatorSprite: {fileID: 0}
+  _indicatorColor: {r: 0.8117647, g: 0.34117648, b: 0.23529412, a: 1}
+  _defaultTilePositions:
+  - {x: 0, y: 0}
+  - {x: 0, y: 1}
+  - {x: 1, y: 0}
+  - {x: 0, y: -1}
+  - {x: -1, y: 0}
+  - {x: 1, y: 1}
+  - {x: 1, y: -1}
+  - {x: -1, y: -1}
+  - {x: -1, y: 1}
 --- !u!114 &1531750997209139500
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -285,6 +311,7 @@ MonoBehaviour:
   _placeableItem: {fileID: 1531750997209139500}
   _fillBarController: {fileID: 8267873137990113261}
   _fillBarDecreasePoint: 5
+  _cookTileIndicator: {fileID: 885117779970919883}
   _burnUpdateItems:
   - _itemScrObj: {fileID: 11400000, guid: cea7459d8010d4a229cb42a2a5b65381, type: 2}
     _amount: 1

@@ -55,7 +55,7 @@ public class Animal : MonoBehaviour, IDamageable
     public int InflictDamage(int damageValue)
     {
         if (_data.isOnSight == false) return _data.health;
-        
+
         _data.Update_Health(_data.health - damageValue);
         Update_DeceasedState();
 
@@ -314,7 +314,27 @@ public class Animal : MonoBehaviour, IDamageable
         if (manager == null) return;
 
         manager.spawnedAnimals.Remove(this);
+
+        Vector2 currentTilePos = _movement.tileTrackerData.CurrentTile().transform.position;
+        List<Tile> edgedTiles = InGame_Manager.instance.tilesController.Current_EdgedTiles();
+
+        edgedTiles.Sort((a, b) =>
+        {
+            int distA = Utility.Chebyshev_Distance(currentTilePos, a.transform.position);
+            int distB = Utility.Chebyshev_Distance(currentTilePos, b.transform.position);
+            return distA.CompareTo(distB);
+        });
+        _movement.MoveTo_Tile(edgedTiles.Count > 0 ? edgedTiles[0] : null);
+
+        StartCoroutine(EscapeDelay());
+    }
+    private IEnumerator EscapeDelay()
+    {
+        MovementControllers_Manager movementsManager = InGame_Manager.instance.movements;
+        while (movementsManager.AllMovements_Complete() == false) yield return null;
+
         Destroy(gameObject);
+        yield break;
     }
 
     public void Follow(int agroRange)
