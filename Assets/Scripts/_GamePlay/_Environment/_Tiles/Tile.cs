@@ -118,8 +118,11 @@ public class Tile : MonoBehaviour
     // Current Placed Items
     private void Track_PlacingItem(PlaceableItem placingItem)
     {
+        if (placedItems == null) return;
+
         _placedItems.Add(placingItem);
         _data.placedItemDatas.Add(placingItem.data);
+        InGame_Manager.instance.tilesController.placedItems.Add(placingItem);
 
         Update_PlacedItemOffsets();
     }
@@ -146,7 +149,7 @@ public class Tile : MonoBehaviour
         {
             PlaceableItem placedItem = samePlacedItems[i];
             ItemData placedItemData = placedItem.data;
-            
+
             int placedItemAmount = placedItemData.amount;
             if (placedItemAmount >= maxAmount) continue;
 
@@ -183,7 +186,7 @@ public class Tile : MonoBehaviour
 
         return new(setItem, setItemAmount);
     }
-    
+
     /// <returns>
     /// Check if item set successfully
     /// </returns>
@@ -222,7 +225,7 @@ public class Tile : MonoBehaviour
         {
             return Set_PlacingItem(setItemData);
         }
-        
+
         if (Set_UseItem(setItemData)) return null;
         return setItemData;
     }
@@ -257,6 +260,7 @@ public class Tile : MonoBehaviour
     {
         _placedItems.Remove(PlacedItem);
         _data.placedItemDatas.Remove(PlacedItem.data);
+        InGame_Manager.instance.tilesController.placedItems.Remove(PlacedItem);
 
         List<ItemData> preservedDatas = new(_data.preservedItemDatas);
         _data.preservedItemDatas.Clear();
@@ -333,7 +337,7 @@ public class Tile : MonoBehaviour
         }
         return null;
     }
-    
+
     public List<PlaceableItem> PlacedItems()
     {
         List<PlaceableItem> placedItems = new();
@@ -347,13 +351,13 @@ public class Tile : MonoBehaviour
     public List<PlaceableItem> PlacedItems(Item_ScrObj targetItem)
     {
         if (targetItem == null) return null;
-        
+
         List<PlaceableItem> placedItems = new();
 
         for (int i = 0; i < _placedItems.Count; i++)
         {
             PlaceableItem placedItem = _placedItems[i];
-            
+
             if (targetItem != placedItem.data.itemScrObj) continue;
             placedItems.Add(placedItem);
         }

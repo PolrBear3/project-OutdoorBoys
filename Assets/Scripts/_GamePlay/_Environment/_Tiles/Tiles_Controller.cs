@@ -8,6 +8,9 @@ public class Tiles_Controller : MonoBehaviour, IItemsSource
     private List<Tile> _currentTiles = new();
     public List<Tile> currentTiles => _currentTiles;
 
+    private List<PlaceableItem> _placedItems = new();
+    public List<PlaceableItem> placedItems => _placedItems;
+
 
     public Action<Tile> OnTileHover;
 
@@ -285,5 +288,21 @@ public class Tiles_Controller : MonoBehaviour, IItemsSource
             tile.Toggle_SelectPreview(Tile_Pointable(tile));
             tile.Toggle_SelectReady();
         }
+    }
+
+
+    // Placed Items
+    public List<PlaceableItem> PlacedItems(Item_ScrObj targetItem)
+    {
+        List<PlaceableItem> placedItems = new();
+
+        for (int i = 0; i < _placedItems.Count; i++)
+        {
+            PlaceableItem placedITem = _placedItems[i];
+
+            if (targetItem != placedITem.data.itemScrObj) continue;
+            placedItems.Add(placedITem);
+        }
+        return placedItems;
     }
 }

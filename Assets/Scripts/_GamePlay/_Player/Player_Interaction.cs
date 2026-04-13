@@ -33,7 +33,7 @@ public class Player_Interaction : MonoBehaviour, IItemsSource, IItemsSourceRemov
         EventBus_Manager.UnRegister(EventBus.AwakeLoad, Set_Data);
 
         Input_Controller input = Input_Controller.instance;
-        
+
         input.OnMovement -= MoveTo_Tile;
 
         Time_Manager time = InGame_Manager.instance.time;
@@ -162,6 +162,9 @@ public class Player_Interaction : MonoBehaviour, IItemsSource, IItemsSourceRemov
     // Movement & Stamina
     private bool MoveAvailable_UpdateStamina()
     {
+        return true;
+
+        /*
         InGame_Manager manager = InGame_Manager.instance;
 
         Player_Controller player = manager.player;
@@ -181,6 +184,7 @@ public class Player_Interaction : MonoBehaviour, IItemsSource, IItemsSourceRemov
 
         player.Update_CurrentStamina(calculatedStamina);
         return true;
+        */
     }
     private void MoveTo_Tile(Vector2 direction)
     {
