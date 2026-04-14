@@ -36,7 +36,7 @@ public class Saw : MonoBehaviour
     // Main
     private PlaceableItem PlacedTree(Tile useTile)
     {
-        List<PlaceableItem> placedItems = useTile.placedItems;
+        List<PlaceableItem> placedItems = useTile.PlacedItems();
 
         for (int i = 0; i < placedItems.Count; i++)
         {

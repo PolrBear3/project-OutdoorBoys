@@ -77,9 +77,10 @@ MonoBehaviour:
   _fillBarController: {fileID: 4102059880458969063}
   _stoneItem: {fileID: 11400000, guid: 85f6c95d406fa44a1890666516ac97b7, type: 2}
   _fireItem: {fileID: 11400000, guid: 7eec0f9b59d3341c48ea66ddd607fcce, type: 2}
-  _activateWoodItems:
-  - {fileID: 11400000, guid: cea7459d8010d4a229cb42a2a5b65381, type: 2}
-  _activateTreeItems:
-  - {fileID: 11400000, guid: 86e876e6c7e9c467db97ab95dfa547ce, type: 2}
+  _fireActivateItemDatas:
+  - _itemScrObj: {fileID: 11400000, guid: cea7459d8010d4a229cb42a2a5b65381, type: 2}
+    _amount: 3
+  - _itemScrObj: {fileID: 11400000, guid: 86e876e6c7e9c467db97ab95dfa547ce, type: 2}
+    _amount: 5
   _fireActivationCount: 3
   _heatSustainTime: 3

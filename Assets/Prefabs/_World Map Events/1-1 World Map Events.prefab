@@ -51,14 +51,14 @@ MonoBehaviour:
     _generateTiles:
     - {fileID: 11400000, guid: 13d5158de20cd4105b5f0b097494ca71, type: 2}
     - {fileID: 11400000, guid: 8145ed0e845b14bca951ca79c25e2e94, type: 2}
-    _generateRate: 2
+    _generateRate: 6
     _generateAmount: 2
     _maxGenerateAmount: 20
     _generatePointDistance: 2
   - _resourceItem: {fileID: 11400000, guid: 85f6c95d406fa44a1890666516ac97b7, type: 2}
     _generateTiles:
     - {fileID: 11400000, guid: 621605563892d4d0a95e4d57c264bf5c, type: 2}
-    _generateRate: 1
+    _generateRate: 5
     _generateAmount: 2
     _maxGenerateAmount: 10
     _generatePointDistance: 2
@@ -69,7 +69,7 @@ MonoBehaviour:
     - {fileID: 11400000, guid: 8145ed0e845b14bca951ca79c25e2e94, type: 2}
     _generateRate: 1
     _generateAmount: 1
-    _maxGenerateAmount: 10
+    _maxGenerateAmount: 3
     _generatePointDistance: 2
 --- !u!114 &3786407175532632579
 MonoBehaviour:

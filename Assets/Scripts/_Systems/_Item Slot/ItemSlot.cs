@@ -15,6 +15,9 @@ public class ItemSlot : MonoBehaviour
 
     [SerializeField] private TextMeshProUGUI _amountText;
 
+    [Space(10)]
+    [SerializeField] private FillBar_UI _durabilityBar;
+
 
     private ItemSlot_Manager _slotManager;
 
@@ -69,20 +72,40 @@ public class ItemSlot : MonoBehaviour
 
 
     // Visuals
-    public void Update_Visuals()
+    public void Update_ItemImage()
     {
         _itemImage.gameObject.SetActive(_data != null);
         _itemImage.sprite = _data?.itemScrObj.inventorySprite;
-
-        Update_AmountText();
     }
 
     public void Update_AmountText()
     {
-        bool toggleText = _data != null && _data.amount > 1;
-        _amountText.gameObject.SetActive(toggleText);
+        _durabilityBar.gameObject.SetActive(false);
 
-        if (toggleText == false) return;
+        bool textToggle = _data != null && _data.amount > 1;
+        _amountText.gameObject.SetActive(textToggle);
+
+        if (textToggle == false) return;
         _amountText.text = _data.amount.ToString();
+    }
+
+    public void Update_AmountIndications()
+    {
+        _amountText.gameObject.SetActive(false);
+
+        GameObject durabilityBar = _durabilityBar.gameObject;
+        durabilityBar.SetActive(false);
+
+        if (_data == null) return;
+        Item_ScrObj currentItem = _data.itemScrObj;
+
+        if (currentItem.itemType == ItemType.use)
+        {
+            _durabilityBar.gameObject.SetActive(true);
+            _durabilityBar.Update_Fill(currentItem.maxAmount, _data.amount);
+
+            return;
+        }
+        Update_AmountText();
     }
 }

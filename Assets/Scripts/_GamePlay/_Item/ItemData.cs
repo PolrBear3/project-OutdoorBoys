@@ -26,7 +26,6 @@ public class ItemData
         _amount = Mathf.Max(0, updateAmount);
     }
 
-
     public int Item_Weight()
     {
         int singleWeight = _itemScrObj.itemWeight;

@@ -49,7 +49,8 @@ public class ItemSlot_Manager : MonoBehaviour
             ItemSlot slot = _slots[i];
 
             slot.Set_Data(this);
-            slot.Update_Visuals();
+            slot.Update_ItemImage();
+            slot.Update_AmountIndications();
         }
 
         Input_Controller input = Input_Controller.instance;
@@ -175,7 +176,8 @@ public class ItemSlot_Manager : MonoBehaviour
     {
         for (int i = 0; i < _slots.Count; i++)
         {
-            slots[i].Update_Visuals();
+            slots[i].Update_ItemImage();
+            slots[i].Update_AmountIndications();
         }
     }
 }

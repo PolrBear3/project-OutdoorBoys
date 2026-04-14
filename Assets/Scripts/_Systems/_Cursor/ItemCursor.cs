@@ -159,16 +159,28 @@ public class ItemCursor : MonoBehaviour, IItemsSource, IItemsSourceRemove, IItem
 
     public void Update_Visuals()
     {
-        // sprite
-        _cursor.Update_PointerSprite(_data?.itemScrObj.inventorySprite);
-        InGame_Manager.instance.player.interaction.Update_IndicationIcon(_data?.itemScrObj.microSprite);
+        GameObject amountText = _cursor.amountText.gameObject;
+        FillBar_UI durabilityBar = _cursor.durabilityBar;
 
-        // amount text
-        if (_data == null || _data.amount <= 1)
+        Item_ScrObj currentItem = _data?.itemScrObj;
+
+        _cursor.Update_PointerSprite(currentItem?.inventorySprite);
+        InGame_Manager.instance.player.interaction.Update_IndicationIcon(currentItem?.microSprite);
+
+        amountText.SetActive(false);
+        durabilityBar.gameObject.SetActive(false);
+
+        if (_data == null || currentItem == null) return;
+
+        if (currentItem.itemType == ItemType.use)
         {
-            _cursor.amountText.gameObject.SetActive(false);
+            durabilityBar.gameObject.SetActive(true);
+            durabilityBar.Update_Fill(currentItem.maxAmount, _data.amount);
+            
             return;
         }
+
+        if (_data.amount <= 1) return;
         _cursor.Update_AmountText(_data.amount);
     }
 
@@ -176,7 +188,7 @@ public class ItemCursor : MonoBehaviour, IItemsSource, IItemsSourceRemove, IItem
     // Item Control
     private void Pickup_Item(Tile selectTile)
     {
-        List<PlaceableItem> placedItems = selectTile.placedItems;
+        List<PlaceableItem> placedItems = selectTile.PlacedItems();
         if (placedItems.Count <= 0) return;
 
         PlaceableItem firstPlacedItem = null;

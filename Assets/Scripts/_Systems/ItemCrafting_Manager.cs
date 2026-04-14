@@ -155,12 +155,12 @@ public class ItemCrafting_Manager : MonoBehaviour
             if (i >= craftAvailableItemDatas.Count)
             {
                 slot.Clear_Data();
-                continue;
             }
-            slot.Set_Data(craftAvailableItemDatas[i]);
-        }
+            else slot.Set_Data(craftAvailableItemDatas[i]);
 
-        _slotManager.Update_Visuals();
+            slot.Update_ItemImage();
+            slot.Update_AmountText();
+        }
     }
     private void Update_CraftableItems(ItemSlot _)
     {
@@ -244,7 +244,13 @@ public class ItemCrafting_Manager : MonoBehaviour
         {
             _ingredientSlotsManager.Add_NewSlot(data);
         }
-        _ingredientSlotsManager.Update_Visuals();
+
+        List<ItemSlot> addedSlots = _ingredientSlotsManager.slots;
+        foreach (ItemSlot slot in addedSlots)
+        {
+            slot.Update_ItemImage();
+            slot.Update_AmountText();
+        }
     }
     private void Toggle_ItemInfoPanel()
     {

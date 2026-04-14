@@ -26,7 +26,6 @@ public class Tile : MonoBehaviour
     public TileData data => _data;
 
     private List<PlaceableItem> _placedItems = new();
-    public List<PlaceableItem> placedItems => _placedItems;
 
 
     // MonoBehaviour
@@ -118,7 +117,7 @@ public class Tile : MonoBehaviour
     // Current Placed Items
     private void Track_PlacingItem(PlaceableItem placingItem)
     {
-        if (placedItems == null) return;
+        if (_placedItems == null) return;
 
         _placedItems.Add(placingItem);
         _data.placedItemDatas.Add(placingItem.data);

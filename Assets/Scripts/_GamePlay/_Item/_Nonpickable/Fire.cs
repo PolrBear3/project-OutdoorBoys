@@ -28,7 +28,10 @@ public class Fire : MonoBehaviour
 
     [Space(20)]
     [SerializeField] private ItemData[] _burnUpdateItems;
+
+    [Space(20)]
     [SerializeField][Range(0, 100)] private int _burnDecreaseValue;
+    [SerializeField][Range(0, 10)] private int _heatTilesUpdateThresholdPoint;
 
     [Space(20)]
     [SerializeField] private HeatUpdate_ItemData[] _heatItemDatas;
@@ -118,7 +121,7 @@ public class Fire : MonoBehaviour
     private void UpdatePlaced_BurnItems(int _)
     {
         Tile currentTile = _placeableItem.currentTile;
-        List<PlaceableItem> placedBurnItems = currentTile.placedItems;
+        List<PlaceableItem> placedBurnItems = currentTile.PlacedItems();
 
         for (int i = placedBurnItems.Count - 1; i >= 0; i--)
         {
@@ -177,10 +180,11 @@ public class Fire : MonoBehaviour
             return;
         }
 
-        int maxTileCount = _heatTileIndicator.defaultTilePositions.Length;
-        int calculatedTileCount = Mathf.CeilToInt((float)burnCount / itemData.itemScrObj.maxAmount * maxTileCount);
-
         Tile currentTile = _placeableItem.currentTile;
+        int maxTileCount = _heatTileIndicator.defaultTilePositions.Length;
+
+        float thresholdAmount = itemData.itemScrObj.maxAmount * (_heatTilesUpdateThresholdPoint / 10f);
+        int calculatedTileCount = burnCount >= thresholdAmount ? maxTileCount : Mathf.CeilToInt(burnCount / thresholdAmount * maxTileCount);
 
         List<Vector2> defaultPositions = _heatTileIndicator.Available_DefaultPositions(currentTile);
         int updateTileCount = Mathf.Clamp(calculatedTileCount, 1, defaultPositions.Count);

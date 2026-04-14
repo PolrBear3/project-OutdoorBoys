@@ -11,6 +11,7 @@ public class FillBar : MonoBehaviour
     // Main
     public void Update_Fill(int maxValue, int currentValue)
     {
+        if (_fillRenderer == null) return; 
         if (maxValue <= 0) return;
         
         Vector3 currentScale = _fillRenderer.transform.localScale;

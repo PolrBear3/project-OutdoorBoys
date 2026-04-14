@@ -196,9 +196,12 @@ public class Inventory_Manager : MonoBehaviour, IItemsSource, IItemsSourceRemove
         if (hoveringItem == null) return;
 
         _itemImageSlot.Set_Data(new ItemData(hoveringItem, 1));
-        _itemImageSlot.Update_Visuals();
+        _itemImageSlot.Update_ItemImage();
+        _itemImageSlot.Update_AmountText();
 
-        _itemNameText.text = hoveringItem.itemName;
+        int hoverAmount = hoveringItemSlot.data.amount;
+
+        _itemNameText.text = hoveringItem.itemName + " [" + hoverAmount + "/" + hoveringItem.maxAmount + "]";
         _itemDescriptionText.text = hoveringItem.description;
 
         LayoutRebuilder.ForceRebuildLayoutImmediate(_itemInfoPanel.rectTransform);
@@ -288,7 +291,8 @@ public class Inventory_Manager : MonoBehaviour, IItemsSource, IItemsSourceRemove
         if (swapSlotData == null && itemCursor.data == null) return;
 
         targetSlot.Set_Data(itemCursor.data);
-        targetSlot.Update_Visuals();
+        targetSlot.Update_ItemImage();
+        targetSlot.Update_AmountIndications();
 
         itemCursor.Set_Data(swapSlotData);
         itemCursor.Update_Visuals();
@@ -319,7 +323,8 @@ public class Inventory_Manager : MonoBehaviour, IItemsSource, IItemsSourceRemove
         slotItemData.Update_CurrentAmount(slotItemData.amount - 1);
 
         targetSlot.Set_Data(slotItemData.amount > 0 ? slotItemData : null);
-        targetSlot.Update_Visuals();
+        targetSlot.Update_ItemImage();
+        targetSlot.Update_AmountIndications();
 
         int currentCursorAmount = cursorItemData != null ? cursorItemData.amount : 0;
 
@@ -354,7 +359,8 @@ public class Inventory_Manager : MonoBehaviour, IItemsSource, IItemsSourceRemove
         slotItemData.Update_CurrentAmount(slotItemData.amount - transferAmount);
 
         targetSlot.Set_Data(slotItemData.amount > 0 ? slotItemData : null);
-        targetSlot.Update_Visuals();
+        targetSlot.Update_ItemImage();
+        targetSlot.Update_AmountIndications();
 
         itemCursor.Update_Data(new(pickupItem, currentCursorAmount + transferAmount));
         itemCursor.Update_Visuals();

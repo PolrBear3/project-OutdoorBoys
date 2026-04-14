@@ -20,6 +20,10 @@ public class Cursor : MonoBehaviour
     public TextMeshProUGUI amountText => _amountText;
 
     [Space(10)]
+    [SerializeField] private FillBar_UI _durabilityBar;
+    public FillBar_UI durabilityBar => _durabilityBar;
+
+    [Space(10)]
     [SerializeField] private Sprite _defaultPointerSprite;
     [SerializeField] private Sprite _pressedPointerSprite;
 
@@ -101,12 +105,16 @@ public class Cursor : MonoBehaviour
         _cursorImage.sprite = isPressed ? _pressedPointerSprite : _defaultPointerSprite;
     }
 
-    public void Update_AmountText(int updateAmount)
+    public void Update_AmountText(string updateString)
     {
-        _amountText.text = updateAmount.ToString();
+        _amountText.text = updateString;
 
         if (_amountText.gameObject.activeSelf) return;
         _amountText.gameObject.SetActive(true);
+    }
+    public void Update_AmountText(int updateValue)
+    {
+        Update_AmountText(updateValue.ToString());
     }
 
 
