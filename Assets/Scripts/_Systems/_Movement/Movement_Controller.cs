@@ -20,7 +20,7 @@ public class Movement_Controller : MonoBehaviour
     public TileTrackerData tileTrackerData => _tileTrackerData;
 
     private Vector2 _currentOffset;
-    
+
     private float _currentMoveDuration;
     public float currentMoveDuration => _currentMoveDuration;
 
@@ -135,7 +135,7 @@ public class Movement_Controller : MonoBehaviour
 
         Vector2 direction = destinationTilePos - previousTilePos;
         OnMovementDirection?.Invoke(direction);
-        
+
         int moveDistance = Utility.Chebyshev_Distance(previousTilePos, destinationTilePos);
         Start_MovementStateUpdate(moveDistance);
 
@@ -143,10 +143,7 @@ public class Movement_Controller : MonoBehaviour
     }
     public void MoveTo_Tile(Vector2 direction)
     {
-        InGame_Manager manager = InGame_Manager.instance;
-        if (manager.movements.AllMovements_Complete() == false) return;
-
-        Tiles_Controller controller = manager.tilesController;
+        Tiles_Controller controller = InGame_Manager.instance.tilesController;
         Tile destinationTile = controller.Current_Tile((Vector2)_tileTrackerData.CurrentTile().transform.position + direction);
 
         if (destinationTile == null || destinationTile == _tileTrackerData.CurrentTile()) return;

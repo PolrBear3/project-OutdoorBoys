@@ -313,14 +313,13 @@ MonoBehaviour:
   _heatTileIndicator: {fileID: 885117779970919883}
   _burnUpdateItems:
   - _itemScrObj: {fileID: 11400000, guid: cea7459d8010d4a229cb42a2a5b65381, type: 2}
-    _amount: 1
+    _amount: 5
   - _itemScrObj: {fileID: 11400000, guid: 86e876e6c7e9c467db97ab95dfa547ce, type: 2}
     _amount: 10
   _burnDecreaseValue: 1
   _heatItemDatas:
   - _preHeatItem: {fileID: 11400000, guid: fba43ae9d93594cddbc2a132e3fd3b95, type: 2}
     _heatedItem: {fileID: 11400000, guid: 56e836a9404ef431d9aaf1eb6c56e70a, type: 2}
-    _updatePointValue: 20
+    _updatePointValue: 5
   _coalItem: {fileID: 11400000, guid: e50291faad97248a7aa944b68f1d5612, type: 2}
   _coalGenerateAmount: 1
-  _debugData: []

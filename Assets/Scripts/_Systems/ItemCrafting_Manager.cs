@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -51,6 +52,11 @@ public class ItemCrafting_Manager : MonoBehaviour
         itemCursor.OnItemReturn -= Update_CraftableItems;
         itemCursor.OnItemReturn -= Toggle_ItemInfoPanel;
 
+        Tiles_Controller tilesController = manager.tilesController;
+
+        tilesController.OnTileSelect -= Update_CraftableItems;
+        tilesController.OnTileSelect -= Toggle_ItemInfoPanel;
+
         Time_Manager time = manager.time;
 
         time.UnRegister(TimeUpdateBus.StartUpdate, Update_CraftableItems);
@@ -78,6 +84,11 @@ public class ItemCrafting_Manager : MonoBehaviour
 
         itemCursor.OnItemReturn += Update_CraftableItems;
         itemCursor.OnItemReturn += Toggle_ItemInfoPanel;
+
+        Tiles_Controller tilesController = manager.tilesController;
+
+        tilesController.OnTileSelect += Update_CraftableItems;
+        tilesController.OnTileSelect += Toggle_ItemInfoPanel;
 
         Time_Manager time = manager.time;
 
@@ -109,12 +120,28 @@ public class ItemCrafting_Manager : MonoBehaviour
         List<ItemData> currentItemDatas = Ingredient_ItemDatas();
         List<ItemData> craftAvailableItemDatas = new();
 
+        Tile playerTile = InGame_Manager.instance.player.movement.tileTrackerData.CurrentTile();
+
         for (int i = 0; i < allItems.Length; i++)
         {
             Item_ScrObj craftItem = allItems[i];
-            int craftCount = craftItem.Available_CraftCount(currentItemDatas);
 
+            ItemData[] placedCheckDatas = craftItem.craftPlacedCheckDatas;
+            bool checkItemsPlaced = true;
+
+            for (int j = 0; j < placedCheckDatas.Length; j++)
+            {
+                ItemData checkData = placedCheckDatas[j];
+                if (playerTile.Placed_ItemCount(checkData.itemScrObj) >= checkData.amount) continue;
+
+                checkItemsPlaced = false;
+                break;
+            }
+            if (checkItemsPlaced == false) continue;
+
+            int craftCount = craftItem.Available_CraftCount(currentItemDatas);
             if (craftCount <= 0) continue;
+
             craftAvailableItemDatas.Add(new(craftItem, craftCount));
         }
         craftAvailableItemDatas.Sort((x, y) => y.amount.CompareTo(x.amount));

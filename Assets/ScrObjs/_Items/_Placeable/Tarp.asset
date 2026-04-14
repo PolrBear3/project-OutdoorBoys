@@ -28,6 +28,9 @@ MonoBehaviour:
   _maxAmount: 2
   _itemWeight: 1
   _triggerRange: 1
+  _placeRestrictions: []
+  _selectRestrictions: []
+  _craftPlacedCheckDatas: []
   _itemIngredientDatas:
   - _itemScrObj: {fileID: 11400000, guid: 86e876e6c7e9c467db97ab95dfa547ce, type: 2}
     _amount: 2

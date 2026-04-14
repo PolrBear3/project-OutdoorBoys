@@ -20,7 +20,7 @@ public class Item_ScrObj : ScriptableObject
     [Space(20)]
     [SerializeField] private Sprite _inventorySprite;
     public Sprite inventorySprite => _inventorySprite;
-    
+
     [SerializeField] private Sprite _microSprite;
     public Sprite microSprite => _microSprite;
 
@@ -59,6 +59,9 @@ public class Item_ScrObj : ScriptableObject
     public ItemRule_ScrObj[] selectRestrictions => _selectRestrictions;
 
     [Space(20)]
+    [SerializeField] private ItemData[] _craftPlacedCheckDatas;
+    public ItemData[] craftPlacedCheckDatas => _craftPlacedCheckDatas;
+
     [SerializeField] private ItemData[] _itemIngredientDatas;
 
 
@@ -74,7 +77,7 @@ public class Item_ScrObj : ScriptableObject
     public bool Place_Available(ItemData currentData, Tile targetTile)
     {
         if (_placeRestrictions.Length <= 0) return true;
-        
+
         for (int i = 0; i < _placeRestrictions.Length; i++)
         {
             if (_placeRestrictions[i].Available(currentData, targetTile) == false) return false;
@@ -106,7 +109,7 @@ public class Item_ScrObj : ScriptableObject
             int ingredientAmount = Mathf.Max(1, ingredientData.amount);
 
             bool duplicateFound = false;
-            
+
             for (int j = 0; j < combinedDatas.Count; j++)
             {
                 ItemData combinedData = combinedDatas[j];
@@ -145,7 +148,7 @@ public class Item_ScrObj : ScriptableObject
                 if (checkItemData?.itemScrObj != ingredientItem) continue;
 
                 int checkItemAmount = checkItemData.amount;
-                
+
                 if (isUseItem == false)
                 {
                     haveAmount += checkItemAmount;
@@ -154,12 +157,12 @@ public class Item_ScrObj : ScriptableObject
 
                 // counts only max amount useable items as 1 (change for gameplay)
                 if (checkItemAmount < ingredientItem.maxAmount) continue;
-                haveAmount ++;
+                haveAmount++;
             }
 
             if (haveAmount < ingredientData.amount) return 0;
             int craftByThisIngredient = haveAmount / ingredientData.amount;
-            
+
             if (craftByThisIngredient >= maxCraftCount) continue;
             maxCraftCount = craftByThisIngredient;
         }

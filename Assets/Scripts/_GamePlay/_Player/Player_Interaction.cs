@@ -162,11 +162,10 @@ public class Player_Interaction : MonoBehaviour, IItemsSource, IItemsSourceRemov
     // Movement & Stamina
     private bool MoveAvailable_UpdateStamina()
     {
-        return true;
+        InGame_Manager manager = InGame_Manager.instance;
+        if (manager.movements.AllMovements_Complete() == false) return false;
 
         /*
-        InGame_Manager manager = InGame_Manager.instance;
-
         Player_Controller player = manager.player;
         PlayerData playerData = player.data;
 
@@ -183,8 +182,9 @@ public class Player_Interaction : MonoBehaviour, IItemsSource, IItemsSourceRemov
         if (calculatedStamina < 0) return false;
 
         player.Update_CurrentStamina(calculatedStamina);
-        return true;
         */
+
+        return true;
     }
     private void MoveTo_Tile(Vector2 direction)
     {
