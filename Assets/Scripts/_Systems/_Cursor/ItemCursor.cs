@@ -17,6 +17,7 @@ public class ItemCursor : MonoBehaviour, IItemsSource, IItemsSourceRemove, IItem
 
     private int _itemPickupFlag = -1;
 
+    public Action OnSetData;
     public Action OnItemReturn;
 
 
@@ -25,6 +26,8 @@ public class ItemCursor : MonoBehaviour, IItemsSource, IItemsSourceRemove, IItem
     {
         EventBus_Manager.Register(EventBus.AwakeLoad, Set_Data);
     }
+
+
 
     private void OnDestroy()
     {
@@ -132,7 +135,9 @@ public class ItemCursor : MonoBehaviour, IItemsSource, IItemsSourceRemove, IItem
     public void Set_Data(ItemData setItemData)
     {
         if (_data == setItemData) return;
+        
         _data = setItemData != null && setItemData.amount > 0 ? setItemData : null;
+        OnSetData?.Invoke();
 
         int updateRange = _data != null ? _data.itemScrObj.triggerRange : 0;
         _cursor.Update_TilePointerRange(updateRange);
@@ -272,6 +277,7 @@ public class ItemCursor : MonoBehaviour, IItemsSource, IItemsSourceRemove, IItem
     }
 
 
+    // Placing
     private void Place_Item(Tile selectTile)
     {
         if (_data == null)
@@ -310,6 +316,7 @@ public class ItemCursor : MonoBehaviour, IItemsSource, IItemsSourceRemove, IItem
     }
 
 
+    // Using
     private void Load_UseItem()
     {
         Player_Interaction player = InGame_Manager.instance.player.interaction;
@@ -331,9 +338,10 @@ public class ItemCursor : MonoBehaviour, IItemsSource, IItemsSourceRemove, IItem
         if (currentItem.itemType != ItemType.use) return;
 
         InGame_Manager manager = InGame_Manager.instance;
-
         GameObject currentUseItem = manager.player.interaction.currentItemPrefab;
+
         if (currentUseItem.TryGetComponent(out UseableItem useItem) == false) return;
+        if (useItem.CanUse?.Invoke(selectTile) == false) return;
 
         manager.time.Count_Time();
         useItem.OnUse?.Invoke(selectTile);

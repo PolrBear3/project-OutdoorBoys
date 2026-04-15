@@ -35,7 +35,14 @@ public class InGameUI_Manager : MonoBehaviour
 
         player.OnHungerUpdate -= Update_HungerText;
         player.OnTemperatureUpdate -= Update_TemperatureText;
+        
         player.OnStaminaUpdate -= Update_StaminaText;
+        player.OnStaminaUpdate -= Update_HungerText;
+
+        ItemCursor itemCursor = manager.cursor.itemCursor;
+
+        itemCursor.OnSetData -= Update_HungerText;
+        itemCursor.OnSetData -= Update_StaminaText;
     }
 
 
@@ -62,7 +69,14 @@ public class InGameUI_Manager : MonoBehaviour
 
         player.OnHungerUpdate += Update_HungerText;
         player.OnTemperatureUpdate += Update_TemperatureText;
+
         player.OnStaminaUpdate += Update_StaminaText;
+        player.OnStaminaUpdate += Update_HungerText;
+
+        ItemCursor itemCursor = manager.cursor.itemCursor;
+
+        itemCursor.OnSetData += Update_HungerText;
+        itemCursor.OnSetData += Update_StaminaText;
     }
 
 
@@ -73,9 +87,41 @@ public class InGameUI_Manager : MonoBehaviour
         _timeText.text = timeCount + " (" + "+" + timeCountUpdateValue + ")".ToString();
     }
     
-    private void Update_DayText(int dayCount) => _dayText.text = "Day " + dayCount.ToString();
+    private void Update_DayText(int dayCount)
+    {
+        _dayText.text = "Day " + dayCount.ToString();
+    }
 
-    private void Update_HungerText(int currentValue) => _hungerText.text = currentValue.ToString();
+    private void Update_HungerText(int currentValue)
+    {
+        Player_Controller player = InGame_Manager.instance.player;
+
+        int decreaseValue = player.data.currentStamina - player.interaction.Movement_StaminaValue();
+        string decreaseString = decreaseValue < 0 ? "\n(" + decreaseValue + ")" : null;
+
+        _hungerText.text = currentValue + decreaseString;
+    }
+    private void Update_HungerText(int _, int __)
+    {
+        Update_HungerText();
+    }
+    private void Update_HungerText()
+    {
+        Update_HungerText(InGame_Manager.instance.player.data.hunger);
+    }
+
     private void Update_TemperatureText(int currentValue) => _temperatureText.text = currentValue.ToString();
-    private void Update_StaminaText(int maxValue, int currentValue) => _staminaText.text = maxValue + "/" + currentValue.ToString();
+
+    private void Update_StaminaText(int maxValue, int currentValue)
+    {
+        Player_Controller player = InGame_Manager.instance.player;
+
+        int decreaseValue = Mathf.Min(player.data.currentStamina, player.interaction.Movement_StaminaValue());
+        _staminaText.text = maxValue + "/" + currentValue + "\n(-" + decreaseValue + ")";
+    }
+    private void Update_StaminaText()
+    {
+        PlayerData playerData = InGame_Manager.instance.player.data;
+        Update_StaminaText(playerData.maxStamina, playerData.currentStamina);
+    }
 }

@@ -16,7 +16,7 @@ public class FillBar : MonoBehaviour
         
         Vector3 currentScale = _fillRenderer.transform.localScale;
 
-        float fillSize = (float)currentValue / maxValue;
+        float fillSize = currentValue > 1 ? Mathf.Max(0.1f, (float)currentValue / maxValue) : 0f;
         currentScale.x = Mathf.Clamp01(fillSize);
 
         _fillRenderer.transform.localScale = currentScale;

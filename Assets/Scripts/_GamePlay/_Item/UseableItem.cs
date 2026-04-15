@@ -8,8 +8,10 @@ public class UseableItem : MonoBehaviour
     private ItemData _data;
     public ItemData data => _data;
 
+    public Func<Tile, bool> CanUse;
     public Action<Tile> OnUse;
-    public Action OnUseDestroy;
+
+    public event Action OnUseDestroy;
 
 
     // Data

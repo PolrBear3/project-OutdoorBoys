@@ -12,9 +12,7 @@ public class Movement_Controller : MonoBehaviour
     [SerializeField] private Vector2 _offset;
     public Vector2 offset => _offset;
 
-    [SerializeField][Range(0, 1)] private float _moveDuration;
-    public float moveDuration => _moveDuration;
-
+    private const float _moveDuration = 0.25f;
 
     private TileTrackerData _tileTrackerData;
     public TileTrackerData tileTrackerData => _tileTrackerData;

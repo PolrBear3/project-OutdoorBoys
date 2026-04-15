@@ -24,11 +24,13 @@ public class Saw : MonoBehaviour
     // MonoBehaviour
     private void Awake()
     {
+        _useableItem.CanUse += Tree_Placed;
         _useableItem.OnUse += Chop_Tree;
     }
 
     private void OnDestroy()
     {
+        _useableItem.CanUse -= Tree_Placed;
         _useableItem.OnUse -= Chop_Tree;
     }
 
@@ -50,6 +52,10 @@ public class Saw : MonoBehaviour
         }
         return null;
     }
+    private bool Tree_Placed(Tile checkTile)
+    {
+        return PlacedTree(checkTile) != null;
+    }
 
     private void Update_ChoppingTree(PlaceableItem targetItem)
     {
@@ -70,8 +76,6 @@ public class Saw : MonoBehaviour
     private void Chop_Tree(Tile useTile)
     {
         PlaceableItem placedTree = PlacedTree(useTile);
-        if (placedTree == null) return;
-
         Update_ChoppingTree(placedTree);
 
         _useableItem.Update_UseAmount(1);

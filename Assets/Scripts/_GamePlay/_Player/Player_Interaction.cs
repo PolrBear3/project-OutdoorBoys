@@ -160,17 +160,9 @@ public class Player_Interaction : MonoBehaviour, IItemsSource, IItemsSourceRemov
 
 
     // Movement & Stamina
-    private bool MoveAvailable_UpdateStamina()
+    public int Movement_StaminaValue()
     {
         InGame_Manager manager = InGame_Manager.instance;
-        if (manager.movements.AllMovements_Complete() == false) return false;
-
-        /*
-        Player_Controller player = manager.player;
-        PlayerData playerData = player.data;
-
-        int currentStamina = playerData.currentStamina;
-        if (currentStamina <= 0) return false;
 
         ItemData currentItem = manager.cursor.itemCursor.data;
         bool hasInventoryBagpack = currentItem != null && currentItem.itemScrObj == _controller.inventoryBagpack;
@@ -178,12 +170,17 @@ public class Player_Interaction : MonoBehaviour, IItemsSource, IItemsSourceRemov
         int currentInventoryWeight = hasInventoryBagpack ? manager.inventory.slotManager.Total_ItemWeight() : 0;
         int currentItemWeight = currentItem != null ? currentItem.Item_Weight() + currentInventoryWeight : 0;
 
-        int calculatedStamina = playerData.currentStamina - Mathf.Max(1, currentItemWeight);
-        if (calculatedStamina < 0) return false;
+        return Mathf.Max(1, currentItemWeight);
+    }
 
-        player.Update_CurrentStamina(calculatedStamina);
-        */
+    private bool MoveAvailable_UpdateStamina()
+    {
+        InGame_Manager manager = InGame_Manager.instance;
+        if (manager.movements.AllMovements_Complete() == false) return false;
 
+        Player_Controller player = manager.player;
+        player.Update_CurrentStamina(player.data.currentStamina - Mathf.Max(1, Movement_StaminaValue()));
+        
         return true;
     }
     private void MoveTo_Tile(Vector2 direction)

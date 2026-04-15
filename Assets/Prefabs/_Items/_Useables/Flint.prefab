@@ -46,6 +46,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1d7b415f5701a4ae888e036e1ae5a777, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _coolTime: 1
 --- !u!114 &4102059880458969063
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -82,5 +83,5 @@ MonoBehaviour:
     _amount: 3
   - _itemScrObj: {fileID: 11400000, guid: 86e876e6c7e9c467db97ab95dfa547ce, type: 2}
     _amount: 5
-  _fireActivationCount: 3
+  _fireActivationCount: 5
   _heatSustainTime: 3

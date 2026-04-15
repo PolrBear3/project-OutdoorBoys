@@ -29,11 +29,13 @@ public class Flint : MonoBehaviour
     // MonoBehaviour
     private void Awake()
     {
+        _useableItem.CanUse += Rock_Placed;
         _useableItem.OnUse += Spawn_Fire;
     }
     
     private void OnDestroy()
     {
+        _useableItem.CanUse -= Rock_Placed;
         _useableItem.OnUse -= Spawn_Fire;
     }
 
@@ -113,11 +115,13 @@ public class Flint : MonoBehaviour
         return burnCountDatas;
     }
 
+    private bool Rock_Placed(Tile checkTile)
+    {
+        return checkTile.PlacedItems(_stoneItem).Count > 0;
+    } 
     private void Spawn_Fire(Tile useTile)
     {
         PlaceableItem placedRockItem = useTile.PlacedItem(_stoneItem);
-        if (placedRockItem == null) return;
-
         Update_TargetRock(placedRockItem);
         
         _targetRockData.Update_DurabilityCount(_targetRockData.durabilityCount + 1);

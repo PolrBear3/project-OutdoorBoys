@@ -28,7 +28,7 @@ public class FillBar_UI : MonoBehaviour
 
         RectTransform rect = _fillImage.rectTransform;
 
-        float fillSize = Mathf.Clamp01((float)currentValue / maxValue);
+        float fillSize = currentValue > 1 ? Mathf.Clamp01((float)currentValue / maxValue) : 0;
         rect.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, _maxFillWidth * fillSize);
     }
 }

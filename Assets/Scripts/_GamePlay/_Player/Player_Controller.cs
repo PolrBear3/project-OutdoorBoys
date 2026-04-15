@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class Player_Controller : MonoBehaviour, ISaveLoadable
@@ -80,6 +81,9 @@ public class Player_Controller : MonoBehaviour, ISaveLoadable
     public void Update_CurrentStamina(int updateValue)
     {
         OnStaminaUpdate?.Invoke(_data.maxStamina, _data.Update_CurrentStamina(updateValue));
+
+        if (updateValue >= 0) return;
+        Update_Hunger(_data.hunger + updateValue);
     }
 
 
