@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 4536870208008606749}
   - component: {fileID: 3786407175532632579}
   m_Layer: 0
-  m_Name: 1-1 World Map Events
+  m_Name: 1-1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

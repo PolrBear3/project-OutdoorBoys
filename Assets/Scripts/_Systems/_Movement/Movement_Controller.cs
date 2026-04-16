@@ -106,6 +106,17 @@ public class Movement_Controller : MonoBehaviour
 
 
     // Movement
+    public void MoveTo_CustomPosition(Vector2 customPosition)
+    {
+        float moveDistance = Vector2.Distance(transform.position, customPosition);
+
+        OnMovement?.Invoke();
+        OnMovementDirection?.Invoke(customPosition - (Vector2)transform.position);
+
+        LeanTween.move(gameObject, customPosition, _currentMoveDuration * moveDistance);
+        Start_MovementStateUpdate(moveDistance);
+    }
+
     public void MoveTo_Tile(Tile destinationTile)
     {
         if (destinationTile == null) return;
@@ -135,9 +146,9 @@ public class Movement_Controller : MonoBehaviour
         OnMovementDirection?.Invoke(direction);
 
         int moveDistance = Utility.Chebyshev_Distance(previousTilePos, destinationTilePos);
-        Start_MovementStateUpdate(moveDistance);
-
+        
         LeanTween.move(gameObject, destination, _currentMoveDuration * moveDistance); // move
+        Start_MovementStateUpdate(moveDistance);
     }
     public void MoveTo_Tile(Vector2 direction)
     {

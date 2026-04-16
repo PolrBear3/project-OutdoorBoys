@@ -95,7 +95,9 @@ public class Time_Manager : MonoBehaviour, ISaveLoadable
         for (int i = 0; i < _timeUpdateBuses.Count; i++)
         {
             TimeUpdateBus runBus = (TimeUpdateBus)i;
-            _timeUpdateBuses[runBus]?.Invoke();
+            
+            if (_timeUpdateBuses.TryGetValue(runBus, out Action action) == false) continue;
+            action?.Invoke();
         }
 
         OnTimeCount?.Invoke(_data.timeCount);

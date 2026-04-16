@@ -80,7 +80,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _offset: {x: 0, y: 0.05}
-  _moveDuration: 0.2
 --- !u!114 &4065704676414607868
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -96,12 +95,12 @@ MonoBehaviour:
   _animation: {fileID: 178274691860591808}
   _movement: {fileID: 3490125478823233063}
   _healthFillBar: {fileID: -496978484732062263}
+  _escapeAnimationClip: {fileID: 11400000, guid: 8eb013fc8c5f64ed4b8445944a05d694, type: 2}
   _deceasedAnimationClip: {fileID: 11400000, guid: f31ad7f4760c24191b7851b6e2ea4bb3, type: 2}
   _dropItems:
   - _itemScrObj: {fileID: 11400000, guid: fba43ae9d93594cddbc2a132e3fd3b95, type: 2}
     _amount: 1
   _followItems: []
-  _actionDelayTime: 0
   OnSightActions:
     m_PersistentCalls:
       m_Calls:
@@ -119,8 +118,8 @@ MonoBehaviour:
         m_CallState: 2
       - m_Target: {fileID: 4065704676414607868}
         m_TargetAssemblyTypeName: Animal, Assembly-CSharp
-        m_MethodName: Roam
-        m_Mode: 1
+        m_MethodName: Escape
+        m_Mode: 3
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
@@ -136,19 +135,19 @@ MonoBehaviour:
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 3
+          m_IntArgument: 2
           m_FloatArgument: 0
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
       - m_Target: {fileID: 4065704676414607868}
         m_TargetAssemblyTypeName: Animal, Assembly-CSharp
-        m_MethodName: Escape
+        m_MethodName: Roam
         m_Mode: 3
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 3
+          m_IntArgument: 1
           m_FloatArgument: 0
           m_StringArgument: 
           m_BoolArgument: 0

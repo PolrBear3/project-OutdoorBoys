@@ -204,7 +204,7 @@ public class WorldMap_Generator : MonoBehaviour
 
         foreach (var data in generateDatas)
         {
-            Generate_Tile(data.Key, dataManager.TileScrObj(data.Value));
+            Generate_Tile(data.Key, _currentWorldMap.GenerateTile(data.Value));
         }
     }
 

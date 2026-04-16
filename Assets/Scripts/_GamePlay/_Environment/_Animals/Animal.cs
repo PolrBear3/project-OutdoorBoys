@@ -4,6 +4,12 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 
+public class Animal_ActionKeys
+{
+    public const string Roam = nameof(Roam);
+    public const string Escape = nameof(Escape);
+}
+
 public class Animal : MonoBehaviour, IDamageable
 {
     [Space(20)]
@@ -16,6 +22,7 @@ public class Animal : MonoBehaviour, IDamageable
 
 
     [Space(20)]
+    [SerializeField] private AnimationClipScrObj _escapeAnimationClip;
     [SerializeField] private AnimationClipScrObj _deceasedAnimationClip;
 
     [Space(20)]
@@ -31,6 +38,8 @@ public class Animal : MonoBehaviour, IDamageable
 
     private float _movementFlag = -1;
     private float _onSightFlag = -1;
+
+    private Dictionary<string, int> _actionCountDatas = new();
 
 
     // MonoBehaviour
@@ -200,7 +209,6 @@ public class Animal : MonoBehaviour, IDamageable
         if (_onSightFlag == Time.frameCount) return;
 
         OnSightActions?.Invoke();
-        _data.Update_OnSightCount(Player_InRange() ? 1 : -1);
     }
 
     public void Update_DeceasedState()
@@ -279,12 +287,6 @@ public class Animal : MonoBehaviour, IDamageable
         _movement.MoveTo_Tile(farTile);
         _movementFlag = Time.frameCount;
     }
-    public void RunOff(int maxRunOffCount)
-    {
-        if (_data.onSightcount > maxRunOffCount) return;
-        RunOff();
-    }
-
 
     public void Roam()
     {
@@ -304,16 +306,44 @@ public class Animal : MonoBehaviour, IDamageable
         _movement.MoveTo_Tile(rangedTiles[UnityEngine.Random.Range(0, rangedTiles.Count)]);
         _movementFlag = Time.frameCount;
     }
+    public void Roam(int coolTime)
+    {
+        string actionKey = nameof(Roam);
+        _actionCountDatas[actionKey] = _actionCountDatas.ContainsKey(actionKey) ? _actionCountDatas[actionKey] : coolTime;
+
+        if (_movementFlag == Time.frameCount) return;
+        if (Player_InRange()) return;
+        if (Deceased()) return;
+
+        _actionCountDatas[actionKey]++;
+        Debug.Log(actionKey + " " + (_actionCountDatas[actionKey] - 1) + "/" + coolTime);
+
+        if (_actionCountDatas[actionKey] <= coolTime) return;
+
+        _actionCountDatas[actionKey] = 0;
+        Roam();
+    }
 
     public void Escape(int delayCount)
     {
-        if (_data.onSightcount < delayCount) return;
         if (Deceased()) return;
+
+        string actionKey = nameof(Escape);
+        _actionCountDatas[actionKey] = _actionCountDatas.ContainsKey(actionKey) ? _actionCountDatas[actionKey] : 0;
+
+        if (Player_InRange() == false)
+        {
+            _actionCountDatas[actionKey] = Mathf.Max(0, _actionCountDatas[actionKey] - 1);
+            return;
+        }
+
+        _actionCountDatas[actionKey] ++;
+        Debug.Log(actionKey + " " + (_actionCountDatas[actionKey] - 1) + "/" + delayCount);
+
+        if (_actionCountDatas[actionKey] <= delayCount) return;
 
         Animals_Manager manager = AnimalManager();
         if (manager == null) return;
-
-        manager.spawnedAnimals.Remove(this);
 
         Vector2 currentTilePos = _movement.tileTrackerData.CurrentTile().transform.position;
         List<Tile> edgedTiles = InGame_Manager.instance.tilesController.Current_EdgedTiles();
@@ -324,17 +354,51 @@ public class Animal : MonoBehaviour, IDamageable
             int distB = Utility.Chebyshev_Distance(currentTilePos, b.transform.position);
             return distA.CompareTo(distB);
         });
-        _movement.MoveTo_Tile(edgedTiles.Count > 0 ? edgedTiles[0] : null);
 
+        Tile escapeTile = edgedTiles.Count > 0 ? edgedTiles[0] : null;
+        Vector2 escapetilePos = escapeTile.transform.position;
+
+        List<Tile> rangedTiles = MoveDistance_RangeTiles();
+
+        rangedTiles.Sort((a, b) =>
+        {
+            int distA = Utility.Chebyshev_Distance(escapetilePos, a.transform.position);
+            int distB = Utility.Chebyshev_Distance(escapetilePos, b.transform.position);
+            return distA.CompareTo(distB);
+        });
+        escapeTile = rangedTiles[0];
+
+        _movement.MoveTo_Tile(escapeTile);
+        _movementFlag = Time.frameCount;
+
+        if (edgedTiles.Contains(escapeTile) == false) return;
+
+        manager.spawnedAnimals.Remove(this);
         StartCoroutine(EscapeDelay());
     }
     private IEnumerator EscapeDelay()
     {
-        MovementControllers_Manager movementsManager = InGame_Manager.instance.movements;
+        InGame_Manager manager = InGame_Manager.instance;
+        MovementControllers_Manager movementsManager = manager.movements;
+
         while (movementsManager.AllMovements_Complete() == false) yield return null;
 
+        Tiles_Controller tilesController = manager.tilesController;
+        List<Vector2> surroundingPositions = Utility.Surrounding_Positions(_movement.tileTrackerData.CurrentTile().transform.position);
+        
+        for (int i = 0; i < surroundingPositions.Count; i++)
+        {
+            Vector2 escapePos = surroundingPositions[i];
+            if (tilesController.Current_Tile(escapePos) != null) continue;
+
+            _movement.MoveTo_CustomPosition(escapePos);
+            _animation.Play(_escapeAnimationClip);
+
+            break;
+        }
+
+        while (LeanTween.isTweening(gameObject)) yield return null;
         Destroy(gameObject);
-        yield break;
     }
 
     public void Follow(int agroRange)
@@ -401,7 +465,6 @@ public class Animal : MonoBehaviour, IDamageable
     public void Follow_Item()
     {
         if (_movementFlag == Time.frameCount) return;
-        if (_data.onSightcount <= 0) return;
 
         Tile currentTile = _movement.tileTrackerData.CurrentTile();
         for (int i = 0; i < _followItems.Length; i++)
@@ -441,7 +504,6 @@ public class Animal : MonoBehaviour, IDamageable
     }
     public void Follow_Item(int maxFollowCount)
     {
-        if (_data.onSightcount > maxFollowCount) return;
         Follow_Item();
     }
 

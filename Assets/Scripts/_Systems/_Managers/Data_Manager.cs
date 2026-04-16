@@ -31,30 +31,6 @@ public class Data_Manager : MonoBehaviour
     }
 
 
-    // tileScrObjs
-    public List<TileScrObj> TileScrObjs(TileType tileType)
-    {
-        List<TileScrObj> tiles = new();
-
-        for (int i = 0; i < _tileScrObjs.Length; i++)
-        {
-            if (_tileScrObjs[i].type != tileType) continue;
-            tiles.Add(_tileScrObjs[i]);
-        }
-
-        return tiles;
-    }
-
-    public TileScrObj TileScrObj(TileType tileType)
-    {
-        List<TileScrObj> tiles = TileScrObjs(tileType);
-        int randIndex = Random.Range(0, tiles.Count);
-
-        if (tiles.Count <= 0) return null;
-        return tiles[randIndex];
-    }
-
-
     // _itemScrObjs
     public Item_ScrObj Item(string itemName)
     {

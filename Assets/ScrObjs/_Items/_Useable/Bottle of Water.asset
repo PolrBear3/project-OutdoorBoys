@@ -1,0 +1,34 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 069327ba6dded4f16af0714f2c328413, type: 3}
+  m_Name: Bottle of Water
+  m_EditorClassIdentifier: 
+  _inventorySprite: {fileID: 1419926628, guid: bf7ece83f843c4c35977c02f8c40d92d, type: 3}
+  _microSprite: {fileID: 917052051, guid: bf7ece83f843c4c35977c02f8c40d92d, type: 3}
+  _itemName: Bottle of Water
+  _description: A bottle filled with water to drink
+  _itemType: 1
+  _itemPrefab: {fileID: 5769858720269626403, guid: fa2ea9d8ba7f3448a92f30505e8cbc67, type: 3}
+  _offsetData:
+  - _position: {x: -0.18, y: -0.13}
+    _rotationValue: 0
+  - _position: {x: -0.18, y: -0.13}
+    _rotationValue: 0
+  - _position: {x: 0.18, y: -0.13}
+    _rotationValue: 0
+  _maxAmount: 3
+  _itemWeight: 0
+  _triggerRange: 0
+  _placeRestrictions: []
+  _selectRestrictions: []
+  _craftPlacedCheckDatas: []
+  _itemIngredientDatas: []

@@ -10,17 +10,14 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 21e98e1b1271248ff99876a7e7247df9, type: 3}
-  m_Name: 1-1
+  m_Name: Home
   m_EditorClassIdentifier: 
-  _worldMapEventsPrefab: {fileID: 353555265533623462, guid: 556217c5b3b7f42f8b49b5cc77927991, type: 3}
-  _generateSize: {x: 10, y: 9}
+  _worldMapEventsPrefab: {fileID: 353555265533623462, guid: f56e8a6c77ad2441b9e2e7257e0bcf3f, type: 3}
+  _generateSize: {x: 5, y: 5}
   _generateTiles:
   - {fileID: 11400000, guid: 13d5158de20cd4105b5f0b097494ca71, type: 2}
-  - {fileID: 11400000, guid: 621605563892d4d0a95e4d57c264bf5c, type: 2}
-  - {fileID: 11400000, guid: 8145ed0e845b14bca951ca79c25e2e94, type: 2}
-  - {fileID: 11400000, guid: 42f8526c01f614d319724853fb4ec66a, type: 2}
   _presetTileDatas: []
-  _harshGroundDensity: 10
+  _harshGroundDensity: 0
   _timeUpdateValue: 1
   _backgroundWarpRenderData:
     _loadDuration: 1
