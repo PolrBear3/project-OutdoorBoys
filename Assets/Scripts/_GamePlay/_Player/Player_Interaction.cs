@@ -34,13 +34,12 @@ public class Player_Interaction : MonoBehaviour, IItemsSource, IItemsSourceRemov
 
         Input_Controller input = Input_Controller.instance;
 
-        input.OnMovement -= MoveTo_Tile;
+        // input.OnMovement -= MoveTo_Tile;
 
         Time_Manager time = InGame_Manager.instance.time;
-        Movement_Controller playerMovement = _controller.movement;
 
-        playerMovement.OnMovement -= time.Count_Time;
-        playerMovement.OnMovementActive -= Update_MovementAnimation;
+        // Movement_Controller playerMovement = _controller.movement;
+        // playerMovement.OnMovement -= time.Count_Time;
 
         time.OnTimeCount -= Charge_Stamina;
     }
@@ -49,7 +48,7 @@ public class Player_Interaction : MonoBehaviour, IItemsSource, IItemsSourceRemov
     // IItemsSource
     public IEnumerable<ItemData> ItemDatas()
     {
-        Tile currentTile = _controller.movement.tileTrackerData.CurrentTile();
+        Tile currentTile = _controller.tileTracker.data.CurrentTile();
         List<ItemData> currentTileItemDatas = currentTile.Placed_ItemDatas();
 
         foreach (ItemData data in currentTileItemDatas)
@@ -60,7 +59,7 @@ public class Player_Interaction : MonoBehaviour, IItemsSource, IItemsSourceRemov
 
     public int RemoveItem(Item_ScrObj updateItem, int removeAmount)
     {
-        Tile currentTile = _controller.movement.tileTrackerData.CurrentTile();
+        Tile currentTile = _controller.tileTracker.data.CurrentTile();
         List<PlaceableItem> placedItems = currentTile.PlacedItems(updateItem);
 
         if (placedItems.Count <= 0) return 0;
@@ -105,7 +104,7 @@ public class Player_Interaction : MonoBehaviour, IItemsSource, IItemsSourceRemov
 
     public int AddItem(Item_ScrObj addItem, int addAmount)
     {
-        Tile playerTile = _controller.movement.tileTrackerData.CurrentTile();
+        Tile playerTile = _controller.tileTracker.data.CurrentTile();
         int placeAmount = Mathf.Min(addAmount, playerTile.ItemPlace_AvailableCount(addItem));
 
         playerTile.Set_Item(new(addItem, placeAmount));
@@ -118,13 +117,12 @@ public class Player_Interaction : MonoBehaviour, IItemsSource, IItemsSourceRemov
     {
         Input_Controller input = Input_Controller.instance;
 
-        input.OnMovement += MoveTo_Tile;
+        // input.OnMovement += MoveTo_Tile;
 
         Time_Manager time = InGame_Manager.instance.time;
-        Movement_Controller playerMovement = _controller.movement;
-
-        playerMovement.OnMovement += time.Count_Time;
-        playerMovement.OnMovementActive += Update_MovementAnimation;
+        
+        // Movement_Controller playerMovement = _controller.movement;
+        // playerMovement.OnMovement += time.Count_Time;
 
         time.OnTimeCount += Charge_Stamina;
     }
@@ -148,14 +146,6 @@ public class Player_Interaction : MonoBehaviour, IItemsSource, IItemsSourceRemov
 
         if (updateAvailable == false) return;
         _indicationIcon.sprite = iconSprite;
-    }
-
-    private void Update_MovementAnimation(bool isMoving)
-    {
-        AnimationPlayer animPlayer = _controller.animationPlayer;
-
-        int animIndexNum = isMoving ? 1 : 0;
-        animPlayer.Play(animIndexNum);
     }
 
 
@@ -188,7 +178,7 @@ public class Player_Interaction : MonoBehaviour, IItemsSource, IItemsSourceRemov
         OnMoveAvailableCheck?.Invoke();
         if (MoveAvailable_UpdateStamina() == false) return;
 
-        _controller.movement.MoveTo_Tile(direction);
+        // _controller.movement.MoveTo_Tile(direction);
     }
 
     private void Charge_Stamina(int _)

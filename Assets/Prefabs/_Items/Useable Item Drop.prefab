@@ -73,7 +73,7 @@ SpriteRenderer:
   m_SortingLayerID: 678841433
   m_SortingLayer: -1
   m_SortingOrder: 1
-  m_Sprite: {fileID: 951127381, guid: bf7ece83f843c4c35977c02f8c40d92d, type: 3}
+  m_Sprite: {fileID: 1258320460, guid: 876726b4a75bd4d21af424fd6ed1343c, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -95,6 +95,8 @@ GameObject:
   - component: {fileID: 4520642281758493457}
   - component: {fileID: 3045259509940891077}
   - component: {fileID: 1531750997209139500}
+  - component: {fileID: 7462963495597463765}
+  - component: {fileID: 7914443749448274476}
   m_Layer: 0
   m_Name: Useable Item Drop
   m_TagString: Untagged
@@ -147,3 +149,30 @@ MonoBehaviour:
   _animPlayer: {fileID: 3045259509940891077}
   _placeAnimationClip: {fileID: 0}
   _removeAnimationClip: {fileID: 0}
+--- !u!114 &7462963495597463765
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3637228250238346253}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: acb7aef88d14f4350bb47957e960a93f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _defaultSpeed: 0.01
+--- !u!114 &7914443749448274476
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3637228250238346253}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 850c9f92eb0f94c0882734a1dae3bb05, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _placeableItem: {fileID: 1531750997209139500}
+  _movementController: {fileID: 7462963495597463765}

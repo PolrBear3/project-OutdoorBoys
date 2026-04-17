@@ -53,9 +53,13 @@ public class Time_Manager : MonoBehaviour, ISaveLoadable
 
         InGame_Manager manager = InGame_Manager.instance;
 
-        manager.player.interaction.OnMoveAvailableCheck -= Stop_TimTik;
         manager.tilesController.OnTileSelect -= Stop_TimTik;
         manager.cursor.OnTilePointRangeUpdate -= Stop_TimTik;
+
+        Player_Controller player = manager.player;
+
+        player.tileTracker.OnTrackUpdate -= Stop_TimTik;
+        player.tileTracker.OnTrackUpdate -= Count_Time;
     }
 
 
@@ -79,9 +83,13 @@ public class Time_Manager : MonoBehaviour, ISaveLoadable
 
         InGame_Manager manager = InGame_Manager.instance;
 
-        manager.player.interaction.OnMoveAvailableCheck += Stop_TimTik;
         manager.tilesController.OnTileSelect += Stop_TimTik;
         manager.cursor.OnTilePointRangeUpdate += Stop_TimTik;
+
+        Player_Controller player = manager.player;
+
+        player.tileTracker.OnTrackUpdate += Stop_TimTik;
+        player.tileTracker.OnTrackUpdate += Count_Time;
     }
 
 

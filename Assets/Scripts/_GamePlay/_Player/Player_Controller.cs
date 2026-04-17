@@ -10,8 +10,11 @@ public class Player_Controller : MonoBehaviour, ISaveLoadable
     [SerializeField] private AnimationPlayer _animationPlayer;
     public AnimationPlayer animationPlayer => _animationPlayer;
 
-    [SerializeField] private Movement_Controller _movement;
-    public Movement_Controller movement => _movement;
+    [SerializeField] private TileTracker _tileTracker;
+    public TileTracker tileTracker => _tileTracker;
+
+    [SerializeField] private Player_Movement _movement;
+    public Player_Movement movement => _movement;
 
     [SerializeField] private Player_Interaction _interaction;
     public Player_Interaction interaction => _interaction;
@@ -97,8 +100,9 @@ public class Player_Controller : MonoBehaviour, ISaveLoadable
     {
         Tile setTile = InGame_Manager.instance.tilesController.Current_Tile(TileType.softGround);
         if (setTile == null) return;
-        
-        _movement.MoveTo_Tile(setTile);
+
+        transform.position = setTile.transform.position;
+        _tileTracker.Set_Data(setTile);
     }
 
     private void Set_InventoryBagpack()

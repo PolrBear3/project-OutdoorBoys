@@ -128,7 +128,7 @@ public class Cursor : MonoBehaviour
     
     public bool PointingTile_InRange(Tile pointTile)
     {
-        Tile playerTile = InGame_Manager.instance.player.movement.tileTrackerData.CurrentTile();
+        Tile playerTile = InGame_Manager.instance.player.tileTracker.data.CurrentTile();
 
         return playerTile.DistanceTo_TargetTile(pointTile) <= _tilePointRange;
     }

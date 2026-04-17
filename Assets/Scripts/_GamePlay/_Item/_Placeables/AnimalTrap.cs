@@ -63,8 +63,8 @@ public class AnimalTrap : MonoBehaviour
         if (activateAnimal.TryGetComponent(out IDamageable damageable) == false) yield break;
         damageable.InflictDamage(_damage);
 
-        Movement_Controller movement = activateAnimal.movement;
-        activateAnimal.movement.Update_CurrentState(MovementState.stunned, movement.CurrentState_Count(MovementState.stunned) + 1);
+        // Movement_Controller movement = activateAnimal.movement;
+        // activateAnimal.movement.Update_CurrentState(MovementState.stunned, movement.CurrentState_Count(MovementState.stunned) + 1);
 
         _placeableItem.AnimationDelay_Remove();
     }

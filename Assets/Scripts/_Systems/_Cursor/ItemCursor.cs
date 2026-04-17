@@ -253,7 +253,7 @@ public class ItemCursor : MonoBehaviour, IItemsSource, IItemsSourceRemove, IItem
         Tiles_Controller tilesController = manager.tilesController;
         if (tilesController.Tile_Selectable(manager.cursor.pointingTile)) return;
 
-        Tile playerTile = manager.player.movement.tileTrackerData.CurrentTile();
+        Tile playerTile = manager.player.tileTracker.data.CurrentTile();
         if (tilesController.Tile_Selectable(playerTile) == false) return;
 
         Inventory_Manager inventory = manager.inventory;
@@ -308,7 +308,7 @@ public class ItemCursor : MonoBehaviour, IItemsSource, IItemsSourceRemove, IItem
     {
         InGame_Manager manager = InGame_Manager.instance;
 
-        Tile playerTile = manager.player.movement.tileTrackerData.CurrentTile();
+        Tile playerTile = manager.player.tileTracker.data.CurrentTile();
         if (manager.tilesController.Tile_Selectable(playerTile) == false) return;
 
         if (playerTile.Set_UseItem(_data) == false) return;

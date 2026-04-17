@@ -18,6 +18,7 @@ public class Projectile_Launcher : MonoBehaviour
     // Launch
     public void Launch_Projectile(Tile useTile, Sprite projectTileSprite)
     {
+        /*
         if (_launchCoroutine != null) return;
         
         Tile playerTile = InGame_Manager.instance.player.movement.tileTrackerData.CurrentTile();
@@ -34,6 +35,7 @@ public class Projectile_Launcher : MonoBehaviour
         projectile.LaunchTo_Tile(useTile);
 
         _launchCoroutine = StartCoroutine(LaunchComplete_Delay(useTile, projectile.gameObject));
+        */
     }
 
     private IEnumerator LaunchComplete_Delay(Tile useTile, GameObject launchedProjectile)

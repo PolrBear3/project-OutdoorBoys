@@ -241,8 +241,6 @@ public class Input_Controller : MonoBehaviour
 
     public void Movement(InputAction.CallbackContext context)
     {
-        if (!context.performed) return;
-
         Vector2 directionInput = context.ReadValue<Vector2>();
         OnMovement?.Invoke(directionInput);
     }

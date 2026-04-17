@@ -5,15 +5,15 @@ using UnityEngine;
 [System.Serializable]
 public class TileTrackerData
 {
-    private List<Tile> _trackingTiles;
+    private List<Tile> _trackingTiles = new();
     public List<Tile> trackingTiles => _trackingTiles;
 
     private const int _maxTrackCount = 10;
 
 
-    public TileTrackerData()
+    public TileTrackerData(Tile startingTile)
     {
-        _trackingTiles = new();
+        _trackingTiles.Add(startingTile);
     }
 
 

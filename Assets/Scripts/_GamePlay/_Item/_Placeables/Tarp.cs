@@ -14,25 +14,24 @@ public class Tarp : MonoBehaviour
     // MonoBehaviour
     private void Awake()
     {
-        InGame_Manager.instance.player.movement.OnMovement += Update_Transparency;
+        InGame_Manager.instance.player.tileTracker.OnTileTrackUpdate += Update_Transparency;
     }
 
     private void Start()
     {
-        Update_Transparency();
+        Update_Transparency(InGame_Manager.instance.player.tileTracker.data.CurrentTile());
     }
 
     private void OnDestroy()
     {
-        InGame_Manager.instance.player.movement.OnMovement -= Update_Transparency;
+        InGame_Manager.instance.player.tileTracker.OnTileTrackUpdate -= Update_Transparency;
     }
 
 
     // Main
-    private void Update_Transparency()
+    private void Update_Transparency(Tile playerCurrentTile)
     {
-        Tile playerTile = InGame_Manager.instance.player.movement.tileTrackerData.CurrentTile();
-        float transparencyValue = playerTile == _placeableItem.currentTile ? _transparencyValue : 1f;
+        float transparencyValue = playerCurrentTile == _placeableItem.currentTile ? _transparencyValue : 1f;
 
         LeanTween.cancel(gameObject);
         LeanTween.alpha(gameObject, transparencyValue, _transparencyUpdateDuration);

@@ -8,8 +8,6 @@ public class Projectile : MonoBehaviour
     [SerializeField] private AnimationPlayer _animPlayer;
     public AnimationPlayer animPlayer => _animPlayer;
 
-    [SerializeField] private Movement_Controller _movement;
-
 
     // Visual
     public void Update_RotateDirection(Vector2 direction, float launchAngle)
@@ -24,6 +22,7 @@ public class Projectile : MonoBehaviour
     // Main
     public void LaunchTo_Tile(Tile targetTile)
     {
+        /*
         if (targetTile == null) return;
 
         InGame_Manager manager = InGame_Manager.instance;
@@ -31,5 +30,6 @@ public class Projectile : MonoBehaviour
 
         _movement.MoveTo_Tile(launchStartTile);
         _movement.MoveTo_Tile(targetTile);
+        */
     }
 }

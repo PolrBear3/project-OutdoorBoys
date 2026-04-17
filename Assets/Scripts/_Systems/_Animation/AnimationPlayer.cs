@@ -13,6 +13,8 @@ public class AnimationPlayer : MonoBehaviour
 
 
     private ClipSpriteData _defaultData;
+
+    private AnimationClipScrObj _playClip;
     private Coroutine _playCoroutine;
 
 
@@ -38,7 +40,7 @@ public class AnimationPlayer : MonoBehaviour
         }
         return null;
     }
-    private AnimationClipScrObj AnimationClip(int clipIndexNum)
+    public AnimationClipScrObj AnimationClip(int clipIndexNum)
     {
         int clipIndex = Mathf.Clamp(clipIndexNum, 0, _animationClips.Length - 1);
 
@@ -49,6 +51,12 @@ public class AnimationPlayer : MonoBehaviour
     {
         return _playCoroutine != null;
     }
+    public bool Animation_Playing(AnimationClipScrObj checkClip)
+    {
+        if (_playClip == null) return false;
+        
+        return _playClip == checkClip;
+    }
 
 
     // Main
@@ -58,6 +66,8 @@ public class AnimationPlayer : MonoBehaviour
 
         StopCoroutine(_playCoroutine);
         _playCoroutine = null;
+
+        _playClip = null;
 
         GameObject animObject = _spriteRenderer.gameObject;
         LeanTween.cancel(animObject);
@@ -80,6 +90,7 @@ public class AnimationPlayer : MonoBehaviour
         if (clip == null) return;
         if (clip.clipSpriteDatas.Length <= 0) return;
 
+        _playClip = clip;
         _playCoroutine = StartCoroutine(Play_AnimationClip(clip));
     }
     private IEnumerator Play_AnimationClip(AnimationClipScrObj playClip)

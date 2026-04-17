@@ -27,7 +27,7 @@ public class PlayerData_UpdateItem : MonoBehaviour
     private void Consume(Tile useTile)
     {
         Player_Controller player = InGame_Manager.instance.player;
-        if (useTile != player.movement.tileTrackerData.CurrentTile()) return;
+        if (useTile != player.tileTracker.data.CurrentTile()) return;
         
         PlayerData data = player.data;
 

@@ -13,10 +13,9 @@ MonoBehaviour:
   m_Name: Player Move
   m_EditorClassIdentifier: 
   _clipName: Player Move
-  _loop: 0
+  _loop: 1
   _clipSpriteDatas:
-  - _clipName: 45
-    _clipSprite: {fileID: 1641917075, guid: cb01ed2ae3c714d4dba399cd0779d6f1, type: 3}
+  - _clipSprite: {fileID: 1641917075, guid: cb01ed2ae3c714d4dba399cd0779d6f1, type: 3}
     _durationTime: 0.1
     _sortingOrderUpdateValue: 0
     _alphaUpdateValue: 0
@@ -24,8 +23,7 @@ MonoBehaviour:
     _offSetPosition: {x: 0, y: 0}
     _rotationValue: 0
     _transformDurationTime: 0
-  - _clipName: 90
-    _clipSprite: {fileID: -1033316769, guid: cb01ed2ae3c714d4dba399cd0779d6f1, type: 3}
+  - _clipSprite: {fileID: -1033316769, guid: cb01ed2ae3c714d4dba399cd0779d6f1, type: 3}
     _durationTime: 0.1
     _sortingOrderUpdateValue: 0
     _alphaUpdateValue: 0
@@ -33,8 +31,7 @@ MonoBehaviour:
     _offSetPosition: {x: 0, y: 0}
     _rotationValue: 0
     _transformDurationTime: 0
-  - _clipName: -45
-    _clipSprite: {fileID: 1080154398, guid: cb01ed2ae3c714d4dba399cd0779d6f1, type: 3}
+  - _clipSprite: {fileID: 1080154398, guid: cb01ed2ae3c714d4dba399cd0779d6f1, type: 3}
     _durationTime: 0.1
     _sortingOrderUpdateValue: 0
     _alphaUpdateValue: 0
@@ -42,9 +39,16 @@ MonoBehaviour:
     _offSetPosition: {x: 0, y: 0}
     _rotationValue: 0
     _transformDurationTime: 0
-  - _clipName: -90
-    _clipSprite: {fileID: -76903804, guid: cb01ed2ae3c714d4dba399cd0779d6f1, type: 3}
+  - _clipSprite: {fileID: -76903804, guid: cb01ed2ae3c714d4dba399cd0779d6f1, type: 3}
     _durationTime: 0.1
+    _sortingOrderUpdateValue: 0
+    _alphaUpdateValue: 0
+    _alphaDurationTime: 0
+    _offSetPosition: {x: 0, y: 0}
+    _rotationValue: 0
+    _transformDurationTime: 0
+  - _clipSprite: {fileID: 2058226474, guid: cb01ed2ae3c714d4dba399cd0779d6f1, type: 3}
+    _durationTime: 0.2
     _sortingOrderUpdateValue: 0
     _alphaUpdateValue: 0
     _alphaDurationTime: 0
