@@ -5,14 +5,20 @@ using UnityEngine;
 
 public class Player_Movement : MonoBehaviour
 {
+    [Space(20)]
     [SerializeField] private Player_Controller _controller;
+
+    [SerializeField] private TileTracker _tileTracker;
+    public TileTracker tileTracker => _tileTracker;
 
     [Space(20)]
     [SerializeField][Range(0, 10)] private float _defaultSpeed;
 
 
     private Vector2 _inputDirection;
+
     public Action<bool> OnMovementState;
+    public Action<Vector2> OnMovementDirection;
 
 
     // MonoBehaviour
@@ -20,13 +26,15 @@ public class Player_Movement : MonoBehaviour
     {
         EventBus_Manager.Register(EventBus.AwakeLoad, Set_Data);
     }
-    
+
     private void OnDestroy()
     {
         EventBus_Manager.UnRegister(EventBus.AwakeLoad, Set_Data);
 
         Input_Controller.instance.OnMovement -= Update_InputDirection;
+
         OnMovementState -= Update_MovementAnimation;
+        OnMovementDirection -= _controller.animationPlayer.Update_Flip;
     }
 
     private void Update()
@@ -39,7 +47,9 @@ public class Player_Movement : MonoBehaviour
     private void Set_Data()
     {
         Input_Controller.instance.OnMovement += Update_InputDirection;
+
         OnMovementState += Update_MovementAnimation;
+        OnMovementDirection += _controller.animationPlayer.Update_Flip;
     }
 
 
@@ -49,17 +59,17 @@ public class Player_Movement : MonoBehaviour
         _inputDirection = direction;
 
         OnMovementState?.Invoke(_inputDirection != Vector2.zero);
+        OnMovementDirection?.Invoke(direction);
     }
     private void Movement_Update()
     {
-        TileTracker tileTracker = _controller.tileTracker;
-        if (tileTracker.clampCoroutine != null) return;
-        
-        transform.Translate(_inputDirection * _defaultSpeed * Time.deltaTime);;
+        if (_tileTracker.clampCoroutine != null) return;
+
+        transform.Translate(_inputDirection * _defaultSpeed * Time.deltaTime); ;
         if (_inputDirection == Vector2.zero) return;
 
-        tileTracker.TrackUpdate_CurrentTile();
-        tileTracker.ClampInside_CurrentTile();
+        _tileTracker.TrackUpdate_CurrentTile();
+        _tileTracker.ClampInside_CurrentTile();
     }
 
     private void Update_MovementAnimation(bool isMoving)

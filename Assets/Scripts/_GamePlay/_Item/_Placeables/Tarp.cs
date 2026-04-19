@@ -14,17 +14,17 @@ public class Tarp : MonoBehaviour
     // MonoBehaviour
     private void Awake()
     {
-        InGame_Manager.instance.player.tileTracker.OnTileTrackUpdate += Update_Transparency;
+        InGame_Manager.instance.player.movement.tileTracker.OnTileTrackUpdate += Update_Transparency;
     }
 
     private void Start()
     {
-        Update_Transparency(InGame_Manager.instance.player.tileTracker.data.CurrentTile());
+        Update_Transparency(InGame_Manager.instance.player.movement.tileTracker.data.CurrentTile());
     }
 
     private void OnDestroy()
     {
-        InGame_Manager.instance.player.tileTracker.OnTileTrackUpdate -= Update_Transparency;
+        InGame_Manager.instance.player.movement.tileTracker.OnTileTrackUpdate -= Update_Transparency;
     }
 
 

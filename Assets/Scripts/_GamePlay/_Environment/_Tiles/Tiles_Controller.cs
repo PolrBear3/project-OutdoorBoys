@@ -42,7 +42,7 @@ public class Tiles_Controller : MonoBehaviour, IItemsSource
         InGame_Manager manager = InGame_Manager.instance;
 
         manager.cursor.OnTilePointRangeUpdate -= Refresh_Toggles;
-        manager.player.tileTracker.OnTrackUpdate -= Refresh_Toggles;
+        manager.player.movement.tileTracker.OnTrackUpdate -= Refresh_Toggles;
     }
 
 
@@ -73,7 +73,7 @@ public class Tiles_Controller : MonoBehaviour, IItemsSource
         InGame_Manager manager = InGame_Manager.instance;
 
         manager.cursor.OnTilePointRangeUpdate += Refresh_Toggles;
-        manager.player.tileTracker.OnTrackUpdate += Refresh_Toggles;
+        manager.player.movement.tileTracker.OnTrackUpdate += Refresh_Toggles;
     }
 
 
@@ -224,7 +224,7 @@ public class Tiles_Controller : MonoBehaviour, IItemsSource
         InGame_Manager manager = InGame_Manager.instance;
         if (manager.movements.AllMovements_Complete() == false) return false;
 
-        Tile playerTile = manager.player.tileTracker.data.CurrentTile();
+        Tile playerTile = manager.player.movement.tileTracker.data.CurrentTile();
         ItemData currentItemData = manager.cursor.itemCursor.data;
 
         if (currentItemData == null) return tile == playerTile;

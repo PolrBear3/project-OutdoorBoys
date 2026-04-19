@@ -48,7 +48,7 @@ public class Player_Interaction : MonoBehaviour, IItemsSource, IItemsSourceRemov
     // IItemsSource
     public IEnumerable<ItemData> ItemDatas()
     {
-        Tile currentTile = _controller.tileTracker.data.CurrentTile();
+        Tile currentTile = _controller.movement.tileTracker.data.CurrentTile();
         List<ItemData> currentTileItemDatas = currentTile.Placed_ItemDatas();
 
         foreach (ItemData data in currentTileItemDatas)
@@ -59,7 +59,7 @@ public class Player_Interaction : MonoBehaviour, IItemsSource, IItemsSourceRemov
 
     public int RemoveItem(Item_ScrObj updateItem, int removeAmount)
     {
-        Tile currentTile = _controller.tileTracker.data.CurrentTile();
+        Tile currentTile = _controller.movement.tileTracker.data.CurrentTile();
         List<PlaceableItem> placedItems = currentTile.PlacedItems(updateItem);
 
         if (placedItems.Count <= 0) return 0;
@@ -104,7 +104,7 @@ public class Player_Interaction : MonoBehaviour, IItemsSource, IItemsSourceRemov
 
     public int AddItem(Item_ScrObj addItem, int addAmount)
     {
-        Tile playerTile = _controller.tileTracker.data.CurrentTile();
+        Tile playerTile = _controller.movement.tileTracker.data.CurrentTile();
         int placeAmount = Mathf.Min(addAmount, playerTile.ItemPlace_AvailableCount(addItem));
 
         playerTile.Set_Item(new(addItem, placeAmount));
@@ -120,7 +120,7 @@ public class Player_Interaction : MonoBehaviour, IItemsSource, IItemsSourceRemov
         // input.OnMovement += MoveTo_Tile;
 
         Time_Manager time = InGame_Manager.instance.time;
-        
+
         // Movement_Controller playerMovement = _controller.movement;
         // playerMovement.OnMovement += time.Count_Time;
 
@@ -170,7 +170,7 @@ public class Player_Interaction : MonoBehaviour, IItemsSource, IItemsSourceRemov
 
         Player_Controller player = manager.player;
         player.Update_CurrentStamina(player.data.currentStamina - Mathf.Max(1, Movement_StaminaValue()));
-        
+
         return true;
     }
     private void MoveTo_Tile(Vector2 direction)

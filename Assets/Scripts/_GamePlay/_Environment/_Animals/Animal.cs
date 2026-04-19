@@ -12,10 +12,12 @@ public class Animal_ActionKeys
 
 public class Animal : MonoBehaviour, IDamageable
 {
+    [SerializeField] private Movement_Controller _movement;
+    public Movement_Controller movement => _movement;
+
     [Space(20)]
     [SerializeField] private AnimationPlayer _animation;
     [SerializeField] private FillBar_Controller _healthFillBar;
-
 
     [Space(20)]
     [SerializeField] private AnimationClipScrObj _escapeAnimationClip;
@@ -25,24 +27,21 @@ public class Animal : MonoBehaviour, IDamageable
     [SerializeField] private ItemData[] _dropItems;
     [SerializeField] private Item_ScrObj[] _followItems;
 
-    [Space(10)]
-    public UnityEvent OnSightActions;
-
 
     private AnimalData _data;
     public AnimalData data => _data;
 
-    // private float _movementFlag = -1;
-    private float _onSightFlag = -1;
-
+    private Coroutine _actionCoroutine;
     private Dictionary<string, int> _actionCountDatas = new();
+
+    public UnityEvent OnSightActions;
 
 
     // MonoBehaviour
     private void OnDestroy()
     {
-        // _movement.OnMovementDirection -= _animation.Update_Flip;
-        // _movement.OnMovementActive -= Update_Animation;
+        _movement.OnMovementState += Update_Animation;
+        _movement.OnMovementDirection += _animation.Update_Flip;
 
         InGame_Manager manager = InGame_Manager.instance;
 
@@ -71,8 +70,8 @@ public class Animal : MonoBehaviour, IDamageable
     // Data
     public void Set_Data()
     {
-        // _movement.OnMovementDirection += _animation.Update_Flip;
-        // _movement.OnMovementActive += Update_Animation;
+        _movement.OnMovementState += Update_Animation;
+        _movement.OnMovementDirection += _animation.Update_Flip;
 
         InGame_Manager manager = InGame_Manager.instance;
 
@@ -87,9 +86,8 @@ public class Animal : MonoBehaviour, IDamageable
 
     public void Set_Data(AnimalScrObj setAnimal)
     {
-        /*
-        Transform currentTilePos = _movement.tileTrackerData.CurrentTile().transform;
-        Transform playerTilePos = InGame_Manager.instance.player.movement.tileTrackerData.CurrentTile().transform;
+        Transform currentTilePos = movement.tileTracker.data.CurrentTile().transform;
+        Transform playerTilePos = InGame_Manager.instance.player.movement.tileTracker.data.CurrentTile().transform;
 
         int health = _data == null ? setAnimal.maxHealth : _data.health;
 
@@ -99,26 +97,23 @@ public class Animal : MonoBehaviour, IDamageable
         _data = new(setAnimal, health, randCollectCount);
 
         _healthFillBar.Refresh_CurrentFillBar();
-        */
+        _movement.Stop();
     }
 
-
-    public void Update_Animation()
-    {
-        if (_data.isOnSight) return;
-
-        _animation.Play(0);
-    }
     public void Update_Animation(bool isMoving)
     {
-        if (_data.isOnSight == false) return;
-
-        if (isMoving == false)
+        if (_data.isOnSight == false)
         {
-            _animation.Stop();
+            _animation.Play(0);
             return;
         }
-        _animation.Play(1);
+
+        if (isMoving)
+        {
+            _animation.Play(1);
+            return;
+        }
+        _animation.Stop();
     }
 
 
@@ -132,33 +127,29 @@ public class Animal : MonoBehaviour, IDamageable
 
     private List<Tile> MoveDistance_RangeTiles()
     {
-        /*
         InGame_Manager manager = InGame_Manager.instance;
         Tiles_Controller tilesController = manager.tilesController;
 
-        Tile currentTile = _movement.tileTrackerData.CurrentTile();
+        Tile currentTile = _movement.tileTracker.data.CurrentTile();
         int distanceRange = _data.animalScrObj.moveDistanceRange;
 
         List<Tile> rangedTiles = tilesController.Current_Tiles(currentTile, distanceRange);
         rangedTiles.Remove(distanceRange > 0 ? currentTile : null);
-        */
 
-        return null; //rangedTiles;
+        return rangedTiles;
     }
     private Tile MoveDistance_RangeTile(bool excludePlayerTile)
     {
-        /*
         List<Tile> rangedTiles = MoveDistance_RangeTiles();
-        if (excludePlayerTile) rangedTiles.Remove(InGame_Manager.instance.player.movement.tileTrackerData.CurrentTile());
-        */
+        if (excludePlayerTile) rangedTiles.Remove(InGame_Manager.instance.player.movement.tileTracker.data.CurrentTile());
 
-        return null; // rangedTiles[UnityEngine.Random.Range(0, rangedTiles.Count)];
+        return rangedTiles[UnityEngine.Random.Range(0, rangedTiles.Count)];
     }
 
 
     private bool Player_InRange()
     {
-        Tile playerTile = InGame_Manager.instance.player.tileTracker.data.CurrentTile();
+        Tile playerTile = InGame_Manager.instance.player.movement.tileTracker.data.CurrentTile();
         float distance = 0f; // playerTile.DistanceTo_TargetTile(_movement.tileTrackerData.CurrentTile());
 
         return distance <= _data.animalScrObj.moveDistanceRange;
@@ -173,7 +164,7 @@ public class Animal : MonoBehaviour, IDamageable
     // Visuals
     private void Toggle_FillBar(Tile hoveringTile)
     {
-        bool toggle = true; //hoveringTile == _movement.tileTrackerData.CurrentTile();
+        bool toggle = hoveringTile == _movement.tileTracker.data.CurrentTile();
         _healthFillBar.Toggle(toggle);
 
         if (toggle == false) return;
@@ -189,17 +180,21 @@ public class Animal : MonoBehaviour, IDamageable
     private void Collect_TrailMark()
     {
         if (_data.isOnSight) return;
-        // if (InGame_Manager.instance.player.movement.tileTrackerData.CurrentTile() != _movement.tileTrackerData.CurrentTile()) return;
+
+        Tile playerTile = InGame_Manager.instance.player.movement.tileTracker.data.CurrentTile();
+        if (playerTile != _movement.tileTracker.data.CurrentTile()) return;
 
         _data.Decrease_TrailMarkCount(1);
 
-        // _movement.Update_Offset(_data.isOnSight ? _movement.offset : Vector2.zero);
-        // _movement.MoveTo_Tile(MoveDistance_RangeTile(true));
+        Tile nextTile = MoveDistance_RangeTile(true);
+        if (nextTile == null) return;
 
-        if (_data.isOnSight == false) return;
-        _onSightFlag = Time.frameCount;
+        bool isOnSight = _data.isOnSight;
 
-        // _movement.Update_MoveDurationValue();
+        transform.position = isOnSight ? nextTile.Random_BoundPoint() : nextTile.transform.position; // update offset ?
+        _movement.tileTracker.data.TrackTile(nextTile);
+
+        if (isOnSight == false) return;
 
         _healthFillBar.Set_FillBar(transform);
         _healthFillBar.Toggle(false);
@@ -208,7 +203,6 @@ public class Animal : MonoBehaviour, IDamageable
     private void Update_OnSight()
     {
         if (_data.isOnSight == false) return;
-        if (_onSightFlag == Time.frameCount) return;
 
         OnSightActions?.Invoke();
     }
@@ -224,25 +218,20 @@ public class Animal : MonoBehaviour, IDamageable
 
 
     // Default Actions
-    public void Update_StunnedMovementState()
-    {
-        // int stunnedStateCount = _movement.CurrentState_Count(MovementState.stunned);
-
-        // if (stunnedStateCount <= 0) return;
-        // _movement.Update_CurrentState(MovementState.stunned, stunnedStateCount - 1);
-    }
-
-
-    public void RunOff()
-    {
-
-    }
-
     public void Roam()
     {
-
+        if (_actionCoroutine != null) return;
+        _actionCoroutine = StartCoroutine(Roam_MovementUpdate());
     }
-    public void Roam(int coolTime)
+    private IEnumerator Roam_MovementUpdate()
+    {
+        _movement.Move(MoveDistance_RangeTile(true).Random_BoundPoint());
+
+        while (_movement.moveCoroutine != null) yield return null;
+        _actionCoroutine = null;
+    }
+
+    public void RunOff()
     {
 
     }
@@ -260,7 +249,6 @@ public class Animal : MonoBehaviour, IDamageable
     {
 
     }
-
 
     public void Attack()
     {

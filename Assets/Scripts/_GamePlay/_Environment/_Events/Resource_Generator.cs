@@ -116,7 +116,7 @@ public class Resource_Generator : MonoBehaviour
 
         InGame_Manager manager = InGame_Manager.instance;
 
-        Tile playerTile = manager.player.tileTracker.data.CurrentTile();
+        Tile playerTile = manager.player.movement.tileTracker.data.CurrentTile();
         List<Tile> tiles = new(manager.tilesController.currentTiles);
 
         for (int i = tiles.Count - 1; i >= 0; i--)

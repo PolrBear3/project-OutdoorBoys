@@ -24,7 +24,7 @@ MonoBehaviour:
   _timeUpdateValue: 1
   _backgroundWarpRenderData:
     _loadDuration: 1
-    _pixelSize: 4
+    _pixelSize: 16
     _animationSpeed: 0.4
     _colorA: {r: 0.09803922, g: 0.2, b: 0.1764706, a: 1}
     _colorB: {r: 0.14509805, g: 0.3372549, b: 0.18039216, a: 1}

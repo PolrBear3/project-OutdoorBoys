@@ -71,14 +71,6 @@ public class Tile : MonoBehaviour
         _tileSpriteRenderer.sprite = isBaseTile ? sprites[1] : sprites[0];
     }
 
-
-    public int DistanceTo_TargetTile(Tile targetTile)
-    {
-        if (targetTile == null || targetTile == this) return 0;
-
-        return Utility.Chebyshev_Distance(transform.position, targetTile.transform.position);
-    }
-
     public List<GameObject> All_CurrentPrefabs()
     {
         List<GameObject> prefabs = new();
@@ -88,6 +80,24 @@ public class Tile : MonoBehaviour
             prefabs.Add(child.gameObject);
         }
         return prefabs;
+    }
+
+
+    public Vector2 Random_BoundPoint()
+    {
+        Bounds bounds = _tileSpriteRenderer.bounds;
+
+        float randomX = UnityEngine.Random.Range(bounds.min.x, bounds.max.x);
+        float randomY = UnityEngine.Random.Range(bounds.min.y, bounds.max.y);
+
+        return new(randomX, randomY);
+    }
+
+    public int DistanceTo_TargetTile(Tile targetTile)
+    {
+        if (targetTile == null || targetTile == this) return 0;
+
+        return Utility.Chebyshev_Distance(transform.position, targetTile.transform.position);
     }
 
 

@@ -30,7 +30,7 @@ Material:
     m_Ints: []
     m_Floats:
     - _Brightness: 1
-    - _PixelSize: 4
+    - _PixelSize: 16
     - _Speed: 0
     - _UVScale: 32
     m_Colors:

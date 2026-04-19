@@ -16,19 +16,19 @@ public class PlayerData_UpdateItem : MonoBehaviour
     {
         _useableItem.OnUse += Consume;
     }
-    
+
     private void OnDestroy()
     {
         _useableItem.OnUse -= Consume;
     }
-    
+
 
     // Use
     private void Consume(Tile useTile)
     {
         Player_Controller player = InGame_Manager.instance.player;
-        if (useTile != player.tileTracker.data.CurrentTile()) return;
-        
+        if (useTile != player.movement.tileTracker.data.CurrentTile()) return;
+
         PlayerData data = player.data;
 
         player.Update_Hunger(data.hunger + _healthUpdateValue);

@@ -58,7 +58,7 @@ public class Inventory_Manager : MonoBehaviour, IItemsSource, IItemsSourceRemove
         InGame_Manager manager = InGame_Manager.instance;
         ItemCursor itemCursor = manager.cursor.itemCursor;
 
-        manager.player.tileTracker.OnTrackUpdate -= Toggle_Update;
+        manager.player.movement.tileTracker.OnTrackUpdate -= Toggle_Update;
         manager.tilesController.OnTileSelect -= Toggle_Update;
         itemCursor.OnItemReturn -= Toggle_Update;
     }
@@ -148,7 +148,7 @@ public class Inventory_Manager : MonoBehaviour, IItemsSource, IItemsSourceRemove
         InGame_Manager manager = InGame_Manager.instance;
         ItemCursor itemCursor = manager.cursor.itemCursor;
 
-        manager.player.tileTracker.OnTrackUpdate += Toggle_Update;
+        manager.player.movement.tileTracker.OnTrackUpdate += Toggle_Update;
         manager.tilesController.OnTileSelect += Toggle_Update;
         itemCursor.OnItemReturn += Toggle_Update;
 
@@ -159,7 +159,7 @@ public class Inventory_Manager : MonoBehaviour, IItemsSource, IItemsSourceRemove
     // Toggle
     private void Toggle_Update()
     {
-        Tile playerTile = InGame_Manager.instance.player.tileTracker.data.CurrentTile();
+        Tile playerTile = InGame_Manager.instance.player.movement.tileTracker.data.CurrentTile();
 
         _togglePanel.gameObject.SetActive(playerTile.Placed_ItemCount(_inventoryBagpack) > 0);
     }

@@ -58,7 +58,7 @@ public class Animals_Manager : MonoBehaviour
     private AnimalScrObj Spawning_Animal()
     {
         if (_spawnAnimals.Length <= 0) return null;
-        
+
         Tiles_Controller tilesController = InGame_Manager.instance.tilesController;
 
         Dictionary<AnimalScrObj, int> spawnWeightDatas = new();
@@ -118,20 +118,15 @@ public class Animals_Manager : MonoBehaviour
         InGame_Manager manager = InGame_Manager.instance;
 
         List<Tile> sortedTiles = manager.tilesController.Current_Tiles(randSpawnTile);
-        // sortedTiles.Remove(manager.player.movement.tileTrackerData.CurrentTile());
+        sortedTiles.Remove(manager.player.movement.tileTracker.data.CurrentTile());
 
         Tile spawnTile = sortedTiles[UnityEngine.Random.Range(0, sortedTiles.Count)];
+        if (spawnTile == null) return;
 
-        // Movement_Controller animalMovement = spawnedAnimal.movement;
+        spawnedAnimal.transform.position = spawnTile.transform.position;
+        spawnedAnimal.movement.tileTracker.Set_Data(spawnTile);
 
-        /*
-        animalMovement.Update_MoveDurationValue(0);
-        animalMovement.Update_Offset(Vector2.zero);
-        animalMovement.MoveTo_Tile(spawnTile);
-        */
-
-        spawnedAnimal.Set_Data(animalToSpawn);
         spawnedAnimal.Set_Data();
-        spawnedAnimal.Update_Animation();
+        spawnedAnimal.Set_Data(animalToSpawn);
     }
 }

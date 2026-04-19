@@ -95,6 +95,7 @@ GameObject:
   - component: {fileID: 1742694073595841622}
   - component: {fileID: 178274691860591808}
   - component: {fileID: 7193615475397820439}
+  - component: {fileID: 5121483621233644340}
   - component: {fileID: 3490125478823233063}
   - component: {fileID: 4065704676414607868}
   m_Layer: 0
@@ -151,6 +152,18 @@ MonoBehaviour:
   _fillBarPrefab: {fileID: 3122773858983555742, guid: b154050f99b494edda6fb24a64dbeae8, type: 3}
   _setOffSet: {x: 0, y: 0.75}
   _fillColor: {r: 0.64705884, g: 0.1882353, b: 0.1882353, a: 1}
+--- !u!114 &5121483621233644340
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2848068808391517652}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 69e70a24ff5f64a4eb7ae9aededb5356, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!114 &3490125478823233063
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -163,7 +176,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: acb7aef88d14f4350bb47957e960a93f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _offset: {x: 0, y: 0.2}
+  _tileTracker: {fileID: 5121483621233644340}
+  _defaultSpeed: 1
 --- !u!114 &4065704676414607868
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -176,8 +190,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 50a713ea4702d416fa43694a35dcf0e7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _animation: {fileID: 178274691860591808}
   _movement: {fileID: 3490125478823233063}
+  _animation: {fileID: 178274691860591808}
   _healthFillBar: {fileID: 7193615475397820439}
   _escapeAnimationClip: {fileID: 11400000, guid: 8eb013fc8c5f64ed4b8445944a05d694, type: 2}
   _deceasedAnimationClip: {fileID: 11400000, guid: f31ad7f4760c24191b7851b6e2ea4bb3, type: 2}
@@ -202,36 +216,12 @@ MonoBehaviour:
         m_CallState: 2
       - m_Target: {fileID: 4065704676414607868}
         m_TargetAssemblyTypeName: Animal, Assembly-CSharp
-        m_MethodName: Escape
-        m_Mode: 3
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 4
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-      - m_Target: {fileID: 4065704676414607868}
-        m_TargetAssemblyTypeName: Animal, Assembly-CSharp
-        m_MethodName: RunOff
-        m_Mode: 3
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 2
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-      - m_Target: {fileID: 4065704676414607868}
-        m_TargetAssemblyTypeName: Animal, Assembly-CSharp
         m_MethodName: Roam
-        m_Mode: 3
+        m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 2
+          m_IntArgument: 0
           m_FloatArgument: 0
           m_StringArgument: 
           m_BoolArgument: 0

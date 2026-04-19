@@ -120,7 +120,7 @@ public class ItemCrafting_Manager : MonoBehaviour
         List<ItemData> currentItemDatas = Ingredient_ItemDatas();
         List<ItemData> craftAvailableItemDatas = new();
 
-        Tile playerTile = InGame_Manager.instance.player.tileTracker.data.CurrentTile();
+        Tile playerTile = InGame_Manager.instance.player.movement.tileTracker.data.CurrentTile();
 
         for (int i = 0; i < allItems.Length; i++)
         {

@@ -56,10 +56,10 @@ public class Time_Manager : MonoBehaviour, ISaveLoadable
         manager.tilesController.OnTileSelect -= Stop_TimTik;
         manager.cursor.OnTilePointRangeUpdate -= Stop_TimTik;
 
-        Player_Controller player = manager.player;
+        TileTracker playerTileTracker = manager.player.movement.tileTracker;
 
-        player.tileTracker.OnTrackUpdate -= Stop_TimTik;
-        player.tileTracker.OnTrackUpdate -= Count_Time;
+        playerTileTracker.OnTrackUpdate -= Stop_TimTik;
+        playerTileTracker.OnTrackUpdate -= Count_Time;
     }
 
 
@@ -86,10 +86,10 @@ public class Time_Manager : MonoBehaviour, ISaveLoadable
         manager.tilesController.OnTileSelect += Stop_TimTik;
         manager.cursor.OnTilePointRangeUpdate += Stop_TimTik;
 
-        Player_Controller player = manager.player;
+        TileTracker playerTileTracker = manager.player.movement.tileTracker;
 
-        player.tileTracker.OnTrackUpdate += Stop_TimTik;
-        player.tileTracker.OnTrackUpdate += Count_Time;
+        playerTileTracker.OnTrackUpdate += Stop_TimTik;
+        playerTileTracker.OnTrackUpdate += Count_Time;
     }
 
 
@@ -103,7 +103,7 @@ public class Time_Manager : MonoBehaviour, ISaveLoadable
         for (int i = 0; i < _timeUpdateBuses.Count; i++)
         {
             TimeUpdateBus runBus = (TimeUpdateBus)i;
-            
+
             if (_timeUpdateBuses.TryGetValue(runBus, out Action action) == false) continue;
             action?.Invoke();
         }

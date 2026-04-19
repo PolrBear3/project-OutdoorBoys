@@ -1,9 +1,13 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class Movement_Controller : MonoBehaviour
 {
+    [SerializeField] private TileTracker _tileTracker;
+    public TileTracker tileTracker => _tileTracker;
+
     [Space(20)]
     [SerializeField][Range(0, 10)] private float _defaultSpeed;
 
@@ -11,17 +15,20 @@ public class Movement_Controller : MonoBehaviour
     public Coroutine moveCoroutine => _moveCoroutine;
 
     private Vector2 _destination;
-    
-    
+
+    public Action<bool> OnMovementState;
+    public Action<Vector2> OnMovementDirection;
+
+
     // MonoBehaviour
     private void Awake()
     {
-        
+
     }
-    
+
     private void OnDestroy()
     {
-        
+
     }
 
     private void Update()
@@ -36,6 +43,18 @@ public class Movement_Controller : MonoBehaviour
         if (_moveCoroutine == null) return;
 
         transform.position = Vector2.MoveTowards(transform.position, _destination, _defaultSpeed * Time.deltaTime);
+
+        _tileTracker.TrackUpdate_CurrentTile();
+    }
+
+    public void Stop()
+    {
+        OnMovementState?.Invoke(false);
+
+        if (_moveCoroutine == null) return;
+
+        StopCoroutine(_moveCoroutine);
+        _moveCoroutine = null;
     }
 
     public bool At_Destination()
@@ -45,20 +64,16 @@ public class Movement_Controller : MonoBehaviour
     private IEnumerator MovementState_Update()
     {
         while (At_Destination() == false) yield return null;
-        _moveCoroutine = null;
-    }
-
-    public void Stop()
-    {
-        if (_moveCoroutine == null) return;
-
-        StopCoroutine(_moveCoroutine);
-        _moveCoroutine = null;
+        Stop();
     }
 
     public void Move(Vector2 customPosition)
     {
         _destination = customPosition;
+
+        OnMovementState?.Invoke(true);
+        OnMovementDirection?.Invoke((_destination - (Vector2)transform.position).normalized);
+
         _moveCoroutine = StartCoroutine(MovementState_Update());
     }
     public void Move(Tile targetTile)
