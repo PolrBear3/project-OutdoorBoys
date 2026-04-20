@@ -8,6 +8,7 @@ public class EventPointer : MonoBehaviour, IPointerEnterHandler, IPointerExitHan
 {
     public Action OnEnter;
     public Action OnExit;
+    public Action<bool> OnPointerState;
 
     private bool _pointerDetected;
     public bool pointerDetected => _pointerDetected;
@@ -17,12 +18,16 @@ public class EventPointer : MonoBehaviour, IPointerEnterHandler, IPointerExitHan
     public void OnPointerEnter(PointerEventData eventData)
     {
         _pointerDetected = true;
+
         OnEnter?.Invoke();
+        OnPointerState?.Invoke(_pointerDetected);
     }
 
     public void OnPointerExit(PointerEventData eventData)
     {
         _pointerDetected = false;
+        
         OnExit?.Invoke();
+        OnPointerState?.Invoke(_pointerDetected);
     }
 }

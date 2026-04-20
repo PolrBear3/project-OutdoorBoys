@@ -48,31 +48,32 @@ public class Tile_Indicator : MonoBehaviour
     }
 
 
+    public void Set_Indicator(Tile targetTile)
+    {
+        if (targetTile == null) return;
+        if (currentIndicateDatas.ContainsKey(targetTile)) return;
+        
+        GameObject setIndicator = Instantiate(_indicatorPrefab, targetTile.transform);
+
+        if (setIndicator.TryGetComponent(out SpriteRenderer sr) == false)
+        {
+            Destroy(setIndicator);
+            return;
+        }
+        _currentIndicateDatas[targetTile] = sr;
+
+        sr.sprite = _indicatorSprite != null ? _indicatorSprite : sr.sprite;
+        sr.color = _indicatorColor;
+    }
+    
     public void Set_Indicators(Tile pivotTile, List<Vector2> setPositions)
     {
-        Clear_CurrentIndicators();
-
         Tiles_Controller tilesController = InGame_Manager.instance.tilesController;
 
         for (int i = 0; i < setPositions.Count; i++)
         {
             Vector2 pivotTilePos = pivotTile.transform.position;
-            Tile setPositionTile = tilesController.Current_Tile(pivotTilePos + setPositions[i]);
-
-            if (setPositionTile == null) continue;
-
-            GameObject setIndicator = Instantiate(_indicatorPrefab, setPositionTile.transform);
-            setIndicator.transform.SetParent(transform);
-
-            if (setIndicator.TryGetComponent(out SpriteRenderer sr) == false)
-            {
-                Destroy(setIndicator);
-                continue;
-            }
-            _currentIndicateDatas[setPositionTile] = sr;
-
-            sr.sprite = _indicatorSprite != null ? _indicatorSprite : sr.sprite;
-            sr.color = _indicatorColor;
+            Set_Indicator(tilesController.Current_Tile(pivotTilePos + setPositions[i]));
         }
     }
     public void Set_Indicators(Tile pivotTile)

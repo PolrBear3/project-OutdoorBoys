@@ -48,7 +48,7 @@ MonoBehaviour:
     _rotationValue: 0
     _transformDurationTime: 0
   - _clipSprite: {fileID: 2058226474, guid: cb01ed2ae3c714d4dba399cd0779d6f1, type: 3}
-    _durationTime: 0.2
+    _durationTime: 0.15
     _sortingOrderUpdateValue: 0
     _alphaUpdateValue: 0
     _alphaDurationTime: 0

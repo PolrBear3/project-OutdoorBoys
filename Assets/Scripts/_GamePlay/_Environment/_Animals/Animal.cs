@@ -16,6 +16,10 @@ public class Animal : MonoBehaviour, IDamageable
     public Movement_Controller movement => _movement;
 
     [Space(20)]
+    [SerializeField] private EventPointer _eventPointer;
+    [SerializeField] private Tile_Indicator _tileIndicator;
+
+    [Space(20)]
     [SerializeField] private AnimationPlayer _animation;
     [SerializeField] private FillBar_Controller _healthFillBar;
 
@@ -40,13 +44,18 @@ public class Animal : MonoBehaviour, IDamageable
     // MonoBehaviour
     private void OnDestroy()
     {
-        _movement.OnMovementState += Update_Animation;
-        _movement.OnMovementDirection += _animation.Update_Flip;
+        _movement.OnMovementState -= Update_Animation;
+        _movement.OnMovementDirection -= _animation.Update_Flip;
+
+        _movement.tileTracker.OnTrackUpdate -= Update_MovementTile;
+
+        _eventPointer.OnPointerState += Toggle_MovementTile;
+        _movement.tileTracker.OnTrackUpdate += Toggle_MovementTile;
 
         InGame_Manager manager = InGame_Manager.instance;
 
         manager.tilesController.OnTileHover -= Toggle_FillBar;
-        // _movement.OnMovement -= Toggle_FillBar;
+        _movement.tileTracker.OnTrackUpdate -= Toggle_FillBar;
 
         Time_Manager time = manager.time;
 
@@ -73,10 +82,15 @@ public class Animal : MonoBehaviour, IDamageable
         _movement.OnMovementState += Update_Animation;
         _movement.OnMovementDirection += _animation.Update_Flip;
 
+        _movement.tileTracker.OnTrackUpdate += Update_MovementTile;
+
+        _eventPointer.OnPointerState += Toggle_MovementTile;
+        _movement.tileTracker.OnTrackUpdate += Toggle_MovementTile;
+
         InGame_Manager manager = InGame_Manager.instance;
 
         manager.tilesController.OnTileHover += Toggle_FillBar;
-        // _movement.OnMovement += Toggle_FillBar;
+        _movement.tileTracker.OnTrackUpdate += Toggle_FillBar;
 
         Time_Manager time = manager.time;
 
@@ -173,6 +187,26 @@ public class Animal : MonoBehaviour, IDamageable
     private void Toggle_FillBar()
     {
         Toggle_FillBar(InGame_Manager.instance.cursor.pointingTile);
+    }
+
+    private void Update_MovementTile()
+    {
+        Tile currentTile = _movement.tileTracker.data.CurrentTile();
+
+        if (currentTile == null) return;
+        if (_tileIndicator.Current_IndicateTiles().Contains(currentTile)) return;
+
+        _tileIndicator.Clear_CurrentIndicators();
+        _tileIndicator.Set_Indicator(currentTile);
+    }
+    
+    private void Toggle_MovementTile(bool toggle)
+    {
+        _tileIndicator.Toggle_CurrentIndicators(toggle);
+    }
+    private void Toggle_MovementTile()
+    {
+        Toggle_MovementTile(_movement.tileTracker.data.CurrentTile() == InGame_Manager.instance.cursor.pointingTile);
     }
 
 

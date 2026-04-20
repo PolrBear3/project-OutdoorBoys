@@ -93,9 +93,12 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1742694073595841622}
+  - component: {fileID: 2049584202980221860}
   - component: {fileID: 178274691860591808}
   - component: {fileID: 7193615475397820439}
   - component: {fileID: 5121483621233644340}
+  - component: {fileID: -6343988300998887824}
+  - component: {fileID: 1160854852167355664}
   - component: {fileID: 3490125478823233063}
   - component: {fileID: 4065704676414607868}
   m_Layer: 0
@@ -121,6 +124,51 @@ Transform:
   - {fileID: 5444721835185955743}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!61 &2049584202980221860
+BoxCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2848068808391517652}
+  m_Enabled: 1
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_ForceSendLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ForceReceiveLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ContactCaptureLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_CallbackLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_IsTrigger: 1
+  m_UsedByEffector: 0
+  m_UsedByComposite: 0
+  m_Offset: {x: 0, y: 0}
+  m_SpriteTilingProperty:
+    border: {x: 0, y: 0, z: 0, w: 0}
+    pivot: {x: 0, y: 0}
+    oldSize: {x: 0, y: 0}
+    newSize: {x: 0, y: 0}
+    adaptiveTilingThreshold: 0
+    drawMode: 0
+    adaptiveTiling: 0
+  m_AutoTiling: 0
+  serializedVersion: 2
+  m_Size: {x: 1, y: 1}
+  m_EdgeRadius: 0
 --- !u!114 &178274691860591808
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -164,6 +212,34 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 69e70a24ff5f64a4eb7ae9aededb5356, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &-6343988300998887824
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2848068808391517652}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dfae89f0c13a44749a96942d4abdd7ae, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &1160854852167355664
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2848068808391517652}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 29610638bf7fa4efd941027cc0309360, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _indicatorPrefab: {fileID: 2646137999372282548, guid: c115b03e5a02a4522895db5f253285dd, type: 3}
+  _indicatorSprite: {fileID: 8321326, guid: 99b3ae6f72cfb43edb595fcf1373eec9, type: 3}
+  _indicatorColor: {r: 0.64705884, g: 0.1882353, b: 0.1882353, a: 1}
+  _defaultTilePositions: []
 --- !u!114 &3490125478823233063
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -191,6 +267,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _movement: {fileID: 3490125478823233063}
+  _eventPointer: {fileID: -6343988300998887824}
+  _tileIndicator: {fileID: 1160854852167355664}
   _animation: {fileID: 178274691860591808}
   _healthFillBar: {fileID: 7193615475397820439}
   _escapeAnimationClip: {fileID: 11400000, guid: 8eb013fc8c5f64ed4b8445944a05d694, type: 2}
@@ -202,18 +280,6 @@ MonoBehaviour:
   OnSightActions:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 4065704676414607868}
-        m_TargetAssemblyTypeName: Animal, Assembly-CSharp
-        m_MethodName: Update_StunnedMovementState
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
       - m_Target: {fileID: 4065704676414607868}
         m_TargetAssemblyTypeName: Animal, Assembly-CSharp
         m_MethodName: Roam

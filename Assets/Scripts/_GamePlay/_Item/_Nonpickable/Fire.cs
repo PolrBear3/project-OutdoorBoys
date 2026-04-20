@@ -203,6 +203,8 @@ public class Fire : MonoBehaviour
             updatePositions.Add(defaultPositions[randIndex]);
             defaultPositions.RemoveAt(randIndex);
         }
+
+        _heatTileIndicator.Clear_CurrentIndicators();
         _heatTileIndicator.Set_Indicators(currentTile, updatePositions);
     }
 

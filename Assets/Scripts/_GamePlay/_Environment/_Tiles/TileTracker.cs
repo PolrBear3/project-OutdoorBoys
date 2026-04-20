@@ -84,6 +84,9 @@ public class TileTracker : MonoBehaviour
         Tile currentTile = _data.CurrentTile();
         if (currentTile == null) return false;
 
+        List<Tile> edgedTiles = InGame_Manager.instance.tilesController.Current_EdgedTiles();
+        if (edgedTiles.Contains(currentTile) == false) return true;
+        
         List<Tile> peripheralTiles = Peripheral_Tiles(currentTile);
 
         for (int i = 0; i < peripheralTiles.Count; i++)
