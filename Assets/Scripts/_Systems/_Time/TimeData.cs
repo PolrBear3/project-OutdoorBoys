@@ -6,21 +6,22 @@ using UnityEngine;
 [System.Serializable]
 public class TimeData
 {
-    private int _timeCountValue;
-    public int timeCountValue => _timeCountValue;
-    
     [ES3Serializable] private int _timeCount;
     public int timeCount => _timeCount;
 
     [ES3Serializable] private int _dayCount;
     public int dayCount => _dayCount;
 
+    [ES3Serializable] private int _rewardTargetTime;
+    public int rewardTargetTime => _rewardTargetTime;
+
 
     // Constructors
-    public TimeData(int timeCount, int dayCount)
+    public TimeData(int timeCount, int dayCount, int rewardTargetTime)
     {
         _timeCount = timeCount;
         _dayCount = dayCount;
+        _rewardTargetTime = rewardTargetTime;
     }
 
 
@@ -31,8 +32,8 @@ public class TimeData
         _dayCount = dayCount;
     }
 
-    public void Update_TimeCountValue(int updateValue)
+    public void Update_RewardTargetTime(int updateValue)
     {
-        _timeCountValue = Mathf.Max(1, updateValue);
+        _rewardTargetTime = Mathf.Max(1, updateValue);
     }
 }

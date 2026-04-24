@@ -15,10 +15,10 @@ public class Time_Manager : MonoBehaviour, ISaveLoadable
 {
     [Space(20)]
     [SerializeField][Range(0, 1000)] private int _maxTimeCount;
-    [SerializeField][Range(0, 1000)] private int _nightPhaseCount;
+    [SerializeField][Range(0, 1000)] private int _nightPhaseTime;
 
     [Space(10)]
-    [SerializeField][Range(0, 100)] private float _tikTime;
+    [SerializeField][Range(0, 100)] private int _rewardTargetUpdateTime;
 
 
     private TimeData _data;
@@ -26,16 +26,10 @@ public class Time_Manager : MonoBehaviour, ISaveLoadable
 
     private Dictionary<TimeUpdateBus, Action> _timeUpdateBuses = new();
 
-    public Action<int> OnTimeCount;
-    public Action OnNightPhaseUpdate;
-
+    public Action OnNightPhaseTime;
     public Action<int> OnDayCount;
-    public Action OnDayUpdate;
 
-    public Action<bool> OnTikToggle;
-
-    private Coroutine _timeTikCoroutine;
-    public Coroutine timeTikCoroutine => _timeTikCoroutine;
+    public Action OnRewardTargetTime;
 
 
     // MonoBehaviour
@@ -44,58 +38,41 @@ public class Time_Manager : MonoBehaviour, ISaveLoadable
         EventBus_Manager.Register(EventBus.AwakeLoad, Set_Data);
     }
 
+    private void Start()
+    {
+        Run_RewardUpdates();
+    }
+
     private void OnDestroy()
     {
         EventBus_Manager.UnRegister(EventBus.AwakeLoad, Set_Data);
 
-        Input_Controller input = Input_Controller.instance;
-        input.OnInteract -= Toggle_TimeTik;
-
-        InGame_Manager manager = InGame_Manager.instance;
-
-        manager.tilesController.OnTileSelect -= Stop_TimTik;
-        manager.cursor.OnTilePointRangeUpdate -= Stop_TimTik;
-
-        TileTracker playerTileTracker = manager.player.movement.tileTracker;
-
-        playerTileTracker.OnTrackUpdate -= Stop_TimTik;
-        playerTileTracker.OnTrackUpdate -= Count_Time;
+        Input_Controller.instance.OnHoldInteract -= Count_Time;
     }
 
 
     // ISaveLoadable
     public void Save_Data()
     {
-        ES3.Save(SaveKeys.Time_SaveKeys.Data, _data ?? new TimeData(0, 0));
+        ES3.Save(SaveKeys.Time_SaveKeys.Data, _data ?? new TimeData(0, 0, _rewardTargetUpdateTime));
     }
 
     public void Load_Data()
     {
-        _data = ES3.Load(SaveKeys.Time_SaveKeys.Data, new TimeData(0, 0));
+        _data = ES3.Load(SaveKeys.Time_SaveKeys.Data, new TimeData(0, 0, _rewardTargetUpdateTime));
     }
 
 
     // Data
     private void Set_Data()
     {
-        Input_Controller input = Input_Controller.instance;
-        input.OnInteract += Toggle_TimeTik;
-
-        InGame_Manager manager = InGame_Manager.instance;
-
-        manager.tilesController.OnTileSelect += Stop_TimTik;
-        manager.cursor.OnTilePointRangeUpdate += Stop_TimTik;
-
-        TileTracker playerTileTracker = manager.player.movement.tileTracker;
-
-        playerTileTracker.OnTrackUpdate += Stop_TimTik;
-        playerTileTracker.OnTrackUpdate += Count_Time;
+        Input_Controller.instance.OnHoldInteract += Count_Time;
     }
 
 
     public bool Is_Night()
     {
-        return _data.timeCount >= _nightPhaseCount;
+        return _data.timeCount >= _nightPhaseTime;
     }
 
     private void Run_TimeUpdates()
@@ -108,20 +85,29 @@ public class Time_Manager : MonoBehaviour, ISaveLoadable
             action?.Invoke();
         }
 
-        OnTimeCount?.Invoke(_data.timeCount);
-
-        if (_data.timeCount != _nightPhaseCount) return;
-        OnNightPhaseUpdate?.Invoke();
+        if (_data.timeCount != _nightPhaseTime) return;
+        OnNightPhaseTime?.Invoke();
     }
+    private void Run_RewardUpdates()
+    {
+        if (data.timeCount < _data.rewardTargetTime) return;
 
+        OnRewardTargetTime?.Invoke();
+    }
+    
     public void Count_Time()
     {
-        int calculatedTimeCount = data.timeCount + Mathf.Max(0, _data.timeCountValue);
+        int calculatedTimeCount = _data.timeCount + 1;
 
+        int rewardTargetTime = _data.rewardTargetTime;
+        _data.Update_RewardTargetTime(calculatedTimeCount > rewardTargetTime ? _data.timeCount + _rewardTargetUpdateTime : rewardTargetTime);
+        
         if (calculatedTimeCount <= _maxTimeCount)
         {
             _data.Set_Data(calculatedTimeCount, data.dayCount);
+
             Run_TimeUpdates();
+            Run_RewardUpdates();
 
             return;
         }
@@ -129,15 +115,14 @@ public class Time_Manager : MonoBehaviour, ISaveLoadable
         int dayUpdateCount = Mathf.FloorToInt(calculatedTimeCount / _maxTimeCount);
 
         _data.Set_Data(calculatedTimeCount % _maxTimeCount - 1, _data.dayCount + dayUpdateCount);
-
-        OnDayUpdate?.Invoke();
         OnDayCount?.Invoke(_data.dayCount);
-
+        
         Run_TimeUpdates();
+        Run_RewardUpdates();
     }
 
 
-    // Data Update
+    // Time Update Bus
     public void Register(TimeUpdateBus updateBus, Action targetAction)
     {
         if (_timeUpdateBuses.ContainsKey(updateBus) == false)
@@ -151,43 +136,5 @@ public class Time_Manager : MonoBehaviour, ISaveLoadable
     public void UnRegister(TimeUpdateBus updateBus, Action targetAction)
     {
         _timeUpdateBuses[updateBus] -= targetAction;
-    }
-
-
-    // Time Tik Count
-    private void Toggle_TimeTik(bool toggle)
-    {
-        if (_timeTikCoroutine != null)
-        {
-            StopCoroutine(_timeTikCoroutine);
-            _timeTikCoroutine = null;
-        }
-
-        OnTikToggle?.Invoke(toggle);
-
-        if (toggle == false) return;
-        if (InGame_Manager.instance.movements.AllMovements_Complete() == false) return;
-
-        _timeTikCoroutine = StartCoroutine(Run_TimeTik());
-    }
-    private IEnumerator Run_TimeTik()
-    {
-        float restrictedTikTime = Mathf.Max(0.1f, _tikTime);
-
-        while (true)
-        {
-            yield return new WaitForSeconds(restrictedTikTime);
-            Count_Time();
-        }
-    }
-
-    private void Toggle_TimeTik()
-    {
-        Toggle_TimeTik(_timeTikCoroutine == null);
-    }
-    private void Stop_TimTik()
-    {
-        if (_timeTikCoroutine == null) return;
-        Toggle_TimeTik(false);
     }
 }

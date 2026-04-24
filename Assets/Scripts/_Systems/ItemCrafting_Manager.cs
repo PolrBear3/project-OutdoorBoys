@@ -57,6 +57,11 @@ public class ItemCrafting_Manager : MonoBehaviour
         tilesController.OnTileSelect -= Update_CraftableItems;
         tilesController.OnTileSelect -= Toggle_ItemInfoPanel;
 
+        TileTracker playerTileTracker = manager.player.movement.tileTracker;
+
+        playerTileTracker.OnTrackUpdate += Update_CraftableItems;
+        playerTileTracker.OnTrackUpdate += Toggle_ItemInfoPanel;
+
         Time_Manager time = manager.time;
 
         time.UnRegister(TimeUpdateBus.StartUpdate, Update_CraftableItems);
@@ -89,6 +94,11 @@ public class ItemCrafting_Manager : MonoBehaviour
 
         tilesController.OnTileSelect += Update_CraftableItems;
         tilesController.OnTileSelect += Toggle_ItemInfoPanel;
+
+        TileTracker playerTileTracker = manager.player.movement.tileTracker;
+
+        playerTileTracker.OnTrackUpdate += Update_CraftableItems;
+        playerTileTracker.OnTrackUpdate += Toggle_ItemInfoPanel;
 
         Time_Manager time = manager.time;
 

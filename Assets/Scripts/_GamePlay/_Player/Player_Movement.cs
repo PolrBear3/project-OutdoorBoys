@@ -32,7 +32,6 @@ public class Player_Movement : MonoBehaviour
         EventBus_Manager.UnRegister(EventBus.AwakeLoad, Set_Data);
 
         Input_Controller.instance.OnMovement -= Update_InputDirection;
-
         OnMovementState -= Update_MovementAnimation;
         OnMovementDirection -= _controller.animationPlayer.Update_Flip;
     }
@@ -47,7 +46,6 @@ public class Player_Movement : MonoBehaviour
     private void Set_Data()
     {
         Input_Controller.instance.OnMovement += Update_InputDirection;
-
         OnMovementState += Update_MovementAnimation;
         OnMovementDirection += _controller.animationPlayer.Update_Flip;
     }

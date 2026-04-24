@@ -45,7 +45,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3f0101b7ff8144838bbf4c1880fb7260, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _generateCoolTime: 3
+  _generateCoolTime: 1
   _generateDatas:
   - _resourceItem: {fileID: 11400000, guid: 86e876e6c7e9c467db97ab95dfa547ce, type: 2}
     _generateTiles:

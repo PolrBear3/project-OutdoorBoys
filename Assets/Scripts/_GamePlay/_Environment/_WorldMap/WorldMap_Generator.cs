@@ -44,8 +44,6 @@ public class WorldMap_Generator : MonoBehaviour
     public void Load_WorldMapData(WorldMapScrObj loadData)
     {
         _currentWorldMap = loadData;
-        
-        InGame_Manager.instance.time.data.Update_TimeCountValue(_currentWorldMap.timeUpdateValue);
     }
     private void Load_WorldMapData()
     {

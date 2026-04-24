@@ -26,6 +26,9 @@ MonoBehaviour:
   - _position: {x: 0.25, y: 0.5}
     _rotationValue: 0
   _maxAmount: 1
-  _itemWeight: 10
+  _itemWeight: 5
   _triggerRange: 0
+  _placeRestrictions: []
+  _selectRestrictions: []
+  _craftPlacedCheckDatas: []
   _itemIngredientDatas: []

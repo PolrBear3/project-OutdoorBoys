@@ -30,18 +30,8 @@ public class Player_Interaction : MonoBehaviour, IItemsSource, IItemsSourceRemov
 
     private void OnDestroy()
     {
-        EventBus_Manager.UnRegister(EventBus.AwakeLoad, Set_Data);
-
-        Input_Controller input = Input_Controller.instance;
-
-        // input.OnMovement -= MoveTo_Tile;
-
-        Time_Manager time = InGame_Manager.instance.time;
-
-        // Movement_Controller playerMovement = _controller.movement;
-        // playerMovement.OnMovement -= time.Count_Time;
-
-        time.OnTimeCount -= Charge_Stamina;
+        _controller.movement.tileTracker.OnTrackUpdate -= MoveUpdate_CurrentStamina;
+        InGame_Manager.instance.time.UnRegister(TimeUpdateBus.AwakeUpdate, MaxUpdate_CurrentStamina);
     }
 
 
@@ -115,16 +105,8 @@ public class Player_Interaction : MonoBehaviour, IItemsSource, IItemsSourceRemov
     // Data
     private void Set_Data()
     {
-        Input_Controller input = Input_Controller.instance;
-
-        // input.OnMovement += MoveTo_Tile;
-
-        Time_Manager time = InGame_Manager.instance.time;
-
-        // Movement_Controller playerMovement = _controller.movement;
-        // playerMovement.OnMovement += time.Count_Time;
-
-        time.OnTimeCount += Charge_Stamina;
+        _controller.movement.tileTracker.OnTrackUpdate += MoveUpdate_CurrentStamina;
+        InGame_Manager.instance.time.Register(TimeUpdateBus.AwakeUpdate, MaxUpdate_CurrentStamina);
     }
 
     public void Load_ItemPrefab(GameObject itemPrefab)
@@ -149,7 +131,7 @@ public class Player_Interaction : MonoBehaviour, IItemsSource, IItemsSourceRemov
     }
 
 
-    // Movement & Stamina
+    // Stamina
     public int Movement_StaminaValue()
     {
         InGame_Manager manager = InGame_Manager.instance;
@@ -163,30 +145,14 @@ public class Player_Interaction : MonoBehaviour, IItemsSource, IItemsSourceRemov
         return Mathf.Max(1, currentItemWeight);
     }
 
-    private bool MoveAvailable_UpdateStamina()
+
+    private void MoveUpdate_CurrentStamina()
     {
-        InGame_Manager manager = InGame_Manager.instance;
-        if (manager.movements.AllMovements_Complete() == false) return false;
-
-        Player_Controller player = manager.player;
-        player.Update_CurrentStamina(player.data.currentStamina - Mathf.Max(1, Movement_StaminaValue()));
-
-        return true;
+        _controller.Update_CurrentStamina(_controller.data.currentStamina - Mathf.Max(1, Movement_StaminaValue()));
     }
-    private void MoveTo_Tile(Vector2 direction)
+    
+    private void MaxUpdate_CurrentStamina()
     {
-        OnMoveAvailableCheck?.Invoke();
-        if (MoveAvailable_UpdateStamina() == false) return;
-
-        // _controller.movement.MoveTo_Tile(direction);
-    }
-
-    private void Charge_Stamina(int _)
-    {
-        Time_Manager time = InGame_Manager.instance.time;
-        if (time.timeTikCoroutine == null) return;
-
-        int chargeValue = 1; // move this to upgrade settings
-        _controller.Update_CurrentStamina(_controller.data.currentStamina + chargeValue);
+        _controller.Update_CurrentStamina(_controller.data.maxStamina);
     }
 }

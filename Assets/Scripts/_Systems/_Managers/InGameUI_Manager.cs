@@ -28,7 +28,7 @@ public class InGameUI_Manager : MonoBehaviour
         InGame_Manager manager = InGame_Manager.instance;
         Time_Manager time = manager.time;
 
-        time.OnTimeCount -= Update_TimeText;
+        time.UnRegister(TimeUpdateBus.AwakeUpdate, Update_TimeText);
         time.OnDayCount -= Update_DayText;
 
         Player_Controller player = manager.player;
@@ -55,7 +55,7 @@ public class InGameUI_Manager : MonoBehaviour
         TimeData timeData = time.data;
 
         Update_TimeText(timeData.timeCount);
-        time.OnTimeCount += Update_TimeText;
+        time.Register(TimeUpdateBus.AwakeUpdate, Update_TimeText);
 
         Update_DayText(timeData.dayCount);
         time.OnDayCount += Update_DayText;
@@ -83,8 +83,12 @@ public class InGameUI_Manager : MonoBehaviour
     // Text
     private void Update_TimeText(int timeCount)
     {
-        int timeCountUpdateValue = InGame_Manager.instance.time.data.timeCountValue;
-        _timeText.text = timeCount + " (" + "+" + timeCountUpdateValue + ")".ToString();
+        int rewardTargetTime = InGame_Manager.instance.time.data.rewardTargetTime;
+        _timeText.text = timeCount + " (" + "<sprite=0> " + rewardTargetTime + ")".ToString();
+    }
+    private void Update_TimeText()
+    {
+        Update_TimeText(InGame_Manager.instance.time.data.timeCount);
     }
     
     private void Update_DayText(int dayCount)
@@ -117,7 +121,9 @@ public class InGameUI_Manager : MonoBehaviour
         Player_Controller player = InGame_Manager.instance.player;
 
         int decreaseValue = Mathf.Min(player.data.currentStamina, player.interaction.Movement_StaminaValue());
-        _staminaText.text = maxValue + "/" + currentValue + "\n(-" + decreaseValue + ")";
+        string decreaseString = decreaseValue > 0 ? "\n(-" + decreaseValue + ")" : null;
+
+        _staminaText.text = currentValue + "/" + maxValue + decreaseString;
     }
     private void Update_StaminaText()
     {

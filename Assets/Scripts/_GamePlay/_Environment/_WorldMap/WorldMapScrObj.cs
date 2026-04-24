@@ -24,9 +24,6 @@ public class WorldMapScrObj : ScriptableObject
     [SerializeField][Range(0, 100)] private float _harshGroundDensity;
     public float harshGroundDensity => _harshGroundDensity;
 
-    [SerializeField][Range(0, 100)] private int _timeUpdateValue;
-    public int timeUpdateValue => _timeUpdateValue;
-
     [Space(20)]
     [SerializeField] private WarpRenderer_Data _backgroundWarpRenderData;
     public WarpRenderer_Data backgroundWarpRenderData => _backgroundWarpRenderData;

@@ -35,9 +35,6 @@ public class Animal : MonoBehaviour, IDamageable
     private AnimalData _data;
     public AnimalData data => _data;
 
-    private Coroutine _actionCoroutine;
-    private Dictionary<string, int> _actionCountDatas = new();
-
     public UnityEvent OnSightActions;
 
 
@@ -47,20 +44,13 @@ public class Animal : MonoBehaviour, IDamageable
         _movement.OnMovementState -= Update_Animation;
         _movement.OnMovementDirection -= _animation.Update_Flip;
 
-        _movement.tileTracker.OnTrackUpdate -= Update_MovementTile;
+        _eventPointer.OnPointerState -= Toggle_HealthBar;
+        _eventPointer.OnPointerState -= _tileIndicator.Toggle_CurrentIndicators;
 
-        _eventPointer.OnPointerState += Toggle_MovementTile;
-        _movement.tileTracker.OnTrackUpdate += Toggle_MovementTile;
+        TileTracker playerTracker = InGame_Manager.instance.player.movement.tileTracker;
 
-        InGame_Manager manager = InGame_Manager.instance;
-
-        manager.tilesController.OnTileHover -= Toggle_FillBar;
-        _movement.tileTracker.OnTrackUpdate -= Toggle_FillBar;
-
-        Time_Manager time = manager.time;
-
-        time.UnRegister(TimeUpdateBus.AwakeUpdate, Collect_TrailMark);
-        time.UnRegister(TimeUpdateBus.AwakeUpdate, Update_OnSight);
+        playerTracker.OnTileTrackUpdate -= Collect_TrailMark;
+        playerTracker.OnTileTrackUpdate -= Update_OnSightAction;
     }
 
 
@@ -82,20 +72,13 @@ public class Animal : MonoBehaviour, IDamageable
         _movement.OnMovementState += Update_Animation;
         _movement.OnMovementDirection += _animation.Update_Flip;
 
-        _movement.tileTracker.OnTrackUpdate += Update_MovementTile;
+        _eventPointer.OnPointerState += Toggle_HealthBar;
+        _eventPointer.OnPointerState += _tileIndicator.Toggle_CurrentIndicators;
 
-        _eventPointer.OnPointerState += Toggle_MovementTile;
-        _movement.tileTracker.OnTrackUpdate += Toggle_MovementTile;
+        TileTracker playerTracker = InGame_Manager.instance.player.movement.tileTracker;
 
-        InGame_Manager manager = InGame_Manager.instance;
-
-        manager.tilesController.OnTileHover += Toggle_FillBar;
-        _movement.tileTracker.OnTrackUpdate += Toggle_FillBar;
-
-        Time_Manager time = manager.time;
-
-        time.Register(TimeUpdateBus.AwakeUpdate, Collect_TrailMark);
-        time.Register(TimeUpdateBus.AwakeUpdate, Update_OnSight);
+        playerTracker.OnTileTrackUpdate += Collect_TrailMark;
+        playerTracker.OnTileTrackUpdate += Update_OnSightAction;
     }
 
     public void Set_Data(AnimalScrObj setAnimal)
@@ -176,47 +159,20 @@ public class Animal : MonoBehaviour, IDamageable
 
 
     // Visuals
-    private void Toggle_FillBar(Tile hoveringTile)
+    private void Toggle_HealthBar(bool toggle)
     {
-        bool toggle = hoveringTile == _movement.tileTracker.data.CurrentTile();
         _healthFillBar.Toggle(toggle);
 
         if (toggle == false) return;
         _healthFillBar.Update_CurrentBarFill(_data.animalScrObj.maxHealth, _data.health);
     }
-    private void Toggle_FillBar()
-    {
-        Toggle_FillBar(InGame_Manager.instance.cursor.pointingTile);
-    }
-
-    private void Update_MovementTile()
-    {
-        Tile currentTile = _movement.tileTracker.data.CurrentTile();
-
-        if (currentTile == null) return;
-        if (_tileIndicator.Current_IndicateTiles().Contains(currentTile)) return;
-
-        _tileIndicator.Clear_CurrentIndicators();
-        _tileIndicator.Set_Indicator(currentTile);
-    }
-    
-    private void Toggle_MovementTile(bool toggle)
-    {
-        _tileIndicator.Toggle_CurrentIndicators(toggle);
-    }
-    private void Toggle_MovementTile()
-    {
-        Toggle_MovementTile(_movement.tileTracker.data.CurrentTile() == InGame_Manager.instance.cursor.pointingTile);
-    }
 
 
     // State Updates
-    private void Collect_TrailMark()
+    private void Collect_TrailMark(Tile collectTile)
     {
         if (_data.isOnSight) return;
-
-        Tile playerTile = InGame_Manager.instance.player.movement.tileTracker.data.CurrentTile();
-        if (playerTile != _movement.tileTracker.data.CurrentTile()) return;
+        if (collectTile != _movement.tileTracker.data.CurrentTile()) return;
 
         _data.Decrease_TrailMarkCount(1);
 
@@ -225,19 +181,29 @@ public class Animal : MonoBehaviour, IDamageable
 
         bool isOnSight = _data.isOnSight;
 
-        transform.position = isOnSight ? nextTile.Random_BoundPoint() : nextTile.transform.position; // update offset ?
+        transform.position = isOnSight ? nextTile.Random_BoundPoint() : nextTile.transform.position;
         _movement.tileTracker.data.TrackTile(nextTile);
 
         if (isOnSight == false) return;
 
+        Update_Animation(false);
+
         _healthFillBar.Set_FillBar(transform);
         _healthFillBar.Toggle(false);
+
+        List<Tile> nextMoveTiles = MoveDistance_RangeTiles();
+        foreach (Tile tile in nextMoveTiles)
+        {
+            _tileIndicator.Set_Indicator(tile);
+        }
+        _tileIndicator.Toggle_CurrentIndicators(_eventPointer.pointerDetected);
     }
 
-    private void Update_OnSight()
+    private void Update_OnSightAction(Tile _)
     {
         if (_data.isOnSight == false) return;
 
+        _tileIndicator.Clear_CurrentIndicators();
         OnSightActions?.Invoke();
     }
 
@@ -254,16 +220,9 @@ public class Animal : MonoBehaviour, IDamageable
     // Default Actions
     public void Roam()
     {
-        if (_actionCoroutine != null) return;
-        _actionCoroutine = StartCoroutine(Roam_MovementUpdate());
-    }
-    private IEnumerator Roam_MovementUpdate()
-    {
-        _movement.Move(MoveDistance_RangeTile(true).Random_BoundPoint());
 
-        while (_movement.moveCoroutine != null) yield return null;
-        _actionCoroutine = null;
     }
+
 
     public void RunOff()
     {
@@ -274,10 +233,7 @@ public class Animal : MonoBehaviour, IDamageable
     {
 
     }
-    private IEnumerator EscapeDelay()
-    {
-        yield break;
-    }
+
 
     public void Follow(int agroRange)
     {

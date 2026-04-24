@@ -51,14 +51,14 @@ public class Fire : MonoBehaviour
         InGame_Manager manager = InGame_Manager.instance;
         Time_Manager time = manager.time;
 
-        time.OnTimeCount += UpdatePlaced_BurnItems;
-        time.OnTimeCount += Update_BurningState;
+        time.Register(TimeUpdateBus.AwakeUpdate, UpdatePlaced_BurnItems);
+        time.Register(TimeUpdateBus.AwakeUpdate, Update_BurningState);
 
-        time.OnTimeCount += Update_HeatTiles;
-        time.OnTimeCount += Toggle_HeatTiles;
+        time.Register(TimeUpdateBus.AwakeUpdate, Update_HeatTiles);
+        time.Register(TimeUpdateBus.AwakeUpdate, Toggle_HeatTiles);
 
-        time.OnTimeCount += Track_HeatingItems;
-        time.OnTimeCount += Update_HeatingItems;
+        time.Register(TimeUpdateBus.AwakeUpdate, Track_HeatingItems);
+        time.Register(TimeUpdateBus.AwakeUpdate, Update_HeatingItems);
 
         Tiles_Controller tiles = manager.tilesController;
 
@@ -71,8 +71,8 @@ public class Fire : MonoBehaviour
         _fillBarController.Set_FillBar(transform);
         Toggle_FillBar(InGame_Manager.instance.cursor.pointingTile);
 
-        Update_HeatTiles(0);
-        Toggle_HeatTiles(0);
+        Update_HeatTiles();
+        Toggle_HeatTiles();
     }
 
     private void OnDestroy()
@@ -80,19 +80,19 @@ public class Fire : MonoBehaviour
         InGame_Manager manager = InGame_Manager.instance;
         Time_Manager time = manager.time;
 
-        time.OnTimeCount -= UpdatePlaced_BurnItems;
-        time.OnTimeCount -= Update_BurningState;
+        time.UnRegister(TimeUpdateBus.AwakeUpdate, UpdatePlaced_BurnItems);
+        time.UnRegister(TimeUpdateBus.AwakeUpdate, Update_BurningState);
 
-        time.OnTimeCount -= Update_HeatTiles;
-        time.OnTimeCount -= Toggle_HeatTiles;
+        time.UnRegister(TimeUpdateBus.AwakeUpdate, Update_HeatTiles);
+        time.UnRegister(TimeUpdateBus.AwakeUpdate, Toggle_HeatTiles);
 
-        time.OnTimeCount -= Track_HeatingItems;
-        time.OnTimeCount -= Update_HeatingItems;
+        time.UnRegister(TimeUpdateBus.AwakeUpdate, Track_HeatingItems);
+        time.UnRegister(TimeUpdateBus.AwakeUpdate, Update_HeatingItems);
 
         Tiles_Controller tiles = manager.tilesController;
 
-        tiles.OnTileHover -= Toggle_FillBar;
-        tiles.OnTileHover -= Toggle_HeatTiles;
+        tiles.OnTileHover += Toggle_FillBar;
+        tiles.OnTileHover += Toggle_HeatTiles;
     }
 
 
@@ -111,14 +111,14 @@ public class Fire : MonoBehaviour
         bool toggle = hoveringTile != null && hoveringTile == _placeableItem.currentTile;
         _heatTileIndicator.Toggle_CurrentIndicators(toggle);
     }
-    private void Toggle_HeatTiles(int _)
+    private void Toggle_HeatTiles()
     {
         Toggle_HeatTiles(InGame_Manager.instance.cursor.pointingTile);
     }
 
 
     // Main
-    private void UpdatePlaced_BurnItems(int _)
+    private void UpdatePlaced_BurnItems()
     {
         Tile currentTile = _placeableItem.currentTile;
         List<PlaceableItem> placedBurnItems = currentTile.PlacedItems();
@@ -146,7 +146,7 @@ public class Fire : MonoBehaviour
         }
     }
 
-    private void Update_BurningState(int _)
+    private void Update_BurningState()
     {
         ItemData itemData = _placeableItem.data;
 
@@ -169,7 +169,7 @@ public class Fire : MonoBehaviour
         Destroy(_placeableItem.gameObject);
     }
 
-    private void Update_HeatTiles(int _)
+    private void Update_HeatTiles()
     {
         ItemData itemData = _placeableItem.data;
         int burnCount = itemData.amount;
@@ -250,7 +250,7 @@ public class Fire : MonoBehaviour
     }
 
 
-    private void Track_HeatingItems(int _)
+    private void Track_HeatingItems()
     {
         List<Tile> currentHeatTiles = _heatTileIndicator.Current_IndicateTiles();
 
@@ -282,7 +282,7 @@ public class Fire : MonoBehaviour
         }
     }
 
-    private void Update_HeatingItems(int _)
+    private void Update_HeatingItems()
     {
         if (_placeableItem.data.amount <= 0) return;
 

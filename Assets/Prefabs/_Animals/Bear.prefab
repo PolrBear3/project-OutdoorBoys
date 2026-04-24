@@ -154,7 +154,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _indicatorPrefab: {fileID: 2646137999372282548, guid: c115b03e5a02a4522895db5f253285dd, type: 3}
   _indicatorSprite: {fileID: 8321326, guid: 99b3ae6f72cfb43edb595fcf1373eec9, type: 3}
-  _indicatorColor: {r: 0.64705884, g: 0.1882353, b: 0.1882353, a: 1}
+  _indicatorColor: {r: 0.8156863, g: 0.85490197, b: 0.5686275, a: 1}
   _defaultTilePositions: []
 --- !u!114 &3490125478823233063
 MonoBehaviour:
@@ -183,7 +183,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _movement: {fileID: 3490125478823233063}
-  _eventPointer: {fileID: -6343988300998887824, guid: 69c2cbe719f5849d6877b02a71467626, type: 3}
+  _eventPointer: {fileID: 8046176955235645512}
   _tileIndicator: {fileID: 72511274709587091}
   _animation: {fileID: 178274691860591808}
   _healthFillBar: {fileID: 6097497222237614963}

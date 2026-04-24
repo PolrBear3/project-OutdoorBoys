@@ -343,7 +343,6 @@ public class ItemCursor : MonoBehaviour, IItemsSource, IItemsSourceRemove, IItem
         if (currentUseItem.TryGetComponent(out UseableItem useItem) == false) return;
         if (useItem.CanUse?.Invoke(selectTile) == false) return;
 
-        manager.time.Count_Time();
         useItem.OnUse?.Invoke(selectTile);
     }
 }

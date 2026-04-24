@@ -295,7 +295,7 @@ MonoBehaviour:
   _renderer: {fileID: 6728837425206148685}
   _defaultData:
     _loadDuration: 0
-    _pixelSize: 1
+    _pixelSize: 3
     _animationSpeed: 1
     _colorA: {r: 0.30980393, g: 0.56078434, b: 0.7294118, a: 1}
     _colorB: {r: 0.6431373, g: 0.8666667, b: 0.85882354, a: 1}
