@@ -17,4 +17,5 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 13d5158de20cd4105b5f0b097494ca71, type: 2}
   - {fileID: 11400000, guid: 8145ed0e845b14bca951ca79c25e2e94, type: 2}
   _maxHealth: 6
-  _moveDistanceRange: 2
+  _movedistance: 1
+  _agroRange: 2

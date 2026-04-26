@@ -4,12 +4,6 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 
-public class Animal_ActionKeys
-{
-    public const string Roam = nameof(Roam);
-    public const string Escape = nameof(Escape);
-}
-
 public class Animal : MonoBehaviour, IDamageable
 {
     [SerializeField] private Movement_Controller _movement;
@@ -24,18 +18,17 @@ public class Animal : MonoBehaviour, IDamageable
     [SerializeField] private FillBar_Controller _healthFillBar;
 
     [Space(20)]
-    [SerializeField] private AnimationClipScrObj _escapeAnimationClip;
     [SerializeField] private AnimationClipScrObj _deceasedAnimationClip;
+    [SerializeField] private ItemData[] _deceasedDropItems;
 
     [Space(20)]
-    [SerializeField] private ItemData[] _dropItems;
-    [SerializeField] private Item_ScrObj[] _followItems;
+    [SerializeField] private AnimalAction[] _onTimeCountActions;
+    [SerializeField] private AnimalAction[] _onAgroActions;
+    [SerializeField] private AnimalAction[] _onDamageInflictedActions;
 
 
     private AnimalData _data;
     public AnimalData data => _data;
-
-    public UnityEvent OnSightActions;
 
 
     // MonoBehaviour
@@ -47,10 +40,13 @@ public class Animal : MonoBehaviour, IDamageable
         _eventPointer.OnPointerState -= Toggle_HealthBar;
         _eventPointer.OnPointerState -= _tileIndicator.Toggle_CurrentIndicators;
 
+        InGame_Manager manager = InGame_Manager.instance;
         TileTracker playerTracker = InGame_Manager.instance.player.movement.tileTracker;
 
         playerTracker.OnTileTrackUpdate -= Collect_TrailMark;
-        playerTracker.OnTileTrackUpdate -= Update_OnSightAction;
+        playerTracker.OnTileTrackUpdate -= Run_AgroActions;
+
+        InGame_Manager.instance.time.UnRegister(TimeUpdateBus.AwakeUpdate, Run_TimeCountActions);
     }
 
 
@@ -62,6 +58,12 @@ public class Animal : MonoBehaviour, IDamageable
         _data.Update_Health(_data.health - damageValue);
         Update_DeceasedState();
 
+        if (_data.health <= 0) return _data.health;
+
+        foreach (AnimalAction animalAction in _onDamageInflictedActions)
+        {
+            if (animalAction.RunAction()) break;
+        }
         return _data.health;
     }
 
@@ -75,12 +77,14 @@ public class Animal : MonoBehaviour, IDamageable
         _eventPointer.OnPointerState += Toggle_HealthBar;
         _eventPointer.OnPointerState += _tileIndicator.Toggle_CurrentIndicators;
 
+        InGame_Manager manager = InGame_Manager.instance;
         TileTracker playerTracker = InGame_Manager.instance.player.movement.tileTracker;
 
         playerTracker.OnTileTrackUpdate += Collect_TrailMark;
-        playerTracker.OnTileTrackUpdate += Update_OnSightAction;
-    }
+        playerTracker.OnTileTrackUpdate += Run_AgroActions;
 
+        InGame_Manager.instance.time.Register(TimeUpdateBus.AwakeUpdate, Run_TimeCountActions);
+    }
     public void Set_Data(AnimalScrObj setAnimal)
     {
         Transform currentTilePos = movement.tileTracker.data.CurrentTile().transform;
@@ -122,20 +126,20 @@ public class Animal : MonoBehaviour, IDamageable
         return manager;
     }
 
-    private List<Tile> MoveDistance_RangeTiles()
+    public List<Tile> MoveDistance_RangeTiles()
     {
         InGame_Manager manager = InGame_Manager.instance;
         Tiles_Controller tilesController = manager.tilesController;
 
         Tile currentTile = _movement.tileTracker.data.CurrentTile();
-        int distanceRange = _data.animalScrObj.moveDistanceRange;
+        int distanceRange = _data.animalScrObj.moveDistance;
 
         List<Tile> rangedTiles = tilesController.Current_Tiles(currentTile, distanceRange);
         rangedTiles.Remove(distanceRange > 0 ? currentTile : null);
 
         return rangedTiles;
     }
-    private Tile MoveDistance_RangeTile(bool excludePlayerTile)
+    public Tile MoveDistance_RangeTile(bool excludePlayerTile)
     {
         List<Tile> rangedTiles = MoveDistance_RangeTiles();
         if (excludePlayerTile) rangedTiles.Remove(InGame_Manager.instance.player.movement.tileTracker.data.CurrentTile());
@@ -143,15 +147,11 @@ public class Animal : MonoBehaviour, IDamageable
         return rangedTiles[UnityEngine.Random.Range(0, rangedTiles.Count)];
     }
 
-
-    private bool Player_InRange()
+    public bool Player_InAgroRange()
     {
         Tile playerTile = InGame_Manager.instance.player.movement.tileTracker.data.CurrentTile();
-        float distance = 0f; // playerTile.DistanceTo_TargetTile(_movement.tileTrackerData.CurrentTile());
-
-        return distance <= _data.animalScrObj.moveDistanceRange;
+        return _movement.tileTracker.data.CurrentTile().DistanceTo_TargetTile(playerTile) <= _data.animalScrObj.agroRange;
     }
-
     public bool Deceased()
     {
         return _data.health <= 0 || AnimalManager().spawnedAnimals.Contains(this) == false;
@@ -199,12 +199,26 @@ public class Animal : MonoBehaviour, IDamageable
         _tileIndicator.Toggle_CurrentIndicators(_eventPointer.pointerDetected);
     }
 
-    private void Update_OnSightAction(Tile _)
+    private void Run_TimeCountActions()
     {
         if (_data.isOnSight == false) return;
 
-        _tileIndicator.Clear_CurrentIndicators();
-        OnSightActions?.Invoke();
+        foreach (AnimalAction animalAction in _onTimeCountActions)
+        {
+            if (animalAction.RunAction()) break;
+        }
+
+        Run_AgroActions(null);
+    }
+    private void Run_AgroActions(Tile _)
+    {
+        if (_data.isOnSight == false) return;
+        if (Player_InAgroRange() == false) return;
+
+        foreach (AnimalAction animalAction in _onAgroActions)
+        {
+            if (animalAction.RunAction()) return;
+        }
     }
 
     public void Update_DeceasedState()
@@ -214,34 +228,5 @@ public class Animal : MonoBehaviour, IDamageable
     private IEnumerator DeceasedState_Update()
     {
         yield break;
-    }
-
-
-    // Default Actions
-    public void Roam()
-    {
-
-    }
-
-
-    public void RunOff()
-    {
-
-    }
-
-    public void Escape(int delayCount)
-    {
-
-    }
-
-
-    public void Follow(int agroRange)
-    {
-
-    }
-
-    public void Attack()
-    {
-
     }
 }
