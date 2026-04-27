@@ -54,12 +54,14 @@ public class AnimalTrap : MonoBehaviour
     }
     private IEnumerator Activate_Delay()
     {
+        /*
         MovementControllers_Manager movementsManager = InGame_Manager.instance.movements;
         while (movementsManager.AllMovements_Complete() == false) yield return null;
+        */
 
         Animal activateAnimal = Activate_TargetAnimal();
         if (activateAnimal == null || activateAnimal.data.isOnSight == false) yield break;
-        
+
         if (activateAnimal.TryGetComponent(out IDamageable damageable) == false) yield break;
         damageable.InflictDamage(_damage);
 

@@ -7,7 +7,7 @@ public class TileTracker : MonoBehaviour
 {
     private const float _clampDistance = 0.7f;
     private const float _clampduration = 0.1f;
-    
+
     private TileTrackerData _data;
     public TileTrackerData data => _data;
 
@@ -86,7 +86,7 @@ public class TileTracker : MonoBehaviour
 
         List<Tile> edgedTiles = InGame_Manager.instance.tilesController.Current_EdgedTiles();
         if (edgedTiles.Contains(currentTile) == false) return true;
-        
+
         List<Tile> peripheralTiles = Peripheral_Tiles(currentTile);
 
         for (int i = 0; i < peripheralTiles.Count; i++)
@@ -96,14 +96,12 @@ public class TileTracker : MonoBehaviour
         }
         return false;
     }
-    
+
     public void ClampInside_CurrentTile()
     {
         Tile currentTile = data.CurrentTile();
-
         if (currentTile == null) return;
-        if (Inside_TileArea()) return;
-        
+
         LeanTween.move(gameObject, currentTile.transform.position, _clampduration);
         _clampCoroutine = StartCoroutine(ClampInside_StateUpdate());
     }

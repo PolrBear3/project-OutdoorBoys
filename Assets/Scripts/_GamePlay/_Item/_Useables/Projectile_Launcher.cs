@@ -40,12 +40,15 @@ public class Projectile_Launcher : MonoBehaviour
 
     private IEnumerator LaunchComplete_Delay(Tile useTile, GameObject launchedProjectile)
     {
+        /*
         MovementControllers_Manager movementsManager = InGame_Manager.instance.movements;
         while (movementsManager.AllMovements_Complete() == false) yield return null;
+        */
 
         OnLaunchComplete?.Invoke(useTile);
         Destroy(launchedProjectile);
 
-        _launchCoroutine= null;
+        _launchCoroutine = null;
+        yield break;
     }
 }

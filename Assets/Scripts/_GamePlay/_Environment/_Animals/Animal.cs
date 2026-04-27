@@ -38,7 +38,7 @@ public class Animal : MonoBehaviour, IDamageable
         _movement.OnMovementDirection -= _animation.Update_Flip;
 
         _eventPointer.OnPointerState -= Toggle_HealthBar;
-        _eventPointer.OnPointerState -= _tileIndicator.Toggle_CurrentIndicators;
+        // _eventPointer.OnPointerState -= _tileIndicator.Toggle_CurrentIndicators;
 
         InGame_Manager manager = InGame_Manager.instance;
         TileTracker playerTracker = InGame_Manager.instance.player.movement.tileTracker;
@@ -75,7 +75,7 @@ public class Animal : MonoBehaviour, IDamageable
         _movement.OnMovementDirection += _animation.Update_Flip;
 
         _eventPointer.OnPointerState += Toggle_HealthBar;
-        _eventPointer.OnPointerState += _tileIndicator.Toggle_CurrentIndicators;
+        // _eventPointer.OnPointerState += _tileIndicator.Toggle_CurrentIndicators;
 
         InGame_Manager manager = InGame_Manager.instance;
         TileTracker playerTracker = InGame_Manager.instance.player.movement.tileTracker;
@@ -203,22 +203,49 @@ public class Animal : MonoBehaviour, IDamageable
     {
         if (_data.isOnSight == false) return;
 
-        foreach (AnimalAction animalAction in _onTimeCountActions)
+        InGame_Manager.instance.time.timeUpdateActions.Add(this);
+        StartCoroutine(TimeCountActions_Update());
+    }
+    private IEnumerator TimeCountActions_Update()
+    {
+        if (Player_InAgroRange())
         {
-            if (animalAction.RunAction()) break;
+            StartCoroutine(AgroActions_Update());
+            yield break;
         }
 
-        Run_AgroActions(null);
+        foreach (AnimalAction animalAction in _onTimeCountActions)
+        {
+            if (animalAction.RunAction() == false) continue;
+            while (animalAction.actionRunning) yield return null;
+        }
+
+        if (Player_InAgroRange() == false)
+        {
+            InGame_Manager.instance.time.timeUpdateActions.Remove(this);
+            yield break;
+        }
+        StartCoroutine(AgroActions_Update());
     }
+
     private void Run_AgroActions(Tile _)
     {
         if (_data.isOnSight == false) return;
         if (Player_InAgroRange() == false) return;
 
+        InGame_Manager.instance.time.timeUpdateActions.Add(this);
+        StartCoroutine(AgroActions_Update());
+    }
+    private IEnumerator AgroActions_Update()
+    {
         foreach (AnimalAction animalAction in _onAgroActions)
         {
-            if (animalAction.RunAction()) return;
+            if (animalAction.RunAction() == false) continue;
+            while (animalAction.actionRunning) yield return null;
         }
+
+        InGame_Manager.instance.time.timeUpdateActions.Remove(this);
+        yield break;
     }
 
     public void Update_DeceasedState()

@@ -26,9 +26,11 @@ public class Time_Manager : MonoBehaviour, ISaveLoadable
 
     private Dictionary<TimeUpdateBus, Action> _timeUpdateBuses = new();
 
+    private HashSet<object> _timeUpdateActions = new();
+    public HashSet<object> timeUpdateActions => _timeUpdateActions;
+
     public Action OnNightPhaseTime;
     public Action<int> OnDayCount;
-
     public Action OnRewardTargetTime;
 
 
@@ -94,14 +96,14 @@ public class Time_Manager : MonoBehaviour, ISaveLoadable
 
         OnRewardTargetTime?.Invoke();
     }
-    
+
     public void Count_Time()
     {
         int calculatedTimeCount = _data.timeCount + 1;
 
         int rewardTargetTime = _data.rewardTargetTime;
         _data.Update_RewardTargetTime(calculatedTimeCount > rewardTargetTime ? _data.timeCount + _rewardTargetUpdateTime : rewardTargetTime);
-        
+
         if (calculatedTimeCount <= _maxTimeCount)
         {
             _data.Set_Data(calculatedTimeCount, data.dayCount);
@@ -116,7 +118,7 @@ public class Time_Manager : MonoBehaviour, ISaveLoadable
 
         _data.Set_Data(calculatedTimeCount % _maxTimeCount - 1, _data.dayCount + dayUpdateCount);
         OnDayCount?.Invoke(_data.dayCount);
-        
+
         Run_TimeUpdates();
         Run_RewardUpdates();
     }

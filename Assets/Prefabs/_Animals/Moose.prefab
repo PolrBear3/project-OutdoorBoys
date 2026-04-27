@@ -254,7 +254,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _tileTracker: {fileID: 5121483621233644340}
-  _defaultSpeed: 1
+  _defaultSpeed: 2
 --- !u!114 &4065704676414607868
 MonoBehaviour:
   m_ObjectHideFlags: 0

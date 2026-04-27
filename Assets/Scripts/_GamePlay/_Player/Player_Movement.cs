@@ -63,17 +63,25 @@ public class Player_Movement : MonoBehaviour
     {
         if (_tileTracker.clampCoroutine != null) return;
 
-        transform.Translate(_inputDirection * _defaultSpeed * Time.deltaTime); ;
+        if (InGame_Manager.instance.time.timeUpdateActions.Count > 0)
+        {
+            _tileTracker.ClampInside_CurrentTile();
+            return;
+        }
+
+        transform.Translate(_inputDirection * _defaultSpeed * Time.deltaTime);
         if (_inputDirection == Vector2.zero) return;
 
         _tileTracker.TrackUpdate_CurrentTile();
+
+        if (_tileTracker.Inside_TileArea()) return;
         _tileTracker.ClampInside_CurrentTile();
     }
 
     private void Update_MovementAnimation(bool isMoving)
     {
         AnimationPlayer animPlayer = _controller.animationPlayer;
-        int animIndexNum = isMoving ? 1 : 0;
+        int animIndexNum = isMoving && InGame_Manager.instance.time.timeUpdateActions.Count <= 0 ? 1 : 0;
 
         if (animPlayer.Animation_Playing(animPlayer.AnimationClip(animIndexNum))) return;
         animPlayer.Play(animIndexNum);

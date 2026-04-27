@@ -142,11 +142,11 @@ public class ItemSlot_Manager : MonoBehaviour
     {
         _hoveringSlot = hoveringSlot;
     }
-    
+
     private bool SlotSelect_Available(ItemSlot slot)
     {
         if (slot == null) return false;
-        if (InGame_Manager.instance.movements.AllMovements_Complete() == false) return false;
+        // if (InGame_Manager.instance.movements.AllMovements_Complete() == false) return false;
 
         return true;
     }
