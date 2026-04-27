@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4488590132571172544}
   - component: {fileID: 6217692412489397371}
+  - component: {fileID: 4152273626842328825}
   - component: {fileID: 1045424759633046486}
   - component: {fileID: 288891129412069521}
   m_Layer: 5
@@ -49,6 +50,18 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _spriteRenderer: {fileID: 2815493769418605830}
   _animationClips: []
+--- !u!114 &4152273626842328825
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4345176530762021143}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 69e70a24ff5f64a4eb7ae9aededb5356, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!114 &1045424759633046486
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -61,8 +74,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: acb7aef88d14f4350bb47957e960a93f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _offset: {x: 0, y: 0}
-  _moveDuration: 0.25
+  _tileTracker: {fileID: 4152273626842328825}
+  _defaultSpeed: 0
 --- !u!114 &288891129412069521
 MonoBehaviour:
   m_ObjectHideFlags: 0

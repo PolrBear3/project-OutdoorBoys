@@ -109,7 +109,8 @@ public class AnimationPlayer : MonoBehaviour
                 _spriteRenderer.sprite = dataSprite != null ? dataSprite : _spriteRenderer.sprite;
                 _spriteRenderer.sortingOrder = _defaultData.sortingOrderUpdateValue + data.sortingOrderUpdateValue;
                 
-                LeanTween.alpha(animObject, _defaultData.alphaUpdateValue + data.alphaUpdateValue, data.Alpha_DurationTime());
+                float alphaValue = _defaultData.alphaUpdateValue + data.alphaUpdateValue;
+                LeanTween.alpha(animObject, alphaValue, data.Alpha_DurationTime());
 
                 float transformDuration = data.Transform_DurationTime();
 

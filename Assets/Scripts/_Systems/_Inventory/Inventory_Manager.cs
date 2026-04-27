@@ -60,6 +60,8 @@ public class Inventory_Manager : MonoBehaviour, IItemsSource, IItemsSourceRemove
 
         manager.player.movement.tileTracker.OnTrackUpdate -= Toggle_Update;
         manager.tilesController.OnTileSelect -= Toggle_Update;
+
+        itemCursor.OnSetData -= Toggle_Update;
         itemCursor.OnItemReturn -= Toggle_Update;
     }
 
@@ -150,6 +152,8 @@ public class Inventory_Manager : MonoBehaviour, IItemsSource, IItemsSourceRemove
 
         manager.player.movement.tileTracker.OnTrackUpdate += Toggle_Update;
         manager.tilesController.OnTileSelect += Toggle_Update;
+
+        itemCursor.OnSetData += Toggle_Update;
         itemCursor.OnItemReturn += Toggle_Update;
 
         Toggle_ItemInfoPanel();

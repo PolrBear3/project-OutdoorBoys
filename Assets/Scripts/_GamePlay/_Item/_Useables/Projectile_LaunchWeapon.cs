@@ -36,16 +36,14 @@ public class Projectile_LaunchWeapon : MonoBehaviour
     // Use
     private void Launch(Tile useTile)
     {
-        /*
         if (_projectileLauncher.launchCoroutine != null) return;
 
-        if (useTile == InGame_Manager.instance.player.movement.tileTrackerData.CurrentTile())
+        if (useTile == InGame_Manager.instance.player.movement.tileTracker.data.CurrentTile())
         {
             Damage(useTile);
             return;
         }
         _projectileLauncher.Launch_Projectile(useTile, _useableItem.data.itemScrObj.inventorySprite);
-        */
     }
 
 

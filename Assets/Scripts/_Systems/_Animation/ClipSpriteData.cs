@@ -16,6 +16,7 @@ public class ClipSpriteData
     [SerializeField][Range(-10, 10)] private int _sortingOrderUpdateValue;
     public int sortingOrderUpdateValue => _sortingOrderUpdateValue;
 
+    [Space(20)]
     [SerializeField][Range(-1, 1)] private float _alphaUpdateValue;
     public float alphaUpdateValue => _alphaUpdateValue;
 
@@ -50,7 +51,7 @@ public class ClipSpriteData
 
     public float Transform_DurationTime()
     {
-        return Mathf.Clamp(_transformDurationTime, 0f, DurationTime());
+        return Mathf.Max(_transformDurationTime, 0f, DurationTime());
     }
 
     public float Alpha_DurationTime()

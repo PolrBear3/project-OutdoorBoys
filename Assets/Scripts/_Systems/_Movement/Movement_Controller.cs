@@ -11,6 +11,8 @@ public class Movement_Controller : MonoBehaviour
     [Space(20)]
     [SerializeField][Range(0, 10)] private float _defaultSpeed;
 
+    private float _currentSpeed;
+
     private Coroutine _moveCoroutine;
     public Coroutine moveCoroutine => _moveCoroutine;
 
@@ -23,7 +25,7 @@ public class Movement_Controller : MonoBehaviour
     // MonoBehaviour
     private void Awake()
     {
-
+        _currentSpeed = _defaultSpeed;
     }
 
     private void OnDestroy()
@@ -42,20 +44,17 @@ public class Movement_Controller : MonoBehaviour
     {
         if (_moveCoroutine == null) return;
 
-        transform.position = Vector2.MoveTowards(transform.position, _destination, _defaultSpeed * Time.deltaTime);
+        transform.position = Vector2.MoveTowards(transform.position, _destination, _currentSpeed * Time.deltaTime);
 
+        if (_tileTracker == null) return;
         _tileTracker.TrackUpdate_CurrentTile();
     }
 
-    public void Stop()
+    public void Update_CurrentSpeed(float updateValue)
     {
-        OnMovementState?.Invoke(false);
-
-        if (_moveCoroutine == null) return;
-
-        StopCoroutine(_moveCoroutine);
-        _moveCoroutine = null;
+        _currentSpeed = Mathf.Max(0.01f, updateValue);
     }
+
 
     public bool At_Destination()
     {
@@ -65,6 +64,17 @@ public class Movement_Controller : MonoBehaviour
     {
         while (At_Destination() == false) yield return null;
         Stop();
+    }
+
+
+    public void Stop()
+    {
+        OnMovementState?.Invoke(false);
+
+        if (_moveCoroutine == null) return;
+
+        StopCoroutine(_moveCoroutine);
+        _moveCoroutine = null;
     }
 
     public void Move(Vector2 customPosition)

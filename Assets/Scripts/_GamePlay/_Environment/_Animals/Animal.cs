@@ -11,7 +11,9 @@ public class Animal : MonoBehaviour, IDamageable
 
     [Space(20)]
     [SerializeField] private EventPointer _eventPointer;
+
     [SerializeField] private Tile_Indicator _tileIndicator;
+    public Tile_Indicator tileIndicator => _tileIndicator;
 
     [Space(20)]
     [SerializeField] private AnimationPlayer _animation;
@@ -38,7 +40,7 @@ public class Animal : MonoBehaviour, IDamageable
         _movement.OnMovementDirection -= _animation.Update_Flip;
 
         _eventPointer.OnPointerState -= Toggle_HealthBar;
-        // _eventPointer.OnPointerState -= _tileIndicator.Toggle_CurrentIndicators;
+        _eventPointer.OnPointerState -= _tileIndicator.Toggle_CurrentIndicators;
 
         InGame_Manager manager = InGame_Manager.instance;
         TileTracker playerTracker = InGame_Manager.instance.player.movement.tileTracker;
@@ -75,7 +77,7 @@ public class Animal : MonoBehaviour, IDamageable
         _movement.OnMovementDirection += _animation.Update_Flip;
 
         _eventPointer.OnPointerState += Toggle_HealthBar;
-        // _eventPointer.OnPointerState += _tileIndicator.Toggle_CurrentIndicators;
+        _eventPointer.OnPointerState += _tileIndicator.Toggle_CurrentIndicators;
 
         InGame_Manager manager = InGame_Manager.instance;
         TileTracker playerTracker = InGame_Manager.instance.player.movement.tileTracker;
@@ -126,19 +128,23 @@ public class Animal : MonoBehaviour, IDamageable
         return manager;
     }
 
-    public List<Tile> MoveDistance_RangeTiles()
+    public List<Tile> MoveDistance_RangeTiles(int maxDistance)
     {
-        InGame_Manager manager = InGame_Manager.instance;
-        Tiles_Controller tilesController = manager.tilesController;
+        Tiles_Controller tilesController = InGame_Manager.instance.tilesController;
 
         Tile currentTile = _movement.tileTracker.data.CurrentTile();
-        int distanceRange = _data.animalScrObj.moveDistance;
+        maxDistance = Mathf.Clamp(maxDistance, 1, _data.animalScrObj.moveDistance);
 
-        List<Tile> rangedTiles = tilesController.Current_Tiles(currentTile, distanceRange);
-        rangedTiles.Remove(distanceRange > 0 ? currentTile : null);
+        List<Tile> rangedTiles = tilesController.Current_Tiles(currentTile, maxDistance);
+        rangedTiles.Remove(maxDistance > 0 ? currentTile : null);
 
         return rangedTiles;
     }
+    public List<Tile> MoveDistance_RangeTiles()
+    {
+        return MoveDistance_RangeTiles(_data.animalScrObj.moveDistance);
+    }
+
     public Tile MoveDistance_RangeTile(bool excludePlayerTile)
     {
         List<Tile> rangedTiles = MoveDistance_RangeTiles();
@@ -167,6 +173,23 @@ public class Animal : MonoBehaviour, IDamageable
         _healthFillBar.Update_CurrentBarFill(_data.animalScrObj.maxHealth, _data.health);
     }
 
+    private void Update_AgroRangeTiles()
+    {
+        Tiles_Controller tilesController = InGame_Manager.instance.tilesController;
+
+        Tile currentTile = _movement.tileTracker.data.CurrentTile();
+        int agroRange = _data.animalScrObj.agroRange;
+
+        List<Tile> agroTiles = tilesController.Current_Tiles(currentTile, agroRange);
+
+        foreach (Tile tile in agroTiles)
+        {
+            if (tile == currentTile) continue;
+            _tileIndicator.Set_Indicator(tile);
+        }
+        _tileIndicator.Toggle_CurrentIndicators(_eventPointer.pointerDetected);
+    }
+
 
     // State Updates
     private void Collect_TrailMark(Tile collectTile)
@@ -191,17 +214,14 @@ public class Animal : MonoBehaviour, IDamageable
         _healthFillBar.Set_FillBar(transform);
         _healthFillBar.Toggle(false);
 
-        List<Tile> nextMoveTiles = MoveDistance_RangeTiles();
-        foreach (Tile tile in nextMoveTiles)
-        {
-            _tileIndicator.Set_Indicator(tile);
-        }
-        _tileIndicator.Toggle_CurrentIndicators(_eventPointer.pointerDetected);
+        Update_AgroRangeTiles();
     }
 
     private void Run_TimeCountActions()
     {
         if (_data.isOnSight == false) return;
+
+        _tileIndicator.Clear_CurrentIndicators();
 
         InGame_Manager.instance.time.timeUpdateActions.Add(this);
         StartCoroutine(TimeCountActions_Update());
@@ -217,12 +237,16 @@ public class Animal : MonoBehaviour, IDamageable
         foreach (AnimalAction animalAction in _onTimeCountActions)
         {
             if (animalAction.RunAction() == false) continue;
+            
             while (animalAction.actionRunning) yield return null;
+            break;
         }
 
         if (Player_InAgroRange() == false)
         {
+            Update_AgroRangeTiles();
             InGame_Manager.instance.time.timeUpdateActions.Remove(this);
+            
             yield break;
         }
         StartCoroutine(AgroActions_Update());
@@ -233,6 +257,8 @@ public class Animal : MonoBehaviour, IDamageable
         if (_data.isOnSight == false) return;
         if (Player_InAgroRange() == false) return;
 
+        _tileIndicator.Clear_CurrentIndicators();
+
         InGame_Manager.instance.time.timeUpdateActions.Add(this);
         StartCoroutine(AgroActions_Update());
     }
@@ -241,10 +267,14 @@ public class Animal : MonoBehaviour, IDamageable
         foreach (AnimalAction animalAction in _onAgroActions)
         {
             if (animalAction.RunAction() == false) continue;
+            
             while (animalAction.actionRunning) yield return null;
+            break;
         }
 
+        Update_AgroRangeTiles();
         InGame_Manager.instance.time.timeUpdateActions.Remove(this);
+        
         yield break;
     }
 

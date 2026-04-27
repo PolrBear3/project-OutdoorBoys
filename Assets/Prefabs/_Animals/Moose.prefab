@@ -274,8 +274,8 @@ MonoBehaviour:
   _healthFillBar: {fileID: 7193615475397820439}
   _deceasedAnimationClip: {fileID: 11400000, guid: f31ad7f4760c24191b7851b6e2ea4bb3, type: 2}
   _deceasedDropItems:
-  - _itemScrObj: {fileID: 0}
-    _amount: 0
+  - _itemScrObj: {fileID: 11400000, guid: fba43ae9d93594cddbc2a132e3fd3b95, type: 2}
+    _amount: 5
   _onTimeCountActions:
   - {fileID: 2352616471981798849}
   _onAgroActions:

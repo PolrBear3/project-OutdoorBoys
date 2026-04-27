@@ -12,6 +12,7 @@ public class Animals_Manager : MonoBehaviour
     public List<Animal> spawnedAnimals => _spawnedAnimals;
 
     [Space(20)]
+    [SerializeField][Range(0, 10)] private int _maxSpawnCount;
     [SerializeField][Range(0, 10)] private int _spawnCoolTime;
 
     private int _currentSpawnCoolTime;
@@ -46,8 +47,6 @@ public class Animals_Manager : MonoBehaviour
         for (int i = 0; i < _spawnedAnimals.Count; i++)
         {
             Animal spawnedAnimal = _spawnedAnimals[i];
-
-            // if (searchTile != spawnedAnimal.movement.tileTrackerData.CurrentTile()) continue;
             animalsOntile.Add(spawnedAnimal);
         }
         return animalsOntile;
@@ -95,7 +94,7 @@ public class Animals_Manager : MonoBehaviour
 
     private void Spawn_Animal()
     {
-        if (_spawnedAnimals.Count > 0) return;
+        if (_spawnedAnimals.Count >= _maxSpawnCount) return;
 
         if (_currentSpawnCoolTime < _spawnCoolTime)
         {

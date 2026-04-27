@@ -14,7 +14,6 @@ public class Player_Movement : MonoBehaviour
     [Space(20)]
     [SerializeField][Range(0, 10)] private float _defaultSpeed;
 
-
     private Vector2 _inputDirection;
 
     public Action<bool> OnMovementState;
@@ -32,8 +31,11 @@ public class Player_Movement : MonoBehaviour
         EventBus_Manager.UnRegister(EventBus.AwakeLoad, Set_Data);
 
         Input_Controller.instance.OnMovement -= Update_InputDirection;
+
         OnMovementState -= Update_MovementAnimation;
         OnMovementDirection -= _controller.animationPlayer.Update_Flip;
+
+        InGame_Manager.instance.time.UnRegister(TimeUpdateBus.AwakeUpdate, _tileTracker.ClampInside_CurrentTile);
     }
 
     private void Update()
@@ -46,8 +48,11 @@ public class Player_Movement : MonoBehaviour
     private void Set_Data()
     {
         Input_Controller.instance.OnMovement += Update_InputDirection;
+        
         OnMovementState += Update_MovementAnimation;
         OnMovementDirection += _controller.animationPlayer.Update_Flip;
+
+        InGame_Manager.instance.time.Register(TimeUpdateBus.AwakeUpdate, _tileTracker.ClampInside_CurrentTile);
     }
 
 
@@ -57,7 +62,7 @@ public class Player_Movement : MonoBehaviour
         _inputDirection = direction;
 
         OnMovementState?.Invoke(_inputDirection != Vector2.zero);
-        OnMovementDirection?.Invoke(direction);
+        OnMovementDirection?.Invoke(_inputDirection);
     }
     private void Movement_Update()
     {
@@ -70,6 +75,7 @@ public class Player_Movement : MonoBehaviour
         }
 
         transform.Translate(_inputDirection * _defaultSpeed * Time.deltaTime);
+
         if (_inputDirection == Vector2.zero) return;
 
         _tileTracker.TrackUpdate_CurrentTile();
@@ -81,9 +87,13 @@ public class Player_Movement : MonoBehaviour
     private void Update_MovementAnimation(bool isMoving)
     {
         AnimationPlayer animPlayer = _controller.animationPlayer;
-        int animIndexNum = isMoving && InGame_Manager.instance.time.timeUpdateActions.Count <= 0 ? 1 : 0;
 
+        // checks if damaged animation is playing
+        if (animPlayer.Animation_Playing(animPlayer.AnimationClip(2))) return;
+
+        int animIndexNum = isMoving ? 1 : 0;
         if (animPlayer.Animation_Playing(animPlayer.AnimationClip(animIndexNum))) return;
+
         animPlayer.Play(animIndexNum);
     }
 }

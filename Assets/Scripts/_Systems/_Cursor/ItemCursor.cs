@@ -44,6 +44,8 @@ public class ItemCursor : MonoBehaviour, IItemsSource, IItemsSourceRemove, IItem
         Input_Controller input = Input_Controller.instance;
 
         input.OnRightClick -= Return_CurrentItem;
+
+        input.OnHoldRightClick -= Place_AllItem;
         input.OnHoldRightClick -= Place_UseItem;
 
         input.OnRightClick -= Update_Visuals;
@@ -125,6 +127,8 @@ public class ItemCursor : MonoBehaviour, IItemsSource, IItemsSourceRemove, IItem
         Input_Controller input = Input_Controller.instance;
 
         input.OnRightClick += Return_CurrentItem;
+
+        input.OnHoldRightClick += Place_AllItem;
         input.OnHoldRightClick += Place_UseItem;
 
         input.OnRightClick += Update_Visuals;
@@ -302,6 +306,10 @@ public class ItemCursor : MonoBehaviour, IItemsSource, IItemsSourceRemove, IItem
         }
 
         Set_Data(selectTile.Set_PlacingItem(_data));
+    }
+    private void Place_AllItem()
+    {
+        Place_AllItem(InGame_Manager.instance.player.movement.tileTracker.data.CurrentTile());
     }
 
     private void Place_UseItem()

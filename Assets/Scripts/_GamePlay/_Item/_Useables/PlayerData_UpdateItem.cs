@@ -31,7 +31,7 @@ public class PlayerData_UpdateItem : MonoBehaviour
 
         PlayerData data = player.data;
 
-        player.Update_Hunger(data.hunger + _healthUpdateValue);
+        player.Update_Health(data.health + _healthUpdateValue);
         player.Update_Temperature(data.temperature + _tempUpdateValue);
 
         _useableItem.Update_UseAmount(1);

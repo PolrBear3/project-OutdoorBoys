@@ -6,7 +6,7 @@ using UnityEngine;
 public class TileTracker : MonoBehaviour
 {
     private const float _clampDistance = 0.7f;
-    private const float _clampduration = 0.1f;
+    private const float _clampduration = 0.5f;
 
     private TileTrackerData _data;
     public TileTrackerData data => _data;
@@ -49,7 +49,7 @@ public class TileTracker : MonoBehaviour
 
     public void TrackUpdate_CurrentTile()
     {
-        Tile currentTile = _data.CurrentTile();
+        Tile currentTile = _data?.CurrentTile();
         if (currentTile == null) return;
 
         List<Tile> peripheralTiles = Peripheral_Tiles(currentTile);
@@ -72,7 +72,9 @@ public class TileTracker : MonoBehaviour
         }
 
         if (closestTile == currentTile) return;
+
         _data.TrackTile(closestTile);
+        gameObject.transform.SetParent(closestTile.setPosition);
 
         OnTrackUpdate?.Invoke();
         OnTileTrackUpdate?.Invoke(closestTile);
@@ -99,10 +101,12 @@ public class TileTracker : MonoBehaviour
 
     public void ClampInside_CurrentTile()
     {
+        if (_clampCoroutine != null) return;
+        
         Tile currentTile = data.CurrentTile();
         if (currentTile == null) return;
 
-        LeanTween.move(gameObject, currentTile.transform.position, _clampduration);
+        LeanTween.move(gameObject, currentTile.transform.position, _clampduration).setEase(LeanTweenType.easeOutElastic);
         _clampCoroutine = StartCoroutine(ClampInside_StateUpdate());
     }
     private IEnumerator ClampInside_StateUpdate()

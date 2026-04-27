@@ -6,8 +6,8 @@ using UnityEngine;
 [System.Serializable]
 public class PlayerData
 {
-    [ES3Serializable][SerializeField][Range(0, 10)] private int _hunger;
-    public int hunger => _hunger;
+    [ES3Serializable][SerializeField][Range(0, 10)] private int _health;
+    public int health => _health;
 
     [ES3Serializable][SerializeField][Range(0, 10)] private int _temperature;
     public int temperature => _temperature;
@@ -20,10 +20,10 @@ public class PlayerData
 
 
     // Data
-    public int Update_Hunger(int updateValue)
+    public int Update_Health(int updateValue)
     {
-        _hunger = Mathf.Max(0, updateValue);
-        return _hunger;
+        _health = Mathf.Max(0, updateValue);
+        return _health;
     }
 
     public int Update_Temperature(int updateValue)

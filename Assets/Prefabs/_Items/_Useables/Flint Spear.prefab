@@ -60,6 +60,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _projectilePrefab: {fileID: 4345176530762021143, guid: 1325e84b6c464463a90d6a708c7a152f, type: 3}
   _projectTileLaunchAngle: 225
+  _projectileLaunchSpeed: 7
 --- !u!114 &6708097330859313645
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
 
-public class Player_Controller : MonoBehaviour, ISaveLoadable
+public class Player_Controller : MonoBehaviour, ISaveLoadable, IDamageable
 {
     [Space(20)]
     [SerializeField] private AnimationPlayer _animationPlayer;
@@ -27,7 +27,7 @@ public class Player_Controller : MonoBehaviour, ISaveLoadable
     private PlayerData _data;
     public PlayerData data => _data;
 
-    public Action<int> OnHungerUpdate;
+    public Action<int> OnHealthUpdate;
     public Action<int> OnTemperatureUpdate;
     public Action<int, int> OnStaminaUpdate;
 
@@ -63,10 +63,20 @@ public class Player_Controller : MonoBehaviour, ISaveLoadable
     }
 
 
-    // Data
-    public void Update_Hunger(int updateValue)
+    // IDamageable
+    public int InflictDamage(int damageValue)
     {
-        OnHungerUpdate?.Invoke(_data.Update_Hunger(updateValue));
+        Update_Health(_data.health - damageValue);
+        _animationPlayer.Play(2);
+
+        return _data.health;
+    }
+
+
+    // Data
+    public void Update_Health(int updateValue)
+    {
+        OnHealthUpdate?.Invoke(_data.Update_Health(updateValue));
     }
 
     public void Update_Temperature(int updateValue)
@@ -83,7 +93,7 @@ public class Player_Controller : MonoBehaviour, ISaveLoadable
         OnStaminaUpdate?.Invoke(_data.maxStamina, _data.Update_CurrentStamina(updateValue));
 
         if (updateValue >= 0) return;
-        Update_Hunger(_data.hunger + updateValue);
+        Update_Health(_data.health + updateValue);
     }
 
 

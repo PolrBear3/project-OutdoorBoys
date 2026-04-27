@@ -30,8 +30,8 @@ public class Player_Interaction : MonoBehaviour, IItemsSource, IItemsSourceRemov
 
     private void OnDestroy()
     {
-        _controller.movement.tileTracker.OnTrackUpdate -= MoveUpdate_CurrentStamina;
-        InGame_Manager.instance.time.UnRegister(TimeUpdateBus.AwakeUpdate, MaxUpdate_CurrentStamina);
+        _controller.movement.tileTracker.OnTrackUpdate -= InteractUpdate_Stamina;
+        InGame_Manager.instance.time.UnRegister(TimeUpdateBus.AwakeUpdate, MaxUpdate_Stamina);
     }
 
 
@@ -105,8 +105,8 @@ public class Player_Interaction : MonoBehaviour, IItemsSource, IItemsSourceRemov
     // Data
     private void Set_Data()
     {
-        _controller.movement.tileTracker.OnTrackUpdate += MoveUpdate_CurrentStamina;
-        InGame_Manager.instance.time.Register(TimeUpdateBus.AwakeUpdate, MaxUpdate_CurrentStamina);
+        _controller.movement.tileTracker.OnTrackUpdate += InteractUpdate_Stamina;
+        InGame_Manager.instance.time.Register(TimeUpdateBus.AwakeUpdate, MaxUpdate_Stamina);
     }
 
     public void Load_ItemPrefab(GameObject itemPrefab)
@@ -132,7 +132,7 @@ public class Player_Interaction : MonoBehaviour, IItemsSource, IItemsSourceRemov
 
 
     // Stamina
-    public int Movement_StaminaValue()
+    public int Current_StaminaValue()
     {
         InGame_Manager manager = InGame_Manager.instance;
 
@@ -145,13 +145,12 @@ public class Player_Interaction : MonoBehaviour, IItemsSource, IItemsSourceRemov
         return Mathf.Max(1, currentItemWeight);
     }
 
-
-    private void MoveUpdate_CurrentStamina()
+    public void InteractUpdate_Stamina()
     {
-        _controller.Update_CurrentStamina(_controller.data.currentStamina - Mathf.Max(1, Movement_StaminaValue()));
+        _controller.Update_CurrentStamina(_controller.data.currentStamina - Mathf.Max(1, Current_StaminaValue()));
     }
     
-    private void MaxUpdate_CurrentStamina()
+    private void MaxUpdate_Stamina()
     {
         _controller.Update_CurrentStamina(_controller.data.maxStamina);
     }

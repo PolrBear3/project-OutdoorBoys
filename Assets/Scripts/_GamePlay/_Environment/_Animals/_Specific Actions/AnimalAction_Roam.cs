@@ -12,14 +12,9 @@ public class AnimalAction_Roam : AnimalAction
         Toggle_ActionRunningSignal(true);
 
         controller.movement.Move(roamTile.Random_BoundPoint());
-        StartCoroutine(RoamMovement_Update());
+        StartCoroutine(MovementAction_Update());
 
+        Run_MovementAction(roamTile.Random_BoundPoint());
         return true;
-    }
-
-    private IEnumerator RoamMovement_Update()
-    {
-        while (controller.movement.At_Destination() == false) yield return null;
-        Toggle_ActionRunningSignal(false);
     }
 }

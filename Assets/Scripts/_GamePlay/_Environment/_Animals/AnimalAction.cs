@@ -13,12 +13,25 @@ public abstract class AnimalAction : MonoBehaviour
 
     public virtual bool RunAction()
     {
-        _actionRunning = false;
         return true;
     }
 
     public void Toggle_ActionRunningSignal(bool toggle)
     {
         _actionRunning = toggle;
+    }
+
+    public void Run_MovementAction(Vector2 destination)
+    {
+        Toggle_ActionRunningSignal(true);
+
+        _controller.movement.Move(destination);
+        StartCoroutine(MovementAction_Update());
+    }
+    public IEnumerator MovementAction_Update()
+    {
+        while (_controller.movement.At_Destination() == false) yield return null;
+
+        Toggle_ActionRunningSignal(false);
     }
 }

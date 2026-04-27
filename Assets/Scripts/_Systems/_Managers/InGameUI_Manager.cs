@@ -10,7 +10,7 @@ public class InGameUI_Manager : MonoBehaviour
     [SerializeField] private TextMeshProUGUI _dayText;
 
     [Space(10)]
-    [SerializeField] private TextMeshProUGUI _hungerText;
+    [SerializeField] private TextMeshProUGUI _healthText;
     [SerializeField] private TextMeshProUGUI _temperatureText;
     [SerializeField] private TextMeshProUGUI _staminaText;
 
@@ -33,15 +33,15 @@ public class InGameUI_Manager : MonoBehaviour
 
         Player_Controller player = manager.player;
 
-        player.OnHungerUpdate -= Update_HungerText;
+        player.OnHealthUpdate -= Update_HealthText;
         player.OnTemperatureUpdate -= Update_TemperatureText;
         
         player.OnStaminaUpdate -= Update_StaminaText;
-        player.OnStaminaUpdate -= Update_HungerText;
+        player.OnStaminaUpdate -= Update_HealthText;
 
         ItemCursor itemCursor = manager.cursor.itemCursor;
 
-        itemCursor.OnSetData -= Update_HungerText;
+        itemCursor.OnSetData -= Update_HealthText;
         itemCursor.OnSetData -= Update_StaminaText;
     }
 
@@ -63,19 +63,19 @@ public class InGameUI_Manager : MonoBehaviour
         Player_Controller player = manager.player;
         PlayerData playerData = player.data;
 
-        Update_HungerText(playerData.hunger);
+        Update_HealthText(playerData.health);
         Update_TemperatureText(playerData.temperature);
         Update_StaminaText(playerData.maxStamina, playerData.currentStamina);
 
-        player.OnHungerUpdate += Update_HungerText;
+        player.OnHealthUpdate += Update_HealthText;
         player.OnTemperatureUpdate += Update_TemperatureText;
 
         player.OnStaminaUpdate += Update_StaminaText;
-        player.OnStaminaUpdate += Update_HungerText;
+        player.OnStaminaUpdate += Update_HealthText;
 
         ItemCursor itemCursor = manager.cursor.itemCursor;
 
-        itemCursor.OnSetData += Update_HungerText;
+        itemCursor.OnSetData += Update_HealthText;
         itemCursor.OnSetData += Update_StaminaText;
     }
 
@@ -96,22 +96,22 @@ public class InGameUI_Manager : MonoBehaviour
         _dayText.text = "Day " + dayCount.ToString();
     }
 
-    private void Update_HungerText(int currentValue)
+    private void Update_HealthText(int currentValue)
     {
         Player_Controller player = InGame_Manager.instance.player;
 
-        int decreaseValue = player.data.currentStamina - player.interaction.Movement_StaminaValue();
+        int decreaseValue = player.data.currentStamina - player.interaction.Current_StaminaValue();
         string decreaseString = decreaseValue < 0 ? "\n(" + decreaseValue + ")" : null;
 
-        _hungerText.text = currentValue + decreaseString;
+        _healthText.text = currentValue + decreaseString;
     }
-    private void Update_HungerText(int _, int __)
+    private void Update_HealthText(int _, int __)
     {
-        Update_HungerText();
+        Update_HealthText();
     }
-    private void Update_HungerText()
+    private void Update_HealthText()
     {
-        Update_HungerText(InGame_Manager.instance.player.data.hunger);
+        Update_HealthText(InGame_Manager.instance.player.data.health);
     }
 
     private void Update_TemperatureText(int currentValue) => _temperatureText.text = currentValue.ToString();
@@ -120,7 +120,7 @@ public class InGameUI_Manager : MonoBehaviour
     {
         Player_Controller player = InGame_Manager.instance.player;
 
-        int decreaseValue = Mathf.Min(player.data.currentStamina, player.interaction.Movement_StaminaValue());
+        int decreaseValue = Mathf.Min(player.data.currentStamina, player.interaction.Current_StaminaValue());
         string decreaseString = decreaseValue > 0 ? "\n(-" + decreaseValue + ")" : null;
 
         _staminaText.text = currentValue + "/" + maxValue + decreaseString;
