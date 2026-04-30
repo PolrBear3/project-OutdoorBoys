@@ -91,9 +91,6 @@ public class Player_Controller : MonoBehaviour, ISaveLoadable, IDamageable
     public void Update_CurrentStamina(int updateValue)
     {
         OnStaminaUpdate?.Invoke(_data.maxStamina, _data.Update_CurrentStamina(updateValue));
-
-        if (updateValue >= 0) return;
-        Update_Health(_data.health + updateValue);
     }
 
 

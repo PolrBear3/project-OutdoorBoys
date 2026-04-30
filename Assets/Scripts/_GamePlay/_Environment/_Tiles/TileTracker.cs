@@ -27,6 +27,24 @@ public class TileTracker : MonoBehaviour
 
 
     // Tracking
+    public bool Inside_TileArea()
+    {
+        Tile currentTile = _data.CurrentTile();
+        if (currentTile == null) return false;
+
+        List<Tile> edgedTiles = InGame_Manager.instance.tilesController.Current_EdgedTiles();
+        if (edgedTiles.Contains(currentTile) == false) return true;
+
+        List<Tile> peripheralTiles = Peripheral_Tiles(currentTile);
+
+        for (int i = 0; i < peripheralTiles.Count; i++)
+        {
+            float distance = Vector2.Distance(transform.position, peripheralTiles[i].transform.position);
+            if (distance <= _clampDistance) return true;
+        }
+        return false;
+    }
+
     private List<Tile> Peripheral_Tiles(Tile pivotTile)
     {
         if (pivotTile == null) return null;
@@ -47,13 +65,14 @@ public class TileTracker : MonoBehaviour
         return peripheralTiles;
     }
 
-    public void TrackUpdate_CurrentTile()
+
+    public Tile TrackUpdate_CurrentTile()
     {
         Tile currentTile = _data?.CurrentTile();
-        if (currentTile == null) return;
+        if (currentTile == null) return null;
 
         List<Tile> peripheralTiles = Peripheral_Tiles(currentTile);
-        if (peripheralTiles.Count <= 0) return;
+        if (peripheralTiles.Count <= 0) return currentTile;
 
         Vector2 currentPos = transform.position;
 
@@ -71,47 +90,34 @@ public class TileTracker : MonoBehaviour
             closestTile = checkTile;
         }
 
-        if (closestTile == currentTile) return;
+        if (currentTile == closestTile) return currentTile;
 
         _data.TrackTile(closestTile);
         gameObject.transform.SetParent(closestTile.setPosition);
 
         OnTrackUpdate?.Invoke();
         OnTileTrackUpdate?.Invoke(closestTile);
+
+        return closestTile;
     }
 
 
-    public bool Inside_TileArea()
+    public void Clamp_toTile(Tile targetTile)
     {
-        Tile currentTile = _data.CurrentTile();
-        if (currentTile == null) return false;
-
-        List<Tile> edgedTiles = InGame_Manager.instance.tilesController.Current_EdgedTiles();
-        if (edgedTiles.Contains(currentTile) == false) return true;
-
-        List<Tile> peripheralTiles = Peripheral_Tiles(currentTile);
-
-        for (int i = 0; i < peripheralTiles.Count; i++)
-        {
-            float distance = Vector2.Distance(transform.position, peripheralTiles[i].transform.position);
-            if (distance <= _clampDistance) return true;
-        }
-        return false;
-    }
-
-    public void ClampInside_CurrentTile()
-    {
+        if (targetTile == null) return;
         if (_clampCoroutine != null) return;
-        
-        Tile currentTile = data.CurrentTile();
-        if (currentTile == null) return;
 
-        LeanTween.move(gameObject, currentTile.transform.position, _clampduration).setEase(LeanTweenType.easeOutElastic);
+        LeanTween.move(gameObject, targetTile.transform.position, _clampduration).setEase(LeanTweenType.easeOutElastic);
         _clampCoroutine = StartCoroutine(ClampInside_StateUpdate());
     }
+    public void Clamp_toCurrentTile()
+    {
+        Clamp_toTile(data.CurrentTile());
+    }
+    
     private IEnumerator ClampInside_StateUpdate()
     {
         yield return new WaitForSeconds(_clampduration);
         _clampCoroutine = null;
     }
-}
+} 

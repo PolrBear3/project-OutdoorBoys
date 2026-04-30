@@ -98,12 +98,7 @@ public class InGameUI_Manager : MonoBehaviour
 
     private void Update_HealthText(int currentValue)
     {
-        Player_Controller player = InGame_Manager.instance.player;
-
-        int decreaseValue = player.data.currentStamina - player.interaction.Current_StaminaValue();
-        string decreaseString = decreaseValue < 0 ? "\n(" + decreaseValue + ")" : null;
-
-        _healthText.text = currentValue + decreaseString;
+        _healthText.text = currentValue.ToString();
     }
     private void Update_HealthText(int _, int __)
     {
@@ -120,9 +115,7 @@ public class InGameUI_Manager : MonoBehaviour
     {
         Player_Controller player = InGame_Manager.instance.player;
 
-        int decreaseValue = Mathf.Min(player.data.currentStamina, player.interaction.Current_StaminaValue());
-        string decreaseString = decreaseValue > 0 ? "\n(-" + decreaseValue + ")" : null;
-
+        string decreaseString = "\n(-" + player.interaction.Current_StaminaValue() + ")";
         _staminaText.text = currentValue + "/" + maxValue + decreaseString;
     }
     private void Update_StaminaText()
