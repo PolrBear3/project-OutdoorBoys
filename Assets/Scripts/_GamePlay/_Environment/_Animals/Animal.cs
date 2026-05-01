@@ -19,6 +19,9 @@ public class Animal : MonoBehaviour, IDamageable
     [SerializeField] private AnimationPlayer _animation;
     [SerializeField] private FillBar_Controller _healthFillBar;
 
+    [Space(10)]
+    [SerializeField] private GameObject _alertIcon;
+
     [Space(20)]
     [SerializeField] private AnimationClipScrObj _deceasedAnimationClip;
     [SerializeField] private ItemData[] _deceasedDropItems;
@@ -31,8 +34,7 @@ public class Animal : MonoBehaviour, IDamageable
     private AnimalData _data;
     public AnimalData data => _data;
 
-    private List<AnimalAction> _completedActions = new();
-    public List<AnimalAction> completedActions => _completedActions;
+    private Coroutine _runActionCoroutine;
 
 
     // MonoBehaviour
@@ -42,11 +44,13 @@ public class Animal : MonoBehaviour, IDamageable
         _movement.OnMovementDirection -= _animation.Update_Flip;
 
         _eventPointer.OnPointerState -= Toggle_HealthBar;
+        _eventPointer.OnPointerState -= Toggle_AlertIcon;
         _eventPointer.OnPointerState -= _tileIndicator.Toggle_CurrentIndicators;
 
         InGame_Manager manager = InGame_Manager.instance;
         TileTracker playerTracker = InGame_Manager.instance.player.movement.tileTracker;
 
+        playerTracker.OnTrackUpdate -= Toggle_AlertIcon;
         playerTracker.OnTileTrackUpdate -= Run_AgroActions;
         playerTracker.OnTileTrackUpdate -= Collect_TrailMark;
 
@@ -76,11 +80,13 @@ public class Animal : MonoBehaviour, IDamageable
         _movement.OnMovementDirection += _animation.Update_Flip;
 
         _eventPointer.OnPointerState += Toggle_HealthBar;
+        _eventPointer.OnPointerState += Toggle_AlertIcon;
         _eventPointer.OnPointerState += _tileIndicator.Toggle_CurrentIndicators;
 
         InGame_Manager manager = InGame_Manager.instance;
         TileTracker playerTracker = InGame_Manager.instance.player.movement.tileTracker;
 
+        playerTracker.OnTrackUpdate += Toggle_AlertIcon;
         playerTracker.OnTileTrackUpdate += Run_AgroActions;
         playerTracker.OnTileTrackUpdate += Collect_TrailMark;
 
@@ -134,29 +140,34 @@ public class Animal : MonoBehaviour, IDamageable
         Tile currentTile = _movement.tileTracker.data.CurrentTile();
         maxDistance = Mathf.Clamp(maxDistance, 1, _data.animalScrObj.moveDistance);
 
-        List<Tile> rangedTiles = tilesController.Current_Tiles(currentTile, maxDistance);
-        rangedTiles.Remove(maxDistance > 0 ? currentTile : null);
-
-        return rangedTiles;
+        return tilesController.Current_Tiles(currentTile, maxDistance);
     }
     public List<Tile> MoveDistance_RangeTiles()
     {
         return MoveDistance_RangeTiles(_data.animalScrObj.moveDistance);
     }
 
-    public Tile MoveDistance_RangeTile(bool excludePlayerTile)
+    public Tile MoveDistanceRange_RandomTile(bool excludePlayerTile)
     {
         List<Tile> rangedTiles = MoveDistance_RangeTiles();
+        rangedTiles.Remove(_movement.tileTracker.data.CurrentTile());
+        
         if (excludePlayerTile) rangedTiles.Remove(InGame_Manager.instance.player.movement.tileTracker.data.CurrentTile());
-
         return rangedTiles[UnityEngine.Random.Range(0, rangedTiles.Count)];
     }
 
+    public List<Tile> AgroRange_Tiles()
+    {
+        Tile currentTile = _movement.tileTracker.data.CurrentTile();
+        return InGame_Manager.instance.tilesController.Current_Tiles(currentTile, _data.animalScrObj.agroRange);
+
+    }
     public bool Player_InAgroRange()
     {
         Tile playerTile = InGame_Manager.instance.player.movement.tileTracker.data.CurrentTile();
         return _movement.tileTracker.data.CurrentTile().DistanceTo_TargetTile(playerTile) <= _data.animalScrObj.agroRange;
     }
+
     public bool Deceased()
     {
         return _data.health <= 0 || AnimalManager().spawnedAnimals.Contains(this) == false;
@@ -172,13 +183,30 @@ public class Animal : MonoBehaviour, IDamageable
         _healthFillBar.Update_CurrentBarFill(_data.animalScrObj.maxHealth, _data.health);
     }
 
+    private void Toggle_AlertIcon(bool isPointing)
+    {
+        InGame_Manager manager = InGame_Manager.instance;
+        Tiles_Controller tilesController = manager.tilesController;
+
+        Tile currentTile = _movement.tileTracker.data.CurrentTile();
+        List<Tile> alertTiles = tilesController.Current_Tiles(currentTile, _data.animalScrObj.agroRange + 1);
+
+        bool playerAlerted = alertTiles.Contains(manager.player.movement.tileTracker.data.CurrentTile());
+        _alertIcon.SetActive(isPointing == false && _data.isOnSight && playerAlerted);
+    }
+    private void Toggle_AlertIcon()
+    {
+        Toggle_AlertIcon(_eventPointer.pointerDetected);
+    }
+
     private void Update_MovementRangeTiles()
     {
         List<Tile> movementTiles = MoveDistance_RangeTiles();
-        movementTiles.Remove(_movement.tileTracker.data.CurrentTile());
+        Tile currentTile = _movement.tileTracker.data.CurrentTile();
 
         foreach (Tile tile in movementTiles)
         {
+            if (tile == currentTile) continue;   
             _tileIndicator.Set_Indicator(tile);
         }
         _tileIndicator.Toggle_CurrentIndicators(_eventPointer.pointerDetected);
@@ -193,7 +221,7 @@ public class Animal : MonoBehaviour, IDamageable
 
         _data.Decrease_TrailMarkCount(1);
 
-        Tile nextTile = MoveDistance_RangeTile(true);
+        Tile nextTile = MoveDistanceRange_RandomTile(true);
         if (nextTile == null) return;
 
         bool isOnSight = _data.isOnSight;
@@ -208,6 +236,7 @@ public class Animal : MonoBehaviour, IDamageable
         _healthFillBar.Set_FillBar(transform);
         _healthFillBar.Toggle(false);
 
+        Toggle_AlertIcon();
         Update_MovementRangeTiles();
     }
 
@@ -218,7 +247,7 @@ public class Animal : MonoBehaviour, IDamageable
         _tileIndicator.Clear_CurrentIndicators();
 
         InGame_Manager.instance.time.timeUpdateActions.Add(this);
-        StartCoroutine(TimeCountActions_Update());
+        _runActionCoroutine = StartCoroutine(TimeCountActions_Update());
     }
     private IEnumerator TimeCountActions_Update()
     {
@@ -227,10 +256,11 @@ public class Animal : MonoBehaviour, IDamageable
             animalAction.Run_Action();
             while (animalAction.actionRunning) yield return null;
         }
-        _completedActions.Clear();
 
         Update_MovementRangeTiles();
         InGame_Manager.instance.time.timeUpdateActions.Remove(this);
+
+        _runActionCoroutine = null;
     }
 
     private void Run_AgroActions(Tile _)
@@ -241,7 +271,7 @@ public class Animal : MonoBehaviour, IDamageable
         _tileIndicator.Clear_CurrentIndicators();
 
         InGame_Manager.instance.time.timeUpdateActions.Add(this);
-        StartCoroutine(AgroActions_Update());
+        _runActionCoroutine = StartCoroutine(AgroActions_Update());
     }
     private IEnumerator AgroActions_Update()
     {
@@ -250,10 +280,11 @@ public class Animal : MonoBehaviour, IDamageable
             animalAction.Run_Action();
             while (animalAction.actionRunning) yield return null;
         }
-        _completedActions.Clear();
 
         Update_MovementRangeTiles();
         InGame_Manager.instance.time.timeUpdateActions.Remove(this);
+
+        _runActionCoroutine = null;
     }
 
     public void Update_DeceasedState()

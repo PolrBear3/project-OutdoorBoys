@@ -15,7 +15,6 @@ MonoBehaviour:
   _prefab: {fileID: 2848068808391517652, guid: 3068ffc36e80a4216ab87381c95f71e6, type: 3}
   _spawnTiles:
   - {fileID: 11400000, guid: 13d5158de20cd4105b5f0b097494ca71, type: 2}
-  - {fileID: 11400000, guid: 8145ed0e845b14bca951ca79c25e2e94, type: 2}
   _maxHealth: 3
   _movedistance: 2
   _agroRange: 2

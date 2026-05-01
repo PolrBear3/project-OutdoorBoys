@@ -6,9 +6,7 @@ public class AnimalAction_Roam : AnimalAction
 {
     public override void Run_Action()
     {
-        if (CheckActions_Complete() == false) return;
-
-        Tile roamTile = controller.MoveDistance_RangeTile(false);
+        Tile roamTile = controller.MoveDistanceRange_RandomTile(false);
         if (roamTile == null) return;
 
         Run_MovementAction(roamTile.Random_BoundPoint());

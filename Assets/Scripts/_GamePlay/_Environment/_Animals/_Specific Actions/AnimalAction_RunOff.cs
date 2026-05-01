@@ -6,12 +6,11 @@ public class AnimalAction_RunOff : AnimalAction
 {
     public override void Run_Action()
     {
-        if (CheckActions_Complete() == false) return;
-
         Tile playerTile = InGame_Manager.instance.player.movement.tileTracker.data.CurrentTile();
-
         int randDistance = Random.Range(1, controller.data.animalScrObj.moveDistance);
+
         List<Tile> runOffTiles = controller.MoveDistance_RangeTiles(randDistance);
+        runOffTiles.Remove(controller.movement.tileTracker.data.CurrentTile());
 
         if (runOffTiles.Count <= 0) return;
 

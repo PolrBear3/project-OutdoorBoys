@@ -6,8 +6,6 @@ public class AnimalAction_Follow : AnimalAction
 {
     public override void Run_Action()
     {
-        if (CheckActions_Complete() == false) return;
-
         Tile playerTile = InGame_Manager.instance.player.movement.tileTracker.data.CurrentTile();
         if (controller.movement.tileTracker.data.CurrentTile().DistanceTo_TargetTile(playerTile) <= 1) return;
 

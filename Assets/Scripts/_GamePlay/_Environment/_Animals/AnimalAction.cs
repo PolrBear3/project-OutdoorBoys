@@ -8,8 +8,6 @@ public abstract class AnimalAction : MonoBehaviour
     [SerializeField] private Animal _controller;
     public Animal controller => _controller;
 
-    [SerializeField] private List<AnimalAction> _completeCheckActions = new();
-
 
     private bool _actionRunning;
     public bool actionRunning => _actionRunning;
@@ -18,20 +16,9 @@ public abstract class AnimalAction : MonoBehaviour
     // Main
     public virtual void Run_Action()
     {
-        _completeCheckActions.Add(this);
         _actionRunning = false;
     }
 
-    public bool CheckActions_Complete()
-    {
-        List<AnimalAction> completedActions = _controller.completedActions;
-
-        for (int i = 0; i < _completeCheckActions.Count; i++)
-        {
-            if (completedActions.Contains(_completeCheckActions[i]) == false) return false;
-        }
-        return true;
-    }
     public void Toggle_ActionRunningSignal(bool toggle)
     {
         _actionRunning = toggle;
@@ -50,7 +37,6 @@ public abstract class AnimalAction : MonoBehaviour
     {
         while (_controller.movement.At_Destination() == false) yield return null;
 
-        controller.completedActions.Add(this);
         Toggle_ActionRunningSignal(false);
     }
 }

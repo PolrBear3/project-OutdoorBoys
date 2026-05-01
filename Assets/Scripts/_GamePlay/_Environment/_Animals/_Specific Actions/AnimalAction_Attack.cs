@@ -12,8 +12,6 @@ public class AnimalAction_Attack : AnimalAction
     // Main
     public override void Run_Action()
     {
-        if (CheckActions_Complete() == false) return;
-
         List<Tile> attackTiles = controller.MoveDistance_RangeTiles();
 
         for (int i = 0; i < attackTiles.Count; i++)
@@ -22,7 +20,9 @@ public class AnimalAction_Attack : AnimalAction
 
             for (int j = currentPrefabs.Count - 1; j >= 0; j--)
             {
+                if (currentPrefabs[j] == controller.gameObject) continue;
                 if (currentPrefabs[j].TryGetComponent(out IDamageable damageable) == false) continue;
+                
                 damageable.InflictDamage(_attackDamage);
             }
         }
@@ -33,7 +33,6 @@ public class AnimalAction_Attack : AnimalAction
 
     private IEnumerator AttackIndication_Update()
     {
-        controller.completedActions.Add(this);
         Toggle_ActionRunningSignal(false);
 
         yield break;
