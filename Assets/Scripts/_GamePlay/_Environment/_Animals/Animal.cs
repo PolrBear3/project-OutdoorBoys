@@ -26,11 +26,13 @@ public class Animal : MonoBehaviour, IDamageable
     [Space(20)]
     [SerializeField] private AnimalAction[] _onTimeCountActions;
     [SerializeField] private AnimalAction[] _onAgroActions;
-    [SerializeField] private AnimalAction[] _onDamageInflictedActions;
 
 
     private AnimalData _data;
     public AnimalData data => _data;
+
+    private List<AnimalAction> _completedActions = new();
+    public List<AnimalAction> completedActions => _completedActions;
 
 
     // MonoBehaviour
@@ -45,8 +47,8 @@ public class Animal : MonoBehaviour, IDamageable
         InGame_Manager manager = InGame_Manager.instance;
         TileTracker playerTracker = InGame_Manager.instance.player.movement.tileTracker;
 
-        playerTracker.OnTileTrackUpdate -= Collect_TrailMark;
         playerTracker.OnTileTrackUpdate -= Run_AgroActions;
+        playerTracker.OnTileTrackUpdate -= Collect_TrailMark;
 
         InGame_Manager.instance.time.UnRegister(TimeUpdateBus.AwakeUpdate, Run_TimeCountActions);
     }
@@ -62,10 +64,7 @@ public class Animal : MonoBehaviour, IDamageable
 
         if (_data.health <= 0) return _data.health;
 
-        foreach (AnimalAction animalAction in _onDamageInflictedActions)
-        {
-            if (animalAction.RunAction()) break;
-        }
+        Run_AgroActions(null);
         return _data.health;
     }
 
@@ -82,8 +81,8 @@ public class Animal : MonoBehaviour, IDamageable
         InGame_Manager manager = InGame_Manager.instance;
         TileTracker playerTracker = InGame_Manager.instance.player.movement.tileTracker;
 
-        playerTracker.OnTileTrackUpdate += Collect_TrailMark;
         playerTracker.OnTileTrackUpdate += Run_AgroActions;
+        playerTracker.OnTileTrackUpdate += Collect_TrailMark;
 
         InGame_Manager.instance.time.Register(TimeUpdateBus.AwakeUpdate, Run_TimeCountActions);
     }
@@ -173,18 +172,13 @@ public class Animal : MonoBehaviour, IDamageable
         _healthFillBar.Update_CurrentBarFill(_data.animalScrObj.maxHealth, _data.health);
     }
 
-    private void Update_AgroRangeTiles()
+    private void Update_MovementRangeTiles()
     {
-        Tiles_Controller tilesController = InGame_Manager.instance.tilesController;
+        List<Tile> movementTiles = MoveDistance_RangeTiles();
+        movementTiles.Remove(_movement.tileTracker.data.CurrentTile());
 
-        Tile currentTile = _movement.tileTracker.data.CurrentTile();
-        int agroRange = _data.animalScrObj.agroRange;
-
-        List<Tile> agroTiles = tilesController.Current_Tiles(currentTile, agroRange);
-
-        foreach (Tile tile in agroTiles)
+        foreach (Tile tile in movementTiles)
         {
-            if (tile == currentTile) continue;
             _tileIndicator.Set_Indicator(tile);
         }
         _tileIndicator.Toggle_CurrentIndicators(_eventPointer.pointerDetected);
@@ -214,7 +208,7 @@ public class Animal : MonoBehaviour, IDamageable
         _healthFillBar.Set_FillBar(transform);
         _healthFillBar.Toggle(false);
 
-        Update_AgroRangeTiles();
+        Update_MovementRangeTiles();
     }
 
     private void Run_TimeCountActions()
@@ -228,28 +222,15 @@ public class Animal : MonoBehaviour, IDamageable
     }
     private IEnumerator TimeCountActions_Update()
     {
-        if (Player_InAgroRange())
-        {
-            StartCoroutine(AgroActions_Update());
-            yield break;
-        }
-
         foreach (AnimalAction animalAction in _onTimeCountActions)
         {
-            if (animalAction.RunAction() == false) continue;
-            
+            animalAction.Run_Action();
             while (animalAction.actionRunning) yield return null;
-            break;
         }
+        _completedActions.Clear();
 
-        if (Player_InAgroRange() == false)
-        {
-            Update_AgroRangeTiles();
-            InGame_Manager.instance.time.timeUpdateActions.Remove(this);
-            
-            yield break;
-        }
-        StartCoroutine(AgroActions_Update());
+        Update_MovementRangeTiles();
+        InGame_Manager.instance.time.timeUpdateActions.Remove(this);
     }
 
     private void Run_AgroActions(Tile _)
@@ -266,16 +247,13 @@ public class Animal : MonoBehaviour, IDamageable
     {
         foreach (AnimalAction animalAction in _onAgroActions)
         {
-            if (animalAction.RunAction() == false) continue;
-            
+            animalAction.Run_Action();
             while (animalAction.actionRunning) yield return null;
-            break;
         }
+        _completedActions.Clear();
 
-        Update_AgroRangeTiles();
+        Update_MovementRangeTiles();
         InGame_Manager.instance.time.timeUpdateActions.Remove(this);
-        
-        yield break;
     }
 
     public void Update_DeceasedState()

@@ -7,17 +7,20 @@ public class AnimalAction_Attack : AnimalAction
     [Space(20)]
     [SerializeField][Range(0, 10)] private int _attackDamage;
     [SerializeField][Range(0, 10)] private float _attackIndicationTime;
-    
-    public override bool RunAction()
+
+
+    // Main
+    public override void Run_Action()
     {
+        if (CheckActions_Complete() == false) return;
+
         List<Tile> attackTiles = controller.MoveDistance_RangeTiles();
-        if (attackTiles.Count <= 0) return false;
 
         for (int i = 0; i < attackTiles.Count; i++)
         {
             List<GameObject> currentPrefabs = attackTiles[i].All_CurrentPrefabs();
 
-            for (int j = currentPrefabs.Count - 1; j >= 0 ; j--)
+            for (int j = currentPrefabs.Count - 1; j >= 0; j--)
             {
                 if (currentPrefabs[j].TryGetComponent(out IDamageable damageable) == false) continue;
                 damageable.InflictDamage(_attackDamage);
@@ -25,24 +28,14 @@ public class AnimalAction_Attack : AnimalAction
         }
 
         Toggle_ActionRunningSignal(true);
-        StartCoroutine(AttackIndication_Update(attackTiles));
-
-        return true;
+        StartCoroutine(AttackIndication_Update());
     }
 
-    private IEnumerator AttackIndication_Update(List<Tile> attackIndicateTiles)
+    private IEnumerator AttackIndication_Update()
     {
-        Tile_Indicator tileIndicator = controller.tileIndicator;
-
-        foreach (Tile attackTile in attackIndicateTiles)
-        {
-            tileIndicator.Set_Indicator(attackTile);
-        }
-        tileIndicator.Toggle_CurrentIndicators(true);
-
-        yield return new WaitForSeconds(_attackIndicationTime);
-        
-        tileIndicator.Clear_CurrentIndicators();
+        controller.completedActions.Add(this);
         Toggle_ActionRunningSignal(false);
+
+        yield break;
     }
 }

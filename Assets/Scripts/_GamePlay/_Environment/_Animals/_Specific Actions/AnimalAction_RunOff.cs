@@ -4,14 +4,16 @@ using UnityEngine;
 
 public class AnimalAction_RunOff : AnimalAction
 {
-    public override bool RunAction()
+    public override void Run_Action()
     {
+        if (CheckActions_Complete() == false) return;
+
         Tile playerTile = InGame_Manager.instance.player.movement.tileTracker.data.CurrentTile();
 
         int randDistance = Random.Range(1, controller.data.animalScrObj.moveDistance);
         List<Tile> runOffTiles = controller.MoveDistance_RangeTiles(randDistance);
 
-        if (runOffTiles.Count <= 0) return false;
+        if (runOffTiles.Count <= 0) return;
 
         runOffTiles.Sort((a, b) =>
         {
@@ -21,6 +23,6 @@ public class AnimalAction_RunOff : AnimalAction
         });
 
         Run_MovementAction(runOffTiles[0].Random_BoundPoint());
-        return true;
+        return;
     }
 }

@@ -4,17 +4,14 @@ using UnityEngine;
 
 public class AnimalAction_Roam : AnimalAction
 {
-    public override bool RunAction()
+    public override void Run_Action()
     {
+        if (CheckActions_Complete() == false) return;
+
         Tile roamTile = controller.MoveDistance_RangeTile(false);
-        if (roamTile == null) return false;
-
-        Toggle_ActionRunningSignal(true);
-
-        controller.movement.Move(roamTile.Random_BoundPoint());
-        StartCoroutine(MovementAction_Update());
+        if (roamTile == null) return;
 
         Run_MovementAction(roamTile.Random_BoundPoint());
-        return true;
+        return;
     }
 }
