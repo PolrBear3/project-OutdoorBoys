@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -10,12 +11,9 @@ public class Animal : MonoBehaviour, IDamageable
     public Movement_Controller movement => _movement;
 
     [Space(20)]
-    [SerializeField] private EventPointer _eventPointer;
-
     [SerializeField] private Tile_Indicator _tileIndicator;
     public Tile_Indicator tileIndicator => _tileIndicator;
 
-    [Space(20)]
     [SerializeField] private AnimationPlayer _animation;
     [SerializeField] private FillBar_Controller _healthFillBar;
 
@@ -43,12 +41,14 @@ public class Animal : MonoBehaviour, IDamageable
         _movement.OnMovementState -= Update_Animation;
         _movement.OnMovementDirection -= _animation.Update_Flip;
 
-        _eventPointer.OnPointerState -= Toggle_HealthBar;
-        _eventPointer.OnPointerState -= Toggle_AlertIcon;
-        _eventPointer.OnPointerState -= _tileIndicator.Toggle_CurrentIndicators;
-
         InGame_Manager manager = InGame_Manager.instance;
-        TileTracker playerTracker = InGame_Manager.instance.player.movement.tileTracker;
+        Tiles_Controller tilesController = manager.tilesController;
+
+        tilesController.OnTileHover -= Toggle_HealthBar;
+        tilesController.OnTileHover -= Toggle_AlertIcon;
+        tilesController.OnTileHover -= Toggle_MovementRangeTiles;
+
+        TileTracker playerTracker = manager.player.movement.tileTracker;
 
         playerTracker.OnTrackUpdate -= Toggle_AlertIcon;
         playerTracker.OnTileTrackUpdate -= Run_AgroActions;
@@ -79,12 +79,14 @@ public class Animal : MonoBehaviour, IDamageable
         _movement.OnMovementState += Update_Animation;
         _movement.OnMovementDirection += _animation.Update_Flip;
 
-        _eventPointer.OnPointerState += Toggle_HealthBar;
-        _eventPointer.OnPointerState += Toggle_AlertIcon;
-        _eventPointer.OnPointerState += _tileIndicator.Toggle_CurrentIndicators;
-
         InGame_Manager manager = InGame_Manager.instance;
-        TileTracker playerTracker = InGame_Manager.instance.player.movement.tileTracker;
+        Tiles_Controller tilesController = manager.tilesController;
+
+        tilesController.OnTileHover += Toggle_HealthBar;
+        tilesController.OnTileHover += Toggle_AlertIcon;
+        tilesController.OnTileHover += Toggle_MovementRangeTiles;
+
+        TileTracker playerTracker = manager.player.movement.tileTracker;
 
         playerTracker.OnTrackUpdate += Toggle_AlertIcon;
         playerTracker.OnTileTrackUpdate += Run_AgroActions;
@@ -175,15 +177,16 @@ public class Animal : MonoBehaviour, IDamageable
 
 
     // Visuals
-    private void Toggle_HealthBar(bool toggle)
+    private void Toggle_HealthBar(Tile hoveringTile)
     {
+        bool toggle = hoveringTile == _movement.tileTracker.data.CurrentTile();
         _healthFillBar.Toggle(toggle);
 
         if (toggle == false) return;
         _healthFillBar.Update_CurrentBarFill(_data.animalScrObj.maxHealth, _data.health);
     }
 
-    private void Toggle_AlertIcon(bool isPointing)
+    private void Toggle_AlertIcon(bool toggle)
     {
         InGame_Manager manager = InGame_Manager.instance;
         Tiles_Controller tilesController = manager.tilesController;
@@ -192,11 +195,15 @@ public class Animal : MonoBehaviour, IDamageable
         List<Tile> alertTiles = tilesController.Current_Tiles(currentTile, _data.animalScrObj.agroRange + 1);
 
         bool playerAlerted = alertTiles.Contains(manager.player.movement.tileTracker.data.CurrentTile());
-        _alertIcon.SetActive(isPointing == false && _data.isOnSight && playerAlerted);
+        _alertIcon.SetActive(toggle == false && _data.isOnSight && playerAlerted);
+    }
+    private void Toggle_AlertIcon(Tile hoveringTile)
+    {
+        Toggle_AlertIcon(hoveringTile == _movement.tileTracker.data.CurrentTile());
     }
     private void Toggle_AlertIcon()
     {
-        Toggle_AlertIcon(_eventPointer.pointerDetected);
+        Toggle_AlertIcon(InGame_Manager.instance.cursor.pointingTile == _movement.tileTracker.data.CurrentTile());
     }
 
     private void Update_MovementRangeTiles()
@@ -209,7 +216,12 @@ public class Animal : MonoBehaviour, IDamageable
             if (tile == currentTile) continue;   
             _tileIndicator.Set_Indicator(tile);
         }
-        _tileIndicator.Toggle_CurrentIndicators(_eventPointer.pointerDetected);
+        Toggle_MovementRangeTiles(InGame_Manager.instance.cursor.pointingTile);
+    }
+    private void Toggle_MovementRangeTiles(Tile hoveringTile)
+    {
+        bool toggle = hoveringTile == _movement.tileTracker.data.CurrentTile();
+        _tileIndicator.Toggle_CurrentIndicators(toggle);
     }
 
 

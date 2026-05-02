@@ -40,11 +40,6 @@ public class Time_Manager : MonoBehaviour, ISaveLoadable
         EventBus_Manager.Register(EventBus.AwakeLoad, Set_Data);
     }
 
-    private void Start()
-    {
-        Run_RewardUpdates();
-    }
-
     private void OnDestroy()
     {
         EventBus_Manager.UnRegister(EventBus.AwakeLoad, Set_Data);
@@ -71,11 +66,11 @@ public class Time_Manager : MonoBehaviour, ISaveLoadable
         Input_Controller.instance.OnHoldInteract += Count_Time;
     }
 
-
     public bool Is_Night()
     {
         return _data.timeCount >= _nightPhaseTime;
     }
+
 
     private void Run_TimeUpdates()
     {
@@ -90,26 +85,31 @@ public class Time_Manager : MonoBehaviour, ISaveLoadable
         if (_data.timeCount != _nightPhaseTime) return;
         OnNightPhaseTime?.Invoke();
     }
-    private void Run_RewardUpdates()
+
+    public void Run_RewardUpdates(bool run)
     {
-        if (data.timeCount < _data.rewardTargetTime) return;
+        if (run == false) return;
 
         OnRewardTargetTime?.Invoke();
+        Debug.Log("reward");
     }
+
 
     public void Count_Time()
     {
         int calculatedTimeCount = _data.timeCount + 1;
-
         int rewardTargetTime = _data.rewardTargetTime;
-        _data.Update_RewardTargetTime(calculatedTimeCount > rewardTargetTime ? _data.timeCount + _rewardTargetUpdateTime : rewardTargetTime);
+
+        bool activateReward = calculatedTimeCount >= rewardTargetTime;
+
+        _data.Update_RewardTargetTime(activateReward ? rewardTargetTime + _rewardTargetUpdateTime : rewardTargetTime);
+        Run_RewardUpdates(activateReward);
 
         if (calculatedTimeCount <= _maxTimeCount)
         {
             _data.Set_Data(calculatedTimeCount, data.dayCount);
 
             Run_TimeUpdates();
-            Run_RewardUpdates();
 
             return;
         }
@@ -120,7 +120,6 @@ public class Time_Manager : MonoBehaviour, ISaveLoadable
         OnDayCount?.Invoke(_data.dayCount);
 
         Run_TimeUpdates();
-        Run_RewardUpdates();
     }
 
 
