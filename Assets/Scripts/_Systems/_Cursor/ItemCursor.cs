@@ -345,12 +345,13 @@ public class ItemCursor : MonoBehaviour, IItemsSource, IItemsSourceRemove, IItem
         Item_ScrObj currentItem = _data.itemScrObj;
         if (currentItem.itemType != ItemType.use) return;
 
-        InGame_Manager manager = InGame_Manager.instance;
-        GameObject currentUseItem = manager.player.interaction.currentItemPrefab;
+        Player_Controller player = InGame_Manager.instance.player;
+        if (player.data.currentStamina <= 0) return;
 
+        GameObject currentUseItem = player.interaction.currentItemPrefab;
         if (currentUseItem.TryGetComponent(out UseableItem useItem) == false) return;
-        if (useItem.CanUse?.Invoke(selectTile) == false) return;
 
+        if (useItem.CanUse?.Invoke(selectTile) == false) return;
         useItem.OnUse?.Invoke(selectTile);
     }
 }
