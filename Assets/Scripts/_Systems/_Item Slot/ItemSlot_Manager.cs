@@ -44,6 +44,12 @@ public class ItemSlot_Manager : MonoBehaviour
     // Data
     private void Set_Datas()
     {
+        Input_Controller input = Input_Controller.instance;
+
+        input.OnLeftClick += Select_HoveringSlot;
+        input.OnHoldLeftClick += HoldSelect_HoveringSlot;
+        input.OnRightClick += RightSelect_HoveringSlot;
+
         for (int i = 0; i < _slots.Count; i++)
         {
             ItemSlot slot = _slots[i];
@@ -52,13 +58,8 @@ public class ItemSlot_Manager : MonoBehaviour
             slot.Update_ItemImage();
             slot.Update_AmountIndications();
         }
-
-        Input_Controller input = Input_Controller.instance;
-
-        input.OnLeftClick += Select_HoveringSlot;
-        input.OnHoldLeftClick += HoldSelect_HoveringSlot;
-        input.OnRightClick += RightSelect_HoveringSlot;
     }
+
 
     public void Refresh_Datas()
     {
@@ -66,6 +67,14 @@ public class ItemSlot_Manager : MonoBehaviour
         {
             ItemSlot slot = _slots[i];
             slot.Set_Data(slot.data);
+        }
+    }
+
+    public void Clear_Datas()
+    {
+        foreach (ItemSlot slot in _slots)
+        {
+            slot.Clear_Data();
         }
     }
 
@@ -127,7 +136,7 @@ public class ItemSlot_Manager : MonoBehaviour
         return newSlot;
     }
 
-    public void Clear_CurrentSlots()
+    public void Remove_AllSlots()
     {
         foreach (ItemSlot currentSlot in _slots)
         {
@@ -146,6 +155,7 @@ public class ItemSlot_Manager : MonoBehaviour
     private bool SlotSelect_Available(ItemSlot slot)
     {
         if (slot == null) return false;
+
         // if (InGame_Manager.instance.movements.AllMovements_Complete() == false) return false;
 
         return true;
@@ -155,6 +165,7 @@ public class ItemSlot_Manager : MonoBehaviour
     private void Select_HoveringSlot()
     {
         if (SlotSelect_Available(_hoveringSlot) == false) return;
+        
         OnSlotSelect?.Invoke(_hoveringSlot);
     }
 

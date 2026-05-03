@@ -18,6 +18,9 @@ public class ItemSlot : MonoBehaviour
     [Space(10)]
     [SerializeField] private FillBar_UI _durabilityBar;
 
+    [Space(20)]
+    [SerializeField][Range(0, 1)]  private float _transparencyToggleValue;
+
 
     private ItemSlot_Manager _slotManager;
 
@@ -107,5 +110,16 @@ public class ItemSlot : MonoBehaviour
             return;
         }
         Update_AmountText();
+    }
+
+
+    public void Toggle_Transparency(bool toggle)
+    {
+        float toggleValue = toggle ? _transparencyToggleValue : 1f;
+
+        Color color = _itemImage.color;
+        color.a = toggleValue;
+
+        _itemImage.color = color;
     }
 }

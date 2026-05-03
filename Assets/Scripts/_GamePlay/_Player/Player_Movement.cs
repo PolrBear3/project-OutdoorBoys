@@ -64,7 +64,7 @@ public class Player_Movement : MonoBehaviour
     {
         if (_tileTracker.clampCoroutine != null) return;
 
-        if (InGame_Manager.instance.time.timeUpdateActions.Count > 0 || _controller.data.currentStamina <= 0)
+        if (InGame_Manager.instance.time.timeUpdateActions.Count > 0 || _controller.interaction.Has_Stamina() == false)
         {
             _tileTracker.Clamp_toCurrentTile();
             return;

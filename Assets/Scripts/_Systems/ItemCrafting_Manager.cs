@@ -10,6 +10,9 @@ public class ItemCrafting_Manager : MonoBehaviour
 {
     [Space(20)]
     [SerializeField] private ItemSlot_Manager _slotManager;
+
+    [Space(20)]
+    [SerializeField] private ItemsSource_Manager _previewSourceManager;
     [SerializeField] private ItemsSource_Manager _itemsSourceManager;
 
     [Space(20)]
@@ -35,9 +38,11 @@ public class ItemCrafting_Manager : MonoBehaviour
         EventBus_Manager.UnRegister(EventBus.AwakeLoad, Set_Data);
 
         _slotManager.OnSlotHover -= Toggle_ItemInfoPanel;
-
         _slotManager.OnSlotSelect -= Craft_Item;
+
         _slotManager.OnSlotSelect -= Update_CraftableItems;
+        _slotManager.OnSlotSelect -= Update_CraftItemsPreview;
+
         _slotManager.OnSlotSelect -= Toggle_ItemInfoPanel;
 
         InGame_Manager manager = InGame_Manager.instance;
@@ -45,27 +50,42 @@ public class ItemCrafting_Manager : MonoBehaviour
 
         inventory.slotManager.OnSlotSelect -= Update_CraftableItems;
         inventory.OnItemAdded -= Update_CraftableItems;
+
+        inventory.slotManager.OnSlotSelect -= Update_CraftItemsPreview;
+        inventory.OnItemAdded -= Update_CraftItemsPreview;
+
         inventory.OnItemAdded -= Toggle_ItemInfoPanel;
 
         ItemCursor itemCursor = manager.cursor.itemCursor;
 
         itemCursor.OnItemReturn -= Update_CraftableItems;
+        itemCursor.OnItemReturn -= Update_CraftItemsPreview;
+
         itemCursor.OnItemReturn -= Toggle_ItemInfoPanel;
 
         Tiles_Controller tilesController = manager.tilesController;
 
         tilesController.OnTileSelect -= Update_CraftableItems;
+        tilesController.OnTileSelect -= Update_CraftItemsPreview;
+
         tilesController.OnTileSelect -= Toggle_ItemInfoPanel;
 
         TileTracker playerTileTracker = manager.player.movement.tileTracker;
 
-        playerTileTracker.OnTrackUpdate += Update_CraftableItems;
-        playerTileTracker.OnTrackUpdate += Toggle_ItemInfoPanel;
+        playerTileTracker.OnTrackUpdate -= Update_CraftableItems;
+        playerTileTracker.OnTrackUpdate -= Update_CraftItemsPreview;
+
+        playerTileTracker.OnTrackUpdate -= Toggle_ItemInfoPanel;
 
         Time_Manager time = manager.time;
 
         time.UnRegister(TimeUpdateBus.StartUpdate, Update_CraftableItems);
+        time.UnRegister(TimeUpdateBus.StartUpdate, Update_CraftItemsPreview);
         time.UnRegister(TimeUpdateBus.StartUpdate, Toggle_ItemInfoPanel);
+
+        EventBus_Manager.UnRegister(EventBus.SubLoad, Update_CraftableItems);
+        EventBus_Manager.UnRegister(EventBus.SubLoad, Update_CraftItemsPreview);
+        EventBus_Manager.UnRegister(EventBus.SubLoad, Toggle_ItemInfoPanel);
     }
 
 
@@ -73,39 +93,114 @@ public class ItemCrafting_Manager : MonoBehaviour
     private void Set_Data()
     {
         _slotManager.OnSlotHover += Toggle_ItemInfoPanel;
-
         _slotManager.OnSlotSelect += Craft_Item;
+
         _slotManager.OnSlotSelect += Update_CraftableItems;
+        _slotManager.OnSlotSelect += Update_CraftItemsPreview;
+
         _slotManager.OnSlotSelect += Toggle_ItemInfoPanel;
 
         InGame_Manager manager = InGame_Manager.instance;
         Inventory_Manager inventory = manager.inventory;
 
-        inventory.slotManager.OnSlotSelect += Update_CraftableItems;
         inventory.OnItemAdded += Update_CraftableItems;
+        inventory.OnItemAdded += Update_CraftItemsPreview;
+
+        inventory.slotManager.OnSlotSelect += Update_CraftableItems;
+        inventory.slotManager.OnSlotSelect += Update_CraftItemsPreview;
+
         inventory.OnItemAdded += Toggle_ItemInfoPanel;
 
         ItemCursor itemCursor = manager.cursor.itemCursor;
 
         itemCursor.OnItemReturn += Update_CraftableItems;
+        itemCursor.OnItemReturn += Update_CraftItemsPreview;
+
         itemCursor.OnItemReturn += Toggle_ItemInfoPanel;
 
         Tiles_Controller tilesController = manager.tilesController;
 
         tilesController.OnTileSelect += Update_CraftableItems;
+        tilesController.OnTileSelect += Update_CraftItemsPreview;
+
         tilesController.OnTileSelect += Toggle_ItemInfoPanel;
 
         TileTracker playerTileTracker = manager.player.movement.tileTracker;
 
         playerTileTracker.OnTrackUpdate += Update_CraftableItems;
+        playerTileTracker.OnTrackUpdate += Update_CraftItemsPreview;
+
         playerTileTracker.OnTrackUpdate += Toggle_ItemInfoPanel;
 
         Time_Manager time = manager.time;
 
         time.Register(TimeUpdateBus.StartUpdate, Update_CraftableItems);
+        time.Register(TimeUpdateBus.StartUpdate, Update_CraftItemsPreview);
         time.Register(TimeUpdateBus.StartUpdate, Toggle_ItemInfoPanel);
 
-        Toggle_ItemInfoPanel();
+        EventBus_Manager.Register(EventBus.SubLoad, Update_CraftableItems);
+        EventBus_Manager.Register(EventBus.SubLoad, Update_CraftItemsPreview);
+        EventBus_Manager.Register(EventBus.SubLoad, Toggle_ItemInfoPanel);
+    }
+
+
+    // Craft Preview
+    private void Update_CraftItemsPreview()
+    {
+        Item_ScrObj[] allItems = Data_Manager.instance.allItems;
+
+        List<ItemData> previewSourceDatas = _previewSourceManager.ItemDatas(_previewSourceManager.itemsSources);
+        List<ItemData> previewDatas = new();
+
+        for (int i = 0; i < allItems.Length; i++)
+        {
+            Item_ScrObj craftItem = allItems[i];
+
+            if (craftItem.Available_CraftCount(previewSourceDatas) <= 0) continue;
+            previewDatas.Add(new(craftItem, 1));
+        }
+        previewDatas.Sort((x, y) => y.amount.CompareTo(x.amount));
+
+        List<ItemSlot> currentSlots = _slotManager.slots;
+        List<ItemData> craftableDatas = _slotManager.Slot_ItemDatas();
+
+        int previewIndex = 0;
+
+        for (int i = 0; i < currentSlots.Count; i++)
+        {
+            ItemSlot slot = currentSlots[i];
+            if (slot.data != null) continue;
+
+            while (previewIndex < previewDatas.Count)
+            {
+                Item_ScrObj previewItem = previewDatas[previewIndex].itemScrObj;
+                previewIndex++;
+                
+                bool itemLoaded = false;
+
+                for (int j = 0; j < craftableDatas.Count; j++)
+                {
+                    if (craftableDatas[j] == null) continue;
+                    if (previewItem != craftableDatas[j].itemScrObj) continue;
+
+                    itemLoaded = true;
+                    break;
+
+                }
+                if (itemLoaded) continue;
+
+                slot.Set_Data(new ItemData(previewItem, 1));
+                slot.Update_ItemImage();
+                slot.Toggle_Transparency(true);
+
+                break;
+            }
+            if (previewIndex >= previewDatas.Count) return;
+        }
+    }
+    private void Update_CraftItemsPreview(ItemSlot _)
+    {
+        Update_CraftItemsPreview();
     }
 
 
@@ -170,6 +265,7 @@ public class ItemCrafting_Manager : MonoBehaviour
 
             slot.Update_ItemImage();
             slot.Update_AmountText();
+            slot.Toggle_Transparency(false);
         }
     }
     private void Update_CraftableItems(ItemSlot _)
@@ -207,8 +303,9 @@ public class ItemCrafting_Manager : MonoBehaviour
         if (slotItemData == null) return;
 
         Item_ScrObj craftItem = slotItemData.itemScrObj;
-        int craftAmount = craftItem.itemType == ItemType.use ? craftItem.maxAmount : 1;
+        if (craftItem.Available_CraftCount(Ingredient_ItemDatas()) <= 0) return;
 
+        int craftAmount = craftItem.itemType == ItemType.use ? craftItem.maxAmount : 1;
         List<ItemData> craftIngredientDatas = new(craftItem.Item_IngredientDatas());
 
         List<IItemsSourceRemove> craftRemoveSources = IngredientRemove_ItemsSource();
@@ -231,13 +328,13 @@ public class ItemCrafting_Manager : MonoBehaviour
     }
 
 
-    // Item Info
+    // Toggles
     private void Toggle_ItemInfoPanel(ItemSlot hoveringItemSlot)
     {
         bool toggle = hoveringItemSlot != null && hoveringItemSlot.data != null;
 
         _itemInfoPanel.gameObject.SetActive(toggle);
-        _ingredientSlotsManager.Clear_CurrentSlots();
+        _ingredientSlotsManager.Remove_AllSlots();
 
         if (toggle == false) return;
 

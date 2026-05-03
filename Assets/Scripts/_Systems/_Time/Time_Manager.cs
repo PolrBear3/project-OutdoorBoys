@@ -89,26 +89,27 @@ public class Time_Manager : MonoBehaviour, ISaveLoadable
     public void Run_RewardUpdates(bool run)
     {
         if (run == false) return;
-
+        
         OnRewardTargetTime?.Invoke();
-        Debug.Log("reward");
     }
 
 
     public void Count_Time()
     {
         int calculatedTimeCount = _data.timeCount + 1;
-        int rewardTargetTime = _data.rewardTargetTime;
-
-        bool activateReward = calculatedTimeCount >= rewardTargetTime;
-
-        _data.Update_RewardTargetTime(activateReward ? rewardTargetTime + _rewardTargetUpdateTime : rewardTargetTime);
-        Run_RewardUpdates(activateReward);
 
         if (calculatedTimeCount <= _maxTimeCount)
         {
+            int currentRewardTime = _data.rewardTargetTime;
+            int calculatedTargetTime = currentRewardTime + _rewardTargetUpdateTime;
+
+            bool activateReward = calculatedTimeCount == currentRewardTime;
+            int rewardUpdateTime = calculatedTargetTime <= _maxTimeCount ? calculatedTargetTime : _rewardTargetUpdateTime;
+
+            _data.Update_RewardTargetTime(activateReward ? rewardUpdateTime : currentRewardTime);
             _data.Set_Data(calculatedTimeCount, data.dayCount);
 
+            Run_RewardUpdates(activateReward);
             Run_TimeUpdates();
 
             return;
@@ -116,9 +117,10 @@ public class Time_Manager : MonoBehaviour, ISaveLoadable
 
         int dayUpdateCount = Mathf.FloorToInt(calculatedTimeCount / _maxTimeCount);
 
-        _data.Set_Data(calculatedTimeCount % _maxTimeCount - 1, _data.dayCount + dayUpdateCount);
-        OnDayCount?.Invoke(_data.dayCount);
+        _data.Set_Data(0, _data.dayCount + dayUpdateCount);
+        _data.Update_RewardTargetTime(_rewardTargetUpdateTime);
 
+        OnDayCount?.Invoke(_data.dayCount);
         Run_TimeUpdates();
     }
 

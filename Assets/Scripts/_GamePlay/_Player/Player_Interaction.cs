@@ -137,13 +137,21 @@ public class Player_Interaction : MonoBehaviour, IItemsSource, IItemsSourceRemov
         InGame_Manager manager = InGame_Manager.instance;
 
         ItemData currentItem = manager.cursor.itemCursor.data;
-        bool hasInventoryBagpack = currentItem != null && currentItem.itemScrObj == _controller.inventoryBagpack;
+        Item_ScrObj inventoryBagpack = _controller.inventoryBagpack;
 
-        int currentInventoryWeight = hasInventoryBagpack ? manager.inventory.slotManager.Total_ItemWeight() : 0;
+        bool hasInventoryBagpack = currentItem != null && currentItem.itemScrObj == inventoryBagpack;
+
+        int currentInventoryWeight = hasInventoryBagpack ? inventoryBagpack.itemWeight : 0;
         int currentItemWeight = currentItem != null ? currentItem.Item_Weight() + currentInventoryWeight : 0;
 
         return Mathf.Max(1, currentItemWeight);
     }
+
+    public bool Has_Stamina()
+    {
+        return _controller.data.currentStamina - Current_StaminaValue() >= 0;
+    }
+
 
     public void InteractUpdate_Stamina()
     {

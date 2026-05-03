@@ -14,15 +14,11 @@ public class Inventory_Manager : MonoBehaviour, IItemsSource, IItemsSourceRemove
     [SerializeField] private ItemSlot_Manager _slotManager;
     public ItemSlot_Manager slotManager => _slotManager;
 
-    [SerializeField] private Image _togglePanel;
+    [SerializeField] private ItemInfo_Controller _itemInfo;
 
     [Space(20)]
-    [SerializeField] private ItemSlot _itemImageSlot;
-    [SerializeField] private Image _itemInfoPanel;
+    [SerializeField] private Image _togglePanel;
 
-    [Space(10)]
-    [SerializeField] private TextMeshProUGUI _itemNameText;
-    [SerializeField] private TextMeshProUGUI _itemDescriptionText;
 
     public Action OnItemAdded;
 
@@ -46,14 +42,14 @@ public class Inventory_Manager : MonoBehaviour, IItemsSource, IItemsSourceRemove
         OnItemAdded -= Toggle_ItemInfoPanel;
         OnItemAdded -= Update_HoveringItemInfo;
 
-        _slotManager.OnSlotHover -= Toggle_ItemInfoPanel;
-        _slotManager.OnSlotHover -= Update_HoveringItemInfo;
+        _slotManager.OnSlotHover -= _itemInfo.Toggle_ItemInfoPanel;
+        _slotManager.OnSlotHover -= _itemInfo.Update_HoveringItemInfo;
 
         _slotManager.OnSlotSelect -= Transfer_AllItems;
         _slotManager.OnSlotRightSelect -= Transfer_Item;
 
-        _slotManager.OnSlotSelect -= Toggle_ItemInfoPanel;
-        _slotManager.OnSlotSelect -= Update_HoveringItemInfo;
+        _slotManager.OnSlotSelect -= _itemInfo.Toggle_ItemInfoPanel;
+        _slotManager.OnSlotSelect -= _itemInfo.Update_HoveringItemInfo;
 
         InGame_Manager manager = InGame_Manager.instance;
         ItemCursor itemCursor = manager.cursor.itemCursor;
@@ -138,14 +134,14 @@ public class Inventory_Manager : MonoBehaviour, IItemsSource, IItemsSourceRemove
         OnItemAdded += Toggle_ItemInfoPanel;
         OnItemAdded += Update_HoveringItemInfo;
 
-        _slotManager.OnSlotHover += Toggle_ItemInfoPanel;
-        _slotManager.OnSlotHover += Update_HoveringItemInfo;
+        _slotManager.OnSlotHover += _itemInfo.Toggle_ItemInfoPanel;
+        _slotManager.OnSlotHover += _itemInfo.Update_HoveringItemInfo;
 
         _slotManager.OnSlotSelect += Transfer_AllItems;
         _slotManager.OnSlotRightSelect += Transfer_Item;
 
-        _slotManager.OnSlotSelect += Toggle_ItemInfoPanel;
-        _slotManager.OnSlotSelect += Update_HoveringItemInfo;
+        _slotManager.OnSlotSelect += _itemInfo.Toggle_ItemInfoPanel;
+        _slotManager.OnSlotSelect += _itemInfo.Update_HoveringItemInfo;
 
         InGame_Manager manager = InGame_Manager.instance;
         ItemCursor itemCursor = manager.cursor.itemCursor;
@@ -178,45 +174,14 @@ public class Inventory_Manager : MonoBehaviour, IItemsSource, IItemsSourceRemove
     }
 
 
-    // Item Info
-    private void Toggle_ItemInfoPanel(ItemSlot hoveringItemSlot)
-    {
-        bool toggle = hoveringItemSlot != null && hoveringItemSlot.data != null;
-        _itemInfoPanel.gameObject.SetActive(toggle);
-
-        if (toggle == false) return;
-
-        Vector2 panelPos = _itemInfoPanel.transform.position;
-        panelPos.x = hoveringItemSlot.itemImage.transform.position.x;
-
-        _itemInfoPanel.transform.position = panelPos;
-    }
+    // Item Info for Item Add Update
     private void Toggle_ItemInfoPanel()
     {
-        Toggle_ItemInfoPanel(_slotManager.hoveringSlot);
-    }
-
-    private void Update_HoveringItemInfo(ItemSlot hoveringItemSlot)
-    {
-        if (hoveringItemSlot == null) return;
-
-        Item_ScrObj hoveringItem = hoveringItemSlot.data?.itemScrObj;
-        if (hoveringItem == null) return;
-
-        _itemImageSlot.Set_Data(new ItemData(hoveringItem, 1));
-        _itemImageSlot.Update_ItemImage();
-        _itemImageSlot.Update_AmountText();
-
-        int hoverAmount = hoveringItemSlot.data.amount;
-
-        _itemNameText.text = hoveringItem.itemName + " [" + hoverAmount + "/" + hoveringItem.maxAmount + "]";
-        _itemDescriptionText.text = hoveringItem.description;
-
-        LayoutRebuilder.ForceRebuildLayoutImmediate(_itemInfoPanel.rectTransform);
+        _itemInfo.Toggle_ItemInfoPanel(_slotManager.hoveringSlot);
     }
     private void Update_HoveringItemInfo()
     {
-        Update_HoveringItemInfo(_slotManager.hoveringSlot);
+        _itemInfo.Update_HoveringItemInfo(_slotManager.hoveringSlot);
     }
 
 

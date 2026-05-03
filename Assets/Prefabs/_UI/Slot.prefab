@@ -183,6 +183,7 @@ MonoBehaviour:
   _itemImage: {fileID: 8068391383958225083}
   _amountText: {fileID: 4575078906471977968}
   _durabilityBar: {fileID: 1934676786381883347}
+  _transparencyToggleValue: 0.5
 --- !u!1 &2214411757397067297
 GameObject:
   m_ObjectHideFlags: 0

@@ -84,6 +84,7 @@ public class InGameUI_Manager : MonoBehaviour
     private void Update_TimeText(int timeCount)
     {
         int rewardTargetTime = InGame_Manager.instance.time.data.rewardTargetTime;
+        
         _timeText.text = timeCount + " (" + "<sprite=0> " + rewardTargetTime + ")".ToString();
     }
     private void Update_TimeText()

@@ -14,6 +14,12 @@ public class EventPointer : MonoBehaviour, IPointerEnterHandler, IPointerExitHan
     public bool pointerDetected => _pointerDetected;
 
 
+    private void OnDisable()
+    {
+        OnPointerExit();
+    }
+
+
     // EventSystems
     public void OnPointerEnter(PointerEventData eventData)
     {
@@ -23,11 +29,16 @@ public class EventPointer : MonoBehaviour, IPointerEnterHandler, IPointerExitHan
         OnPointerState?.Invoke(_pointerDetected);
     }
 
-    public void OnPointerExit(PointerEventData eventData)
+    private void OnPointerExit()
     {
+        if (_pointerDetected == false) return;
         _pointerDetected = false;
-        
+
         OnExit?.Invoke();
         OnPointerState?.Invoke(_pointerDetected);
+    }
+    public void OnPointerExit(PointerEventData eventData)
+    {
+        OnPointerExit();
     }
 }

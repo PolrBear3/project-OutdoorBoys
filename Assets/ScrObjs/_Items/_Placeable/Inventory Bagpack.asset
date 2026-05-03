@@ -26,9 +26,10 @@ MonoBehaviour:
   - _position: {x: 0.25, y: 0.5}
     _rotationValue: 0
   _maxAmount: 1
-  _itemWeight: 0
+  _itemWeight: 1
   _triggerRange: 0
   _placeRestrictions:
   - {fileID: 11400000, guid: ce54e4e0d72924f0c9ece991976d94f8, type: 2}
   _selectRestrictions: []
+  _craftPlacedCheckDatas: []
   _itemIngredientDatas: []
