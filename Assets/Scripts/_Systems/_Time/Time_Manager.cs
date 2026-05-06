@@ -71,6 +71,11 @@ public class Time_Manager : MonoBehaviour, ISaveLoadable
         return _data.timeCount >= _nightPhaseTime;
     }
 
+    public bool TimeUpdateActions_Running()
+    {
+        return _timeUpdateActions.Count > 0;
+    }
+
 
     private void Run_TimeUpdates()
     {
@@ -92,7 +97,6 @@ public class Time_Manager : MonoBehaviour, ISaveLoadable
         
         OnRewardTargetTime?.Invoke();
     }
-
 
     public void Count_Time()
     {

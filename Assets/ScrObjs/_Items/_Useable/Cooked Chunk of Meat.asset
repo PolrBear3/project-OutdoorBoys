@@ -15,7 +15,7 @@ MonoBehaviour:
   _inventorySprite: {fileID: -1164706450, guid: bf7ece83f843c4c35977c02f8c40d92d, type: 3}
   _microSprite: {fileID: -699544037, guid: bf7ece83f843c4c35977c02f8c40d92d, type: 3}
   _itemName: Cooked Chunk of Meat
-  _description: Cooked chunk of meat from an animal
+  _description: cooked chunk of meat from an animal
   _itemType: 1
   _itemPrefab: {fileID: 5769858720269626403, guid: a5d11f869598944c4b6d19801e21651e, type: 3}
   _offsetData:
@@ -30,4 +30,5 @@ MonoBehaviour:
   _triggerRange: 0
   _placeRestrictions: []
   _selectRestrictions: []
+  _craftPlacedCheckDatas: []
   _itemIngredientDatas: []

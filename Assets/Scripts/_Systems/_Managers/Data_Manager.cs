@@ -4,8 +4,10 @@ using UnityEngine;
 
 public interface IDamageable
 {
+    bool IsDamageable();
+    
     /// <returns>
-    /// Remaining value after damage
+    /// Actual Inflicted Damage Value
     /// </returns>
     int InflictDamage(int damageValue);
 }

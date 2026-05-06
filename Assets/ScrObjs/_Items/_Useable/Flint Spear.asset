@@ -27,7 +27,7 @@ MonoBehaviour:
     _rotationValue: 0
   _maxAmount: 30
   _itemWeight: 1
-  _triggerRange: 2
+  _triggerRange: 1
   _placeRestrictions: []
   _selectRestrictions: []
   _craftPlacedCheckDatas: []

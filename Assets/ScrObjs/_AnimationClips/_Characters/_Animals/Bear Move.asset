@@ -15,8 +15,7 @@ MonoBehaviour:
   _clipName: Bear Move
   _loop: 1
   _clipSpriteDatas:
-  - _clipName: 
-    _clipSprite: {fileID: 1389460449, guid: cb01ed2ae3c714d4dba399cd0779d6f1, type: 3}
+  - _clipSprite: {fileID: 1389460449, guid: cb01ed2ae3c714d4dba399cd0779d6f1, type: 3}
     _durationTime: 0
     _sortingOrderUpdateValue: 0
     _alphaUpdateValue: 0

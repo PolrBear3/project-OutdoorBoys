@@ -16,9 +16,7 @@ public class Player_Movement : MonoBehaviour
 
 
     private Vector2 _inputDirection;
-
     private Vector2 _previousPosition;
-    private Vector2 _movingPosition;
 
     private bool _isMoving;
     public bool isMoving => _isMoving;
@@ -63,8 +61,12 @@ public class Player_Movement : MonoBehaviour
     private void Movement_Update()
     {
         if (_tileTracker.clampCoroutine != null) return;
+        if (InGame_Manager.instance.time.TimeUpdateActions_Running()) return;
 
-        if (InGame_Manager.instance.time.timeUpdateActions.Count > 0 || _controller.interaction.Has_Stamina() == false)
+        AnimationPlayer animPlayer = _controller.animationPlayer;
+        if (animPlayer.Animation_Playing(animPlayer.AnimationClip(1))) return;
+
+        if (_controller.interaction.Has_Stamina() == false)
         {
             _tileTracker.Clamp_toCurrentTile();
             return;
@@ -90,10 +92,15 @@ public class Player_Movement : MonoBehaviour
     private void MovementAnimation_Update()
     {
         AnimationPlayer animPlayer = _controller.animationPlayer;
+        if (animPlayer.Animation_Playing(animPlayer.AnimationClip(1))) return;
 
-        int animIndexNum = _isMoving ? 1 : 0;
-        if (animPlayer.Animation_Playing(animPlayer.AnimationClip(animIndexNum))) return;
+        if (_isMoving == false)
+        {
+            animPlayer.Stop();
+            return;
+        }
 
-        animPlayer.Play(animIndexNum);
+        if (animPlayer.Animation_Playing(animPlayer.AnimationClip(0))) return;
+        animPlayer.Play(0);
     }
 }

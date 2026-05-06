@@ -20,8 +20,11 @@ public class AnimalAction_Attack : AnimalAction
 
             for (int j = currentPrefabs.Count - 1; j >= 0; j--)
             {
-                if (currentPrefabs[j] == controller.gameObject) continue;
-                if (currentPrefabs[j].TryGetComponent(out IDamageable damageable) == false) continue;
+                GameObject prefab = currentPrefabs[j];
+
+                if (prefab == controller.gameObject) continue;
+                if (prefab.TryGetComponent(out Animal _)) continue;
+                if (prefab.TryGetComponent(out IDamageable damageable) == false) continue;
                 
                 damageable.InflictDamage(_attackDamage);
             }

@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using UnityEditor.Localization.Plugins.XLIFF.V12;
 using UnityEngine;
 
 public class TileTracker : MonoBehaviour
@@ -65,7 +66,18 @@ public class TileTracker : MonoBehaviour
         return peripheralTiles;
     }
 
+    public Tile TrackUpdate_CurrentTile(Tile targetTile)
+    {
+        if (targetTile == null) return _data?.CurrentTile();
 
+        _data.TrackTile(targetTile);
+        gameObject.transform.SetParent(targetTile.setPosition);
+
+        OnTrackUpdate?.Invoke();
+        OnTileTrackUpdate?.Invoke(targetTile);
+
+        return targetTile;
+    }
     public Tile TrackUpdate_CurrentTile()
     {
         Tile currentTile = _data?.CurrentTile();

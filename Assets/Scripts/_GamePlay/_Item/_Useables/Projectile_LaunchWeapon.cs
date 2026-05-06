@@ -13,6 +13,7 @@ public class Projectile_LaunchWeapon : MonoBehaviour
 
     [Space(20)]
     [SerializeField] private Projectile_LaunchWeaponType _weaponType;
+    [SerializeField][Range(0, 50)] private int _maxLaunchDistance;
     [SerializeField][Range(0, 10)] private int _damageValue;
 
     [Space(20)]
@@ -34,58 +35,100 @@ public class Projectile_LaunchWeapon : MonoBehaviour
 
 
     // Use
-    private void Launch(Tile useTile)
-    {
-        if (_projectileLauncher.launchCoroutine != null) return;
-
-        if (useTile == InGame_Manager.instance.player.movement.tileTracker.data.CurrentTile())
-        {
-            Damage(useTile);
-            return;
-        }
-        _projectileLauncher.Launch_Projectile(useTile, _useableItem.data.itemScrObj.inventorySprite);
-    }
-
-
-    private bool Obstacle_Blocked(Tile useTile)
+    private bool Obstacle_Blocked(Tile checkTile)
     {
         for (int i = 0; i < _obstacleItems.Length; i++)
         {
-            if (useTile.Placed_ItemCount(_obstacleItems[i]) > 0) return true;
+            if (checkTile.Placed_ItemCount(_obstacleItems[i]) > 0) return true;
+        }
+        return false;
+    }
+    private bool Has_Damageables(Tile checkTile)
+    {
+        List<GameObject> tilePrefabs = checkTile.All_CurrentPrefabs();
+
+        for (int i = 0; i < tilePrefabs.Count; i++)
+        {
+            if (tilePrefabs[i].TryGetComponent(out IDamageable damageable) == false) continue;
+            if (damageable.IsDamageable() == false) continue;
+
+            return true;
         }
         return false;
     }
 
-    private void Damage(Tile useTile)
+    public Tile Launch_DestinationTile(Tile directionalTile)
+    {
+        InGame_Manager manager = InGame_Manager.instance;
+        Tiles_Controller tilesController = manager.tilesController;
+
+        Tile startTile = manager.player.movement.tileTracker.data.CurrentTile();
+        if (startTile == null || directionalTile == null) return null;
+
+        Vector2 directionValue = Utility.Grid_Direction(startTile.transform.position, directionalTile.transform.position);
+        if (directionValue == Vector2.zero) return startTile;
+
+        Tile currentTile = tilesController.Current_Tile((Vector2)startTile.transform.position + directionValue);
+        if (currentTile == null) return startTile;
+
+        int distanceTraveled = 1;
+
+        while (currentTile != null)
+        {
+            if (Obstacle_Blocked(currentTile) || Has_Damageables(currentTile)) return currentTile;
+            if (distanceTraveled >= _maxLaunchDistance) return currentTile;
+
+            Tile nextTile = tilesController.Current_Tile((Vector2)currentTile.transform.position + directionValue);
+            if (nextTile == null) return currentTile;
+
+            currentTile = nextTile;
+            distanceTraveled++;
+        }
+        return startTile;
+    }
+    private void Launch(Tile useTile)
+    {
+        if (_projectileLauncher.launchCoroutine != null) return;
+
+        _projectileLauncher.Launch_Projectile(Launch_DestinationTile(useTile), _useableItem.data.itemScrObj.inventorySprite);
+    }
+    
+    private bool InflictDamage(Tile damageTile)
+    {
+        if (damageTile == null) return false;
+
+        Tile startTile = InGame_Manager.instance.player.movement.tileTracker.data.CurrentTile();
+        if (damageTile == startTile) return false;
+
+        bool damageInflicted = false;
+        List<GameObject> tilePrefabs = damageTile.All_CurrentPrefabs();
+
+        for (int i = 0; i < tilePrefabs.Count; i++)
+        {
+            if (Obstacle_Blocked(damageTile)) break;
+            if (tilePrefabs[i].TryGetComponent(out IDamageable damageable) == false) continue;
+            if (damageable.InflictDamage(_damageValue) <= 0) continue;
+
+            damageInflicted = true;
+            break;
+        }
+        return damageInflicted;
+    }
+    private void Damage(Tile damageTile)
     {
         InGame_Manager manager = InGame_Manager.instance;
         ItemCursor itemCursor = manager.cursor.itemCursor;
 
-        List<GameObject> tilePrefabs = useTile.All_CurrentPrefabs();
-        bool damageSuccessful = false;
+        bool damageInflicted = InflictDamage(damageTile);
 
-        for (int i = 0; i < tilePrefabs.Count; i++)
+        int useAmountDecrease = _weaponType == Projectile_LaunchWeaponType.consumable ? 1 : damageInflicted ? 1 : 0;
+        _useableItem.Update_UseAmount(useAmountDecrease);
+
+        if (_weaponType == Projectile_LaunchWeaponType.reuseable)
         {
-            if (Obstacle_Blocked(useTile)) break;
-            if (tilePrefabs[i].TryGetComponent(out IDamageable damageable) == false) continue;
-
-            damageable.InflictDamage(_damageValue);
-            damageSuccessful = true;
-
-            break;
+            damageTile.SetPreserve_Item(_useableItem.data);
+            itemCursor.Set_Data(null);
         }
-        
-        if (_weaponType == Projectile_LaunchWeaponType.consumable)
-        {
-            _useableItem.Update_UseAmount(1);
-            itemCursor.Update_Visuals();
-            return;
-        }
-        
-        _useableItem.Update_UseAmount(damageSuccessful ? 1 : 0);
-        useTile.SetPreserve_Item(_useableItem.data);
-
-        itemCursor.Set_Data(null);
         itemCursor.Update_Visuals();
     }
 }

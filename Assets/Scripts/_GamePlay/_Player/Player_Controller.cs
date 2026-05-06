@@ -64,10 +64,15 @@ public class Player_Controller : MonoBehaviour, ISaveLoadable, IDamageable
 
 
     // IDamageable
+    public bool IsDamageable()
+    {
+        return _data.health > 0;
+    }
+
     public int InflictDamage(int damageValue)
     {
         Update_Health(_data.health - damageValue);
-        _animationPlayer.Play(2);
+        _animationPlayer.Play(1);
 
         return _data.health;
     }
@@ -106,7 +111,9 @@ public class Player_Controller : MonoBehaviour, ISaveLoadable, IDamageable
         if (setTile == null) return;
 
         transform.position = setTile.Random_BoundPoint();
+        
         _movement.tileTracker.Set_Data(setTile);
+        _movement.tileTracker.TrackUpdate_CurrentTile(setTile);
     }
 
     private void Set_InventoryBagpack()

@@ -63,7 +63,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _animPlayer: {fileID: 3045259509940891077}
   _placeAnimationClip: {fileID: 11400000, guid: 3d7cc84e4f7b345aeb523baf0fb1bc08, type: 2}
-  _removeAnimationClip: {fileID: 0}
+  _removeAnimationClip: {fileID: 11400000, guid: 3d7cc84e4f7b345aeb523baf0fb1bc08, type: 2}
 --- !u!114 &4960320058556688228
 MonoBehaviour:
   m_ObjectHideFlags: 0

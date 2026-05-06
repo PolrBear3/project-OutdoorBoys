@@ -15,7 +15,7 @@ MonoBehaviour:
   _inventorySprite: {fileID: 656074368, guid: bf7ece83f843c4c35977c02f8c40d92d, type: 3}
   _microSprite: {fileID: -767490444, guid: bf7ece83f843c4c35977c02f8c40d92d, type: 3}
   _itemName: Animal Trap
-  _description: 
+  _description: animals that step on this take damage and cannot move for 1 turn
   _itemType: 0
   _itemPrefab: {fileID: 3637228250238346253, guid: 2bc4ff21ecd184446983d642708a9ab1, type: 3}
   _offsetData:
@@ -27,10 +27,11 @@ MonoBehaviour:
     _rotationValue: 0
   _maxAmount: 1
   _itemWeight: 3
-  _triggerRange: 1
+  _triggerRange: 0
   _placeRestrictions:
   - {fileID: 11400000, guid: ce54e4e0d72924f0c9ece991976d94f8, type: 2}
   _selectRestrictions: []
+  _craftPlacedCheckDatas: []
   _itemIngredientDatas:
   - _itemScrObj: {fileID: 11400000, guid: cea7459d8010d4a229cb42a2a5b65381, type: 2}
     _amount: 10

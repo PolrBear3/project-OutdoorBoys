@@ -54,44 +54,6 @@ public class Animals_Manager : MonoBehaviour
 
 
     // Spawn
-    private AnimalScrObj Spawning_Animal()
-    {
-        if (_spawnAnimals.Length <= 0) return null;
-
-        Tiles_Controller tilesController = InGame_Manager.instance.tilesController;
-
-        Dictionary<AnimalScrObj, int> spawnWeightDatas = new();
-        int totalWeight = 0;
-
-        for (int i = 0; i < _spawnAnimals.Length; i++)
-        {
-            AnimalScrObj spawnAnimal = _spawnAnimals[i];
-
-            TileScrObj[] spawnTiles = spawnAnimal.spawnTiles;
-            int spawnTileCount = 0;
-
-            foreach (TileScrObj tile in spawnTiles)
-            {
-                spawnTileCount += tilesController.Tile_Count(tile);
-            }
-
-            spawnWeightDatas.Add(spawnAnimal, spawnTileCount);
-            totalWeight += spawnTileCount;
-        }
-
-        int randValue = UnityEngine.Random.Range(0, totalWeight);
-        int cumulativeWeight = 0;
-
-        foreach (var data in spawnWeightDatas)
-        {
-            cumulativeWeight += data.Value;
-
-            if (randValue >= cumulativeWeight) continue;
-            return data.Key;
-        }
-        return _spawnAnimals[UnityEngine.Random.Range(0, _spawnAnimals.Length)];
-    }
-
     private void Spawn_Animal()
     {
         if (_spawnedAnimals.Count >= _maxSpawnCount) return;
@@ -103,7 +65,7 @@ public class Animals_Manager : MonoBehaviour
         }
         _currentSpawnCoolTime = 0;
 
-        AnimalScrObj animalToSpawn = Spawning_Animal();
+        AnimalScrObj animalToSpawn = _spawnAnimals[UnityEngine.Random.Range(0, _spawnAnimals.Length)];
         if (animalToSpawn == null) return;
 
         TileScrObj[] spawnTiles = animalToSpawn.spawnTiles;

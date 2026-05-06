@@ -1,9 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
-using UnityEngine.Events;
 
 public class Animal : MonoBehaviour, IDamageable
 {
@@ -51,25 +49,38 @@ public class Animal : MonoBehaviour, IDamageable
         TileTracker playerTracker = manager.player.movement.tileTracker;
 
         playerTracker.OnTrackUpdate -= Toggle_AlertIcon;
-        playerTracker.OnTileTrackUpdate -= Run_AgroActions;
         playerTracker.OnTileTrackUpdate -= Collect_TrailMark;
+        playerTracker.OnTileTrackUpdate -= Run_AgroActions;
 
         InGame_Manager.instance.time.UnRegister(TimeUpdateBus.AwakeUpdate, Run_TimeCountActions);
     }
 
 
     // IDamageable
+    public bool IsDamageable()
+    {
+        return _data.isOnSight && Deceased() == false;
+    }
+
     public int InflictDamage(int damageValue)
     {
-        if (_data.isOnSight == false) return _data.health;
+        if (_data.isOnSight == false) return 0;
 
-        _data.Update_Health(_data.health - damageValue);
-        Update_DeceasedState();
+        int actualDamageValue = Mathf.Min(damageValue, _data.health);
 
-        if (_data.health <= 0) return _data.health;
+        _data.Update_Health(_data.health - actualDamageValue);
+        _healthFillBar.Update_CurrentBarFill(_data.animalScrObj.maxHealth, _data.health);
 
+        if (_data.health <= 0)
+        {
+            Update_DeceasedState();
+            return actualDamageValue;
+        }
+
+        _animation.Play(2);
         Run_AgroActions(null);
-        return _data.health;
+
+        return actualDamageValue;
     }
 
 
@@ -89,8 +100,8 @@ public class Animal : MonoBehaviour, IDamageable
         TileTracker playerTracker = manager.player.movement.tileTracker;
 
         playerTracker.OnTrackUpdate += Toggle_AlertIcon;
-        playerTracker.OnTileTrackUpdate += Run_AgroActions;
         playerTracker.OnTileTrackUpdate += Collect_TrailMark;
+        playerTracker.OnTileTrackUpdate += Run_AgroActions;
 
         InGame_Manager.instance.time.Register(TimeUpdateBus.AwakeUpdate, Run_TimeCountActions);
     }
@@ -195,7 +206,7 @@ public class Animal : MonoBehaviour, IDamageable
         List<Tile> alertTiles = tilesController.Current_Tiles(currentTile, _data.animalScrObj.agroRange + 1);
 
         bool playerAlerted = alertTiles.Contains(manager.player.movement.tileTracker.data.CurrentTile());
-        _alertIcon.SetActive(toggle == false && _data.isOnSight && playerAlerted);
+        _alertIcon.SetActive(toggle == false && _data.isOnSight && _data.health > 0 && playerAlerted);
     }
     private void Toggle_AlertIcon(Tile hoveringTile)
     {
@@ -226,22 +237,52 @@ public class Animal : MonoBehaviour, IDamageable
 
 
     // State Updates
+    private Tile TrailMark_CollectTile()
+    {
+        Tile playerTile = InGame_Manager.instance.player.movement.tileTracker.data.CurrentTile();
+        List<Tile> rangeTiles = MoveDistance_RangeTiles(_data.animalScrObj.agroRange + 1);
+        
+        for (int i = rangeTiles.Count - 1; i >= 0 ; i--)
+        {
+            Tile checkTile = rangeTiles[i];
+            if (checkTile == playerTile)
+            {
+                rangeTiles.RemoveAt(i);
+                continue;
+            }
+
+            List<GameObject> prefabs = checkTile.All_CurrentPrefabs();
+            for (int j = 0; j < prefabs.Count; j++)
+            {
+                if (prefabs[j].TryGetComponent(out Animal animal) == false) continue;
+                if (animal.data.isOnSight) continue;
+
+                rangeTiles.RemoveAt(i);
+                break;
+            }
+        }
+        return rangeTiles[UnityEngine.Random.Range(0, rangeTiles.Count)];
+    }
+    
     private void Collect_TrailMark(Tile collectTile)
     {
-        if (_data.isOnSight) return;
-        if (collectTile != _movement.tileTracker.data.CurrentTile()) return;
+        bool isOnSight = _data.isOnSight;
+        if (isOnSight) return;
 
+        if (collectTile != _movement.tileTracker.data.CurrentTile()) return;
         _data.Decrease_TrailMarkCount(1);
 
-        Tile nextTile = MoveDistanceRange_RandomTile(true);
-        if (nextTile == null) return;
+        Tile updateTile = TrailMark_CollectTile();
+        if (updateTile == null) return;
 
-        bool isOnSight = _data.isOnSight;
+        transform.position = isOnSight ? updateTile.Random_BoundPoint() : updateTile.transform.position;
+        _movement.tileTracker.TrackUpdate_CurrentTile(updateTile);
 
-        transform.position = isOnSight ? nextTile.Random_BoundPoint() : nextTile.transform.position;
-        _movement.tileTracker.data.TrackTile(nextTile);
-
-        if (isOnSight == false) return;
+        Update_OnSight();
+    }
+    private void Update_OnSight()
+    {
+        if (_data.isOnSight == false) return;
 
         Update_Animation(false);
 
@@ -263,6 +304,8 @@ public class Animal : MonoBehaviour, IDamageable
     }
     private IEnumerator TimeCountActions_Update()
     {
+        while(_animation.Animation_Playing()) yield return null;
+
         foreach (AnimalAction animalAction in _onTimeCountActions)
         {
             animalAction.Run_Action();
@@ -270,8 +313,8 @@ public class Animal : MonoBehaviour, IDamageable
         }
 
         Update_MovementRangeTiles();
-        InGame_Manager.instance.time.timeUpdateActions.Remove(this);
 
+        InGame_Manager.instance.time.timeUpdateActions.Remove(this);
         _runActionCoroutine = null;
     }
 
@@ -287,6 +330,8 @@ public class Animal : MonoBehaviour, IDamageable
     }
     private IEnumerator AgroActions_Update()
     {
+        while (_animation.Animation_Playing()) yield return null;
+
         foreach (AnimalAction animalAction in _onAgroActions)
         {
             animalAction.Run_Action();
@@ -294,17 +339,37 @@ public class Animal : MonoBehaviour, IDamageable
         }
 
         Update_MovementRangeTiles();
-        InGame_Manager.instance.time.timeUpdateActions.Remove(this);
 
+        InGame_Manager.instance.time.timeUpdateActions.Remove(this);
         _runActionCoroutine = null;
     }
 
     public void Update_DeceasedState()
     {
+        if (_data.health > 0) return;
 
+        _healthFillBar.Refresh_CurrentFillBar();
+        _tileIndicator.Clear_CurrentIndicators();
+        Toggle_AlertIcon(false);
+
+        InGame_Manager.instance.time.timeUpdateActions.Add(this);
+        _runActionCoroutine = StartCoroutine(DeceasedState_Update());
     }
     private IEnumerator DeceasedState_Update()
     {
-        yield break;
+        _animation.Play(_deceasedAnimationClip);
+        while (_animation.Animation_Playing(_deceasedAnimationClip)) yield return null;
+
+        Tile currentTile = _movement.tileTracker.data.CurrentTile();
+        foreach (ItemData itemData in _deceasedDropItems)
+        {
+            currentTile.Set_Item(new(itemData.itemScrObj, itemData.amount));
+        }
+
+        InGame_Manager.instance.time.timeUpdateActions.Remove(this);
+        _runActionCoroutine = null;
+
+        AnimalManager().spawnedAnimals.Remove(this);
+        Destroy(gameObject);
     }
 }

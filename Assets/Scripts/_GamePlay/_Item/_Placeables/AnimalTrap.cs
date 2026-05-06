@@ -16,12 +16,18 @@ public class AnimalTrap : MonoBehaviour
     // MonoBehaviour
     private void Awake()
     {
-        InGame_Manager.instance.time.Register(TimeUpdateBus.StartUpdate, Activate);
+        InGame_Manager manager = InGame_Manager.instance;
+
+        manager.time.Register(TimeUpdateBus.StartUpdate, Activate);
+        manager.player.movement.tileTracker.OnTrackUpdate += Activate;
     }
 
     private void OnDestroy()
     {
-        InGame_Manager.instance.time.UnRegister(TimeUpdateBus.StartUpdate, Activate);
+        InGame_Manager manager = InGame_Manager.instance;
+
+        manager.time.UnRegister(TimeUpdateBus.StartUpdate, Activate);
+        manager.player.movement.tileTracker.OnTrackUpdate -= Activate;
     }
 
 
@@ -39,9 +45,11 @@ public class AnimalTrap : MonoBehaviour
             for (int j = 0; j < currentAnimals.Count; j++)
             {
                 Animal currentAnimal = currentAnimals[j];
-                if (currentAnimal.Deceased()) continue;
 
+                if (currentAnimal.Deceased()) continue;
                 if (currentAnimal.data.animalScrObj != _activatePriorities[i]) continue;
+                if (currentAnimal.movement.tileTracker.data.CurrentTile() != _placeableItem.currentTile) continue;
+
                 return currentAnimal;
             }
         }
@@ -54,19 +62,14 @@ public class AnimalTrap : MonoBehaviour
     }
     private IEnumerator Activate_Delay()
     {
-        /*
-        MovementControllers_Manager movementsManager = InGame_Manager.instance.movements;
-        while (movementsManager.AllMovements_Complete() == false) yield return null;
-        */
+        Time_Manager time = InGame_Manager.instance.time;
+        while (time.TimeUpdateActions_Running()) yield return null;
 
         Animal activateAnimal = Activate_TargetAnimal();
         if (activateAnimal == null || activateAnimal.data.isOnSight == false) yield break;
 
         if (activateAnimal.TryGetComponent(out IDamageable damageable) == false) yield break;
         damageable.InflictDamage(_damage);
-
-        // Movement_Controller movement = activateAnimal.movement;
-        // activateAnimal.movement.Update_CurrentState(MovementState.stunned, movement.CurrentState_Count(MovementState.stunned) + 1);
 
         _placeableItem.AnimationDelay_Remove();
     }

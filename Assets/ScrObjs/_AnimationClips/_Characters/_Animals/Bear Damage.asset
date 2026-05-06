@@ -10,9 +10,16 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 8f9c661a3761e4420b2248af7d2f7997, type: 3}
-  m_Name: Player Idle
+  m_Name: Bear Damage
   m_EditorClassIdentifier: 
-  _clipName: Player Idle
-  _defaultSprite: {fileID: 2058226474, guid: cb01ed2ae3c714d4dba399cd0779d6f1, type: 3}
-  _loop: 1
-  _clipSpriteDatas: []
+  _clipName: Bear Move
+  _loop: 0
+  _clipSpriteDatas:
+  - _clipSprite: {fileID: -1981309997, guid: cb01ed2ae3c714d4dba399cd0779d6f1, type: 3}
+    _durationTime: 0.25
+    _sortingOrderUpdateValue: 0
+    _alphaUpdateValue: 0
+    _alphaDurationTime: 0
+    _offSetPosition: {x: 0, y: 0}
+    _rotationValue: 0
+    _transformDurationTime: 0
