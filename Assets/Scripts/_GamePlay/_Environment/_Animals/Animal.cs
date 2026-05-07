@@ -164,7 +164,7 @@ public class Animal : MonoBehaviour, IDamageable
     {
         List<Tile> rangedTiles = MoveDistance_RangeTiles();
         rangedTiles.Remove(_movement.tileTracker.data.CurrentTile());
-        
+
         if (excludePlayerTile) rangedTiles.Remove(InGame_Manager.instance.player.movement.tileTracker.data.CurrentTile());
         return rangedTiles[UnityEngine.Random.Range(0, rangedTiles.Count)];
     }
@@ -224,7 +224,7 @@ public class Animal : MonoBehaviour, IDamageable
 
         foreach (Tile tile in movementTiles)
         {
-            if (tile == currentTile) continue;   
+            if (tile == currentTile) continue;
             _tileIndicator.Set_Indicator(tile);
         }
         Toggle_MovementRangeTiles(InGame_Manager.instance.cursor.pointingTile);
@@ -241,8 +241,8 @@ public class Animal : MonoBehaviour, IDamageable
     {
         Tile playerTile = InGame_Manager.instance.player.movement.tileTracker.data.CurrentTile();
         List<Tile> rangeTiles = MoveDistance_RangeTiles(_data.animalScrObj.agroRange + 1);
-        
-        for (int i = rangeTiles.Count - 1; i >= 0 ; i--)
+
+        for (int i = rangeTiles.Count - 1; i >= 0; i--)
         {
             Tile checkTile = rangeTiles[i];
             if (checkTile == playerTile)
@@ -263,7 +263,7 @@ public class Animal : MonoBehaviour, IDamageable
         }
         return rangeTiles[UnityEngine.Random.Range(0, rangeTiles.Count)];
     }
-    
+
     private void Collect_TrailMark(Tile collectTile)
     {
         bool isOnSight = _data.isOnSight;
@@ -304,7 +304,7 @@ public class Animal : MonoBehaviour, IDamageable
     }
     private IEnumerator TimeCountActions_Update()
     {
-        while(_animation.Animation_Playing()) yield return null;
+        while (_animation.Animation_Playing()) yield return null;
 
         foreach (AnimalAction animalAction in _onTimeCountActions)
         {

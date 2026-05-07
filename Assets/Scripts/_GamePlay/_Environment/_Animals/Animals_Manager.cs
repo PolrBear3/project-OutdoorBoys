@@ -54,6 +54,40 @@ public class Animals_Manager : MonoBehaviour
 
 
     // Spawn
+    private Tile AnimalSpawn_Tile(AnimalScrObj spawnAnimal)
+    {
+        TileScrObj[] spawnTiles = spawnAnimal.spawnTiles;
+        TileScrObj randSpawnTile = spawnTiles[UnityEngine.Random.Range(0, spawnTiles.Length)];
+
+        InGame_Manager manager = InGame_Manager.instance;
+
+        List<Tile> sortedTiles = new(manager.tilesController.Current_Tiles(randSpawnTile));
+        Tile playerTile = manager.player.movement.tileTracker.data.CurrentTile();
+
+        for (int i = sortedTiles.Count - 1; i >= 0; i--)
+        {
+            Tile sortedTile = sortedTiles[i];
+            if (sortedTile == playerTile)
+            {
+                sortedTiles.RemoveAt(i);
+                continue;
+            }
+
+            List<GameObject> prefabs = sortedTile.All_CurrentPrefabs();
+            for (int j = 0; j < prefabs.Count; j++)
+            {
+                if (prefabs[j].TryGetComponent(out Animal animal) == false) continue;
+                if (animal.data.isOnSight) continue;
+
+                sortedTiles.RemoveAt(i);
+                break;
+            }
+        }
+
+        if (sortedTiles.Count <= 0) return null;
+        return sortedTiles[UnityEngine.Random.Range(0, sortedTiles.Count)];
+    }
+
     private void Spawn_Animal()
     {
         if (_spawnedAnimals.Count >= _maxSpawnCount) return;
@@ -68,21 +102,13 @@ public class Animals_Manager : MonoBehaviour
         AnimalScrObj animalToSpawn = _spawnAnimals[UnityEngine.Random.Range(0, _spawnAnimals.Length)];
         if (animalToSpawn == null) return;
 
-        TileScrObj[] spawnTiles = animalToSpawn.spawnTiles;
-        TileScrObj randSpawnTile = spawnTiles[UnityEngine.Random.Range(0, spawnTiles.Length)];
+        Tile spawnTile = AnimalSpawn_Tile(animalToSpawn);
+        if (spawnTile == null) return;
 
-        GameObject animalPrefab = Instantiate(animalToSpawn.prefab, transform);
+        GameObject animalPrefab = Instantiate(animalToSpawn.prefab);
 
         Animal spawnedAnimal = animalPrefab.GetComponent<Animal>();
         _spawnedAnimals.Add(spawnedAnimal);
-
-        InGame_Manager manager = InGame_Manager.instance;
-
-        List<Tile> sortedTiles = manager.tilesController.Current_Tiles(randSpawnTile);
-        sortedTiles.Remove(manager.player.movement.tileTracker.data.CurrentTile());
-
-        Tile spawnTile = sortedTiles[UnityEngine.Random.Range(0, sortedTiles.Count)];
-        if (spawnTile == null) return;
 
         spawnedAnimal.transform.position = spawnTile.transform.position;
         spawnedAnimal.movement.tileTracker.Set_Data(spawnTile);

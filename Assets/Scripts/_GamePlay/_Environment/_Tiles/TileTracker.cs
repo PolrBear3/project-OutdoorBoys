@@ -23,7 +23,9 @@ public class TileTracker : MonoBehaviour
     public void Set_Data(Tile startingCurrentTile)
     {
         if (startingCurrentTile == null) return;
+
         _data = new(startingCurrentTile);
+        gameObject.transform.SetParent(startingCurrentTile.setPosition);
     }
 
 
@@ -126,10 +128,10 @@ public class TileTracker : MonoBehaviour
     {
         Clamp_toTile(data.CurrentTile());
     }
-    
+
     private IEnumerator ClampInside_StateUpdate()
     {
         yield return new WaitForSeconds(_clampduration);
         _clampCoroutine = null;
     }
-} 
+}
