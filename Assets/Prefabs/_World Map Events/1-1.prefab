@@ -85,7 +85,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _spawnAnimals:
   - {fileID: 11400000, guid: 3865eb48a70924336bd951d0826621c7, type: 2}
-  - {fileID: 11400000, guid: b90a3b7935e344a6dbde6f8144181129, type: 2}
-  - {fileID: 11400000, guid: c78b5f27455724331954b6c0efe32af4, type: 2}
   _maxSpawnCount: 3
   _spawnCoolTime: 1

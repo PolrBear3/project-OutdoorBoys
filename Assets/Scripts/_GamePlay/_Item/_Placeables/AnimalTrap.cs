@@ -18,16 +18,16 @@ public class AnimalTrap : MonoBehaviour
     {
         InGame_Manager manager = InGame_Manager.instance;
 
-        manager.time.Register(TimeUpdateBus.StartUpdate, Activate);
-        manager.player.movement.tileTracker.OnTrackUpdate += Activate;
+        manager.time.Register(ActionUpdateBus.StartUpdate, Activate);
+        manager.player.movement.tileTracker.Register(ActionUpdateBus.StartUpdate, Activate);
     }
 
     private void OnDestroy()
     {
         InGame_Manager manager = InGame_Manager.instance;
 
-        manager.time.UnRegister(TimeUpdateBus.StartUpdate, Activate);
-        manager.player.movement.tileTracker.OnTrackUpdate -= Activate;
+        manager.time.UnRegister(ActionUpdateBus.StartUpdate, Activate);
+        manager.player.movement.tileTracker.UnRegister(ActionUpdateBus.StartUpdate, Activate);
     }
 
 
@@ -60,6 +60,11 @@ public class AnimalTrap : MonoBehaviour
     {
         StartCoroutine(Activate_Delay());
     }
+    private void Activate(Tile _)
+    {
+        Activate();
+    }
+
     private IEnumerator Activate_Delay()
     {
         Time_Manager time = InGame_Manager.instance.time;

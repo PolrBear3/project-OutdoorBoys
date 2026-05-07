@@ -72,16 +72,16 @@ public class ItemCrafting_Manager : MonoBehaviour
 
         TileTracker playerTileTracker = manager.player.movement.tileTracker;
 
-        playerTileTracker.OnTrackUpdate -= Update_CraftableItems;
-        playerTileTracker.OnTrackUpdate -= Update_CraftItemsPreview;
+        playerTileTracker.UnRegister(ActionUpdateBus.AwakeUpdate, Update_CraftableItems);
+        playerTileTracker.UnRegister(ActionUpdateBus.AwakeUpdate, Update_CraftItemsPreview);
 
-        playerTileTracker.OnTrackUpdate -= Toggle_ItemInfoPanel;
+        playerTileTracker.UnRegister(ActionUpdateBus.AwakeUpdate, Toggle_ItemInfoPanel);
 
         Time_Manager time = manager.time;
 
-        time.UnRegister(TimeUpdateBus.StartUpdate, Update_CraftableItems);
-        time.UnRegister(TimeUpdateBus.StartUpdate, Update_CraftItemsPreview);
-        time.UnRegister(TimeUpdateBus.StartUpdate, Toggle_ItemInfoPanel);
+        time.UnRegister(ActionUpdateBus.StartUpdate, Update_CraftableItems);
+        time.UnRegister(ActionUpdateBus.StartUpdate, Update_CraftItemsPreview);
+        time.UnRegister(ActionUpdateBus.StartUpdate, Toggle_ItemInfoPanel);
 
         EventBus_Manager.UnRegister(EventBus.SubLoad, Update_CraftableItems);
         EventBus_Manager.UnRegister(EventBus.SubLoad, Update_CraftItemsPreview);
@@ -127,16 +127,16 @@ public class ItemCrafting_Manager : MonoBehaviour
 
         TileTracker playerTileTracker = manager.player.movement.tileTracker;
 
-        playerTileTracker.OnTrackUpdate += Update_CraftableItems;
-        playerTileTracker.OnTrackUpdate += Update_CraftItemsPreview;
+        playerTileTracker.Register(ActionUpdateBus.AwakeUpdate, Update_CraftableItems);
+        playerTileTracker.Register(ActionUpdateBus.AwakeUpdate, Update_CraftItemsPreview);
 
-        playerTileTracker.OnTrackUpdate += Toggle_ItemInfoPanel;
+        playerTileTracker.Register(ActionUpdateBus.AwakeUpdate, Toggle_ItemInfoPanel);
 
         Time_Manager time = manager.time;
 
-        time.Register(TimeUpdateBus.StartUpdate, Update_CraftableItems);
-        time.Register(TimeUpdateBus.StartUpdate, Update_CraftItemsPreview);
-        time.Register(TimeUpdateBus.StartUpdate, Toggle_ItemInfoPanel);
+        time.Register(ActionUpdateBus.StartUpdate, Update_CraftableItems);
+        time.Register(ActionUpdateBus.StartUpdate, Update_CraftItemsPreview);
+        time.Register(ActionUpdateBus.StartUpdate, Toggle_ItemInfoPanel);
 
         EventBus_Manager.Register(EventBus.SubLoad, Update_CraftableItems);
         EventBus_Manager.Register(EventBus.SubLoad, Update_CraftItemsPreview);
@@ -198,6 +198,10 @@ public class ItemCrafting_Manager : MonoBehaviour
             if (previewIndex >= previewDatas.Count) return;
         }
     }
+    private void Update_CraftItemsPreview(Tile _)
+    {
+        Update_CraftItemsPreview();
+    }
     private void Update_CraftItemsPreview(ItemSlot _)
     {
         Update_CraftItemsPreview();
@@ -218,14 +222,12 @@ public class ItemCrafting_Manager : MonoBehaviour
         return _itemsSourceManager.ItemDatas(itemsSources);
     }
 
-    public void Update_CraftableItems()
+    private void Update_CraftableItems(Tile playerTile)
     {
         Item_ScrObj[] allItems = Data_Manager.instance.allItems;
 
         List<ItemData> currentItemDatas = Ingredient_ItemDatas();
         List<ItemData> craftAvailableItemDatas = new();
-
-        Tile playerTile = InGame_Manager.instance.player.movement.tileTracker.data.CurrentTile();
 
         for (int i = 0; i < allItems.Length; i++)
         {
@@ -267,6 +269,10 @@ public class ItemCrafting_Manager : MonoBehaviour
             slot.Update_AmountText();
             slot.Toggle_Transparency(false);
         }
+    }
+    private void Update_CraftableItems()
+    {
+        Update_CraftableItems(InGame_Manager.instance.player.movement.tileTracker.data.CurrentTile());
     }
     private void Update_CraftableItems(ItemSlot _)
     {
@@ -358,6 +364,10 @@ public class ItemCrafting_Manager : MonoBehaviour
             slot.Update_ItemImage();
             slot.Update_AmountText();
         }
+    }
+    private void Toggle_ItemInfoPanel(Tile _)
+    {
+        Toggle_ItemInfoPanel(_slotManager.hoveringSlot);
     }
     private void Toggle_ItemInfoPanel()
     {

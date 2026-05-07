@@ -14,7 +14,7 @@ public class Tarp : MonoBehaviour
     // MonoBehaviour
     private void Awake()
     {
-        InGame_Manager.instance.player.movement.tileTracker.OnTileTrackUpdate += Update_Transparency;
+        InGame_Manager.instance.player.movement.tileTracker.Register(ActionUpdateBus.AwakeUpdate, Update_Transparency);
     }
 
     private void Start()
@@ -24,7 +24,7 @@ public class Tarp : MonoBehaviour
 
     private void OnDestroy()
     {
-        InGame_Manager.instance.player.movement.tileTracker.OnTileTrackUpdate -= Update_Transparency;
+        InGame_Manager.instance.player.movement.tileTracker.UnRegister(ActionUpdateBus.AwakeUpdate, Update_Transparency);
     }
 
 

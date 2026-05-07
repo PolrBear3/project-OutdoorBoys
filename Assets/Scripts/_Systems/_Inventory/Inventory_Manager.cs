@@ -54,7 +54,7 @@ public class Inventory_Manager : MonoBehaviour, IItemsSource, IItemsSourceRemove
         InGame_Manager manager = InGame_Manager.instance;
         ItemCursor itemCursor = manager.cursor.itemCursor;
 
-        manager.player.movement.tileTracker.OnTrackUpdate -= Toggle_Update;
+        manager.player.movement.tileTracker.UnRegister(ActionUpdateBus.AwakeUpdate, Toggle_Update);
         manager.tilesController.OnTileSelect -= Toggle_Update;
 
         itemCursor.OnSetData -= Toggle_Update;
@@ -146,7 +146,7 @@ public class Inventory_Manager : MonoBehaviour, IItemsSource, IItemsSourceRemove
         InGame_Manager manager = InGame_Manager.instance;
         ItemCursor itemCursor = manager.cursor.itemCursor;
 
-        manager.player.movement.tileTracker.OnTrackUpdate += Toggle_Update;
+        manager.player.movement.tileTracker.Register(ActionUpdateBus.AwakeUpdate, Toggle_Update);
         manager.tilesController.OnTileSelect += Toggle_Update;
 
         itemCursor.OnSetData += Toggle_Update;

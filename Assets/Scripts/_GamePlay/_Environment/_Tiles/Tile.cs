@@ -17,6 +17,8 @@ public class Tile : MonoBehaviour
     [SerializeField] private Transform _setPosition;
     public Transform setPosition => _setPosition;
 
+    [SerializeField] private SpriteRenderer _boundPointRenderer;
+
     [Space(20)]
     [SerializeField] private Item_ScrObj _useableItemDrop;
     [SerializeField][Range(0, 10)] private int _maxItemPlaceCount;
@@ -85,7 +87,7 @@ public class Tile : MonoBehaviour
 
     public Vector2 Random_BoundPoint()
     {
-        Bounds bounds = _tileSpriteRenderer.bounds;
+        Bounds bounds = _boundPointRenderer.bounds;
 
         float randomX = UnityEngine.Random.Range(bounds.min.x, bounds.max.x);
         float randomY = UnityEngine.Random.Range(bounds.min.y, bounds.max.y);

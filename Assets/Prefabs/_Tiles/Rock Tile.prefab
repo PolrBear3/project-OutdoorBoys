@@ -126,6 +126,7 @@ MonoBehaviour:
   _selectorAnimPlayer: {fileID: 894385741868623628}
   _tileSpriteRenderer: {fileID: 8526343298762341458}
   _setPosition: {fileID: 7971817962077731149}
+  _boundPointRenderer: {fileID: 3872212962410569136}
   _useableItemDrop: {fileID: 11400000, guid: 38f3d32e30dd248c99301e476ece34c4, type: 2}
   _maxItemPlaceCount: 2
 --- !u!1 &8297920845869203048
@@ -272,6 +273,11 @@ PrefabInstance:
 --- !u!4 &2490292674126378336 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 6917075339042576539, guid: 82d596386d4b0418d98992122df261ff, type: 3}
+  m_PrefabInstance: {fileID: 9039050600409476603}
+  m_PrefabAsset: {fileID: 0}
+--- !u!212 &3872212962410569136 stripped
+SpriteRenderer:
+  m_CorrespondingSourceObject: {fileID: 5246119127819825227, guid: 82d596386d4b0418d98992122df261ff, type: 3}
   m_PrefabInstance: {fileID: 9039050600409476603}
   m_PrefabAsset: {fileID: 0}
 --- !u!4 &7971817962077731149 stripped

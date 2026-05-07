@@ -30,8 +30,8 @@ public class Player_Interaction : MonoBehaviour, IItemsSource, IItemsSourceRemov
 
     private void OnDestroy()
     {
-        _controller.movement.tileTracker.OnTrackUpdate -= InteractUpdate_Stamina;
-        InGame_Manager.instance.time.UnRegister(TimeUpdateBus.AwakeUpdate, MaxUpdate_Stamina);
+        _controller.movement.tileTracker.UnRegister(ActionUpdateBus.AwakeUpdate, InteractUpdate_Stamina);
+        InGame_Manager.instance.time.UnRegister(ActionUpdateBus.AwakeUpdate, MaxUpdate_Stamina);
     }
 
 
@@ -105,8 +105,8 @@ public class Player_Interaction : MonoBehaviour, IItemsSource, IItemsSourceRemov
     // Data
     private void Set_Data()
     {
-        _controller.movement.tileTracker.OnTrackUpdate += InteractUpdate_Stamina;
-        InGame_Manager.instance.time.Register(TimeUpdateBus.AwakeUpdate, MaxUpdate_Stamina);
+        _controller.movement.tileTracker.Register(ActionUpdateBus.AwakeUpdate, InteractUpdate_Stamina);
+        InGame_Manager.instance.time.Register(ActionUpdateBus.AwakeUpdate, MaxUpdate_Stamina);
     }
 
     public void Load_ItemPrefab(GameObject itemPrefab)
@@ -157,7 +157,11 @@ public class Player_Interaction : MonoBehaviour, IItemsSource, IItemsSourceRemov
     {
         _controller.Update_CurrentStamina(_controller.data.currentStamina - Mathf.Max(1, Current_StaminaValue()));
     }
-    
+    private void InteractUpdate_Stamina(Tile _)
+    {
+        InteractUpdate_Stamina();
+    }
+
     private void MaxUpdate_Stamina()
     {
         _controller.Update_CurrentStamina(_controller.data.maxStamina);

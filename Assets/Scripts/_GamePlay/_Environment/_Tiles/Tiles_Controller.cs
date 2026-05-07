@@ -42,7 +42,7 @@ public class Tiles_Controller : MonoBehaviour, IItemsSource
         InGame_Manager manager = InGame_Manager.instance;
 
         manager.cursor.OnTilePointRangeUpdate -= Refresh_Toggles;
-        manager.player.movement.tileTracker.OnTrackUpdate -= Refresh_Toggles;
+        manager.player.movement.tileTracker.UnRegister(ActionUpdateBus.AwakeUpdate, Refresh_Toggles);
     }
 
 
@@ -73,7 +73,7 @@ public class Tiles_Controller : MonoBehaviour, IItemsSource
         InGame_Manager manager = InGame_Manager.instance;
 
         manager.cursor.OnTilePointRangeUpdate += Refresh_Toggles;
-        manager.player.movement.tileTracker.OnTrackUpdate += Refresh_Toggles;
+        manager.player.movement.tileTracker.Register(ActionUpdateBus.AwakeUpdate, Refresh_Toggles);
     }
 
 
@@ -288,6 +288,10 @@ public class Tiles_Controller : MonoBehaviour, IItemsSource
             tile.Toggle_SelectPreview(Tile_Pointable(tile));
             tile.Toggle_SelectReady();
         }
+    }
+    private void Refresh_Toggles(Tile _)
+    {
+        Refresh_Toggles();
     }
 
 

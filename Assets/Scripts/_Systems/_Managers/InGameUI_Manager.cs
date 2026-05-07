@@ -28,7 +28,7 @@ public class InGameUI_Manager : MonoBehaviour
         InGame_Manager manager = InGame_Manager.instance;
         Time_Manager time = manager.time;
 
-        time.UnRegister(TimeUpdateBus.AwakeUpdate, Update_TimeText);
+        time.UnRegister(ActionUpdateBus.AwakeUpdate, Update_TimeText);
         time.OnDayCount -= Update_DayText;
 
         Player_Controller player = manager.player;
@@ -55,7 +55,7 @@ public class InGameUI_Manager : MonoBehaviour
         TimeData timeData = time.data;
 
         Update_TimeText(timeData.timeCount);
-        time.Register(TimeUpdateBus.AwakeUpdate, Update_TimeText);
+        time.Register(ActionUpdateBus.AwakeUpdate, Update_TimeText);
 
         Update_DayText(timeData.dayCount);
         time.OnDayCount += Update_DayText;

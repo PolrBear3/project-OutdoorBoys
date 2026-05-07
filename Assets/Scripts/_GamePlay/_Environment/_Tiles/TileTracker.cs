@@ -12,8 +12,7 @@ public class TileTracker : MonoBehaviour
     private TileTrackerData _data;
     public TileTrackerData data => _data;
 
-    public Action OnTrackUpdate;
-    public Action<Tile> OnTileTrackUpdate;
+    private Dictionary<ActionUpdateBus, Action<Tile>> _trackUpdateBus = new();
 
     private Coroutine _clampCoroutine;
     public Coroutine clampCoroutine => _clampCoroutine;
@@ -26,6 +25,33 @@ public class TileTracker : MonoBehaviour
 
         _data = new(startingCurrentTile);
         gameObject.transform.SetParent(startingCurrentTile.setPosition);
+    }
+
+
+    // Update Bus
+    public void Register(ActionUpdateBus updateBus, Action<Tile> targetAction)
+    {
+        if (_trackUpdateBus.ContainsKey(updateBus) == false)
+        {
+            _trackUpdateBus.Add(updateBus, targetAction);
+            return;
+        }
+        _trackUpdateBus[updateBus] += targetAction;
+    }
+    public void UnRegister(ActionUpdateBus updateBus, Action<Tile> targetAction)
+    {
+        _trackUpdateBus[updateBus] -= targetAction;
+    }
+
+    private void RunRegistered_UpdateBus(Tile updateTile)
+    {
+        for (int i = 0; i < _trackUpdateBus.Count; i++)
+        {
+            ActionUpdateBus runBus = (ActionUpdateBus)i;
+
+            if (_trackUpdateBus.TryGetValue(runBus, out Action<Tile> action) == false) continue;
+            action?.Invoke(updateTile);
+        }
     }
 
 
@@ -75,9 +101,7 @@ public class TileTracker : MonoBehaviour
         _data.TrackTile(targetTile);
         gameObject.transform.SetParent(targetTile.setPosition);
 
-        OnTrackUpdate?.Invoke();
-        OnTileTrackUpdate?.Invoke(targetTile);
-
+        RunRegistered_UpdateBus(targetTile);
         return targetTile;
     }
     public Tile TrackUpdate_CurrentTile()
@@ -109,9 +133,7 @@ public class TileTracker : MonoBehaviour
         _data.TrackTile(closestTile);
         gameObject.transform.SetParent(closestTile.setPosition);
 
-        OnTrackUpdate?.Invoke();
-        OnTileTrackUpdate?.Invoke(closestTile);
-
+        RunRegistered_UpdateBus(closestTile);
         return closestTile;
     }
 

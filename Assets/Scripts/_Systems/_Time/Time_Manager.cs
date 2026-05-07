@@ -4,13 +4,6 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 
-public enum TimeUpdateBus
-{
-    AwakeUpdate = 0,
-    StartUpdate = 1,
-    SubUpdate = 2
-}
-
 public class Time_Manager : MonoBehaviour, ISaveLoadable
 {
     [Space(20)]
@@ -24,7 +17,7 @@ public class Time_Manager : MonoBehaviour, ISaveLoadable
     private TimeData _data;
     public TimeData data => _data;
 
-    private Dictionary<TimeUpdateBus, Action> _timeUpdateBuses = new();
+    private Dictionary<ActionUpdateBus, Action> _timeUpdateBuses = new();
 
     private HashSet<object> _timeUpdateActions = new();
     public HashSet<object> timeUpdateActions => _timeUpdateActions;
@@ -60,6 +53,36 @@ public class Time_Manager : MonoBehaviour, ISaveLoadable
     }
 
 
+    // Time Update Bus
+    public void Register(ActionUpdateBus updateBus, Action targetAction)
+    {
+        if (_timeUpdateBuses.ContainsKey(updateBus) == false)
+        {
+            _timeUpdateBuses.Add(updateBus, targetAction);
+            return;
+        }
+        _timeUpdateBuses[updateBus] += targetAction;
+    }
+    public void UnRegister(ActionUpdateBus updateBus, Action targetAction)
+    {
+        _timeUpdateBuses[updateBus] -= targetAction;
+    }
+
+    private void Run_TimeUpdates()
+    {
+        for (int i = 0; i < _timeUpdateBuses.Count; i++)
+        {
+            ActionUpdateBus runBus = (ActionUpdateBus)i;
+
+            if (_timeUpdateBuses.TryGetValue(runBus, out Action action) == false) continue;
+            action?.Invoke();
+        }
+
+        if (_data.timeCount != _nightPhaseTime) return;
+        OnNightPhaseTime?.Invoke();
+    }
+
+
     // Data
     private void Set_Data()
     {
@@ -71,25 +94,12 @@ public class Time_Manager : MonoBehaviour, ISaveLoadable
         return _data.timeCount >= _nightPhaseTime;
     }
 
+
     public bool TimeUpdateActions_Running()
     {
         return _timeUpdateActions.Count > 0;
     }
 
-
-    private void Run_TimeUpdates()
-    {
-        for (int i = 0; i < _timeUpdateBuses.Count; i++)
-        {
-            TimeUpdateBus runBus = (TimeUpdateBus)i;
-
-            if (_timeUpdateBuses.TryGetValue(runBus, out Action action) == false) continue;
-            action?.Invoke();
-        }
-
-        if (_data.timeCount != _nightPhaseTime) return;
-        OnNightPhaseTime?.Invoke();
-    }
 
     public void Run_RewardUpdates(bool run)
     {
@@ -126,22 +136,5 @@ public class Time_Manager : MonoBehaviour, ISaveLoadable
 
         OnDayCount?.Invoke(_data.dayCount);
         Run_TimeUpdates();
-    }
-
-
-    // Time Update Bus
-    public void Register(TimeUpdateBus updateBus, Action targetAction)
-    {
-        if (_timeUpdateBuses.ContainsKey(updateBus) == false)
-        {
-            _timeUpdateBuses.Add(updateBus, targetAction);
-            return;
-        }
-        _timeUpdateBuses[updateBus] += targetAction;
-    }
-
-    public void UnRegister(TimeUpdateBus updateBus, Action targetAction)
-    {
-        _timeUpdateBuses[updateBus] -= targetAction;
     }
 }

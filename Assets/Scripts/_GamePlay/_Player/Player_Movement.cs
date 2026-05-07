@@ -33,7 +33,7 @@ public class Player_Movement : MonoBehaviour
         EventBus_Manager.UnRegister(EventBus.AwakeLoad, Set_Data);
 
         Input_Controller.instance.OnMovement -= Update_InputDirection;
-        InGame_Manager.instance.time.UnRegister(TimeUpdateBus.AwakeUpdate, _tileTracker.Clamp_toCurrentTile);
+        InGame_Manager.instance.time.UnRegister(ActionUpdateBus.AwakeUpdate, _tileTracker.Clamp_toCurrentTile);
     }
 
     private void Update()
@@ -48,7 +48,7 @@ public class Player_Movement : MonoBehaviour
     private void Set_Data()
     {
         Input_Controller.instance.OnMovement += Update_InputDirection;
-        InGame_Manager.instance.time.Register(TimeUpdateBus.AwakeUpdate, _tileTracker.Clamp_toCurrentTile);
+        InGame_Manager.instance.time.Register(ActionUpdateBus.AwakeUpdate, _tileTracker.Clamp_toCurrentTile);
     }
 
 
@@ -61,7 +61,7 @@ public class Player_Movement : MonoBehaviour
     private void Movement_Update()
     {
         if (_tileTracker.clampCoroutine != null) return;
-        if (InGame_Manager.instance.time.TimeUpdateActions_Running()) return;
+        // if (InGame_Manager.instance.time.TimeUpdateActions_Running()) return;
 
         AnimationPlayer animPlayer = _controller.animationPlayer;
         if (animPlayer.Animation_Playing(animPlayer.AnimationClip(1))) return;

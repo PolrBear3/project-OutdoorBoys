@@ -51,14 +51,14 @@ public class Fire : MonoBehaviour
         InGame_Manager manager = InGame_Manager.instance;
         Time_Manager time = manager.time;
 
-        time.Register(TimeUpdateBus.AwakeUpdate, UpdatePlaced_BurnItems);
-        time.Register(TimeUpdateBus.AwakeUpdate, Update_BurningState);
+        time.Register(ActionUpdateBus.AwakeUpdate, UpdatePlaced_BurnItems);
+        time.Register(ActionUpdateBus.AwakeUpdate, Update_BurningState);
 
-        time.Register(TimeUpdateBus.AwakeUpdate, Update_HeatTiles);
-        time.Register(TimeUpdateBus.AwakeUpdate, Toggle_HeatTiles);
+        time.Register(ActionUpdateBus.AwakeUpdate, Update_HeatTiles);
+        time.Register(ActionUpdateBus.AwakeUpdate, Toggle_HeatTiles);
 
-        time.Register(TimeUpdateBus.AwakeUpdate, Track_HeatingItems);
-        time.Register(TimeUpdateBus.AwakeUpdate, Update_HeatingItems);
+        time.Register(ActionUpdateBus.AwakeUpdate, Track_HeatingItems);
+        time.Register(ActionUpdateBus.AwakeUpdate, Update_HeatingItems);
 
         Tiles_Controller tiles = manager.tilesController;
 
@@ -80,14 +80,14 @@ public class Fire : MonoBehaviour
         InGame_Manager manager = InGame_Manager.instance;
         Time_Manager time = manager.time;
 
-        time.UnRegister(TimeUpdateBus.AwakeUpdate, UpdatePlaced_BurnItems);
-        time.UnRegister(TimeUpdateBus.AwakeUpdate, Update_BurningState);
+        time.UnRegister(ActionUpdateBus.AwakeUpdate, UpdatePlaced_BurnItems);
+        time.UnRegister(ActionUpdateBus.AwakeUpdate, Update_BurningState);
 
-        time.UnRegister(TimeUpdateBus.AwakeUpdate, Update_HeatTiles);
-        time.UnRegister(TimeUpdateBus.AwakeUpdate, Toggle_HeatTiles);
+        time.UnRegister(ActionUpdateBus.AwakeUpdate, Update_HeatTiles);
+        time.UnRegister(ActionUpdateBus.AwakeUpdate, Toggle_HeatTiles);
 
-        time.UnRegister(TimeUpdateBus.AwakeUpdate, Track_HeatingItems);
-        time.UnRegister(TimeUpdateBus.AwakeUpdate, Update_HeatingItems);
+        time.UnRegister(ActionUpdateBus.AwakeUpdate, Track_HeatingItems);
+        time.UnRegister(ActionUpdateBus.AwakeUpdate, Update_HeatingItems);
 
         Tiles_Controller tiles = manager.tilesController;
 

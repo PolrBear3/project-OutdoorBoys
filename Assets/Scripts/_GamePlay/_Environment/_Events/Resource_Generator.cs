@@ -53,13 +53,13 @@ public class Resource_Generator : MonoBehaviour
     private void Awake()
     {
         EventBus_Manager.Register(EventBus.StartLoad, Generate_OnLoad);
-        InGame_Manager.instance.time.Register(TimeUpdateBus.AwakeUpdate, Generate);
+        InGame_Manager.instance.time.Register(ActionUpdateBus.AwakeUpdate, Generate);
     }
 
     private void OnDestroy()
     {
         EventBus_Manager.UnRegister(EventBus.StartLoad, Generate_OnLoad);
-        InGame_Manager.instance.time.UnRegister(TimeUpdateBus.AwakeUpdate, Generate);
+        InGame_Manager.instance.time.UnRegister(ActionUpdateBus.AwakeUpdate, Generate);
     }
 
 

@@ -2,6 +2,13 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+public enum ActionUpdateBus
+{
+    AwakeUpdate = 0,
+    StartUpdate = 1,
+    SubUpdate = 2
+}
+
 public interface IDamageable
 {
     bool IsDamageable();
