@@ -2,14 +2,26 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+[System.Serializable]
+public class TileIndicator_VisualData
+{
+    [SerializeField] private Sprite _indicatorSprite;
+    public Sprite indicatorSprite => _indicatorSprite;
+
+    [SerializeField] private Color _indicatorColor;
+    public Color indicatorColor => _indicatorColor;
+}
+
 public class Tile_Indicator : MonoBehaviour
 {
     [Space(20)]
     [SerializeField] private GameObject _indicatorPrefab;
 
     [Space(20)]
-    [SerializeField] private Sprite _indicatorSprite;
-    [SerializeField] private Color _indicatorColor;
+    [SerializeField] private TileIndicator_VisualData _defaultVisualData;
+
+    [SerializeField] private TileIndicator_VisualData[] _visualDatas;
+    public TileIndicator_VisualData[] visualDatas => _visualDatas;
 
     [Space(20)]
     [SerializeField] private Vector2[] _defaultTilePositions;
@@ -29,13 +41,13 @@ public class Tile_Indicator : MonoBehaviour
         foreach (Vector2 position in _defaultTilePositions)
         {
             Tile checkTile = tilesController.Current_Tile((Vector2)pivotTile.transform.position + position);
-            
+
             if (checkTile == null) continue;
             tilePositions.Add(position);
         }
         return tilePositions;
     }
-    
+
     public List<Tile> Current_IndicateTiles()
     {
         List<Tile> currentTiles = new();
@@ -52,7 +64,7 @@ public class Tile_Indicator : MonoBehaviour
     {
         if (targetTile == null) return;
         if (currentIndicateDatas.ContainsKey(targetTile)) return;
-        
+
         GameObject setIndicator = Instantiate(_indicatorPrefab, targetTile.transform);
 
         if (setIndicator.TryGetComponent(out SpriteRenderer sr) == false)
@@ -62,10 +74,12 @@ public class Tile_Indicator : MonoBehaviour
         }
         _currentIndicateDatas[targetTile] = sr;
 
-        sr.sprite = _indicatorSprite != null ? _indicatorSprite : sr.sprite;
-        sr.color = _indicatorColor;
+        Sprite defaultSprite = _defaultVisualData.indicatorSprite;
+
+        sr.sprite = defaultSprite != null ? defaultSprite : sr.sprite;
+        sr.color = _defaultVisualData.indicatorColor;
     }
-    
+
     public void Set_Indicators(Tile pivotTile, List<Vector2> setPositions)
     {
         Tiles_Controller tilesController = InGame_Manager.instance.tilesController;
@@ -96,6 +110,19 @@ public class Tile_Indicator : MonoBehaviour
         _currentIndicateDatas.Clear();
     }
 
+
+    public void Update_CurrentVisualDatas(TileIndicator_VisualData visualData)
+    {
+        if (_currentIndicateDatas.Count <= 0) return;
+
+        foreach (var setIndicator in _currentIndicateDatas)
+        {
+            SpriteRenderer indicationRenderer = setIndicator.Value;
+
+            indicationRenderer.sprite = visualData.indicatorSprite;
+            indicationRenderer.color = visualData.indicatorColor;
+        }
+    }
 
     public void Toggle_CurrentIndicators(bool toggle)
     {
