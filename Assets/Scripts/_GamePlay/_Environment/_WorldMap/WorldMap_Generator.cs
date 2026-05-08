@@ -2,7 +2,6 @@ using System.Collections;
 using System.Collections.Generic;
 using Unity.Mathematics;
 using UnityEngine;
-using UnityEngine.Experimental.Rendering.Universal;
 
 public class WorldMap_Generator : MonoBehaviour
 {
@@ -152,7 +151,7 @@ public class WorldMap_Generator : MonoBehaviour
     {
         Tiles_Controller tilesController = InGame_Manager.instance.tilesController;
         List<Tile> currentTiles = tilesController.currentTiles;
-        
+
         for (int i = 0; i < currentTiles.Count; i++)
         {
             if ((Vector2)currentTiles[i].transform.position != generatePos) continue;
@@ -189,7 +188,7 @@ public class WorldMap_Generator : MonoBehaviour
                 if (generatePositions.Count <= 0) return;
 
                 int randInex = UnityEngine.Random.Range(0, generatePositions.Count);
-                
+
                 Generate_Tile(generatePositions[randInex], presetTileDatas[i].tileScrObj);
                 generatePositions.RemoveAt(randInex);
             }
@@ -209,7 +208,7 @@ public class WorldMap_Generator : MonoBehaviour
     private void Set_MapEventsPrefab()
     {
         GameObject eventsPrefab = _currentWorldMap.worldMapEventsPrefab;
-        
+
         if (eventsPrefab == null) return;
         _currentMapEventsPrefab = Instantiate(eventsPrefab, transform);
     }

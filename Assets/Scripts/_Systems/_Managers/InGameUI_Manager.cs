@@ -35,7 +35,7 @@ public class InGameUI_Manager : MonoBehaviour
 
         player.OnHealthUpdate -= Update_HealthText;
         player.OnTemperatureUpdate -= Update_TemperatureText;
-        
+
         player.OnStaminaUpdate -= Update_StaminaText;
         player.OnStaminaUpdate -= Update_HealthText;
 
@@ -84,14 +84,14 @@ public class InGameUI_Manager : MonoBehaviour
     private void Update_TimeText(int timeCount)
     {
         int rewardTargetTime = InGame_Manager.instance.time.data.rewardTargetTime;
-        
+
         _timeText.text = timeCount + " (" + "<sprite=0> " + rewardTargetTime + ")".ToString();
     }
     private void Update_TimeText()
     {
         Update_TimeText(InGame_Manager.instance.time.data.timeCount);
     }
-    
+
     private void Update_DayText(int dayCount)
     {
         _dayText.text = "Day " + dayCount.ToString();
