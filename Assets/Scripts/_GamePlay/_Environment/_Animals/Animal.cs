@@ -167,7 +167,7 @@ public class Animal : MonoBehaviour, IDamageable
         Tile currentTile = _movement.tileTracker.data.CurrentTile();
         maxDistance = Mathf.Clamp(maxDistance, 1, _data.animalScrObj.moveDistance);
 
-        return tilesController.Current_Tiles(currentTile, maxDistance);
+        return TilePatterns_Utility.PivotDistanced_Tiles(currentTile, maxDistance);
     }
     public List<Tile> MoveDistance_RangeTiles()
     {
@@ -186,8 +186,7 @@ public class Animal : MonoBehaviour, IDamageable
     public List<Tile> AgroRange_Tiles()
     {
         Tile currentTile = _movement.tileTracker.data.CurrentTile();
-        return InGame_Manager.instance.tilesController.Current_Tiles(currentTile, _data.animalScrObj.agroRange);
-
+        return TilePatterns_Utility.PivotDistanced_Tiles(currentTile, _data.animalScrObj.agroRange);
     }
     public bool Player_InAgroRange()
     {
@@ -227,7 +226,7 @@ public class Animal : MonoBehaviour, IDamageable
         Tiles_Controller tilesController = manager.tilesController;
 
         Tile currentTile = _movement.tileTracker.data.CurrentTile();
-        List<Tile> alertTiles = tilesController.Current_Tiles(currentTile, _data.animalScrObj.agroRange + 1);
+        List<Tile> alertTiles = TilePatterns_Utility.PivotDistanced_Tiles(currentTile, _data.animalScrObj.agroRange + 1);
 
         bool playerAlerted = alertTiles.Contains(manager.player.movement.tileTracker.data.CurrentTile());
         _alertIcon.SetActive(toggle && _data.isOnSight && _data.health > 0 && playerAlerted);

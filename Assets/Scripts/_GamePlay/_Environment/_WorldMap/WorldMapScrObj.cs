@@ -29,7 +29,6 @@ public class WorldMapScrObj : ScriptableObject
     public WarpRenderer_Data backgroundWarpRenderData => _backgroundWarpRenderData;
 
 
-
     // Generate Tiles
     public List<TileScrObj> GenerateTiles(TileType tileType)
     {

@@ -197,6 +197,7 @@ MonoBehaviour:
   _defaultVisualData:
     _indicatorSprite: {fileID: 8321326, guid: 99b3ae6f72cfb43edb595fcf1373eec9, type: 3}
     _indicatorColor: {r: 1, g: 0.13333344, b: 0, a: 1}
+    _sortingOrder: 2
   _visualDatas: []
   _defaultTilePositions: []
 --- !u!114 &3490125478823233063

@@ -61,7 +61,6 @@ public class WorldMap_Generator : MonoBehaviour
         Vector2 convertedSize = Converted_GenerateSize();
         return new(-(convertedSize.x - 1) / 2, (convertedSize.y - 1) / 2);
     }
-
     private List<Vector2> Generate_Positions()
     {
         List<Vector2> positions = new();

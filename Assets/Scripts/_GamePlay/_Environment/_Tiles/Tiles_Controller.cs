@@ -92,22 +92,6 @@ public class Tiles_Controller : MonoBehaviour, IItemsSource
         if (sortedTiles.Count <= 0) return _currentTiles;
         return sortedTiles;
     }
-    public List<Tile> Current_Tiles(Tile pivotTile, int rangeDistance)
-    {
-        if (pivotTile == null) return null;
-
-        List<Tile> innerRangedTiles = new();
-
-        for (int i = 0; i < _currentTiles.Count; i++)
-        {
-            Tile currentTile = _currentTiles[i];
-            float distance = Utility.Chebyshev_Distance(pivotTile.transform.position, currentTile.transform.position);
-
-            if (distance > rangeDistance) continue;
-            innerRangedTiles.Add(currentTile);
-        }
-        return innerRangedTiles;
-    }
     public List<Tile> Current_Tiles(Item_ScrObj targetItem)
     {
         List<Tile> itemExistTiles = new();

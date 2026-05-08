@@ -9,6 +9,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8731621838702089674}
+  - component: {fileID: 8692835251749850803}
+  - component: {fileID: 2102519640886982411}
   m_Layer: 0
   m_Name: Weather Events
   m_TagString: Untagged
@@ -34,6 +36,38 @@ Transform:
   - {fileID: 3425795650498849601}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &8692835251749850803
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 353555265533623462}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 29610638bf7fa4efd941027cc0309360, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _indicatorPrefab: {fileID: 2646137999372282548, guid: c115b03e5a02a4522895db5f253285dd, type: 3}
+  _defaultVisualData:
+    _indicatorSprite: {fileID: 8321326, guid: 99b3ae6f72cfb43edb595fcf1373eec9, type: 3}
+    _indicatorColor: {r: 0, g: 0.89888954, b: 1, a: 1}
+    _sortingOrder: 1
+  _visualDatas: []
+  _defaultTilePositions: []
+--- !u!114 &2102519640886982411
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 353555265533623462}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5f1f3b21d55f04e128f1b254c47fe6d3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _tileIndicator: {fileID: 8692835251749850803}
 --- !u!1 &2655673373668987861
 GameObject:
   m_ObjectHideFlags: 0

@@ -10,6 +10,9 @@ public class TileIndicator_VisualData
 
     [SerializeField] private Color _indicatorColor;
     public Color indicatorColor => _indicatorColor;
+
+    [SerializeField][Range(0, 10)] private int _sortingOrder;
+    public int sortingOrder => _sortingOrder;
 }
 
 public class Tile_Indicator : MonoBehaviour
@@ -78,6 +81,7 @@ public class Tile_Indicator : MonoBehaviour
 
         sr.sprite = defaultSprite != null ? defaultSprite : sr.sprite;
         sr.color = _defaultVisualData.indicatorColor;
+        sr.sortingOrder = _defaultVisualData.sortingOrder;
     }
 
     public void Set_Indicators(Tile pivotTile, List<Vector2> setPositions)
@@ -121,6 +125,7 @@ public class Tile_Indicator : MonoBehaviour
 
             indicationRenderer.sprite = visualData.indicatorSprite;
             indicationRenderer.color = visualData.indicatorColor;
+            indicationRenderer.sortingOrder = visualData.sortingOrder;
         }
     }
 
