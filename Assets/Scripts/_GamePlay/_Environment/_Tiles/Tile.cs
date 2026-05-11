@@ -111,7 +111,8 @@ public class Tile : MonoBehaviour
 
     public void Toggle_SelectReady(bool toggle)
     {
-        int clipIndex = toggle && _selectorAnimPlayer.spriteRenderer.gameObject.activeSelf ? 1 : 0;
+        if (!_selectorAnimPlayer.spriteRenderer.gameObject.activeSelf && !toggle) return;
+        int clipIndex = toggle ? 1 : 0;
 
         if (_selectorAnimPlayer.Animation_Playing(_selectorAnimPlayer.AnimationClip(clipIndex))) return;
         _selectorAnimPlayer.Play(clipIndex);

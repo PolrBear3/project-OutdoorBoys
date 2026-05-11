@@ -22,13 +22,13 @@ public class AnimationPlayer : MonoBehaviour
     private void Awake()
     {
         _defaultData = new(
-            _spriteRenderer.sprite, 
-            _spriteRenderer.sortingOrder, 
-            _spriteRenderer.color.a, 
+            _spriteRenderer.sprite,
+            _spriteRenderer.sortingOrder,
+            _spriteRenderer.color.a,
             _spriteRenderer.transform.localPosition
         );
     }
-    
+
 
     // Data
     private AnimationClipScrObj AnimationClip(string clipName)
@@ -54,7 +54,7 @@ public class AnimationPlayer : MonoBehaviour
     public bool Animation_Playing(AnimationClipScrObj checkClip)
     {
         if (_playClip == null) return false;
-        
+
         return _playClip == checkClip;
     }
 
@@ -103,12 +103,12 @@ public class AnimationPlayer : MonoBehaviour
             {
                 ClipSpriteData data = spriteDatas[i];
                 Sprite dataSprite = data.clipSprite;
-                
+
                 GameObject animObject = _spriteRenderer.gameObject;
-                
+
                 _spriteRenderer.sprite = dataSprite != null ? dataSprite : _spriteRenderer.sprite;
                 _spriteRenderer.sortingOrder = _defaultData.sortingOrderUpdateValue + data.sortingOrderUpdateValue;
-                
+
                 float alphaValue = _defaultData.alphaUpdateValue + data.alphaUpdateValue;
                 LeanTween.alpha(animObject, alphaValue, data.Alpha_DurationTime());
 

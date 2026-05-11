@@ -1,0 +1,22 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 158c8b4bfec7b4eea85d8dea788cb83b, type: 3}
+  m_Name: Rain
+  m_EditorClassIdentifier: 
+  _upcomingInfoText: Rains on
+  _runningInfoText: "Rain wet tiles decrease player\u2019s temperature by -5"
+  _activePrefab: {fileID: 5858694087719140007, guid: 806d10ca5f9d8449db30d7c234d7860b, type: 3}
+  _randomWeightValue: 0
+  _activeDayCount: 0
+  _activeTimeCount: 3
+  _minActiveTime: 0
+  _maxActiveTime: 10
