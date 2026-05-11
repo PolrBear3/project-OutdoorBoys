@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 158c8b4bfec7b4eea85d8dea788cb83b, type: 3}
   m_Name: Rain
   m_EditorClassIdentifier: 
-  _upcomingInfoText: Rains on
+  _upcomingInfoText: Rain in
   _runningInfoText: "Rain wet tiles decrease player\u2019s temperature by -5"
   _activePrefab: {fileID: 5858694087719140007, guid: 806d10ca5f9d8449db30d7c234d7860b, type: 3}
   _randomWeightValue: 0

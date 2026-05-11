@@ -10,8 +10,10 @@ public class InGameUI_Manager : MonoBehaviour
     [SerializeField] private TextMeshProUGUI _dayText;
 
     [Space(20)]
-    [SerializeField] private RectTransform _hoverPanel;
     [SerializeField] private EventPointer _mainHoverPanelPointer;
+    public EventPointer mainHoverPanelPointer => _mainHoverPanelPointer;
+
+    [SerializeField] private RectTransform _hoverPanel;
     [SerializeField] private TextMeshProUGUI _mainHoverText;
 
     [Space(10)]

@@ -179,7 +179,9 @@ public class Weather_Manager : MonoBehaviour
         if (nearestUpcomingData == null) return;
 
         Weather_ScrObj weather = nearestUpcomingData.weather;
-        string weatherInfo = weather.upcomingInfoText + " <sprite=0> +" + nearestUpcomingTime;
+        _activeEvents[weather].Update_EventPreview();
+
+        string weatherInfo = weather.upcomingInfoText + ": <sprite=0> " + nearestUpcomingTime;
 
         uiManager.Update_MainHoverPanelText(weatherInfo);
         uiManager.Update_HoverInfoText(weather.runningInfoText);
