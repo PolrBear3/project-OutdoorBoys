@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
@@ -8,17 +9,6 @@ public class InGameUI_Manager : MonoBehaviour
     [Space(20)]
     [SerializeField] private TextMeshProUGUI _timeText;
     [SerializeField] private TextMeshProUGUI _dayText;
-
-    [Space(20)]
-    [SerializeField] private EventPointer _mainHoverPanelPointer;
-    public EventPointer mainHoverPanelPointer => _mainHoverPanelPointer;
-
-    [SerializeField] private RectTransform _hoverPanel;
-    [SerializeField] private TextMeshProUGUI _mainHoverText;
-
-    [Space(10)]
-    [SerializeField] private RectTransform _hoverInfoPanel;
-    [SerializeField] private TextMeshProUGUI _hoverInfoText;
 
     [Space(20)]
     [SerializeField] private TextMeshProUGUI _healthText;
@@ -32,12 +22,6 @@ public class InGameUI_Manager : MonoBehaviour
         EventBus_Manager.Register(EventBus.AwakeLoad, Set_Data);
     }
 
-    private void Start()
-    {
-        Toggle_HoverInfoPanel(false);
-        Toggle_MainHoverPanel(false);
-    }
-
     private void OnDestroy()
     {
         EventBus_Manager.UnRegister(EventBus.AwakeLoad, Set_Data);
@@ -47,8 +31,6 @@ public class InGameUI_Manager : MonoBehaviour
 
         time.UnRegister(ActionUpdateBus.AwakeUpdate, Update_TimeText);
         time.OnDayCount -= Update_DayText;
-
-        _mainHoverPanelPointer.OnPointerState -= Toggle_HoverInfoPanel;
 
         Player_Controller player = manager.player;
 
@@ -78,8 +60,6 @@ public class InGameUI_Manager : MonoBehaviour
 
         Update_DayText(timeData.dayCount);
         time.OnDayCount += Update_DayText;
-
-        _mainHoverPanelPointer.OnPointerState += Toggle_HoverInfoPanel;
 
         Player_Controller player = manager.player;
         PlayerData playerData = player.data;
@@ -147,28 +127,5 @@ public class InGameUI_Manager : MonoBehaviour
     {
         PlayerData playerData = InGame_Manager.instance.player.data;
         Update_StaminaText(playerData.maxStamina, playerData.currentStamina);
-    }
-
-
-    // Hover Panel
-    public void Toggle_MainHoverPanel(bool toggle)
-    {
-        _hoverPanel.gameObject.SetActive(toggle);
-    }
-
-    public void Update_MainHoverPanelText(string textString)
-    {
-        Toggle_MainHoverPanel(textString != null);
-
-        _mainHoverText.text = textString;
-    }
-    public void Update_HoverInfoText(string textString)
-    {
-        _hoverInfoText.text = textString;
-    }
-
-    private void Toggle_HoverInfoPanel(bool toggle)
-    {
-        _hoverInfoPanel.gameObject.SetActive(toggle);
     }
 }

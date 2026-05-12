@@ -12,7 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 21e98e1b1271248ff99876a7e7247df9, type: 3}
   m_Name: 1-1
   m_EditorClassIdentifier: 
-  _worldMapEventsPrefab: {fileID: 353555265533623462, guid: 556217c5b3b7f42f8b49b5cc77927991, type: 3}
   _generateSize: {x: 8, y: 8}
   _generateTiles:
   - {fileID: 11400000, guid: 13d5158de20cd4105b5f0b097494ca71, type: 2}
@@ -21,6 +20,10 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 42f8526c01f614d319724853fb4ec66a, type: 2}
   _presetTileDatas: []
   _harshGroundDensity: 10
+  _worldMapEventsPrefab: {fileID: 353555265533623462, guid: 556217c5b3b7f42f8b49b5cc77927991, type: 3}
+  _weathers:
+  - {fileID: 11400000, guid: dd95a5d82f9fb4d8e842dd3938129501, type: 2}
+  - {fileID: 11400000, guid: 7d5ed3b52409443119f0f6ee41db4f54, type: 2}
   _backgroundWarpRenderData:
     _loadDuration: 1
     _pixelSize: 16

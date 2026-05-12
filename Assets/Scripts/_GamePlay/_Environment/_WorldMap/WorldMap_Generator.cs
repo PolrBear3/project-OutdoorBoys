@@ -10,6 +10,7 @@ public class WorldMap_Generator : MonoBehaviour
 
 
     private WorldMapScrObj _currentWorldMap;
+    public WorldMapScrObj currentWorldMap => _currentWorldMap;
 
     private GameObject _currentMapEventsPrefab;
     public GameObject currentMapEventsPrefab => _currentMapEventsPrefab;

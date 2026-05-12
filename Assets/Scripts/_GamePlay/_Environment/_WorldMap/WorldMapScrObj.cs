@@ -6,10 +6,6 @@ using UnityEngine;
 public class WorldMapScrObj : ScriptableObject
 {
     [Space(20)]
-    [SerializeField] private GameObject _worldMapEventsPrefab;
-    public GameObject worldMapEventsPrefab => _worldMapEventsPrefab;
-
-    [Space(20)]
     [SerializeField] private Vector2 _generateSize;
     public Vector2 generateSize => _generateSize;
 
@@ -23,6 +19,13 @@ public class WorldMapScrObj : ScriptableObject
     [Space(20)]
     [SerializeField][Range(0, 100)] private float _harshGroundDensity;
     public float harshGroundDensity => _harshGroundDensity;
+
+    [Space(20)]
+    [SerializeField] private GameObject _worldMapEventsPrefab;
+    public GameObject worldMapEventsPrefab => _worldMapEventsPrefab;
+
+    [SerializeField] private Weather_ScrObj[] _weathers;
+    public Weather_ScrObj[] weathers => _weathers;
 
     [Space(20)]
     [SerializeField] private WarpRenderer_Data _backgroundWarpRenderData;

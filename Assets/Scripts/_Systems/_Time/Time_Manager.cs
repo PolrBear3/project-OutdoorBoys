@@ -8,6 +8,8 @@ public class Time_Manager : MonoBehaviour, ISaveLoadable
 {
     [Space(20)]
     [SerializeField][Range(0, 1000)] private int _maxTimeCount;
+    public int maxTimecount => _maxTimeCount;
+
     [SerializeField][Range(0, 1000)] private int _nightPhaseTime;
 
     [Space(10)]

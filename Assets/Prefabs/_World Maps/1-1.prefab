@@ -11,7 +11,6 @@ GameObject:
   - component: {fileID: 8731621838702089674}
   - component: {fileID: 4536870208008606749}
   - component: {fileID: 644200425565053860}
-  - component: {fileID: 1820128384779074931}
   m_Layer: 0
   m_Name: 1-1
   m_TagString: Untagged
@@ -90,20 +89,3 @@ MonoBehaviour:
   - {fileID: 11400000, guid: c78b5f27455724331954b6c0efe32af4, type: 2}
   _maxSpawnCount: 1
   _spawnCoolTime: 1
---- !u!114 &1820128384779074931
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 353555265533623462}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5f1f3b21d55f04e128f1b254c47fe6d3, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _upcomingUpdateCoolTime: 1
-  _mapWeatherEvents:
-  - {fileID: 11400000, guid: dd95a5d82f9fb4d8e842dd3938129501, type: 2}
-  _upcomingEventDatas: []
-  _runningEventDatas: []

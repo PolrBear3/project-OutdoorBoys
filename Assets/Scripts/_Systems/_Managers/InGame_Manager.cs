@@ -39,6 +39,12 @@ public class InGame_Manager : MonoBehaviour
     [SerializeField] private Tiles_Controller _tilesController;
     public Tiles_Controller tilesController => _tilesController;
 
+    [SerializeField] private Reward_Manager _reward;
+    public Reward_Manager reward => _reward;
+
+    [SerializeField] private Weather_Manager _weather;
+    public Weather_Manager weather => _weather;
+
 
     [Space(20)]
     [SerializeField] private Player_Controller _player;
