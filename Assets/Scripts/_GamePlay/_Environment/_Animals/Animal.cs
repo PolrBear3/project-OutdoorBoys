@@ -223,7 +223,6 @@ public class Animal : MonoBehaviour, IDamageable
     private void Toggle_AlertIcon(bool toggle)
     {
         InGame_Manager manager = InGame_Manager.instance;
-        Tiles_Controller tilesController = manager.tilesController;
 
         Tile currentTile = _movement.tileTracker.data.CurrentTile();
         List<Tile> alertTiles = TilePatterns_Utility.PivotDistanced_Tiles(currentTile, _data.animalScrObj.agroRange + 1);
@@ -235,7 +234,7 @@ public class Animal : MonoBehaviour, IDamageable
     {
         Toggle_AlertIcon(hoveringTile == _movement.tileTracker.data.CurrentTile());
     }
-    
+
     private void AlertIcon_Toggle()
     {
         Toggle_AlertIcon(InGame_Manager.instance.cursor.pointingTile);
@@ -249,7 +248,7 @@ public class Animal : MonoBehaviour, IDamageable
     private void Update_MovementRangeTiles()
     {
         _tileIndicator.Clear_CurrentIndicators();
-        
+
         List<Tile> movementTiles = MoveDistance_RangeTiles();
         Tile currentTile = _movement.tileTracker.data.CurrentTile();
 
@@ -337,6 +336,7 @@ public class Animal : MonoBehaviour, IDamageable
 
     private void Run_TimeCountActions()
     {
+        if (Deceased()) return;
         if (_data.isOnSight == false) return;
 
         Reset_ActionsUpdate();
@@ -364,6 +364,7 @@ public class Animal : MonoBehaviour, IDamageable
 
     private void Run_AgroActions(Tile _)
     {
+        if (Deceased()) return;
         if (_data.isOnSight == false) return;
         if (Player_InAgroRange() == false) return;
 

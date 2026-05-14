@@ -25,11 +25,8 @@ public class Weather_Manager : MonoBehaviour
     public Dictionary<Weather_ScrObj, WeatherEvent> currentWeathers => _currentWeathers;
 
 
-    private const int _maxUpcomingEventCount = 3;
     private int _currentCooltime;
-
     private List<WeatherEvent_Data> _upcomingWeatherDatas = new();
-
 
     private const float _indicatorToggleDelayTime = 1;
     private Coroutine _toggleDelayCoroutine;
@@ -48,7 +45,7 @@ public class Weather_Manager : MonoBehaviour
         EventBus_Manager.UnRegister(EventBus.StartLoad, Set_Data);
 
         Time_Manager time = InGame_Manager.instance.time;
-        
+
         time.UnRegister(ActionUpdateBus.AwakeUpdate, Update_UpcomingWeathers);
         time.UnRegister(ActionUpdateBus.AwakeUpdate, Update_Icons);
         time.UnRegister(ActionUpdateBus.AwakeUpdate, Toggle_Description);
@@ -105,7 +102,7 @@ public class Weather_Manager : MonoBehaviour
     // Update
     private bool Update_CoolTime()
     {
-        if (_upcomingWeatherDatas.Count >= _maxUpcomingEventCount) return false;
+        if (EmptyIcons().Count <= 0) return false;
 
         _currentCooltime++;
         if (_currentCooltime < _upcomingUpdateCoolTime) return false;
@@ -191,10 +188,9 @@ public class Weather_Manager : MonoBehaviour
         }
 
         Weather_ScrObj updateEvent = RandomWeight_WeatherScrObj();
-
         if (updateEvent == null) return;
-        if (Update_CoolTime() == false) return;
 
+        if (Update_CoolTime() == false) return;
         _upcomingWeatherDatas.Add(new(updateEvent, updateEvent.Random_ActiveTime()));
     }
 
@@ -232,7 +228,7 @@ public class Weather_Manager : MonoBehaviour
         {
             WeatherUI_Icon icon = _icons[i];
             WeatherEvent_Data iconData = icon.data;
-            
+
             if (iconData == null || iconData != data) continue;
             return icon;
         }
@@ -273,7 +269,7 @@ public class Weather_Manager : MonoBehaviour
 
         Refresh_Icons();
     }
-    
+
     private void Refresh_Icons()
     {
         List<WeatherEvent_Data> currentDatas = new();
@@ -363,7 +359,7 @@ public class Weather_Manager : MonoBehaviour
     {
         Toggle_TileIndicator(Hovering_Icon());
     }
-    
+
     private IEnumerator IndicatorToggle_DelayUpdate()
     {
         yield return new WaitForSeconds(_indicatorToggleDelayTime);
