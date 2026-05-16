@@ -4,13 +4,25 @@ using UnityEngine;
 
 public class WeatherEvent_Sunlight : WeatherEvent
 {
+    [Space(20)]
+    [SerializeField][Range(0, 10)] private int _activationRange;
+    [SerializeField][Range(0, 10)] private int _temperatureIncreaseValue;
+
+
     public override List<Tile> Generated_ActivationTiles()
     {
-        return TilePatterns_Utility.CheckBoard_Tiles(true);
+        Tiles_Controller tilesController = InGame_Manager.instance.tilesController;
+        List<Tile> allTiles = new(tilesController.currentTiles);
+        
+        Tile pivotTile = allTiles[Random.Range(0, allTiles.Count)];
+        return TilePatterns_Utility.PivotDistanced_Tiles(pivotTile, _activationRange);
     }
 
     public override void Activate_Event()
     {
-        Debug.Log("Sunlight");
+        if (ActivationTiles_PlayerDetected() == false) return;
+
+        Player_Controller player = InGame_Manager.instance.player;
+        player.Update_Temperature(player.data.temperature + _temperatureIncreaseValue);
     }
 }

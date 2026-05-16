@@ -91,11 +91,21 @@ public class Time_Manager : MonoBehaviour, ISaveLoadable
         Input_Controller.instance.OnHoldInteract += Count_Time;
     }
 
+
     public bool Is_Night()
     {
         return _data.timeCount >= _nightPhaseTime;
     }
-
+    
+    public int Total_NightTimeCount()
+    {
+        return _maxTimeCount - _nightPhaseTime + 1;
+    }
+    public int Current_NightTimeCount()
+    {
+        if (_data.timeCount < _nightPhaseTime) return 0;
+        return _data.timeCount - _nightPhaseTime + 1;
+    }
 
     public bool TimeUpdateActions_Running()
     {
@@ -112,6 +122,8 @@ public class Time_Manager : MonoBehaviour, ISaveLoadable
 
     public void Count_Time()
     {
+        if (TimeUpdateActions_Running()) return;
+        
         int calculatedTimeCount = _data.timeCount + 1;
 
         if (calculatedTimeCount <= _maxTimeCount)

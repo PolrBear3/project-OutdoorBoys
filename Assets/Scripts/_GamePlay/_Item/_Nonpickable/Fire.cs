@@ -40,6 +40,9 @@ public class Fire : MonoBehaviour
     [SerializeField] private Item_ScrObj _coalItem;
     [SerializeField][Range(0, 100)] private int _coalGenerateAmount;
 
+    [Space(20)]
+    [SerializeField][Range(0, 100)] private int _temperatureIncreaseValue;
+
 
     private Dictionary<PlaceableItem, int> _trackingDatas = new();
     private int _coalGeneratedCount;
@@ -56,6 +59,8 @@ public class Fire : MonoBehaviour
 
         time.Register(ActionUpdateBus.AwakeUpdate, Update_HeatTiles);
         time.Register(ActionUpdateBus.AwakeUpdate, Toggle_HeatTiles);
+
+        time.Register(ActionUpdateBus.AwakeUpdate, Update_PlayerTemperature);
 
         time.Register(ActionUpdateBus.AwakeUpdate, Track_HeatingItems);
         time.Register(ActionUpdateBus.AwakeUpdate, Update_HeatingItems);
@@ -85,6 +90,8 @@ public class Fire : MonoBehaviour
 
         time.UnRegister(ActionUpdateBus.AwakeUpdate, Update_HeatTiles);
         time.UnRegister(ActionUpdateBus.AwakeUpdate, Toggle_HeatTiles);
+
+        time.UnRegister(ActionUpdateBus.AwakeUpdate, Update_PlayerTemperature);
 
         time.UnRegister(ActionUpdateBus.AwakeUpdate, Track_HeatingItems);
         time.UnRegister(ActionUpdateBus.AwakeUpdate, Update_HeatingItems);
@@ -168,7 +175,6 @@ public class Fire : MonoBehaviour
 
         Destroy(_placeableItem.gameObject);
     }
-
     private void Update_HeatTiles()
     {
         ItemData itemData = _placeableItem.data;
@@ -206,6 +212,14 @@ public class Fire : MonoBehaviour
 
         _heatTileIndicator.Clear_CurrentIndicators();
         _heatTileIndicator.Set_Indicators(currentTile, updatePositions);
+    }
+
+    private void Update_PlayerTemperature()
+    {
+        Player_Controller player = InGame_Manager.instance.player;
+
+        if (_heatTileIndicator.Current_IndicateTiles().Contains(player.movement.tileTracker.data.CurrentTile()) == false) return; 
+        player.Update_Temperature(player.data.temperature + _temperatureIncreaseValue);
     }
 
 
@@ -281,7 +295,6 @@ public class Fire : MonoBehaviour
             }
         }
     }
-
     private void Update_HeatingItems()
     {
         if (_placeableItem.data.amount <= 0) return;
@@ -322,7 +335,7 @@ public class Fire : MonoBehaviour
             trackingItemTile.Set_Item(new(replaceItem, replaceAmount));
         }
     }
-
+    
     private void Transfer_HeatingItems()
     {
         List<PlaceableItem> placedFireItems = Placed_FireItems();

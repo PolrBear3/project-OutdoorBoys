@@ -284,8 +284,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _indicatorPrefab: {fileID: 2646137999372282548, guid: c115b03e5a02a4522895db5f253285dd, type: 3}
-  _indicatorSprite: {fileID: 0}
-  _indicatorColor: {r: 0.8117647, g: 0.34117648, b: 0.23529412, a: 1}
+  _defaultVisualData:
+    _indicatorSprite: {fileID: 8321326, guid: 99b3ae6f72cfb43edb595fcf1373eec9, type: 3}
+    _indicatorColor: {r: 0.8117647, g: 0.34117648, b: 0.23529412, a: 1}
+    _sortingOrder: 2
+  _visualDatas: []
   _defaultTilePositions:
   - {x: 0, y: 0}
   - {x: 0, y: 1}
@@ -321,6 +324,7 @@ MonoBehaviour:
   _heatItemDatas:
   - _preHeatItem: {fileID: 11400000, guid: fba43ae9d93594cddbc2a132e3fd3b95, type: 2}
     _heatedItem: {fileID: 11400000, guid: 56e836a9404ef431d9aaf1eb6c56e70a, type: 2}
-    _updatePointValue: 10
+    _updatePointValue: 1
   _coalItem: {fileID: 11400000, guid: e50291faad97248a7aa944b68f1d5612, type: 2}
   _coalGenerateAmount: 1
+  _temperatureIncreaseValue: 5

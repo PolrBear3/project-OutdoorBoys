@@ -328,9 +328,7 @@ public class Animal : MonoBehaviour, IDamageable
     {
         if (_runActionCoroutine == null) return;
 
-        InGame_Manager.instance.time.timeUpdateActions.Remove(this);
         StopCoroutine(_runActionCoroutine);
-
         _runActionCoroutine = null;
     }
 
@@ -342,7 +340,6 @@ public class Animal : MonoBehaviour, IDamageable
         Reset_ActionsUpdate();
         _tileIndicator.Clear_CurrentIndicators();
 
-        InGame_Manager.instance.time.timeUpdateActions.Add(this);
         _runActionCoroutine = StartCoroutine(TimeCountActions_Update());
     }
     private IEnumerator TimeCountActions_Update()
@@ -371,7 +368,6 @@ public class Animal : MonoBehaviour, IDamageable
         Reset_ActionsUpdate();
         _tileIndicator.Clear_CurrentIndicators();
 
-        InGame_Manager.instance.time.timeUpdateActions.Add(this);
         _runActionCoroutine = StartCoroutine(AgroActions_Update());
     }
     private IEnumerator AgroActions_Update()
@@ -399,9 +395,8 @@ public class Animal : MonoBehaviour, IDamageable
 
         _healthFillBar.Refresh_CurrentFillBar();
         _tileIndicator.Clear_CurrentIndicators();
-        Toggle_AlertIcon(false);
 
-        InGame_Manager.instance.time.timeUpdateActions.Add(this);
+        Toggle_AlertIcon(false);
         _runActionCoroutine = StartCoroutine(DeceasedState_Update());
     }
     private IEnumerator DeceasedState_Update()
@@ -414,8 +409,7 @@ public class Animal : MonoBehaviour, IDamageable
         {
             currentTile.Set_Item(new(itemData.itemScrObj, itemData.amount));
         }
-
-        InGame_Manager.instance.time.timeUpdateActions.Remove(this);
+        
         _runActionCoroutine = null;
 
         AnimalManager().spawnedAnimals.Remove(this);

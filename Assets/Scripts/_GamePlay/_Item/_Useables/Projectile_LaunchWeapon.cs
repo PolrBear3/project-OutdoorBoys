@@ -71,6 +71,7 @@ public class Projectile_LaunchWeapon : MonoBehaviour
         for (int i = 0; i < directionTiles.Count; i++)
         {
             Tile directionTile = directionTiles[i];
+            if (directionTile == startTile) continue;
 
             if (Obstacle_Blocked(directionTile) || Has_Damageables(directionTile)) return directionTile;
             if (distanceTraveled >= _maxLaunchDistance) return directionTile;

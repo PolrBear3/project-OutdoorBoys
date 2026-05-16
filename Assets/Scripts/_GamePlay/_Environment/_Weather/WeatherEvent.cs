@@ -18,6 +18,12 @@ public abstract class WeatherEvent : MonoBehaviour
     {
         _reservedActivationTiles = Generated_ActivationTiles() ?? new();
     }
+    public bool ActivationTiles_PlayerDetected()
+    {
+        Tile playerTile = InGame_Manager.instance.player.movement.tileTracker.data.CurrentTile();
+
+        return _reservedActivationTiles.Contains(playerTile);
+    }
 
     public abstract void Activate_Event();
 }

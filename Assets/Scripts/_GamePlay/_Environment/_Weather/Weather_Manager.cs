@@ -21,6 +21,12 @@ public class Weather_Manager : MonoBehaviour
     [SerializeField][Range(0, 100)] private int _upcomingUpdateCoolTime;
 
 
+    [SerializeField][Range(0, 10)] private float _updateDelayTime;
+    public float updateDelayTime => _updateDelayTime;
+
+
+    private Coroutine _weathersUpdateCoroutine;
+
     private Dictionary<Weather_ScrObj, WeatherEvent> _currentWeathers = new();
     public Dictionary<Weather_ScrObj, WeatherEvent> currentWeathers => _currentWeathers;
 
@@ -47,9 +53,7 @@ public class Weather_Manager : MonoBehaviour
         Time_Manager time = InGame_Manager.instance.time;
 
         time.UnRegister(ActionUpdateBus.AwakeUpdate, Update_UpcomingWeathers);
-        time.UnRegister(ActionUpdateBus.AwakeUpdate, Update_Icons);
-        time.UnRegister(ActionUpdateBus.AwakeUpdate, Toggle_Description);
-        time.UnRegister(ActionUpdateBus.AwakeUpdate, Toggle_TileIndicator);
+        time.UnRegister(ActionUpdateBus.AwakeUpdate, Update_Visuals);
 
         OnIconHover -= Toggle_Description;
         OnIconHover -= Toggle_TileIndicator;
@@ -63,9 +67,7 @@ public class Weather_Manager : MonoBehaviour
         Time_Manager time = manager.time;
 
         time.Register(ActionUpdateBus.AwakeUpdate, Update_UpcomingWeathers);
-        time.Register(ActionUpdateBus.AwakeUpdate, Update_Icons);
-        time.Register(ActionUpdateBus.AwakeUpdate, Toggle_Description);
-        time.Register(ActionUpdateBus.AwakeUpdate, Toggle_TileIndicator);
+        time.Register(ActionUpdateBus.AwakeUpdate, Update_Visuals);
 
         Weather_ScrObj[] currentMapWeathers = manager.worldMapGenerator.currentWorldMap.weathers;
 
@@ -100,6 +102,29 @@ public class Weather_Manager : MonoBehaviour
 
 
     // Update
+    public WeatherEvent Current_WeatherEvent(Weather_ScrObj weather)
+    {
+        foreach (var currentWeather in _currentWeathers)
+        {
+            if (currentWeather.Key != weather) continue;
+            return currentWeather.Value;
+        }
+        return null;
+    }
+
+    private WeatherEvent_Data Upcoming_EventData(WeatherEvent_Data searchData)
+    {
+        for (int i = 0; i < _upcomingWeatherDatas.Count; i++)
+        {
+            WeatherEvent_Data data = _upcomingWeatherDatas[i];
+
+            if (data != searchData) continue;
+            return data;
+        }
+        return null;
+    }
+
+
     private bool Update_CoolTime()
     {
         if (EmptyIcons().Count <= 0) return false;
@@ -109,17 +134,6 @@ public class Weather_Manager : MonoBehaviour
 
         _currentCooltime = 0;
         return true;
-    }
-
-
-    public WeatherEvent Current_WeatherEvent(Weather_ScrObj weather)
-    {
-        foreach (var currentWeather in _currentWeathers)
-        {
-            if (currentWeather.Key != weather) continue;
-            return currentWeather.Value;
-        }
-        return null;
     }
 
     private Weather_ScrObj RandomWeight_WeatherScrObj()
@@ -172,11 +186,18 @@ public class Weather_Manager : MonoBehaviour
 
         return availableWeathers[UnityEngine.Random.Range(0, availableWeathers.Count)];
     }
+    
     private void Update_UpcomingWeathers()
+    {
+        InGame_Manager.instance.time.timeUpdateActions.Add(this);
+        _weathersUpdateCoroutine = StartCoroutine(UpcomingWeathers_Update());
+    }
+    private IEnumerator UpcomingWeathers_Update()
     {
         for (int i = _upcomingWeatherDatas.Count - 1; i >= 0; i--)
         {
             WeatherEvent_Data eventData = _upcomingWeatherDatas[i];
+            if (eventData == null) continue;
 
             if (eventData.timeCount <= 1)
             {
@@ -186,30 +207,28 @@ public class Weather_Manager : MonoBehaviour
                 weatherEvent.reservedActivationTiles.Clear();
 
                 _upcomingWeatherDatas.RemoveAt(i);
+
+                Icon(eventData).Update_ActivateAnimation(_updateDelayTime);
+                yield return new WaitForSeconds(_updateDelayTime);
+
                 continue;
             }
             eventData.Update_TimeCount(eventData.timeCount - 1);
         }
 
+        InGame_Manager.instance.time.timeUpdateActions.Remove(this);
+        
         Weather_ScrObj updateEvent = RandomWeight_WeatherScrObj();
-
-        if (updateEvent == null) return;
-        if (Update_CoolTime() == false) return;
+        if (updateEvent == null || Update_CoolTime() == false)
+        {
+            _weathersUpdateCoroutine = null;
+            yield break;
+        }
 
         _upcomingWeatherDatas.Add(new(updateEvent, updateEvent.Random_ActiveTime()));
         Current_WeatherEvent(updateEvent).Reserve_ActivationTiles();
-    }
 
-    private WeatherEvent_Data Upcoming_EventData(WeatherEvent_Data searchData)
-    {
-        for (int i = 0; i < _upcomingWeatherDatas.Count; i++)
-        {
-            WeatherEvent_Data data = _upcomingWeatherDatas[i];
-
-            if (data != searchData) continue;
-            return data;
-        }
-        return null;
+        _weathersUpdateCoroutine = null;
     }
 
 
@@ -253,6 +272,20 @@ public class Weather_Manager : MonoBehaviour
     }
 
 
+    private void Update_Visuals()
+    {
+        StartCoroutine(VisualsUpdate_Delay());
+    }
+    private IEnumerator VisualsUpdate_Delay()
+    {
+        while (_weathersUpdateCoroutine != null) yield return null;
+
+        Update_Icons();
+        Toggle_Description();
+        Toggle_TileIndicator();
+    }
+
+
     private void Update_Icons()
     {
         List<WeatherEvent_Data> newDatas = new();
@@ -275,7 +308,6 @@ public class Weather_Manager : MonoBehaviour
 
         Refresh_Icons();
     }
-
     private void Refresh_Icons()
     {
         List<WeatherEvent_Data> currentDatas = new();
@@ -310,7 +342,6 @@ public class Weather_Manager : MonoBehaviour
         Toggle_WeatherPanel();
     }
 
-
     private void Toggle_WeatherPanel()
     {
         _weatherPanel.gameObject.SetActive(EmptyIcons().Count < _icons.Length);
@@ -324,6 +355,8 @@ public class Weather_Manager : MonoBehaviour
         if (toggle == false) return;
 
         WeatherEvent_Data hoveringData = Upcoming_EventData(hoveringIcon.data);
+        if (hoveringData == null) return;
+        
         Weather_ScrObj weather = hoveringData.weather;
 
         string upcomingDescription = weather.upcomingInfoText + ": <sprite=0> " + hoveringData.timeCount;

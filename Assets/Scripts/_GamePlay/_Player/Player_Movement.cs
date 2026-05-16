@@ -61,7 +61,7 @@ public class Player_Movement : MonoBehaviour
     private void Movement_Update()
     {
         if (_tileTracker.clampCoroutine != null) return;
-        // if (InGame_Manager.instance.time.TimeUpdateActions_Running()) return;
+        if (InGame_Manager.instance.time.TimeUpdateActions_Running()) return;
 
         AnimationPlayer animPlayer = _controller.animationPlayer;
         if (animPlayer.Animation_Playing(animPlayer.AnimationClip(1))) return;

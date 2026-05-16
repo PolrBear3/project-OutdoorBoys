@@ -53,4 +53,17 @@ public class WeatherUI_Icon : MonoBehaviour
     {
         _image.sprite = _data.weather.iconSprite;
     }
+
+    public void Update_ActivateAnimation(float animateDuration)
+    {
+        StartCoroutine(ActivateAnimation_Update(animateDuration));
+    }
+    private IEnumerator ActivateAnimation_Update(float animateDuration)
+    {
+        animateDuration /= 2;
+        LeanTween.scale(gameObject, new(1.5f, 1.5f), animateDuration);
+        
+        yield return new WaitForSeconds(animateDuration);
+        LeanTween.scale(gameObject, new(1f, 1f), animateDuration);
+    }
 }

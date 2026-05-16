@@ -7,7 +7,8 @@ public class WeatherEvent_Rain : WeatherEvent
     [Space(20)]
     [SerializeField] private TileScrObj[] _excludeTiles;
 
-    private bool _firstTileToggle;
+    [Space(10)]
+    [SerializeField][Range(0, 10)] private int _temperatureDecreaseValue;
 
 
     private bool Is_ExcludeTile(Tile checkTile)
@@ -22,8 +23,7 @@ public class WeatherEvent_Rain : WeatherEvent
 
     public override List<Tile> Generated_ActivationTiles()
     {
-        _firstTileToggle = !_firstTileToggle;
-        List<Tile> rainTiles = TilePatterns_Utility.CheckBoard_Tiles(_firstTileToggle);
+        List<Tile> rainTiles = TilePatterns_Utility.CheckBoard_Tiles(Random.value < 0.5f);
 
         for (int i = rainTiles.Count - 1; i >= 0; i--)
         {
@@ -35,6 +35,9 @@ public class WeatherEvent_Rain : WeatherEvent
 
     public override void Activate_Event()
     {
-        Debug.Log("Rain");
+        if (ActivationTiles_PlayerDetected() == false) return;
+
+        Player_Controller player = InGame_Manager.instance.player;
+        player.Update_Temperature(player.data.temperature - _temperatureDecreaseValue);
     }
 }
