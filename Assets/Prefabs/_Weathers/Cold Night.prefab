@@ -44,3 +44,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a593be9df51ab48f09b5a8e1fc065bef, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _activateTileVisuals:
+    _indicatorSprite: {fileID: 8321326, guid: 99b3ae6f72cfb43edb595fcf1373eec9, type: 3}
+    _indicatorColor: {r: 0.14509805, g: 0.22745098, b: 0.36862746, a: 1}
+    _sortingOrder: 1

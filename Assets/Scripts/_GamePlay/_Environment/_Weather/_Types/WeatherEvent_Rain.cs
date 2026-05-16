@@ -7,6 +7,8 @@ public class WeatherEvent_Rain : WeatherEvent
     [Space(20)]
     [SerializeField] private TileScrObj[] _excludeTiles;
 
+    private bool _firstTileToggle;
+
 
     private bool Is_ExcludeTile(Tile checkTile)
     {
@@ -18,11 +20,12 @@ public class WeatherEvent_Rain : WeatherEvent
         return false;
     }
 
-    public override List<Tile> Event_ActivationTiles()
+    public override List<Tile> Generated_ActivationTiles()
     {
-        List<Tile> rainTiles = TilePatterns_Utility.CheckBoard_Tiles(true);
+        _firstTileToggle = !_firstTileToggle;
+        List<Tile> rainTiles = TilePatterns_Utility.CheckBoard_Tiles(_firstTileToggle);
 
-        for (int i = rainTiles.Count - 1; i >= 0 ; i--)
+        for (int i = rainTiles.Count - 1; i >= 0; i--)
         {
             if (Is_ExcludeTile(rainTiles[i]) == false) continue;
             rainTiles.RemoveAt(i);

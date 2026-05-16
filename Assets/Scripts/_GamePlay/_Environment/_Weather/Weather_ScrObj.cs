@@ -27,16 +27,25 @@ public class Weather_ScrObj : ScriptableObject
     [SerializeField][Range(0, 100)] private int _activeDayPoint;
     public int activeDayPoint => _activeDayPoint;
 
+    [Space(20)]
     [SerializeField][Range(0, 100)] private int _activeTimePoint;
+    [SerializeField][Range(0, 100)] private int _restrictTimePoint;
 
     [Space(20)]
     [SerializeField][Range(0, 100)] private int _minActiveTime;
     [SerializeField][Range(0, 100)] private int _maxActiveTime;
 
 
-    public int Active_TimeCount()
+    public int Active_TimePoint()
     {
         return Mathf.Min(_activeTimePoint, InGame_Manager.instance.time.maxTimecount);
+    }
+
+    public int Restrict_TimePoint()
+    {
+        int maxtimeCount = InGame_Manager.instance.time.maxTimecount;
+
+        return _restrictTimePoint > 0 ? Mathf.Min(_restrictTimePoint, maxtimeCount) : maxtimeCount + 1;
     }
 
     public int Random_ActiveTime()

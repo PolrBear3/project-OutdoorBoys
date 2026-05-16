@@ -24,6 +24,7 @@ MonoBehaviour:
   _weathers:
   - {fileID: 11400000, guid: dd95a5d82f9fb4d8e842dd3938129501, type: 2}
   - {fileID: 11400000, guid: 7d5ed3b52409443119f0f6ee41db4f54, type: 2}
+  - {fileID: 11400000, guid: 8a1f7c46e181347769b0b4048f23f0ef, type: 2}
   _backgroundWarpRenderData:
     _loadDuration: 1
     _pixelSize: 16

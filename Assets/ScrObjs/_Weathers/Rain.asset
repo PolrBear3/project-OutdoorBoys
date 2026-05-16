@@ -16,8 +16,9 @@ MonoBehaviour:
   _descriptionText: Rain wet tiles decrease player's temperature by -5
   _iconSprite: {fileID: -443011722, guid: 08db937c9bf304fd9bd2b19319eae929, type: 3}
   _activePrefab: {fileID: 5858694087719140007, guid: 806d10ca5f9d8449db30d7c234d7860b, type: 3}
-  _randomWeightValue: 0
-  _activeDayCount: 0
-  _activeTimeCount: 3
+  _randomWeightValue: 5
+  _activeDayPoint: 0
+  _activeTimePoint: 0
+  _restrictTimePoint: 0
   _minActiveTime: 0
   _maxActiveTime: 10

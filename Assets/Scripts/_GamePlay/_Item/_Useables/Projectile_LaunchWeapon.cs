@@ -7,7 +7,7 @@ public enum Projectile_LaunchWeaponType { reuseable, consumable }
 public class Projectile_LaunchWeapon : MonoBehaviour
 {
     [SerializeField] private UseableItem _useableItem;
-    
+
     [Space(20)]
     [SerializeField] private Projectile_Launcher _projectileLauncher;
 
@@ -59,29 +59,22 @@ public class Projectile_LaunchWeapon : MonoBehaviour
 
     public Tile Launch_DestinationTile(Tile directionalTile)
     {
-        InGame_Manager manager = InGame_Manager.instance;
-        Tiles_Controller tilesController = manager.tilesController;
-
-        Tile startTile = manager.player.movement.tileTracker.data.CurrentTile();
+        Tile startTile = InGame_Manager.instance.player.movement.tileTracker.data.CurrentTile();
         if (startTile == null || directionalTile == null) return null;
 
         Vector2 directionValue = Utility.Grid_Direction(startTile.transform.position, directionalTile.transform.position);
         if (directionValue == Vector2.zero) return startTile;
 
-        Tile currentTile = tilesController.Current_Tile((Vector2)startTile.transform.position + directionValue);
-        if (currentTile == null) return startTile;
-
+        List<Tile> directionTiles = TilePatterns_Utility.Directional_Tiles(startTile, directionValue);
         int distanceTraveled = 1;
 
-        while (currentTile != null)
+        for (int i = 0; i < directionTiles.Count; i++)
         {
-            if (Obstacle_Blocked(currentTile) || Has_Damageables(currentTile)) return currentTile;
-            if (distanceTraveled >= _maxLaunchDistance) return currentTile;
+            Tile directionTile = directionTiles[i];
 
-            Tile nextTile = tilesController.Current_Tile((Vector2)currentTile.transform.position + directionValue);
-            if (nextTile == null) return currentTile;
+            if (Obstacle_Blocked(directionTile) || Has_Damageables(directionTile)) return directionTile;
+            if (distanceTraveled >= _maxLaunchDistance) return directionTile;
 
-            currentTile = nextTile;
             distanceTraveled++;
         }
         return startTile;
@@ -92,7 +85,7 @@ public class Projectile_LaunchWeapon : MonoBehaviour
 
         _projectileLauncher.Launch_Projectile(Launch_DestinationTile(useTile), _useableItem.data.itemScrObj.inventorySprite);
     }
-    
+
     private bool InflictDamage(Tile damageTile)
     {
         if (damageTile == null) return false;

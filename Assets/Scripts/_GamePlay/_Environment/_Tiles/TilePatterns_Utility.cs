@@ -8,9 +8,7 @@ public static class TilePatterns_Utility
     {
         InGame_Manager manager = InGame_Manager.instance;
 
-        Tiles_Controller tilesController = manager.tilesController;
-        List<Tile> allTiles = tilesController.currentTiles;
-
+        List<Tile> allTiles = manager.tilesController.currentTiles;
         if (allTiles.Count <= 0) return null;
 
         WorldMap_Generator generator = manager.worldMapGenerator;
@@ -35,9 +33,7 @@ public static class TilePatterns_Utility
     {
         if (pivotTile == null) return null;
 
-        Tiles_Controller tilesController = InGame_Manager.instance.tilesController;
-        List<Tile> allTiles = tilesController.currentTiles;
-
+        List<Tile> allTiles = InGame_Manager.instance.tilesController.currentTiles;
         List<Tile> innerRangedTiles = new();
 
         for (int i = 0; i < allTiles.Count; i++)
@@ -51,13 +47,24 @@ public static class TilePatterns_Utility
         return innerRangedTiles;
     }
 
-    public static List<Tile> StraightRow_Tiles(Tile pivotTile, bool isIncrement)
+    public static List<Tile> Directional_Tiles(Tile pivotTile, Vector2 direction)
     {
-        return null;
-    }
+        if (pivotTile == null) return null;
 
-    public static List<Tile> StraightColumn_Tiles(Tile pivotTile, bool isIncrement)
-    {
-        return null;
+        Tiles_Controller tilesController = InGame_Manager.instance.tilesController;
+
+        List<Tile> allTiles = tilesController.currentTiles;
+        List<Tile> directionalTiles = new();
+
+        for (int i = 0; i < allTiles.Count; i++)
+        {
+            directionalTiles.Add(pivotTile);
+            if (direction == Vector2.zero) break;
+
+            pivotTile = tilesController.Current_Tile((Vector2)pivotTile.transform.position + direction);
+            if (pivotTile == null) break;
+        }
+        return directionalTiles;
+
     }
 }

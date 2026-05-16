@@ -146,7 +146,8 @@ public class Weather_Manager : MonoBehaviour
             if (upcomingFound) continue;
 
             if (currentDayCount < weatherToAdd.activeDayPoint) continue;
-            if (currentTimeCount < weatherToAdd.Active_TimeCount()) continue;
+            if (currentTimeCount < weatherToAdd.Active_TimePoint()) continue;
+            if (currentTimeCount >= weatherToAdd.Restrict_TimePoint()) continue;
 
             availableWeathers.Add(weatherToAdd);
         }
@@ -179,19 +180,24 @@ public class Weather_Manager : MonoBehaviour
 
             if (eventData.timeCount <= 1)
             {
-                _currentWeathers[eventData.weather].Activate_Event();
-                _upcomingWeatherDatas.RemoveAt(i);
+                WeatherEvent weatherEvent = Current_WeatherEvent(eventData.weather);
 
+                weatherEvent.Activate_Event();
+                weatherEvent.reservedActivationTiles.Clear();
+
+                _upcomingWeatherDatas.RemoveAt(i);
                 continue;
             }
             eventData.Update_TimeCount(eventData.timeCount - 1);
         }
 
         Weather_ScrObj updateEvent = RandomWeight_WeatherScrObj();
-        if (updateEvent == null) return;
 
+        if (updateEvent == null) return;
         if (Update_CoolTime() == false) return;
+
         _upcomingWeatherDatas.Add(new(updateEvent, updateEvent.Random_ActiveTime()));
+        Current_WeatherEvent(updateEvent).Reserve_ActivationTiles();
     }
 
     private WeatherEvent_Data Upcoming_EventData(WeatherEvent_Data searchData)
@@ -340,7 +346,8 @@ public class Weather_Manager : MonoBehaviour
 
         if (hoveringIcon != null)
         {
-            List<Tile> activationTiles = Current_WeatherEvent(hoveringIcon.data.weather).Event_ActivationTiles();
+            WeatherEvent hoveringWeatherEvent = Current_WeatherEvent(hoveringIcon.data.weather);
+            List<Tile> activationTiles = hoveringWeatherEvent.reservedActivationTiles;
 
             _tileIndicator.Clear_CurrentIndicators();
             if (activationTiles == null) return;
@@ -350,7 +357,9 @@ public class Weather_Manager : MonoBehaviour
                 _tileIndicator.Set_Indicator(activationTiles[i]);
             }
 
+            _tileIndicator.Update_CurrentVisualDatas(hoveringWeatherEvent.activateTileVisuals);
             _tileIndicator.Toggle_CurrentIndicators(true);
+
             return;
         }
         _toggleDelayCoroutine = StartCoroutine(IndicatorToggle_DelayUpdate());
