@@ -9,6 +9,7 @@ public class WeatherEvent_Sunlight : WeatherEvent
     [SerializeField][Range(0, 10)] private int _temperatureIncreaseValue;
 
 
+    // Activation
     public override List<Tile> Generated_ActivationTiles()
     {
         Tiles_Controller tilesController = InGame_Manager.instance.tilesController;
@@ -24,5 +25,14 @@ public class WeatherEvent_Sunlight : WeatherEvent
 
         Player_Controller player = InGame_Manager.instance.player;
         player.Update_Temperature(player.data.temperature + _temperatureIncreaseValue);
+    }
+
+
+    // Text Template
+    public override string Description()
+    {
+        return base.Description()
+            .Replace("{activationRange}", _activationRange.ToString())
+            .Replace("{temperatureIncreaseValue}", _temperatureIncreaseValue.ToString());
     }
 }

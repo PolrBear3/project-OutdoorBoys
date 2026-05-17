@@ -12,8 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 158c8b4bfec7b4eea85d8dea788cb83b, type: 3}
   m_Name: Rain
   m_EditorClassIdentifier: 
-  _upcomingInfoText: Rain will fall in
-  _descriptionText: Rain wet tiles decrease player's temperature by -5
+  _upcomingInfoText: 'Rain will fall in : <sprite=0> {upcomingTimeValue}'
+  _descriptionText: Rain wet tiles decrease player's temperature by -{temperatureDecreaseValue}
   _iconSprite: {fileID: -443011722, guid: 08db937c9bf304fd9bd2b19319eae929, type: 3}
   _activePrefab: {fileID: 5858694087719140007, guid: 806d10ca5f9d8449db30d7c234d7860b, type: 3}
   _randomWeightValue: 5

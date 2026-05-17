@@ -6,8 +6,7 @@ using UnityEngine;
 public class Weather_ScrObj : ScriptableObject
 {
     [Space(20)]
-    [SerializeField] private string _upcomingInfoText;
-    public string upcomingInfoText => _upcomingInfoText;
+    [SerializeField][TextArea(3, 10)] private string _upcomingInfoText;
 
     [SerializeField][TextArea(3, 10)] private string _descriptionText;
     public string descriptionText => _descriptionText;
@@ -36,6 +35,7 @@ public class Weather_ScrObj : ScriptableObject
     [SerializeField][Range(0, 100)] private int _maxActiveTime;
 
 
+    // Converted Data
     public int Active_TimePoint()
     {
         return Mathf.Min(_activeTimePoint, InGame_Manager.instance.time.maxTimecount);
@@ -51,5 +51,12 @@ public class Weather_ScrObj : ScriptableObject
     public int Random_ActiveTime()
     {
         return Mathf.Max(1, Random.Range(_minActiveTime, _maxActiveTime + 1));
+    }
+
+
+    // Text Template
+    public string UpcomingInfo(int upcomingTimeValue)
+    {
+        return _upcomingInfoText.Replace("{upcomingTimeValue}", upcomingTimeValue.ToString());
     }
 }

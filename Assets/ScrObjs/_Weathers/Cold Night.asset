@@ -12,8 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 158c8b4bfec7b4eea85d8dea788cb83b, type: 3}
   m_Name: Cold Night
   m_EditorClassIdentifier: 
-  _upcomingInfoText: Sun goes down, cold in the night
-  _descriptionText: Without sunlight, player's temperature decrease by -3
+  _upcomingInfoText: 'Sun goes down, gets cold in the night : <sprite=0> {upcomingTimeValue}'
+  _descriptionText: Without sunlight, player's temperature decrease by -{temperatureDecreaseValue}
   _iconSprite: {fileID: -1908865621, guid: 08db937c9bf304fd9bd2b19319eae929, type: 3}
   _activePrefab: {fileID: 5858694087719140007, guid: 33de10b58d69b45128b63fab346c7224, type: 3}
   _randomWeightValue: 5

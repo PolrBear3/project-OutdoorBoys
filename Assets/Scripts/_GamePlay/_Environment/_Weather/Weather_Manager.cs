@@ -10,19 +10,17 @@ public class Weather_Manager : MonoBehaviour
     [SerializeField] private Tile_Indicator _tileIndicator;
     [SerializeField] private RectTransform _weatherPanel;
 
-    [Space(10)]
-    [SerializeField] private WeatherUI_Icon[] _icons;
+    [Space(20)]
+    [SerializeField][Range(0, 10)] private float _updateDelayTime;
+    public float updateDelayTime => _updateDelayTime;
 
-    [Space(10)]
+    [Space(20)]
+    [SerializeField] private WeatherUI_Icon[] _icons;
     [SerializeField] private RectTransform _descriptionPanel;
     [SerializeField] private TextMeshProUGUI _descriptionText;
 
     [Space(20)]
     [SerializeField][Range(0, 100)] private int _upcomingUpdateCoolTime;
-
-
-    [SerializeField][Range(0, 10)] private float _updateDelayTime;
-    public float updateDelayTime => _updateDelayTime;
 
 
     private Coroutine _weathersUpdateCoroutine;
@@ -88,6 +86,7 @@ public class Weather_Manager : MonoBehaviour
             if (eventPrefab.TryGetComponent(out WeatherEvent weatherEvent) == false) continue;
 
             _currentWeathers.Add(weather, weatherEvent);
+            weatherEvent.Set_Manager(this);
         }
 
         for (int i = 0; i < _icons.Length; i++)
@@ -108,6 +107,15 @@ public class Weather_Manager : MonoBehaviour
         {
             if (currentWeather.Key != weather) continue;
             return currentWeather.Value;
+        }
+        return null;
+    }
+    public Weather_ScrObj TargetEvent_Weather(WeatherEvent weatherEvent)
+    {
+        foreach (var currentWeather in _currentWeathers)
+        {
+            if (currentWeather.Value != weatherEvent) continue;
+            return currentWeather.Key;
         }
         return null;
     }
@@ -203,14 +211,17 @@ public class Weather_Manager : MonoBehaviour
             {
                 WeatherEvent weatherEvent = Current_WeatherEvent(eventData.weather);
 
+                // visuals
+                Icon(eventData).Update_ActivateAnimation(_updateDelayTime);
+                ActivateBlink_TileIndicator(weatherEvent);
+
+                // activation
                 weatherEvent.Activate_Event();
                 weatherEvent.reservedActivationTiles.Clear();
 
                 _upcomingWeatherDatas.RemoveAt(i);
 
-                Icon(eventData).Update_ActivateAnimation(_updateDelayTime);
                 yield return new WaitForSeconds(_updateDelayTime);
-
                 continue;
             }
             eventData.Update_TimeCount(eventData.timeCount - 1);
@@ -232,7 +243,7 @@ public class Weather_Manager : MonoBehaviour
     }
 
 
-    // UI
+    // Visuals
     private List<WeatherUI_Icon> EmptyIcons()
     {
         List<WeatherUI_Icon> emptyIcons = new();
@@ -356,41 +367,39 @@ public class Weather_Manager : MonoBehaviour
 
         WeatherEvent_Data hoveringData = Upcoming_EventData(hoveringIcon.data);
         if (hoveringData == null) return;
-        
+
         Weather_ScrObj weather = hoveringData.weather;
-
-        string upcomingDescription = weather.upcomingInfoText + ": <sprite=0> " + hoveringData.timeCount;
-        string weatherDescription = "\n\n" + weather.descriptionText;
-
-        _descriptionText.text = upcomingDescription + weatherDescription;
+        _descriptionText.text = weather.UpcomingInfo(hoveringData.timeCount) + "\n\n" + Current_WeatherEvent(weather).Description();
     }
     private void Toggle_Description()
     {
         Toggle_Description(Hovering_Icon());
     }
 
+
+    private void Update_TileIndicator(WeatherEvent targetEvent)
+    {
+        List<Tile> activationTiles = targetEvent.reservedActivationTiles;
+
+        _tileIndicator.Clear_CurrentIndicators();
+        if (activationTiles == null) return;
+
+        for (int i = 0; i < activationTiles.Count; i++)
+        {
+            _tileIndicator.Set_Indicator(activationTiles[i]);
+        }
+        _tileIndicator.Update_CurrentVisualDatas(targetEvent.activateTileVisuals);
+    }
+
     private void Toggle_TileIndicator(WeatherUI_Icon hoveringIcon)
     {
-        if (_toggleDelayCoroutine != null)
-        {
-            StopCoroutine(_toggleDelayCoroutine);
-            _toggleDelayCoroutine = null;
-        }
+        if (_weathersUpdateCoroutine != null) return;
+        
+        Cancel_IndicatorToggleDelay();
 
         if (hoveringIcon != null)
         {
-            WeatherEvent hoveringWeatherEvent = Current_WeatherEvent(hoveringIcon.data.weather);
-            List<Tile> activationTiles = hoveringWeatherEvent.reservedActivationTiles;
-
-            _tileIndicator.Clear_CurrentIndicators();
-            if (activationTiles == null) return;
-
-            for (int i = 0; i < activationTiles.Count; i++)
-            {
-                _tileIndicator.Set_Indicator(activationTiles[i]);
-            }
-
-            _tileIndicator.Update_CurrentVisualDatas(hoveringWeatherEvent.activateTileVisuals);
+            Update_TileIndicator(Current_WeatherEvent(hoveringIcon.data.weather));
             _tileIndicator.Toggle_CurrentIndicators(true);
 
             return;
@@ -408,5 +417,34 @@ public class Weather_Manager : MonoBehaviour
 
         _tileIndicator.Clear_CurrentIndicators();
         _toggleDelayCoroutine = null;
+    }
+    private void Cancel_IndicatorToggleDelay()
+    {
+        if (_toggleDelayCoroutine == null) return;
+
+        StopCoroutine(_toggleDelayCoroutine);
+        _toggleDelayCoroutine = null;
+    }
+
+    private void ActivateBlink_TileIndicator(WeatherEvent activateEvent)
+    {
+        Cancel_IndicatorToggleDelay();
+        Update_TileIndicator(activateEvent);
+        
+        StartCoroutine(ActivateBlink_Update());
+    }
+    private IEnumerator ActivateBlink_Update()
+    {
+        const int blinkCount = 3;
+        float blinkDuration = _updateDelayTime / (blinkCount * 2f);
+
+        for (int i = 0; i < blinkCount; i++)
+        {
+            _tileIndicator.Toggle_CurrentIndicators(true);
+            yield return new WaitForSeconds(blinkDuration);
+
+            _tileIndicator.Toggle_CurrentIndicators(false);
+            yield return new WaitForSeconds(blinkDuration);
+        }
     }
 }

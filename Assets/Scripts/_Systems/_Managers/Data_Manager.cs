@@ -28,7 +28,6 @@ public class Data_Manager : MonoBehaviour
     [SerializeField] private TileScrObj[] _tileScrObjs;
     public TileScrObj[] tileScrObjs => _tileScrObjs;
 
-    [Space(20)]
     [SerializeField] private Item_ScrObj[] _allItems;
     public Item_ScrObj[] allItems => _allItems;
 

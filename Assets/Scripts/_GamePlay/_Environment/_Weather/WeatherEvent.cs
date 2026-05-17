@@ -4,6 +4,9 @@ using UnityEngine;
 
 public abstract class WeatherEvent : MonoBehaviour
 {
+    private Weather_Manager _manager;
+
+    
     [Space(20)]
     [SerializeField] private TileIndicator_VisualData _activateTileVisuals;
     public TileIndicator_VisualData activateTileVisuals => _activateTileVisuals;
@@ -12,6 +15,14 @@ public abstract class WeatherEvent : MonoBehaviour
     public List<Tile> reservedActivationTiles => _reservedActivationTiles;
 
 
+    // Data
+    public void Set_Manager(Weather_Manager manager)
+    {
+        _manager = manager;
+    }
+
+
+    // Activation
     public abstract List<Tile> Generated_ActivationTiles();
 
     public void Reserve_ActivationTiles()
@@ -26,4 +37,11 @@ public abstract class WeatherEvent : MonoBehaviour
     }
 
     public abstract void Activate_Event();
+
+
+    // Text Template
+    public virtual string Description()
+    {
+        return _manager.TargetEvent_Weather(this).descriptionText;
+    }
 }

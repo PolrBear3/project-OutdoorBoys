@@ -407,7 +407,7 @@ public class Animal : MonoBehaviour, IDamageable
         Tile currentTile = _movement.tileTracker.data.CurrentTile();
         foreach (ItemData itemData in _deceasedDropItems)
         {
-            currentTile.Set_Item(new(itemData.itemScrObj, itemData.amount));
+            currentTile.SetPreserve_Item(new(itemData.itemScrObj, itemData.amount));
         }
         
         _runActionCoroutine = null;

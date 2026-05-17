@@ -11,6 +11,7 @@ public class WeatherEvent_Rain : WeatherEvent
     [SerializeField][Range(0, 10)] private int _temperatureDecreaseValue;
 
 
+    // Activation
     private bool Is_ExcludeTile(Tile checkTile)
     {
         for (int i = 0; i < _excludeTiles.Length; i++)
@@ -39,5 +40,13 @@ public class WeatherEvent_Rain : WeatherEvent
 
         Player_Controller player = InGame_Manager.instance.player;
         player.Update_Temperature(player.data.temperature - _temperatureDecreaseValue);
+    }
+
+
+    // Text Template
+    public override string Description()
+    {
+        return base.Description()
+            .Replace("{temperatureDecreaseValue}", _temperatureDecreaseValue.ToString());
     }
 }

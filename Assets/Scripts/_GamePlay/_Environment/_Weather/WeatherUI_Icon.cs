@@ -61,9 +61,11 @@ public class WeatherUI_Icon : MonoBehaviour
     private IEnumerator ActivateAnimation_Update(float animateDuration)
     {
         animateDuration /= 2;
-        LeanTween.scale(gameObject, new(1.5f, 1.5f), animateDuration);
+        LeanTweenType tweenType = LeanTweenType.easeOutElastic;
+
+        LeanTween.scale(gameObject, new(1.5f, 1.5f), animateDuration).setEase(tweenType);
         
         yield return new WaitForSeconds(animateDuration);
-        LeanTween.scale(gameObject, new(1f, 1f), animateDuration);
+        LeanTween.scale(gameObject, new(1f, 1f), animateDuration).setEase(tweenType);
     }
 }
