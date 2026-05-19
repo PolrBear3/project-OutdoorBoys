@@ -22,4 +22,7 @@ MonoBehaviour:
   _maxAmount: 0
   _itemWeight: 0
   _triggerRange: 0
+  _placeRestrictions: []
+  _selectRestrictions: []
   _itemIngredientDatas: []
+  _craftRequiredPlacedItemDatas: []

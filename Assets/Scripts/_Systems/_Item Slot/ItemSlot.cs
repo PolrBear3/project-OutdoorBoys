@@ -18,14 +18,13 @@ public class ItemSlot : MonoBehaviour
     [Space(10)]
     [SerializeField] private FillBar_UI _durabilityBar;
 
-    [Space(20)]
-    [SerializeField][Range(0, 1)]  private float _transparencyToggleValue;
-
 
     private ItemSlot_Manager _slotManager;
 
     private ItemData _data;
     public ItemData data => _data;
+
+    private const float _transparencyToggleValue = 0.1f;
 
 
     // MonoBehaviour

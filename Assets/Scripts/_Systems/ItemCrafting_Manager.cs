@@ -16,11 +16,11 @@ public class ItemCrafting_Manager : MonoBehaviour
     [SerializeField] private ItemsSource_Manager _itemsSourceManager;
 
     [Space(20)]
-    [SerializeField] private Image _togglePanel;
-
-    [Space(20)]
     [SerializeField] private ItemSlot_Manager _ingredientSlotsManager;
+
+    [Space(10)]
     [SerializeField] private Image _itemInfoPanel;
+    [SerializeField] private ItemSlot _itemImageSlot;
 
     [Space(10)]
     [SerializeField] private TextMeshProUGUI _itemNameText;
@@ -233,7 +233,7 @@ public class ItemCrafting_Manager : MonoBehaviour
         {
             Item_ScrObj craftItem = allItems[i];
 
-            ItemData[] placedCheckDatas = craftItem.craftPlacedCheckDatas;
+            ItemData[] placedCheckDatas = craftItem.craftRequiredPlacedItemDatas;
             bool checkItemsPlaced = true;
 
             for (int j = 0; j < placedCheckDatas.Length; j++)
@@ -346,6 +346,10 @@ public class ItemCrafting_Manager : MonoBehaviour
 
         Item_ScrObj hoveringItem = hoveringItemSlot.data?.itemScrObj;
         if (hoveringItem == null) return;
+
+        _itemImageSlot.Set_Data(new ItemData(hoveringItem, 1));
+        _itemImageSlot.Update_ItemImage();
+        _itemImageSlot.Update_AmountText();
 
         _itemNameText.text = hoveringItem.itemName;
         _itemDescriptionText.text = hoveringItem.description;

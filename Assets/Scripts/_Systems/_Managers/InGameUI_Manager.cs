@@ -18,6 +18,8 @@ public class InGameUI_Manager : MonoBehaviour
     [Space(20)]
     [SerializeField][Range(0, 10)] private float _textAnimateDuration;
 
+    private Dictionary<TextMeshProUGUI, Coroutine> _textAnimationDatas = new();
+
 
     // MonoBehaviour
     private void Awake()
@@ -74,13 +76,13 @@ public class InGameUI_Manager : MonoBehaviour
     }
 
 
-    // Text
+    // Time Text
     private void Update_TimeText(int timeCount)
     {
         int rewardTargetTime = InGame_Manager.instance.time.data.rewardTargetTime;
 
         _timeText.text = "<sprite=0> " + timeCount + " (" + "<sprite=2> " + rewardTargetTime + ")".ToString();
-        StartCoroutine(AnimateText_Update(_timeText));
+        Update_TextAnimation(_timeText);
     }
     private void Update_TimeText()
     {
@@ -90,27 +92,21 @@ public class InGameUI_Manager : MonoBehaviour
     private void Update_DayText(int dayCount)
     {
         _dayText.text = "Day " + dayCount.ToString();
-        StartCoroutine(AnimateText_Update(_dayText));
+        Update_TextAnimation(_dayText);
     }
 
+
+    // Player Data Text
     private void Update_HealthText(int currentValue)
     {
         _healthText.text = currentValue.ToString();
-        StartCoroutine(AnimateText_Update(_healthText));
-    }
-    private void Update_HealthText(int _, int __)
-    {
-        Update_HealthText();
-    }
-    private void Update_HealthText()
-    {
-        Update_HealthText(InGame_Manager.instance.player.data.health);
+        Update_TextAnimation(_healthText);
     }
 
     private void Update_TemperatureText(int currentValue)
     {
         _temperatureText.text = currentValue.ToString();
-        StartCoroutine(AnimateText_Update(_temperatureText));
+        Update_TextAnimation(_temperatureText);
     }
 
     private void Update_StaminaText(int maxValue, int currentValue)
@@ -119,7 +115,7 @@ public class InGameUI_Manager : MonoBehaviour
         string decreaseString = "\n(-" + player.interaction.Current_StaminaValue() + ")";
         
         _staminaText.text = currentValue + "/" + maxValue + decreaseString;
-        StartCoroutine(AnimateText_Update(_staminaText));
+        Update_TextAnimation(_staminaText);
     }
     private void Update_StaminaText()
     {
@@ -129,14 +125,26 @@ public class InGameUI_Manager : MonoBehaviour
 
 
     // Visual
+    private void Update_TextAnimation(TextMeshProUGUI animateText)
+    {
+        if (_textAnimationDatas.ContainsKey(animateText))
+        {
+            StopCoroutine(_textAnimationDatas[animateText]);
+            _textAnimationDatas.Remove(animateText);
+        }
+        _textAnimationDatas[animateText] = StartCoroutine(AnimateText_Update(animateText));
+    }
     private IEnumerator AnimateText_Update(TextMeshProUGUI targetText)
     {
         GameObject animateText = targetText.gameObject;
         LeanTweenType tweenType = LeanTweenType.easeOutElastic;
 
         LeanTween.scale(animateText, new(1.5f, 1.5f), _textAnimateDuration).setEase(tweenType);
-
         yield return new WaitForSeconds(_textAnimateDuration);
+
         LeanTween.scale(animateText, new(1f, 1f), _textAnimateDuration).setEase(tweenType);
+        yield return new WaitForSeconds(_textAnimateDuration);
+
+        _textAnimationDatas.Remove(targetText);
     }
 }

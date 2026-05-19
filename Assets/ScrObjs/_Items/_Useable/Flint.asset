@@ -28,9 +28,16 @@ MonoBehaviour:
   _maxAmount: 10
   _itemWeight: 0
   _triggerRange: 1
+  _discoverTimeRangeData:
+    _activeDay: 0
+    _activeTime: 0
+    _restrictTime: 0
+    _minTimeCount: 0
+    _maxTimeCount: 0
   _placeRestrictions: []
   _selectRestrictions:
   - {fileID: 11400000, guid: ce54e4e0d72924f0c9ece991976d94f8, type: 2}
   _itemIngredientDatas:
   - _itemScrObj: {fileID: 11400000, guid: 85f6c95d406fa44a1890666516ac97b7, type: 2}
     _amount: 2
+  _craftRequiredPlacedItemDatas: []

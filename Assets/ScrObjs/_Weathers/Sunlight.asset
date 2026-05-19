@@ -17,9 +17,10 @@ MonoBehaviour:
     the player's temperature by +{temperatureIncreaseValue}
   _iconSprite: {fileID: 1127324843, guid: 08db937c9bf304fd9bd2b19319eae929, type: 3}
   _activePrefab: {fileID: 5858694087719140007, guid: 2519fbc749378423e8d755864585a3a3, type: 3}
-  _randomWeightValue: 2
-  _activeDayPoint: 0
-  _activeTimePoint: 0
-  _restrictTimePoint: 5
-  _minActiveTime: 0
-  _maxActiveTime: 0
+  _rateValue: 2
+  _timeRangeData:
+    _activeDay: 0
+    _activeTime: 0
+    _restrictTime: 15
+    _minTimeCount: 0
+    _maxTimeCount: 0

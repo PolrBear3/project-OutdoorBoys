@@ -19,39 +19,11 @@ public class Weather_ScrObj : ScriptableObject
     public GameObject activePrefab => _activePrefab;
 
     [Space(20)]
-    [SerializeField][Range(0, 10)] private int _randomWeightValue;
-    public int randomWeightValue => _randomWeightValue;
+    [SerializeField][Range(0, 10)] private int _rateValue;
+    public int rateValue => _rateValue;
 
-    [Space(20)]
-    [SerializeField][Range(0, 100)] private int _activeDayPoint;
-    public int activeDayPoint => _activeDayPoint;
-
-    [Space(20)]
-    [SerializeField][Range(0, 100)] private int _activeTimePoint;
-    [SerializeField][Range(0, 100)] private int _restrictTimePoint;
-
-    [Space(20)]
-    [SerializeField][Range(0, 100)] private int _minActiveTime;
-    [SerializeField][Range(0, 100)] private int _maxActiveTime;
-
-
-    // Converted Data
-    public int Active_TimePoint()
-    {
-        return Mathf.Min(_activeTimePoint, InGame_Manager.instance.time.maxTimecount);
-    }
-
-    public int Restrict_TimePoint()
-    {
-        int maxtimeCount = InGame_Manager.instance.time.maxTimecount;
-
-        return _restrictTimePoint > 0 ? Mathf.Min(_restrictTimePoint, maxtimeCount) : maxtimeCount + 1;
-    }
-
-    public int Random_ActiveTime()
-    {
-        return Mathf.Max(1, Random.Range(_minActiveTime, _maxActiveTime + 1));
-    }
+    [SerializeField] private TimeRange_Data _timeRangeData;
+    public TimeRange_Data timeRangeData => _timeRangeData;
 
 
     // Text Template

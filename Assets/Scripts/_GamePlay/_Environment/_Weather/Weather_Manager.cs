@@ -146,11 +146,6 @@ public class Weather_Manager : MonoBehaviour
 
     private Weather_ScrObj RandomWeight_WeatherScrObj()
     {
-        Time_Manager time = InGame_Manager.instance.time;
-
-        int currentDayCount = time.data.dayCount;
-        int currentTimeCount = time.data.timeCount;
-
         List<Weather_ScrObj> availableWeathers = new();
 
         foreach (var activeEvent in _currentWeathers)
@@ -167,9 +162,10 @@ public class Weather_Manager : MonoBehaviour
             }
             if (upcomingFound) continue;
 
-            if (currentDayCount < weatherToAdd.activeDayPoint) continue;
-            if (currentTimeCount < weatherToAdd.Active_TimePoint()) continue;
-            if (currentTimeCount >= weatherToAdd.Restrict_TimePoint()) continue;
+            TimeRange_Data timeRangeData = weatherToAdd.timeRangeData;
+
+            if (timeRangeData.Is_ActiveDay() == false) continue;
+            if (timeRangeData.Is_ActiveTime() == false || timeRangeData.Is_RestrictTime()) continue;
 
             availableWeathers.Add(weatherToAdd);
         }
@@ -179,14 +175,14 @@ public class Weather_Manager : MonoBehaviour
         int totalWeight = 0;
         for (int i = 0; i < availableWeathers.Count; i++)
         {
-            totalWeight += Mathf.Max(0, availableWeathers[i].randomWeightValue);
+            totalWeight += Mathf.Max(0, availableWeathers[i].rateValue);
         }
 
         int randomValue = UnityEngine.Random.Range(0, totalWeight);
         for (int i = 0; i < availableWeathers.Count; i++)
         {
             Weather_ScrObj weather = availableWeathers[i];
-            int weight = Mathf.Max(0, weather.randomWeightValue);
+            int weight = Mathf.Max(0, weather.rateValue);
 
             if (randomValue < weight) return weather;
             randomValue -= weight;
@@ -236,7 +232,7 @@ public class Weather_Manager : MonoBehaviour
             yield break;
         }
 
-        _upcomingWeatherDatas.Add(new(updateEvent, updateEvent.Random_ActiveTime()));
+        _upcomingWeatherDatas.Add(new(updateEvent, updateEvent.timeRangeData.Random_TimeCount()));
         Current_WeatherEvent(updateEvent).Reserve_ActivationTiles();
 
         _weathersUpdateCoroutine = null;

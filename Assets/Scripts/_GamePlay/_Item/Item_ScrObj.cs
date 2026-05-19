@@ -52,6 +52,10 @@ public class Item_ScrObj : ScriptableObject
     public int triggerRange => _triggerRange;
 
     [Space(20)]
+    [SerializeField] private TimeRange_Data _discoverTimeRangeData;
+    public TimeRange_Data discoverTimeRangeData => _discoverTimeRangeData;
+
+    [Space(20)]
     [SerializeField] private ItemRule_ScrObj[] _placeRestrictions;
     public ItemRule_ScrObj[] placeRestrictions => _placeRestrictions;
 
@@ -59,10 +63,10 @@ public class Item_ScrObj : ScriptableObject
     public ItemRule_ScrObj[] selectRestrictions => _selectRestrictions;
 
     [Space(20)]
-    [SerializeField] private ItemData[] _craftPlacedCheckDatas;
-    public ItemData[] craftPlacedCheckDatas => _craftPlacedCheckDatas;
-
     [SerializeField] private ItemData[] _itemIngredientDatas;
+
+    [SerializeField] private ItemData[] _craftRequiredPlacedItemDatas;
+    public ItemData[] craftRequiredPlacedItemDatas => _craftRequiredPlacedItemDatas;
 
 
     // Data
@@ -130,7 +134,10 @@ public class Item_ScrObj : ScriptableObject
     public int Available_CraftCount(List<ItemData> checkItemDatas)
     {
         List<ItemData> ingredientDatas = new(Item_IngredientDatas());
+        
         if (ingredientDatas.Count <= 0) return 0;
+        if (_discoverTimeRangeData.Is_ActiveDay() == false) return 0;
+        if (_discoverTimeRangeData.Is_ActiveTime() == false || _discoverTimeRangeData.Is_RestrictTime()) return 0;
 
         int maxCraftCount = int.MaxValue;
 
