@@ -95,7 +95,7 @@ public class Time_Manager : MonoBehaviour, ISaveLoadable
     {
         return _data.timeCount >= _nightActiveTime;
     }
-    
+
     public int Total_NightTimeCount()
     {
         return _maxTimeCount - _nightActiveTime + 1;
@@ -115,14 +115,15 @@ public class Time_Manager : MonoBehaviour, ISaveLoadable
     public void Run_RewardUpdates(bool run)
     {
         if (run == false) return;
-        
+
         OnRewardTargetTime?.Invoke();
     }
 
     public void Count_Time()
     {
         if (TimeUpdateActions_Running()) return;
-        
+        if (InGame_Manager.instance.movements.AllMovements_Complete() == false) return;
+
         int calculatedTimeCount = _data.timeCount + 1;
 
         if (calculatedTimeCount <= _maxTimeCount)

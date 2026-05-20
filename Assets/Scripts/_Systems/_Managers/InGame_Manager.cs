@@ -22,6 +22,9 @@ public class InGame_Manager : MonoBehaviour
     [SerializeField] private Time_Manager _time;
     public Time_Manager time => _time;
 
+    [SerializeField] private Movements_Manager _movements;
+    public Movements_Manager movements => _movements;
+
     [SerializeField] private Inventory_Manager _inventory;
     public Inventory_Manager inventory => _inventory;
 

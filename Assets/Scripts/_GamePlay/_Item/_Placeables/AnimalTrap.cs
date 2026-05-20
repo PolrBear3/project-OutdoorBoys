@@ -14,7 +14,7 @@ public class AnimalTrap : MonoBehaviour
 
 
     // MonoBehaviour
-    private void Awake()
+    private void Start()
     {
         InGame_Manager manager = InGame_Manager.instance;
 

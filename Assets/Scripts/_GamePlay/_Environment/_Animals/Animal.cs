@@ -392,11 +392,11 @@ public class Animal : MonoBehaviour, IDamageable
         if (_data.health > 0) return;
 
         Reset_ActionsUpdate();
-
-        _healthFillBar.Refresh_CurrentFillBar();
         _tileIndicator.Clear_CurrentIndicators();
 
         Toggle_AlertIcon(false);
+        _healthFillBar.Refresh_CurrentFillBar();
+
         _runActionCoroutine = StartCoroutine(DeceasedState_Update());
     }
     private IEnumerator DeceasedState_Update()
@@ -409,7 +409,7 @@ public class Animal : MonoBehaviour, IDamageable
         {
             currentTile.SetPreserve_Item(new(itemData.itemScrObj, itemData.amount));
         }
-        
+
         _runActionCoroutine = null;
 
         AnimalManager().spawnedAnimals.Remove(this);

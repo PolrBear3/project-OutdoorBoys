@@ -29,7 +29,7 @@ public class Projectile_Launcher : MonoBehaviour
 
         Tile playerTile = manager.player.movement.tileTracker.data.CurrentTile();
         GameObject spawnedProjectile = Instantiate(_projectilePrefab, playerTile.setPosition);
-        
+
         if (spawnedProjectile.TryGetComponent(out Projectile projectile) == false)
         {
             Destroy(spawnedProjectile);
@@ -48,12 +48,13 @@ public class Projectile_Launcher : MonoBehaviour
     private IEnumerator LaunchComplete_Delay(Tile useTile, Projectile launchedProjectile)
     {
         while (launchedProjectile.movement.At_Destination() == false) yield return null;
-        
+
         OnLaunchComplete?.Invoke(useTile);
+        InGame_Manager.instance.time.timeUpdateActions.Remove(this);
+
+        launchedProjectile.movement.Stop();
         Destroy(launchedProjectile.gameObject);
 
-        InGame_Manager.instance.time.timeUpdateActions.Remove(this);
-        
         _launchCoroutine = null;
         yield break;
     }

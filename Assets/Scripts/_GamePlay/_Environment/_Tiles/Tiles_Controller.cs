@@ -206,7 +206,9 @@ public class Tiles_Controller : MonoBehaviour, IItemsSource
         if (Tile_Pointable(tile) == false) return false;
 
         InGame_Manager manager = InGame_Manager.instance;
-        // if (manager.movements.AllMovements_Complete() == false) return false;
+
+        if (manager.time.TimeUpdateActions_Running()) return false;
+        if (manager.movements.AllMovements_Complete() == false) return false;
 
         Tile playerTile = manager.player.movement.tileTracker.data.CurrentTile();
         ItemData currentItemData = manager.cursor.itemCursor.data;

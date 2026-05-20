@@ -156,7 +156,10 @@ public class ItemSlot_Manager : MonoBehaviour
     {
         if (slot == null) return false;
 
-        // if (InGame_Manager.instance.movements.AllMovements_Complete() == false) return false;
+        InGame_Manager manager = InGame_Manager.instance;
+
+        if (manager.time.TimeUpdateActions_Running()) return false;
+        if (manager.movements.AllMovements_Complete() == false) return false;
 
         return true;
     }
@@ -165,7 +168,7 @@ public class ItemSlot_Manager : MonoBehaviour
     private void Select_HoveringSlot()
     {
         if (SlotSelect_Available(_hoveringSlot) == false) return;
-        
+
         OnSlotSelect?.Invoke(_hoveringSlot);
     }
 

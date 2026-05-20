@@ -28,9 +28,14 @@ public class Movement_Controller : MonoBehaviour
         _currentSpeed = _defaultSpeed;
     }
 
+    private void Start()
+    {
+        InGame_Manager.instance.movements.movementControllers.Add(this);
+    }
+
     private void OnDestroy()
     {
-
+        InGame_Manager.instance.movements.movementControllers.Remove(this);
     }
 
     private void Update()

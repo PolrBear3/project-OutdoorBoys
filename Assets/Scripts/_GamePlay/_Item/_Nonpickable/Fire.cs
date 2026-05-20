@@ -49,7 +49,7 @@ public class Fire : MonoBehaviour
 
 
     // MonoBehaviour
-    private void Awake()
+    private void Start()
     {
         InGame_Manager manager = InGame_Manager.instance;
         Time_Manager time = manager.time;
@@ -69,10 +69,8 @@ public class Fire : MonoBehaviour
 
         tiles.OnTileHover += Toggle_FillBar;
         tiles.OnTileHover += Toggle_HeatTiles;
-    }
 
-    private void Start()
-    {
+
         _fillBarController.Set_FillBar(transform);
         Toggle_FillBar(InGame_Manager.instance.cursor.pointingTile);
 
@@ -98,8 +96,8 @@ public class Fire : MonoBehaviour
 
         Tiles_Controller tiles = manager.tilesController;
 
-        tiles.OnTileHover += Toggle_FillBar;
-        tiles.OnTileHover += Toggle_HeatTiles;
+        tiles.OnTileHover -= Toggle_FillBar;
+        tiles.OnTileHover -= Toggle_HeatTiles;
     }
 
 
@@ -218,7 +216,7 @@ public class Fire : MonoBehaviour
     {
         Player_Controller player = InGame_Manager.instance.player;
 
-        if (_heatTileIndicator.Current_IndicateTiles().Contains(player.movement.tileTracker.data.CurrentTile()) == false) return; 
+        if (_heatTileIndicator.Current_IndicateTiles().Contains(player.movement.tileTracker.data.CurrentTile()) == false) return;
         player.Update_Temperature(player.data.temperature + _temperatureIncreaseValue);
     }
 
@@ -335,7 +333,7 @@ public class Fire : MonoBehaviour
             trackingItemTile.Set_Item(new(replaceItem, replaceAmount));
         }
     }
-    
+
     private void Transfer_HeatingItems()
     {
         List<PlaceableItem> placedFireItems = Placed_FireItems();
