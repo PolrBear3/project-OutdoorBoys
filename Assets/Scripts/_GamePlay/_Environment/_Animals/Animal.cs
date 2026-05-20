@@ -71,7 +71,7 @@ public class Animal : MonoBehaviour, IDamageable
 
     public int InflictDamage(int damageValue)
     {
-        if (_data.isOnSight == false) return 0;
+        if (_data == null || _data.isOnSight == false) return 0;
 
         int actualDamageValue = Mathf.Min(damageValue, _data.health);
 
@@ -84,10 +84,19 @@ public class Animal : MonoBehaviour, IDamageable
             return actualDamageValue;
         }
 
-        _animation.Play(2);
-        Run_AgroActions(null);
+        Reset_ActionsUpdate();
+        _runActionCoroutine = StartCoroutine(InflictDamage_Update());
 
         return actualDamageValue;
+    }
+    private IEnumerator InflictDamage_Update()
+    {
+        AnimationClipScrObj damageAnimClip = _animation.AnimationClip(2);
+
+        _animation.Play(damageAnimClip);
+        while (_animation.Animation_Playing(damageAnimClip)) yield return null;
+
+        Run_AgroActions();
     }
 
 
@@ -137,6 +146,8 @@ public class Animal : MonoBehaviour, IDamageable
 
     public void Update_Animation(bool isMoving)
     {
+        if (_animation.Animation_Playing(_animation.AnimationClip(2))) return;
+        
         if (_data.isOnSight == false)
         {
             _animation.Play(0);
@@ -196,6 +207,7 @@ public class Animal : MonoBehaviour, IDamageable
 
     public bool Deceased()
     {
+        if (_data == null) return false;
         return _data.health <= 0 || AnimalManager().spawnedAnimals.Contains(this) == false;
     }
 
@@ -330,6 +342,8 @@ public class Animal : MonoBehaviour, IDamageable
 
         StopCoroutine(_runActionCoroutine);
         _runActionCoroutine = null;
+
+        _movement.Stop();
     }
 
     private void Run_TimeCountActions()
@@ -359,16 +373,20 @@ public class Animal : MonoBehaviour, IDamageable
         Reset_ActionsUpdate();
     }
 
+    private void Run_AgroActions()
+    {
+        Reset_ActionsUpdate();
+        _tileIndicator.Clear_CurrentIndicators();
+
+        _runActionCoroutine = StartCoroutine(AgroActions_Update());
+    }
     private void Run_AgroActions(Tile _)
     {
         if (Deceased()) return;
         if (_data.isOnSight == false) return;
         if (Player_InAgroRange() == false) return;
 
-        Reset_ActionsUpdate();
-        _tileIndicator.Clear_CurrentIndicators();
-
-        _runActionCoroutine = StartCoroutine(AgroActions_Update());
+        Run_AgroActions();
     }
     private IEnumerator AgroActions_Update()
     {

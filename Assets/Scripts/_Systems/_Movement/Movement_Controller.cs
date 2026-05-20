@@ -5,18 +5,21 @@ using UnityEngine;
 
 public class Movement_Controller : MonoBehaviour
 {
+    private Movements_Manager _manager;
+
+    
     [SerializeField] private TileTracker _tileTracker;
     public TileTracker tileTracker => _tileTracker;
 
     [Space(20)]
     [SerializeField][Range(0, 10)] private float _defaultSpeed;
 
+
     private float _currentSpeed;
+    private Vector2 _destination;
 
     private Coroutine _moveCoroutine;
     public Coroutine moveCoroutine => _moveCoroutine;
-
-    private Vector2 _destination;
 
     public Action<bool> OnMovementState;
     public Action<Vector2> OnMovementDirection;

@@ -28,7 +28,9 @@ public class Projectile_Launcher : MonoBehaviour
         manager.time.timeUpdateActions.Add(this);
 
         Tile playerTile = manager.player.movement.tileTracker.data.CurrentTile();
-        GameObject spawnedProjectile = Instantiate(_projectilePrefab, playerTile.setPosition);
+
+        GameObject spawnedProjectile = Instantiate(_projectilePrefab, playerTile.transform);
+        playerTile.Set_CurrentPrefab(spawnedProjectile);
 
         if (spawnedProjectile.TryGetComponent(out Projectile projectile) == false)
         {

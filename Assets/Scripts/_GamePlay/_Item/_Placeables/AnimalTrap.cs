@@ -9,72 +9,41 @@ public class AnimalTrap : MonoBehaviour
     [Space(20)]
     [SerializeField][Range(0, 100)] private int _damage;
 
-    [Space(10)]
-    [SerializeField] private AnimalScrObj[] _activatePriorities;
+    private Coroutine _activationCoroutine;
 
 
     // MonoBehaviour
     private void Start()
     {
-        InGame_Manager manager = InGame_Manager.instance;
-
-        manager.time.Register(ActionUpdateBus.StartUpdate, Activate);
-        manager.player.movement.tileTracker.Register(ActionUpdateBus.StartUpdate, Activate);
+        _placeableItem.currentTile.OnSetPrefab += Activate;
     }
 
     private void OnDestroy()
     {
-        InGame_Manager manager = InGame_Manager.instance;
-
-        manager.time.UnRegister(ActionUpdateBus.StartUpdate, Activate);
-        manager.player.movement.tileTracker.UnRegister(ActionUpdateBus.StartUpdate, Activate);
+        _placeableItem.currentTile.OnSetPrefab -= Activate;
     }
 
 
     // Main
-    private Animal Activate_TargetAnimal()
+    private IDamageable Damageable_TargetAnimal(GameObject targetPrefab)
     {
-        GameObject eventsPrefab = InGame_Manager.instance.worldMapGenerator.currentMapEventsPrefab;
-        if (eventsPrefab.TryGetComponent(out Animals_Manager manager) == false) return null;
+        if (targetPrefab.TryGetComponent(out Animal targetAnimal) == false) return null;
 
-        List<Animal> currentAnimals = manager.SpwnedAnimals(_placeableItem.currentTile);
-        if (currentAnimals.Count <= 0) return null;
+        AnimalData data = targetAnimal.data;
+        
+        if (data == null) return null;
+        if (targetAnimal.Deceased() || data.isOnSight == false) return null;
 
-        for (int i = 0; i < _activatePriorities.Length; i++)
-        {
-            for (int j = 0; j < currentAnimals.Count; j++)
-            {
-                Animal currentAnimal = currentAnimals[j];
-
-                if (currentAnimal.Deceased()) continue;
-                if (currentAnimal.data.animalScrObj != _activatePriorities[i]) continue;
-                if (currentAnimal.movement.tileTracker.data.CurrentTile() != _placeableItem.currentTile) continue;
-
-                return currentAnimal;
-            }
-        }
-        return null;
+        if (targetAnimal.TryGetComponent(out IDamageable damageable) == false) return null;
+        return damageable;
     }
 
-    private void Activate()
+    private void Activate(GameObject activatePrefab)
     {
-        StartCoroutine(Activate_Delay());
-    }
-    private void Activate(Tile _)
-    {
-        Activate();
-    }
+        IDamageable damageAnimal = Damageable_TargetAnimal(activatePrefab);
 
-    private IEnumerator Activate_Delay()
-    {
-        Time_Manager time = InGame_Manager.instance.time;
-        while (time.TimeUpdateActions_Running()) yield return null;
-
-        Animal activateAnimal = Activate_TargetAnimal();
-        if (activateAnimal == null || activateAnimal.data.isOnSight == false) yield break;
-
-        if (activateAnimal.TryGetComponent(out IDamageable damageable) == false) yield break;
-        damageable.InflictDamage(_damage);
+        if (damageAnimal == null) return;
+        damageAnimal.InflictDamage(_damage);
 
         _placeableItem.AnimationDelay_Remove();
     }

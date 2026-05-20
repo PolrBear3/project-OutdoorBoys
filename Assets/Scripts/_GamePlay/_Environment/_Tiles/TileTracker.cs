@@ -24,7 +24,7 @@ public class TileTracker : MonoBehaviour
         if (startingCurrentTile == null) return;
 
         _data = new(startingCurrentTile);
-        gameObject.transform.SetParent(startingCurrentTile.setPosition);
+        startingCurrentTile.Set_CurrentPrefab(gameObject);
     }
 
 
@@ -99,7 +99,7 @@ public class TileTracker : MonoBehaviour
         if (targetTile == null) return _data?.CurrentTile();
 
         _data.TrackTile(targetTile);
-        gameObject.transform.SetParent(targetTile.setPosition);
+        targetTile.Set_CurrentPrefab(gameObject);
 
         RunRegistered_UpdateBus(targetTile);
         return targetTile;
@@ -131,7 +131,7 @@ public class TileTracker : MonoBehaviour
         if (currentTile == closestTile) return currentTile;
 
         _data.TrackTile(closestTile);
-        gameObject.transform.SetParent(closestTile.setPosition);
+        closestTile.Set_CurrentPrefab(gameObject);
 
         RunRegistered_UpdateBus(closestTile);
         return closestTile;

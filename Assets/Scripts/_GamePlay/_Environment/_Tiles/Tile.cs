@@ -14,9 +14,8 @@ public class Tile : MonoBehaviour
     [Space(20)]
     [SerializeField] private SpriteRenderer _tileSpriteRenderer;
 
+    [Space(10)]
     [SerializeField] private Transform _setPosition;
-    public Transform setPosition => _setPosition;
-
     [SerializeField] private SpriteRenderer _boundPointRenderer;
 
     [Space(20)]
@@ -28,6 +27,8 @@ public class Tile : MonoBehaviour
     public TileData data => _data;
 
     private List<PlaceableItem> _placedItems = new();
+
+    public Action<GameObject> OnSetPrefab;
 
 
     // MonoBehaviour
@@ -73,11 +74,18 @@ public class Tile : MonoBehaviour
         _tileSpriteRenderer.sprite = isBaseTile ? sprites[1] : sprites[0];
     }
 
+    public void Set_CurrentPrefab(GameObject setPrefab)
+    {
+        if (setPrefab == null) return;
+        
+        setPrefab.transform.SetParent(_setPosition);
+        OnSetPrefab?.Invoke(setPrefab);
+    }
     public List<GameObject> All_CurrentPrefabs()
     {
         List<GameObject> prefabs = new();
 
-        foreach (Transform child in setPosition)
+        foreach (Transform child in _setPosition)
         {
             prefabs.Add(child.gameObject);
         }
