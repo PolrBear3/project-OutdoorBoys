@@ -104,7 +104,7 @@ public class ItemSlot : MonoBehaviour
         if (currentItem.itemType == ItemType.use)
         {
             _durabilityBar.gameObject.SetActive(true);
-            _durabilityBar.Update_Fill(currentItem.maxAmount, _data.amount);
+            _durabilityBar.Update_Visuals(currentItem.maxAmount, _data.amount);
 
             return;
         }

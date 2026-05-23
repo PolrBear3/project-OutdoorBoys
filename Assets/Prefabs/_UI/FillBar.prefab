@@ -182,4 +182,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0abd93adfd48a4a7587babddbb719790, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _barRenderer: {fileID: 6448152435546696202}
+  _barSprites:
+  - {fileID: -103093361, guid: 876726b4a75bd4d21af424fd6ed1343c, type: 3}
+  - {fileID: 1258320460, guid: 876726b4a75bd4d21af424fd6ed1343c, type: 3}
   _fillRenderer: {fileID: 8125877549516139369}

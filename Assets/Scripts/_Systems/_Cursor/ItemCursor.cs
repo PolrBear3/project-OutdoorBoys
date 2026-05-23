@@ -184,7 +184,7 @@ public class ItemCursor : MonoBehaviour, IItemsSource, IItemsSourceRemove, IItem
         if (currentItem.itemType == ItemType.use)
         {
             durabilityBar.gameObject.SetActive(true);
-            durabilityBar.Update_Fill(currentItem.maxAmount, _data.amount);
+            durabilityBar.Update_Visuals(currentItem.maxAmount, _data.amount);
 
             return;
         }

@@ -48,7 +48,7 @@ public class FillBar_Controller : MonoBehaviour
     {
         if (_currentFllBar == null) return;
 
-        _currentFllBar.Update_Fill(maxValue, currentValue);
+        _currentFllBar.Update_Visuals(maxValue, currentValue);
     }
 
     public void Toggle(bool toggle)

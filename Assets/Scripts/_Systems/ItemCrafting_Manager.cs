@@ -10,6 +10,7 @@ public class ItemCrafting_Manager : MonoBehaviour
 {
     [Space(20)]
     [SerializeField] private ItemSlot_Manager _slotManager;
+    [SerializeField] private GameObject _slotsPageControlButtons;
 
     [Space(20)]
     [SerializeField] private ItemsSource_Manager _previewSourceManager;
@@ -27,6 +28,9 @@ public class ItemCrafting_Manager : MonoBehaviour
     [SerializeField] private TextMeshProUGUI _itemDescriptionText;
 
 
+    private int _currentSlotsPage;
+
+
     // MonoBehaviour
     private void Awake()
     {
@@ -35,56 +39,40 @@ public class ItemCrafting_Manager : MonoBehaviour
 
     private void OnDestroy()
     {
-        EventBus_Manager.UnRegister(EventBus.AwakeLoad, Set_Data);
-
         _slotManager.OnSlotHover -= Toggle_ItemInfoPanel;
         _slotManager.OnSlotSelect -= Craft_Item;
 
-        _slotManager.OnSlotSelect -= Update_CraftableItems;
-        _slotManager.OnSlotSelect -= Update_CraftItemsPreview;
-
+        _slotManager.OnSlotSelect -= Refresh_Page;
         _slotManager.OnSlotSelect -= Toggle_ItemInfoPanel;
 
         InGame_Manager manager = InGame_Manager.instance;
         Inventory_Manager inventory = manager.inventory;
 
-        inventory.slotManager.OnSlotSelect -= Update_CraftableItems;
-        inventory.OnItemAdded -= Update_CraftableItems;
-
-        inventory.slotManager.OnSlotSelect -= Update_CraftItemsPreview;
-        inventory.OnItemAdded -= Update_CraftItemsPreview;
-
+        inventory.OnItemAdded -= Refresh_Page;
+        inventory.slotManager.OnSlotSelect -= Refresh_Page;
         inventory.OnItemAdded -= Toggle_ItemInfoPanel;
 
         ItemCursor itemCursor = manager.cursor.itemCursor;
 
-        itemCursor.OnItemReturn -= Update_CraftableItems;
-        itemCursor.OnItemReturn -= Update_CraftItemsPreview;
-
+        itemCursor.OnItemReturn -= Refresh_Page;
         itemCursor.OnItemReturn -= Toggle_ItemInfoPanel;
 
         Tiles_Controller tilesController = manager.tilesController;
 
-        tilesController.OnTileSelect -= Update_CraftableItems;
-        tilesController.OnTileSelect -= Update_CraftItemsPreview;
-
+        tilesController.OnTileSelect -= Refresh_Page;
         tilesController.OnTileSelect -= Toggle_ItemInfoPanel;
 
         TileTracker playerTileTracker = manager.player.movement.tileTracker;
 
-        playerTileTracker.UnRegister(ActionUpdateBus.AwakeUpdate, Update_CraftableItems);
-        playerTileTracker.UnRegister(ActionUpdateBus.AwakeUpdate, Update_CraftItemsPreview);
-
+        playerTileTracker.UnRegister(ActionUpdateBus.AwakeUpdate, Refresh_Page);
         playerTileTracker.UnRegister(ActionUpdateBus.AwakeUpdate, Toggle_ItemInfoPanel);
 
         Time_Manager time = manager.time;
 
-        time.UnRegister(ActionUpdateBus.StartUpdate, Update_CraftableItems);
-        time.UnRegister(ActionUpdateBus.StartUpdate, Update_CraftItemsPreview);
+        time.UnRegister(ActionUpdateBus.StartUpdate, Refresh_Page);
         time.UnRegister(ActionUpdateBus.StartUpdate, Toggle_ItemInfoPanel);
 
-        EventBus_Manager.UnRegister(EventBus.SubLoad, Update_CraftableItems);
-        EventBus_Manager.UnRegister(EventBus.SubLoad, Update_CraftItemsPreview);
+        EventBus_Manager.UnRegister(EventBus.SubLoad, Refresh_Page);
         EventBus_Manager.UnRegister(EventBus.SubLoad, Toggle_ItemInfoPanel);
     }
 
@@ -95,57 +83,43 @@ public class ItemCrafting_Manager : MonoBehaviour
         _slotManager.OnSlotHover += Toggle_ItemInfoPanel;
         _slotManager.OnSlotSelect += Craft_Item;
 
-        _slotManager.OnSlotSelect += Update_CraftableItems;
-        _slotManager.OnSlotSelect += Update_CraftItemsPreview;
-
+        _slotManager.OnSlotSelect += Refresh_Page;
         _slotManager.OnSlotSelect += Toggle_ItemInfoPanel;
 
         InGame_Manager manager = InGame_Manager.instance;
         Inventory_Manager inventory = manager.inventory;
 
-        inventory.OnItemAdded += Update_CraftableItems;
-        inventory.OnItemAdded += Update_CraftItemsPreview;
-
-        inventory.slotManager.OnSlotSelect += Update_CraftableItems;
-        inventory.slotManager.OnSlotSelect += Update_CraftItemsPreview;
-
+        inventory.OnItemAdded += Refresh_Page;
+        inventory.slotManager.OnSlotSelect += Refresh_Page;
         inventory.OnItemAdded += Toggle_ItemInfoPanel;
 
         ItemCursor itemCursor = manager.cursor.itemCursor;
 
-        itemCursor.OnItemReturn += Update_CraftableItems;
-        itemCursor.OnItemReturn += Update_CraftItemsPreview;
-
+        itemCursor.OnItemReturn += Refresh_Page;
         itemCursor.OnItemReturn += Toggle_ItemInfoPanel;
 
         Tiles_Controller tilesController = manager.tilesController;
 
-        tilesController.OnTileSelect += Update_CraftableItems;
-        tilesController.OnTileSelect += Update_CraftItemsPreview;
-
+        tilesController.OnTileSelect += Refresh_Page;
         tilesController.OnTileSelect += Toggle_ItemInfoPanel;
 
         TileTracker playerTileTracker = manager.player.movement.tileTracker;
 
-        playerTileTracker.Register(ActionUpdateBus.AwakeUpdate, Update_CraftableItems);
-        playerTileTracker.Register(ActionUpdateBus.AwakeUpdate, Update_CraftItemsPreview);
-
+        playerTileTracker.Register(ActionUpdateBus.AwakeUpdate, Refresh_Page);
         playerTileTracker.Register(ActionUpdateBus.AwakeUpdate, Toggle_ItemInfoPanel);
 
         Time_Manager time = manager.time;
 
-        time.Register(ActionUpdateBus.StartUpdate, Update_CraftableItems);
-        time.Register(ActionUpdateBus.StartUpdate, Update_CraftItemsPreview);
+        time.Register(ActionUpdateBus.StartUpdate, Refresh_Page);
         time.Register(ActionUpdateBus.StartUpdate, Toggle_ItemInfoPanel);
 
-        EventBus_Manager.Register(EventBus.SubLoad, Update_CraftableItems);
-        EventBus_Manager.Register(EventBus.SubLoad, Update_CraftItemsPreview);
+        EventBus_Manager.Register(EventBus.SubLoad, Refresh_Page);
         EventBus_Manager.Register(EventBus.SubLoad, Toggle_ItemInfoPanel);
     }
 
 
-    // Craft Preview
-    private void Update_CraftItemsPreview()
+    // Datas
+    private List<ItemData> CraftPreview_ItemDatas()
     {
         Item_ScrObj[] allItems = Data_Manager.instance.allItems;
 
@@ -159,56 +133,11 @@ public class ItemCrafting_Manager : MonoBehaviour
             if (craftItem.Available_CraftCount(previewSourceDatas) <= 0) continue;
             previewDatas.Add(new(craftItem, 1));
         }
+
         previewDatas.Sort((x, y) => y.amount.CompareTo(x.amount));
-
-        List<ItemSlot> currentSlots = _slotManager.slots;
-        List<ItemData> craftableDatas = _slotManager.Slot_ItemDatas();
-
-        int previewIndex = 0;
-
-        for (int i = 0; i < currentSlots.Count; i++)
-        {
-            ItemSlot slot = currentSlots[i];
-            if (slot.data != null) continue;
-
-            while (previewIndex < previewDatas.Count)
-            {
-                Item_ScrObj previewItem = previewDatas[previewIndex].itemScrObj;
-                previewIndex++;
-                
-                bool itemLoaded = false;
-
-                for (int j = 0; j < craftableDatas.Count; j++)
-                {
-                    if (craftableDatas[j] == null) continue;
-                    if (previewItem != craftableDatas[j].itemScrObj) continue;
-
-                    itemLoaded = true;
-                    break;
-
-                }
-                if (itemLoaded) continue;
-
-                slot.Set_Data(new ItemData(previewItem, 1));
-                slot.Update_ItemImage();
-                slot.Toggle_Transparency(true);
-
-                break;
-            }
-            if (previewIndex >= previewDatas.Count) return;
-        }
-    }
-    private void Update_CraftItemsPreview(Tile _)
-    {
-        Update_CraftItemsPreview();
-    }
-    private void Update_CraftItemsPreview(ItemSlot _)
-    {
-        Update_CraftItemsPreview();
+        return previewDatas;
     }
 
-
-    // Craft
     private List<ItemData> Ingredient_ItemDatas()
     {
         List<IItemsSource> itemsSources = new(_itemsSourceManager.itemsSources);
@@ -221,10 +150,10 @@ public class ItemCrafting_Manager : MonoBehaviour
 
         return _itemsSourceManager.ItemDatas(itemsSources);
     }
-
-    private void Update_CraftableItems(Tile playerTile)
+    private List<ItemData> CraftAvailable_ItemDatas()
     {
         Item_ScrObj[] allItems = Data_Manager.instance.allItems;
+        Tile playerTile = InGame_Manager.instance.player.movement.tileTracker.data.CurrentTile();
 
         List<ItemData> currentItemDatas = Ingredient_ItemDatas();
         List<ItemData> craftAvailableItemDatas = new();
@@ -252,34 +181,88 @@ public class ItemCrafting_Manager : MonoBehaviour
             craftAvailableItemDatas.Add(new(craftItem, craftCount));
         }
         craftAvailableItemDatas.Sort((x, y) => y.amount.CompareTo(x.amount));
+        return craftAvailableItemDatas;
+    }
 
-        List<ItemSlot> craftSlots = _slotManager.slots;
+    private List<ItemData> Refreshed_ItemDatas()
+    {
+        List<ItemData> craftableDatas = CraftAvailable_ItemDatas();
+        List<ItemData> previewDatas = CraftPreview_ItemDatas();
 
-        for (int i = 0; i < craftSlots.Count; i++)
+        for (int i = previewDatas.Count - 1; i >= 0; i--)
         {
-            ItemSlot slot = craftSlots[i];
+            Item_ScrObj previewItem = previewDatas[i].itemScrObj;
 
-            if (i >= craftAvailableItemDatas.Count)
+            for (int j = 0; j < craftableDatas.Count; j++)
+            {
+                if (craftableDatas[j].itemScrObj != previewItem) continue;
+
+                previewDatas.RemoveAt(i);
+                break;
+            }
+        }
+
+        List<ItemData> refreshedDatas = new();
+
+        refreshedDatas.AddRange(craftableDatas);
+        refreshedDatas.AddRange(previewDatas);
+
+        return refreshedDatas;
+    }
+
+
+    // Page Update
+    private void Refresh_Page()
+    {
+        List<ItemData> craftableDatas = CraftAvailable_ItemDatas();
+        List<ItemData> refreshDatas = Refreshed_ItemDatas();
+
+        int maxSlotsCount = _slotManager.slots.Count;
+        _slotsPageControlButtons.SetActive(refreshDatas.Count > maxSlotsCount);
+
+        int maxPage = refreshDatas.Count <= 0 ? 0 : (refreshDatas.Count - 1) / maxSlotsCount;
+        int startIndex = Mathf.Clamp(_currentSlotsPage, 0, maxPage) * maxSlotsCount;
+
+        for (int i = 0; i < maxSlotsCount; i++)
+        {
+            ItemSlot slot = _slotManager.slots[i];
+            int dataIndex = startIndex + i;
+
+            if (dataIndex >= refreshDatas.Count)
             {
                 slot.Clear_Data();
+                slot.Update_ItemImage();
+                slot.Toggle_Transparency(false);
+                
+                continue;
             }
-            else slot.Set_Data(craftAvailableItemDatas[i]);
-
+            slot.Set_Data(refreshDatas[dataIndex]);
             slot.Update_ItemImage();
-            slot.Update_AmountText();
-            slot.Toggle_Transparency(false);
+            slot.Toggle_Transparency(dataIndex >= craftableDatas.Count);
         }
     }
-    private void Update_CraftableItems()
+    private void Refresh_Page(ItemSlot _)
     {
-        Update_CraftableItems(InGame_Manager.instance.player.movement.tileTracker.data.CurrentTile());
+        Refresh_Page();
     }
-    private void Update_CraftableItems(ItemSlot _)
+    private void Refresh_Page(Tile _)
     {
-        Update_CraftableItems();
+        Refresh_Page();
+    }
+
+    public void Update_Page(bool nextPage)
+    {
+        List<ItemData> refreshDatas = Refreshed_ItemDatas();
+
+        int maxSlotsCount = _slotManager.slots.Count;
+        int maxPage = refreshDatas.Count <= 0 ? 0 : (refreshDatas.Count - 1) / maxSlotsCount;
+
+        _currentSlotsPage = (_currentSlotsPage + (nextPage ? 1 : -1) + maxPage + 1) % (maxPage + 1);
+        Refresh_Page();
     }
 
 
+    // Craft
     private List<IItemsSourceRemove> IngredientRemove_ItemsSource()
     {
         Inventory_Manager inventory = InGame_Manager.instance.inventory;
