@@ -28,6 +28,7 @@ public class Fire : MonoBehaviour
 
     [Space(20)]
     [SerializeField] private ItemData[] _burnUpdateItems;
+    [SerializeField] private Item_ScrObj[] _wetStateProtectItems;
 
     [Space(20)]
     [SerializeField][Range(0, 100)] private int _burnDecreaseValue;
@@ -51,6 +52,8 @@ public class Fire : MonoBehaviour
     // MonoBehaviour
     private void Start()
     {
+        _placeableItem.currentTile.OnStateUpdate += RemoveUpdate_WetState;
+
         InGame_Manager manager = InGame_Manager.instance;
         Time_Manager time = manager.time;
 
@@ -80,6 +83,8 @@ public class Fire : MonoBehaviour
 
     private void OnDestroy()
     {
+        _placeableItem.currentTile.OnStateUpdate -= RemoveUpdate_WetState;
+
         InGame_Manager manager = InGame_Manager.instance;
         Time_Manager time = manager.time;
 
@@ -123,6 +128,31 @@ public class Fire : MonoBehaviour
 
 
     // Main
+    private void Remove()
+    {
+        Transfer_HeatingItems();
+
+        Tile currentTile = _placeableItem.currentTile;
+
+        currentTile.Remove_PlacedItemData(_placeableItem);
+        currentTile.Set_Item(new(_coalItem, _coalGeneratedCount));
+
+        Destroy(_placeableItem.gameObject);
+    }
+    private void RemoveUpdate_WetState(TileState updateState, bool activated)
+    {
+        if (activated == false) return;
+        if (updateState != TileState.wet) return;
+        
+        Tile currentTile = _placeableItem.currentTile;
+        
+        foreach (Item_ScrObj item in _wetStateProtectItems)
+        {
+            if (currentTile.Placed_ItemCount(item) > 0) return;
+        }
+        Remove();
+    }
+
     private void UpdatePlaced_BurnItems()
     {
         Tile currentTile = _placeableItem.currentTile;
@@ -150,7 +180,6 @@ public class Fire : MonoBehaviour
             }
         }
     }
-
     private void Update_BurningState()
     {
         ItemData itemData = _placeableItem.data;
@@ -163,16 +192,9 @@ public class Fire : MonoBehaviour
             _coalGeneratedCount += _coalGenerateAmount;
             return;
         }
-
-        Transfer_HeatingItems();
-
-        Tile currentTile = _placeableItem.currentTile;
-
-        currentTile.Remove_PlacedItemData(_placeableItem);
-        currentTile.Set_Item(new(_coalItem, _coalGeneratedCount));
-
-        Destroy(_placeableItem.gameObject);
+        Remove();
     }
+    
     private void Update_HeatTiles()
     {
         ItemData itemData = _placeableItem.data;
@@ -211,7 +233,6 @@ public class Fire : MonoBehaviour
         _heatTileIndicator.Clear_CurrentIndicators();
         _heatTileIndicator.Set_Indicators(currentTile, updatePositions);
     }
-
     private void Update_PlayerTemperature()
     {
         Player_Controller player = InGame_Manager.instance.player;

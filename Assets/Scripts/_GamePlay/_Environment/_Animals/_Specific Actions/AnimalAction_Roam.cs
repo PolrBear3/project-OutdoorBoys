@@ -6,10 +6,14 @@ public class AnimalAction_Roam : AnimalAction
 {
     public override void Run_Action()
     {
-        Tile roamTile = controller.MoveDistanceRange_RandomTile(true);
-        if (roamTile == null) return;
+        List<Tile> roamTiles = controller.MoveDistance_RangeTiles();
+        roamTiles.Remove(controller.movement.tileTracker.data.CurrentTile());
 
+        if (roamTiles.Count <= 0) return;
+
+        Tile roamTile = roamTiles[Random.Range(0, roamTiles.Count)];
         Run_MovementAction(roamTile.Random_BoundPoint());
+        
         return;
     }
 }

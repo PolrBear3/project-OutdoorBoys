@@ -48,6 +48,6 @@ MonoBehaviour:
     _indicatorSprite: {fileID: 8321326, guid: 99b3ae6f72cfb43edb595fcf1373eec9, type: 3}
     _indicatorColor: {r: 0.6431373, g: 0.8666667, b: 0.85882354, a: 1}
     _sortingOrder: 1
+  _tileStatesToRemove: 0200000003000000
+  _tileStatesToAdd: 01000000
   _temperatureDecreaseValue: 2
-  _excludeTiles:
-  - {fileID: 11400000, guid: 42f8526c01f614d319724853fb4ec66a, type: 2}

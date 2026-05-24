@@ -20,15 +20,18 @@ public class Tile : MonoBehaviour
 
     [Space(20)]
     [SerializeField] private Item_ScrObj _useableItemDrop;
-    [SerializeField][Range(0, 10)] private int _maxItemPlaceCount;
 
 
     private TileData _data;
     public TileData data => _data;
 
+    private const int _maxItemPlaceCount = 2;
     private List<PlaceableItem> _placedItems = new();
 
     public Action<GameObject> OnSetPrefab;
+
+    private const int _stateSetTime = 3;
+    public Action<TileState, bool> OnStateUpdate;
 
 
     // MonoBehaviour
@@ -58,6 +61,8 @@ public class Tile : MonoBehaviour
         if (setTile == null) return null;
 
         _data = new(setTile);
+        Load_StaticStates();
+
         return _data;
     }
 
@@ -128,6 +133,35 @@ public class Tile : MonoBehaviour
     public void Toggle_SelectReady()
     {
         Toggle_SelectReady(_pointer.pointerDetected && InGame_Manager.instance.tilesController.Tile_Pointable(this));
+    }
+
+
+    // State
+    private void Load_StaticStates()
+    {
+        TileState[] staticStates = _data.tileScrObj.staticStates;
+
+        foreach (TileState state in staticStates)
+        {
+            _data.stateDatas[state] = _stateSetTime;
+        }
+    }
+
+    public void Add_State(TileState stateToAdd)
+    {
+        if (_data.tileScrObj.Is_StaticState(stateToAdd) == false)
+        {
+            _data.stateDatas[stateToAdd] = _stateSetTime + 1;
+        }
+        OnStateUpdate?.Invoke(stateToAdd, true);
+    }
+    public void Remove_State(TileState stateToRemove)
+    {
+        if (_data.tileScrObj.Is_StaticState(stateToRemove) == false)
+        {
+            _data.stateDatas.Remove(stateToRemove);
+        }
+        OnStateUpdate?.Invoke(stateToRemove, false);
     }
 
 

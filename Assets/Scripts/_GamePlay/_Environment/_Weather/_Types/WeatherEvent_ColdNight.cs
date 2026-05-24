@@ -8,6 +8,14 @@ public class WeatherEvent_ColdNight : WeatherEvent
     [SerializeField][Range(0, 10)] private int _temperatureDecreaseValue;
 
 
+    // Text Template
+    public override string Description()
+    {
+        return base.Description()
+            .Replace("{temperatureDecreaseValue}", _temperatureDecreaseValue.ToString());
+    }
+
+
     // Activation
     public override List<Tile> Generated_ActivationTiles()
     {
@@ -41,13 +49,5 @@ public class WeatherEvent_ColdNight : WeatherEvent
 
         Player_Controller player = InGame_Manager.instance.player;
         player.Update_Temperature(player.data.temperature - _temperatureDecreaseValue);
-    }
-
-
-    // Text Template
-    public override string Description()
-    {
-        return base.Description()
-            .Replace("{temperatureDecreaseValue}", _temperatureDecreaseValue.ToString());
     }
 }

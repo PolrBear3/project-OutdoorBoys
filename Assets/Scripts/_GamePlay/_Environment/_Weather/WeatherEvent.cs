@@ -11,6 +11,11 @@ public abstract class WeatherEvent : MonoBehaviour
     [SerializeField] private TileIndicator_VisualData _activateTileVisuals;
     public TileIndicator_VisualData activateTileVisuals => _activateTileVisuals;
 
+    [Space(10)]
+    [SerializeField] private TileState[] _tileStatesToRemove;
+    [SerializeField] private TileState[] _tileStatesToAdd;
+
+
     private List<Tile> _reservedActivationTiles = new();
     public List<Tile> reservedActivationTiles => _reservedActivationTiles;
 
@@ -24,11 +29,15 @@ public abstract class WeatherEvent : MonoBehaviour
 
     // Activation
     public abstract List<Tile> Generated_ActivationTiles();
-
     public void Reserve_ActivationTiles()
     {
         _reservedActivationTiles = Generated_ActivationTiles() ?? new();
     }
+
+    public abstract void Activate_Event();
+
+
+    // Custom Activations
     public bool ActivationTiles_PlayerDetected()
     {
         Tile playerTile = InGame_Manager.instance.player.movement.tileTracker.data.CurrentTile();
@@ -36,7 +45,22 @@ public abstract class WeatherEvent : MonoBehaviour
         return _reservedActivationTiles.Contains(playerTile);
     }
 
-    public abstract void Activate_Event();
+    public void Update_TileStates()
+    {
+        if (_reservedActivationTiles.Count <= 0) return;
+
+        foreach (Tile tile in _reservedActivationTiles)
+        {
+            for (int i = 0; i < _tileStatesToRemove.Length; i++)
+            {
+                tile.Remove_State(_tileStatesToRemove[i]);
+            }
+            for (int i = 0; i < _tileStatesToAdd.Length; i++)
+            {
+                tile.Add_State(_tileStatesToAdd[i]);
+            }
+        }
+    }
 
 
     // Text Template

@@ -48,5 +48,7 @@ MonoBehaviour:
     _indicatorSprite: {fileID: 8321326, guid: 99b3ae6f72cfb43edb595fcf1373eec9, type: 3}
     _indicatorColor: {r: 0.9098039, g: 0.75686276, b: 0.4392157, a: 1}
     _sortingOrder: 1
+  _tileStatesToAdd: 02000000
+  _tileStatesToRemove: 0100000000000000
   _activationRange: 2
   _temperatureIncreaseValue: 1

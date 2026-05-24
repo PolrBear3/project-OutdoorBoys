@@ -14,11 +14,13 @@ public class Tiles_Controller : MonoBehaviour, IItemsSource
 
     public Action<Tile> OnTileHover;
 
+    public Action OnTileSelect;
+    
     public Action<Tile> OnTargetTileSelect;
     public Action<Tile> OnTargetTileHoldSelect;
     public Action<Tile> OnTileRightSelect;
-
-    public Action OnTileSelect;
+    
+    public Action OnTileStatesTimeCount;
 
 
     // MonoBehaviour
@@ -43,6 +45,8 @@ public class Tiles_Controller : MonoBehaviour, IItemsSource
 
         manager.cursor.OnTilePointRangeUpdate -= Refresh_Toggles;
         manager.player.movement.tileTracker.UnRegister(ActionUpdateBus.AwakeUpdate, Refresh_Toggles);
+
+        manager.time.UnRegister(ActionUpdateBus.StartUpdate, UpdateTiles_StateTimeCount);
     }
 
 
@@ -74,6 +78,8 @@ public class Tiles_Controller : MonoBehaviour, IItemsSource
 
         manager.cursor.OnTilePointRangeUpdate += Refresh_Toggles;
         manager.player.movement.tileTracker.Register(ActionUpdateBus.AwakeUpdate, Refresh_Toggles);
+
+        manager.time.Register(ActionUpdateBus.StartUpdate, UpdateTiles_StateTimeCount);
     }
 
 
@@ -278,6 +284,22 @@ public class Tiles_Controller : MonoBehaviour, IItemsSource
     private void Refresh_Toggles(Tile _)
     {
         Refresh_Toggles();
+    }
+
+    private void UpdateTiles_StateTimeCount()
+    {
+        StartCoroutine(StateTimeCount_TilesUpdateDelay());
+    }
+    private IEnumerator StateTimeCount_TilesUpdateDelay()
+    {
+        Time_Manager time = InGame_Manager.instance.time;
+        while (time.TimeUpdateActions_Running()) yield return null;
+
+        foreach (Tile tile in _currentTiles)
+        {
+            tile.data.Decrease_StateDatas();
+        }
+        OnTileStatesTimeCount?.Invoke();
     }
 
 

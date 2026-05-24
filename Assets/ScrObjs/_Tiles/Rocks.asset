@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: Rocks
   m_EditorClassIdentifier: 
   _type: 1
+  _staticStates: 
   _prefab: {fileID: 8222574897102272058, guid: 2d5232037afdd4e41b93eee438910837, type: 3}
   _groupedSprites:
   - _sprites:

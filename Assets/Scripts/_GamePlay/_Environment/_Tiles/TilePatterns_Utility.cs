@@ -7,25 +7,27 @@ public static class TilePatterns_Utility
     public static List<Tile> CheckBoard_Tiles(bool skipFirstTile)
     {
         InGame_Manager manager = InGame_Manager.instance;
-
         List<Tile> allTiles = manager.tilesController.currentTiles;
+
         if (allTiles.Count <= 0) return null;
 
-        WorldMap_Generator generator = manager.worldMapGenerator;
+        Vector2 startPos = manager.worldMapGenerator.Generate_StartPosition();
         List<Tile> matchedTiles = new();
-
-        int columnCount = Mathf.RoundToInt(generator.Converted_GenerateSize().x);
 
         for (int i = 0; i < allTiles.Count; i++)
         {
-            int column = i % columnCount;
-            int row = i / columnCount;
+            Tile tile = allTiles[i];
+            Vector2 tilePos = tile.transform.position;
 
+            int column = Mathf.RoundToInt(tilePos.x - startPos.x);
+            int row = Mathf.RoundToInt(startPos.y - tilePos.y);
+            
             bool isEven = (row + column) % 2 == 0;
             if (isEven == skipFirstTile) continue;
-
-            matchedTiles.Add(allTiles[i]);
+            
+            matchedTiles.Add(tile);
         }
+
         return matchedTiles;
     }
 

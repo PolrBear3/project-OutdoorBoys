@@ -17,14 +17,15 @@ public class ResourceGenerate_Data
     [SerializeField][Range(0, 100)] private int _generateRate;
     public int generateRate => _generateRate;
 
+    [SerializeField][Range(0, 10)] private int _generatePointDistance;
+    public int generatePointDistance => _generatePointDistance;
+
+    [Space(10)]
     [SerializeField][Range(0, 100)] private int _generateAmount;
     public int generateAmount => _generateAmount;
 
     [SerializeField][Range(0, 100)] private int _maxGenerateAmount;
     public int maxGenerateAmount => _maxGenerateAmount;
-
-    [SerializeField][Range(0, 10)] private int _generatePointDistance;
-    public int generatePointDistance => _generatePointDistance;
 
 
     // Data
@@ -46,6 +47,7 @@ public class Resource_Generator : MonoBehaviour
     private int _currentCoolTime;
 
     [Space(10)]
+    [SerializeField] private ResourceGenerate_Data[] _generateOnLoadDatas;
     [SerializeField] private ResourceGenerate_Data[] _generateDatas;
 
 
@@ -144,10 +146,10 @@ public class Resource_Generator : MonoBehaviour
 
     private void Generate_OnLoad()
     {
-        for (int i = 0; i < _generateDatas.Length; i++)
+        for (int i = 0; i < _generateOnLoadDatas.Length; i++)
         {
-            ResourceGenerate_Data data = _generateDatas[i];
-            Generate(data, Random.Range(0, data.maxGenerateAmount + 1));
+            ResourceGenerate_Data data = _generateOnLoadDatas[i];
+            Generate(data, Random.Range(data.generateAmount, data.maxGenerateAmount + 1));
         }
     }
     private void Generate()

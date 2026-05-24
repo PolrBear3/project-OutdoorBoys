@@ -173,8 +173,6 @@ public class Animal : MonoBehaviour, IDamageable
 
     public List<Tile> MoveDistance_RangeTiles(int maxDistance)
     {
-        Tiles_Controller tilesController = InGame_Manager.instance.tilesController;
-
         Tile currentTile = _movement.tileTracker.data.CurrentTile();
         maxDistance = Mathf.Clamp(maxDistance, 1, _data.animalScrObj.moveDistance);
 
@@ -183,15 +181,6 @@ public class Animal : MonoBehaviour, IDamageable
     public List<Tile> MoveDistance_RangeTiles()
     {
         return MoveDistance_RangeTiles(_data.animalScrObj.moveDistance);
-    }
-
-    public Tile MoveDistanceRange_RandomTile(bool excludePlayerTile)
-    {
-        List<Tile> rangedTiles = MoveDistance_RangeTiles();
-        rangedTiles.Remove(_movement.tileTracker.data.CurrentTile());
-
-        if (excludePlayerTile) rangedTiles.Remove(InGame_Manager.instance.player.movement.tileTracker.data.CurrentTile());
-        return rangedTiles[UnityEngine.Random.Range(0, rangedTiles.Count)];
     }
 
     public List<Tile> AgroRange_Tiles()
@@ -262,11 +251,9 @@ public class Animal : MonoBehaviour, IDamageable
         _tileIndicator.Clear_CurrentIndicators();
 
         List<Tile> movementTiles = MoveDistance_RangeTiles();
-        Tile currentTile = _movement.tileTracker.data.CurrentTile();
 
         foreach (Tile tile in movementTiles)
         {
-            if (tile == currentTile) continue;
             _tileIndicator.Set_Indicator(tile);
         }
         Toggle_MovementRangeTiles(InGame_Manager.instance.cursor.pointingTile);

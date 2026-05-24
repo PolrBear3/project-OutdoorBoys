@@ -133,6 +133,12 @@ public class TileTracker : MonoBehaviour
         _data.TrackTile(closestTile);
         closestTile.Set_CurrentPrefab(gameObject);
 
+        Dictionary<TileState, int> stateDatas = closestTile.data.stateDatas;
+        foreach (var stateData in stateDatas)
+        {
+            Debug.Log(stateData.Key + " " + stateData.Value);
+        }
+
         RunRegistered_UpdateBus(closestTile);
         return closestTile;
     }

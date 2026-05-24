@@ -319,6 +319,8 @@ MonoBehaviour:
     _amount: 3
   - _itemScrObj: {fileID: 11400000, guid: 86e876e6c7e9c467db97ab95dfa547ce, type: 2}
     _amount: 5
+  _wetStateProtectItems:
+  - {fileID: 11400000, guid: 1f0f853271bde41e785e0d219c0cdbe3, type: 2}
   _burnDecreaseValue: 1
   _heatTilesUpdateThresholdPoint: 5
   _heatItemDatas:

@@ -19,18 +19,24 @@ MonoBehaviour:
   _itemType: 0
   _itemPrefab: {fileID: 3637228250238346253, guid: f990c87832dc348cba041952eea5503d, type: 3}
   _offsetData:
-  - _position: {x: 0, y: -0.02}
+  - _position: {x: 0, y: 0}
     _rotationValue: 0
-  - _position: {x: 0, y: -0.02}
+  - _position: {x: 0.1, y: 0.1}
     _rotationValue: 0
-  - _position: {x: 0, y: -0.02}
-    _rotationValue: -45
-  _maxAmount: 2
+  - _position: {x: -0.1, y: -0.1}
+    _rotationValue: 0
+  _maxAmount: 1
   _itemWeight: 1
   _triggerRange: 1
+  _discoverTimeRangeData:
+    _activeDay: 0
+    _activeTime: 0
+    _restrictTime: 0
+    _minTimeCount: 0
+    _maxTimeCount: 0
   _placeRestrictions: []
   _selectRestrictions: []
-  _craftPlacedCheckDatas: []
   _itemIngredientDatas:
   - _itemScrObj: {fileID: 11400000, guid: 86e876e6c7e9c467db97ab95dfa547ce, type: 2}
     _amount: 2
+  _craftRequiredPlacedItemDatas: []

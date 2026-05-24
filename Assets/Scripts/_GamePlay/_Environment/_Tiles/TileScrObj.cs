@@ -16,13 +16,25 @@ public class TileScrObj : ScriptableObject
     [SerializeField] private TileType _type;
     public TileType type => _type;
 
+    [SerializeField] private TileState[] _staticStates;
+    public TileState[] staticStates => _staticStates;
+
+    [Space(20)]
     [SerializeField] private GameObject _prefab;
     public GameObject prefab => _prefab;
 
-    [Space(20)]
     [SerializeField] private Grouped_TileSprites[] _groupedSprites;
     public Grouped_TileSprites[] groupedSprites => _groupedSprites;
 
+
+    public bool Is_StaticState(TileState checkState)
+    {
+        for (int i = 0; i < _staticStates.Length; i++)
+        {
+            if (checkState == _staticStates[i]) return true;
+        }
+        return false;
+    }
 
     public Sprite[] GroupedSprites()
     {

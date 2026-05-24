@@ -124,6 +124,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _pointer: {fileID: 1210712548005400206}
   _selectorAnimPlayer: {fileID: 894385741868623628}
+  _statesController: {fileID: 0}
   _tileSpriteRenderer: {fileID: 8526343298762341458}
   _setPosition: {fileID: 7971817962077731149}
   _boundPointRenderer: {fileID: 3872212962410569136}
