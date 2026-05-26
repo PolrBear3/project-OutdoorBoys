@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using UnityEngine.InputSystem;
 
 public class Cursor : MonoBehaviour
 {
@@ -26,6 +27,14 @@ public class Cursor : MonoBehaviour
     [Space(10)]
     [SerializeField] private Sprite _defaultPointerSprite;
     [SerializeField] private Sprite _pressedPointerSprite;
+
+    [Space(20)]
+    [SerializeField] private RectTransform _hoverInfoPanel;
+    [SerializeField] private ItemSlot_Manager _placedItemsSlotManager;
+
+    [Space(10)]
+    [SerializeField] private GameObject _tileStateSlotsGroup;
+    [SerializeField] private TileState_IndicationSlot[] _tileStateSlots;
 
 
     private bool _pointerVisible;
@@ -57,7 +66,14 @@ public class Cursor : MonoBehaviour
         input.OnLeftClickStated -= Update_PointerSprite;
         input.OnCursorControl -= Movement_Update;
 
-        InGame_Manager.instance.tilesController.OnTileHover -= Track_PointingTile;
+        InGame_Manager manager = InGame_Manager.instance;
+        Tiles_Controller tilesController = manager.tilesController;
+
+        tilesController.OnTileHover -= Track_PointingTile;
+
+        tilesController.OnTileSelect -= Toggle_HoverInfoPanel;
+        tilesController.OnTileHoldHover -= Toggle_HoverInfoPanel;
+        tilesController.OnTileStatesTimeCount -= Toggle_HoverInfoPanel;
     }
 
 
@@ -70,7 +86,16 @@ public class Cursor : MonoBehaviour
         input.OnLeftClickStated += Update_PointerSprite;
         input.OnCursorControl += Movement_Update;
 
-        InGame_Manager.instance.tilesController.OnTileHover += Track_PointingTile;
+        InGame_Manager manager = InGame_Manager.instance;
+        Tiles_Controller tilesController = manager.tilesController;
+
+        tilesController.OnTileHover += Track_PointingTile;
+
+        tilesController.OnTileSelect += Toggle_HoverInfoPanel;
+        tilesController.OnTileHoldHover += Toggle_HoverInfoPanel;
+        tilesController.OnTileStatesTimeCount += Toggle_HoverInfoPanel;
+
+        Toggle_HoverInfoPanel(_pointingTile);
     }
 
 
@@ -119,23 +144,81 @@ public class Cursor : MonoBehaviour
 
 
     // Tile Pointing
+    private void Track_PointingTile(Tile pointingTile)
+    {
+        _pointingTile = pointingTile;
+    }
+
     public void Update_TilePointerRange(int range)
     {
         _tilePointRange = Mathf.Max(0, range);
 
         OnTilePointRangeUpdate?.Invoke();
     }
-
-    public bool PointingTile_InRange(Tile pointTile)
+    public bool PointingTile_InRange(Tile pointingTile)
     {
         Tile playerTile = InGame_Manager.instance.player.movement.tileTracker.data.CurrentTile();
 
-        return playerTile.DistanceTo_TargetTile(pointTile) <= _tilePointRange;
+        return playerTile.DistanceTo_TargetTile(pointingTile) <= _tilePointRange;
     }
 
 
-    private void Track_PointingTile(Tile pointTile)
+    private void Toggle_HoverInfoPanel(Tile hoveringTile)
     {
-        _pointingTile = pointTile;
+        Dictionary<TileState, int> stateDatas = hoveringTile != null ? new(hoveringTile.data.stateDatas) : new();
+        bool hasStateData = stateDatas.Count > 0;
+
+        List<ItemData> placedItemDatas = hoveringTile != null ? new(hoveringTile.Placed_ItemDatas()) : new();
+        int placedItemCount = placedItemDatas.Count;
+
+        bool togglePanel = hoveringTile != null && hasStateData || placedItemCount > 0;
+        _hoverInfoPanel.gameObject.SetActive(togglePanel);
+
+        if (togglePanel == false) return;
+
+        // tile states
+        _tileStateSlotsGroup.SetActive(hasStateData);
+        
+        foreach (TileState_IndicationSlot slot in _tileStateSlots)
+        {
+            slot.gameObject.SetActive(false);
+        }
+
+        Tiles_Controller tilesController = InGame_Manager.instance.tilesController;
+        int stateSlotsIndex = 0;
+
+        foreach (var data in stateDatas)
+        {
+            if (stateSlotsIndex >= _tileStateSlots.Length) break;
+
+            TileState_IndicationSlot stateSlot = _tileStateSlots[stateSlotsIndex];
+            Sprite stateSprite = tilesController.TileState_VisualSprite(data.Key);
+            
+            stateSlot.gameObject.SetActive(stateSprite != null);
+
+            stateSlot.stateIcon.sprite = stateSprite;
+            stateSlot.timeCountText.text = "<sprite=0> " + data.Value;
+
+            stateSlotsIndex++;
+        }
+
+        // placed items
+        _placedItemsSlotManager.gameObject.SetActive(placedItemCount > 0);
+        _placedItemsSlotManager.Clear_Datas();
+
+        List<ItemSlot> itemSlots = _placedItemsSlotManager.slots;
+
+        for (int i = 0; i < placedItemCount; i++)
+        {
+            if (i + 1 > itemSlots.Count) break;
+            itemSlots[i].Set_Data(placedItemDatas[i]);
+        }
+        _placedItemsSlotManager.Update_Visuals();
+    }
+    private void Toggle_HoverInfoPanel()
+    {
+        if (_pointingTile == null || _pointingTile.pointer.pointerHoldCoroutine != null) return;
+        
+        Toggle_HoverInfoPanel(_pointingTile);
     }
 }

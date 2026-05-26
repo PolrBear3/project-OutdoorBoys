@@ -6,6 +6,16 @@ public enum TileType { softGround, harshGround }
 public enum TileState { frozen, wet, warm, hot }
 
 [System.Serializable]
+public class TileState_VisualData
+{
+    [SerializeField] private TileState _tileState;
+    public TileState tileState => _tileState;
+
+    [SerializeField] private Sprite _indicationSprite;
+    public Sprite indicationSprite => _indicationSprite;
+}
+
+[System.Serializable]
 public class TileData
 {
     private TileScrObj _tileScrObj;

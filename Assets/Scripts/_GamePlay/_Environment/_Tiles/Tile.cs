@@ -42,6 +42,8 @@ public class Tile : MonoBehaviour
         _pointer.OnEnter -= tilesController.Hover_Tile;
         _pointer.OnExit -= tilesController.Hover_Tile;
 
+        _pointer.OnPointerHoldState -= tilesController.HoldHover_Tile;
+
         _pointer.OnEnter -= Toggle_SelectReady;
         _pointer.OnExit -= Toggle_SelectReady;
     }
@@ -54,6 +56,8 @@ public class Tile : MonoBehaviour
 
         _pointer.OnEnter += tilesController.Hover_Tile;
         _pointer.OnExit += tilesController.Hover_Tile;
+
+        _pointer.OnPointerHoldState += tilesController.HoldHover_Tile;
 
         _pointer.OnEnter += Toggle_SelectReady;
         _pointer.OnExit += Toggle_SelectReady;
@@ -220,9 +224,10 @@ public class Tile : MonoBehaviour
             if (setItemAmount <= 0) return null;
             if (_placedItems.Count >= _maxItemPlaceCount) break;
 
-            GameObject spawnedItem = Instantiate(setItem.itemPrefab, _setPosition);
-            PlaceableItem newPlacedItem = spawnedItem.GetComponent<PlaceableItem>();
+            GameObject spawnedItem = Instantiate(setItem.itemPrefab);
+            Set_CurrentPrefab(spawnedItem);
 
+            PlaceableItem newPlacedItem = spawnedItem.GetComponent<PlaceableItem>();
             int spawnSetAmount = Mathf.Min(setItemAmount, maxAmount);
 
             newPlacedItem.Set_Data(new(setItem, spawnSetAmount));
@@ -250,6 +255,8 @@ public class Tile : MonoBehaviour
         if (setItem.itemType != ItemType.use) return false;
 
         GameObject spawnedDrop = Instantiate(_useableItemDrop.itemPrefab, _setPosition);
+        Set_CurrentPrefab(spawnedDrop);
+
         PlaceableItem placedUseItem = spawnedDrop.GetComponent<PlaceableItem>();
 
         placedUseItem.Set_Data(new(setItem, setItemData.amount));

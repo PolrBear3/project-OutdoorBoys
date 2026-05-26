@@ -5,6 +5,10 @@ using UnityEngine;
 
 public class Tiles_Controller : MonoBehaviour, IItemsSource
 {
+    [Space(20)]
+    [SerializeField] private TileState_VisualData[] _tileStateVisualDatas;
+
+
     private List<Tile> _currentTiles = new();
     public List<Tile> currentTiles => _currentTiles;
 
@@ -13,13 +17,14 @@ public class Tiles_Controller : MonoBehaviour, IItemsSource
 
 
     public Action<Tile> OnTileHover;
+    public Action<Tile> OnTileHoldHover;
 
     public Action OnTileSelect;
     
     public Action<Tile> OnTargetTileSelect;
     public Action<Tile> OnTargetTileHoldSelect;
     public Action<Tile> OnTileRightSelect;
-    
+
     public Action OnTileStatesTimeCount;
 
 
@@ -196,6 +201,20 @@ public class Tiles_Controller : MonoBehaviour, IItemsSource
     }
 
 
+    // Visual Data
+    public Sprite TileState_VisualSprite(TileState tileState)
+    {
+        for (int i = 0; i < _tileStateVisualDatas.Length; i++)
+        {
+            TileState_VisualData visualData = _tileStateVisualDatas[i];
+
+            if (tileState != visualData.tileState) continue;
+            return visualData.indicationSprite;
+        }
+        return null;
+    }
+
+
     // Select
     public bool Tile_Pointable(Tile tile)
     {
@@ -232,6 +251,10 @@ public class Tiles_Controller : MonoBehaviour, IItemsSource
     public void Hover_Tile()
     {
         OnTileHover?.Invoke(Current_Tile());
+    }
+    public void HoldHover_Tile(bool hovering)
+    {
+        OnTileHoldHover?.Invoke(hovering ? Current_Tile() : null);
     }
 
     public void Select_Tile()
