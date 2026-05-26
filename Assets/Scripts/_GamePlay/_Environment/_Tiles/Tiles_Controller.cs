@@ -20,12 +20,13 @@ public class Tiles_Controller : MonoBehaviour, IItemsSource
     public Action<Tile> OnTileHoldHover;
 
     public Action OnTileSelect;
-    
+
     public Action<Tile> OnTargetTileSelect;
     public Action<Tile> OnTargetTileHoldSelect;
     public Action<Tile> OnTileRightSelect;
 
-    public Action OnTileStatesTimeCount;
+    public Action<Tile> OnTileItemsUpdate;
+    public Action OnTilesStatesTimeCount;
 
 
     // MonoBehaviour
@@ -322,7 +323,7 @@ public class Tiles_Controller : MonoBehaviour, IItemsSource
         {
             tile.data.Decrease_StateDatas();
         }
-        OnTileStatesTimeCount?.Invoke();
+        OnTilesStatesTimeCount?.Invoke();
     }
 
 

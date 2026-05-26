@@ -86,7 +86,7 @@ public class Tile : MonoBehaviour
     public void Set_CurrentPrefab(GameObject setPrefab)
     {
         if (setPrefab == null) return;
-        
+
         setPrefab.transform.SetParent(_setPosition);
         OnSetPrefab?.Invoke(setPrefab);
     }
@@ -176,7 +176,11 @@ public class Tile : MonoBehaviour
 
         _placedItems.Add(placingItem);
         _data.placedItemDatas.Add(placingItem.data);
-        InGame_Manager.instance.tilesController.placedItems.Add(placingItem);
+
+        Tiles_Controller tilesController = InGame_Manager.instance.tilesController;
+
+        tilesController.placedItems.Add(placingItem);
+        tilesController.OnTileItemsUpdate?.Invoke(this);
 
         Update_PlacedItemOffsets();
     }
@@ -215,7 +219,10 @@ public class Tile : MonoBehaviour
 
             placedItem.Play_PlaceAnimation();
 
-            if (setItemAmount <= 0) return null;
+            if (setItemAmount > 0) continue;
+
+            InGame_Manager.instance.tilesController.OnTileItemsUpdate(this);
+            return null;
         }
 
         // spawn new
@@ -291,7 +298,9 @@ public class Tile : MonoBehaviour
         ItemData leftOverData = Set_Item(setItemData);
 
         if (leftOverData == null) return;
+
         _data.Preserve_ItemData(leftOverData);
+        InGame_Manager.instance.tilesController.OnTileItemsUpdate(this);
     }
 
 
@@ -317,7 +326,9 @@ public class Tile : MonoBehaviour
     {
         _placedItems.Remove(PlacedItem);
         _data.placedItemDatas.Remove(PlacedItem.data);
-        InGame_Manager.instance.tilesController.placedItems.Remove(PlacedItem);
+
+        Tiles_Controller tilesController = InGame_Manager.instance.tilesController;
+        tilesController.placedItems.Remove(PlacedItem);
 
         List<ItemData> preservedDatas = new(_data.preservedItemDatas);
         _data.preservedItemDatas.Clear();
@@ -329,6 +340,7 @@ public class Tile : MonoBehaviour
             if (leftOverData == null) continue;
             _data.Preserve_ItemData(leftOverData);
         }
+        tilesController.OnTileItemsUpdate?.Invoke(this);
 
         Update_PlacedItemOffsets();
     }

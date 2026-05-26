@@ -15,7 +15,7 @@ public class EventPointer : MonoBehaviour, IPointerEnterHandler, IPointerExitHan
     private bool _pointerDetected;
     public bool pointerDetected => _pointerDetected;
 
-    private const float _pointerHoldDelayTime = 0.75f;
+    private const float _pointerHoldDelayTime = 0.5f;
 
     private Coroutine _pointerHoldCoroutine;
     public Coroutine pointerHoldCoroutine => _pointerHoldCoroutine;

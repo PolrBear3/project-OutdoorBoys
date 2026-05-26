@@ -71,9 +71,9 @@ public class Cursor : MonoBehaviour
 
         tilesController.OnTileHover -= Track_PointingTile;
 
-        tilesController.OnTileSelect -= Toggle_HoverInfoPanel;
         tilesController.OnTileHoldHover -= Toggle_HoverInfoPanel;
-        tilesController.OnTileStatesTimeCount -= Toggle_HoverInfoPanel;
+        tilesController.OnTileItemsUpdate -= Update_HoverInfoPanel;
+        tilesController.OnTilesStatesTimeCount -= Toggle_HoverInfoPanel;
     }
 
 
@@ -91,9 +91,9 @@ public class Cursor : MonoBehaviour
 
         tilesController.OnTileHover += Track_PointingTile;
 
-        tilesController.OnTileSelect += Toggle_HoverInfoPanel;
         tilesController.OnTileHoldHover += Toggle_HoverInfoPanel;
-        tilesController.OnTileStatesTimeCount += Toggle_HoverInfoPanel;
+        tilesController.OnTileItemsUpdate += Update_HoverInfoPanel;
+        tilesController.OnTilesStatesTimeCount += Toggle_HoverInfoPanel;
 
         Toggle_HoverInfoPanel(_pointingTile);
     }
@@ -178,7 +178,7 @@ public class Cursor : MonoBehaviour
 
         // tile states
         _tileStateSlotsGroup.SetActive(hasStateData);
-        
+
         foreach (TileState_IndicationSlot slot in _tileStateSlots)
         {
             slot.gameObject.SetActive(false);
@@ -193,7 +193,7 @@ public class Cursor : MonoBehaviour
 
             TileState_IndicationSlot stateSlot = _tileStateSlots[stateSlotsIndex];
             Sprite stateSprite = tilesController.TileState_VisualSprite(data.Key);
-            
+
             stateSlot.gameObject.SetActive(stateSprite != null);
 
             stateSlot.stateIcon.sprite = stateSprite;
@@ -218,7 +218,14 @@ public class Cursor : MonoBehaviour
     private void Toggle_HoverInfoPanel()
     {
         if (_pointingTile == null || _pointingTile.pointer.pointerHoldCoroutine != null) return;
-        
+
         Toggle_HoverInfoPanel(_pointingTile);
+    }
+
+    private void Update_HoverInfoPanel(Tile updateTile)
+    {
+        if (_pointingTile != updateTile) return;
+
+        Toggle_HoverInfoPanel();
     }
 }
