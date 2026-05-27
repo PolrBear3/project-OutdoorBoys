@@ -7,8 +7,8 @@ using TMPro;
 public class Weather_Manager : MonoBehaviour
 {
     [Space(20)]
+    [SerializeField] private PanelToggle_AnimationController _togglePanel;
     [SerializeField] private Tile_Indicator _tileIndicator;
-    [SerializeField] private RectTransform _weatherPanel;
 
     [Space(20)]
     [SerializeField][Range(0, 10)] private float _updateDelayTime;
@@ -16,7 +16,7 @@ public class Weather_Manager : MonoBehaviour
 
     [Space(20)]
     [SerializeField] private WeatherUI_Icon[] _icons;
-    [SerializeField] private RectTransform _descriptionPanel;
+    [SerializeField] private PanelToggle_AnimationController _descriptionToggleController;
     [SerializeField] private TextMeshProUGUI _descriptionText;
 
     [Space(20)]
@@ -351,13 +351,13 @@ public class Weather_Manager : MonoBehaviour
 
     private void Toggle_WeatherPanel()
     {
-        _weatherPanel.gameObject.SetActive(EmptyIcons().Count < _icons.Length);
+        _togglePanel.Toggle(EmptyIcons().Count < _icons.Length);
     }
 
     private void Toggle_Description(WeatherUI_Icon hoveringIcon)
     {
         bool toggle = hoveringIcon != null && hoveringIcon.data != null;
-        _descriptionPanel.gameObject.SetActive(toggle);
+        _descriptionToggleController.Toggle(toggle);
 
         if (toggle == false) return;
 

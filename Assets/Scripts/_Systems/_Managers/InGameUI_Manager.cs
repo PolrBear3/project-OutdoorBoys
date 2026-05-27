@@ -8,6 +8,8 @@ public class InGameUI_Manager : MonoBehaviour
 {
     [Space(20)]
     [SerializeField] private TextMeshProUGUI _timeText;
+    public TextMeshProUGUI timeText => _timeText;
+
     [SerializeField] private TextMeshProUGUI _dayText;
 
     [Space(20)]

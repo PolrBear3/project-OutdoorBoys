@@ -20,7 +20,7 @@ public class ItemCrafting_Manager : MonoBehaviour
     [SerializeField] private ItemSlot_Manager _ingredientSlotsManager;
 
     [Space(10)]
-    [SerializeField] private Image _itemInfoPanel;
+    [SerializeField] private PanelToggle_AnimationController _itemInfoToggleController;
     [SerializeField] private ItemSlot _itemImageSlot;
 
     [Space(10)]
@@ -322,7 +322,7 @@ public class ItemCrafting_Manager : MonoBehaviour
     {
         bool toggle = hoveringItemSlot != null && hoveringItemSlot.data != null;
 
-        _itemInfoPanel.gameObject.SetActive(toggle);
+        _itemInfoToggleController.Toggle(toggle);
         _ingredientSlotsManager.Remove_AllSlots();
 
         if (toggle == false) return;
@@ -337,7 +337,7 @@ public class ItemCrafting_Manager : MonoBehaviour
         _itemNameText.text = hoveringItem.itemName;
         _itemDescriptionText.text = hoveringItem.description;
 
-        LayoutRebuilder.ForceRebuildLayoutImmediate(_itemInfoPanel.rectTransform);
+        LayoutRebuilder.ForceRebuildLayoutImmediate(_itemInfoToggleController.togglePanel);
 
         List<ItemData> ingredientDatas = hoveringItem.Item_IngredientDatas();
         foreach (ItemData data in ingredientDatas)

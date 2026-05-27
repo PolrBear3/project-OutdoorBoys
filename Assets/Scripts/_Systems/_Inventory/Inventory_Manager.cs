@@ -11,13 +11,13 @@ public class Inventory_Manager : MonoBehaviour, IItemsSource, IItemsSourceRemove
     [SerializeField] private Item_ScrObj _inventoryBagpack;
 
     [Space(20)]
+    [SerializeField] private PanelToggle_AnimationController _toggleController;
+    
+    [Space(20)]
     [SerializeField] private ItemSlot_Manager _slotManager;
     public ItemSlot_Manager slotManager => _slotManager;
 
     [SerializeField] private ItemInfo_Controller _itemInfo;
-
-    [Space(20)]
-    [SerializeField] private Image _togglePanel;
 
 
     public Action OnItemAdded;
@@ -161,16 +161,16 @@ public class Inventory_Manager : MonoBehaviour, IItemsSource, IItemsSourceRemove
     {
         Tile playerTile = InGame_Manager.instance.player.movement.tileTracker.data.CurrentTile();
 
-        _togglePanel.gameObject.SetActive(playerTile.Placed_ItemCount(_inventoryBagpack) > 0);
+        _toggleController.Toggle(playerTile.Placed_ItemCount(_inventoryBagpack) > 0);
     }
     private void Toggle_Update(Tile playerTile)
     {
-        _togglePanel.gameObject.SetActive(playerTile.Placed_ItemCount(_inventoryBagpack) > 0);
+        _toggleController.Toggle(playerTile.Placed_ItemCount(_inventoryBagpack) > 0);
     }
 
     public bool Toggled()
     {
-        return _togglePanel.gameObject.activeSelf;
+        return _toggleController.togglePanel.gameObject.activeSelf;
     }
 
 

@@ -48,8 +48,7 @@ public class Input_Controller : MonoBehaviour
     public Action OnRightClick;
     public Action OnHoldRightClick;
 
-    public Action OnInteractStart;
-    public Action OnInteractEnd;
+    public Action<bool> OnInteractStated;
     public Action OnInteract;
     public Action OnHoldInteract;
 
@@ -249,12 +248,12 @@ public class Input_Controller : MonoBehaviour
     {
         if (context.started)
         {
-            OnInteractStart?.Invoke();
+            OnInteractStated?.Invoke(true);
             return;
         }
         if (context.canceled == false) return;
 
-        OnInteractEnd?.Invoke();
+        OnInteractStated?.Invoke(false);
     }
     public void HoldInteract(InputAction.CallbackContext context)
     {

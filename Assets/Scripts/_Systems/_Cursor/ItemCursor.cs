@@ -27,8 +27,6 @@ public class ItemCursor : MonoBehaviour, IItemsSource, IItemsSourceRemove, IItem
         EventBus_Manager.Register(EventBus.AwakeLoad, Set_Data);
     }
 
-
-
     private void OnDestroy()
     {
         EventBus_Manager.UnRegister(EventBus.AwakeLoad, Set_Data);

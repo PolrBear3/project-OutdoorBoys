@@ -32,14 +32,15 @@ public class Reward_ItemData
 public class Reward_Manager : MonoBehaviour
 {
     [Space(20)]
+    [SerializeField] private PanelToggle_AnimationController _panelToggleController;
+
+    [Space(10)]
     [SerializeField] private ItemSlot_Manager _itemSlotManager;
     [SerializeField] private ItemInfo_Controller _itemInfo;
 
     [Space(10)]
     [SerializeField] private ItemsSource_Manager _itemSource;
 
-    [Space(20)]
-    [SerializeField] private RectTransform _togglePanel;
 
     [Space(20)]
     [SerializeField] private Reward_ItemData[] _rewardItemDatas;
@@ -74,7 +75,7 @@ public class Reward_Manager : MonoBehaviour
 
         _itemSlotManager.OnSlotSelect += Select_RewardItem;
 
-        _togglePanel.gameObject.SetActive(false);
+        _panelToggleController.Toggle(false);
         _itemInfo.Toggle_ItemInfoPanel(null);
     }
 
@@ -108,7 +109,7 @@ public class Reward_Manager : MonoBehaviour
 
     private void Update_RewardItems()
     {
-        _togglePanel.gameObject.SetActive(true);
+        _panelToggleController.Toggle(true);
         _itemSlotManager.Clear_Datas();
 
         List<ItemSlot> slots = _itemSlotManager.slots;
@@ -143,7 +144,7 @@ public class Reward_Manager : MonoBehaviour
         List<IItemsSourceAdd> rewardSources = AddItems_Source();
         _itemSource.AddItem(rewardSources, selectedRewardData.itemScrObj, selectedRewardData.amount);
 
-        _togglePanel.gameObject.SetActive(false);
+        _panelToggleController.Toggle(false);
         _itemInfo.Toggle_ItemInfoPanel(null);
     }
 }

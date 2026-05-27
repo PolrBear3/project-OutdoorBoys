@@ -7,7 +7,7 @@ using TMPro;
 public class ItemInfo_Controller : MonoBehaviour
 {
     [Space(20)]
-    [SerializeField] private Image _itemInfoPanel;
+    [SerializeField] private PanelToggle_AnimationController _togglePanelController;
     [SerializeField] private ItemSlot _itemImageSlot;
 
     [Space(10)]
@@ -18,14 +18,14 @@ public class ItemInfo_Controller : MonoBehaviour
     public void Toggle_ItemInfoPanel(ItemSlot targetItemSlot)
     {
         bool toggle = targetItemSlot != null && targetItemSlot.data != null;
-        _itemInfoPanel.gameObject.SetActive(toggle);
+        _togglePanelController.Toggle(toggle);
 
         if (toggle == false) return;
 
-        Vector2 panelPos = _itemInfoPanel.transform.position;
+        Vector2 panelPos = _togglePanelController.togglePanel.transform.position;
         panelPos.x = targetItemSlot.itemImage.transform.position.x;
 
-        _itemInfoPanel.transform.position = panelPos;
+        _togglePanelController.togglePanel.transform.position = panelPos;
     }
 
     public void Update_HoveringItemInfo(ItemSlot targetItemSlot)
@@ -44,6 +44,6 @@ public class ItemInfo_Controller : MonoBehaviour
         _itemNameText.text = hoveringItem.itemName + " [" + hoverAmount + "/" + hoveringItem.maxAmount + "]";
         _itemDescriptionText.text = hoveringItem.description;
 
-        LayoutRebuilder.ForceRebuildLayoutImmediate(_itemInfoPanel.rectTransform);
+        LayoutRebuilder.ForceRebuildLayoutImmediate(_togglePanelController.togglePanel);
     }
 }

@@ -15,6 +15,7 @@ public class FillBar_UI : MonoBehaviour
 
 
     private float _maxFillWidth;
+    public float maxFillWidth => _maxFillWidth;
 
 
     // MonoBehaviour
@@ -32,7 +33,8 @@ public class FillBar_UI : MonoBehaviour
         if (_fillImage == null) return;
         if (maxValue <= 0) return;
 
-        _barImage.sprite = _barSprites[currentValue > 1 ? 0 : 1];
+        int barSpriteIndex = Mathf.Clamp(currentValue > 1 ? 0 : 1, 0, _barSprites.Length - 1);
+        _barImage.sprite = _barSprites[barSpriteIndex];
 
         RectTransform rect = _fillImage.rectTransform;
 

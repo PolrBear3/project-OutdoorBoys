@@ -15,6 +15,7 @@ public class Cursor : MonoBehaviour
     [SerializeField] private RectTransform _rect;
 
     [Space(20)]
+    [SerializeField] private PanelToggle_AnimationController _cursorImageController;
     [SerializeField] private Image _cursorImage;
 
     [SerializeField] private TextMeshProUGUI _amountText;
@@ -29,7 +30,7 @@ public class Cursor : MonoBehaviour
     [SerializeField] private Sprite _pressedPointerSprite;
 
     [Space(20)]
-    [SerializeField] private RectTransform _hoverInfoPanel;
+    [SerializeField] private PanelToggle_AnimationController _hoverInfoToggleController;
     [SerializeField] private ItemSlot_Manager _placedItemsSlotManager;
 
     [Space(10)]
@@ -122,6 +123,7 @@ public class Cursor : MonoBehaviour
     public void Update_PointerSprite(Sprite sprite)
     {
         _cursorImage.sprite = sprite != null ? sprite : _defaultPointerSprite;
+        _cursorImageController.Update_ToggleAnimation();
     }
     private void Update_PointerSprite(bool isPressed)
     {
@@ -172,7 +174,7 @@ public class Cursor : MonoBehaviour
         int placedItemCount = placedItemDatas.Count;
 
         bool togglePanel = hoveringTile != null && hasStateData || placedItemCount > 0;
-        _hoverInfoPanel.gameObject.SetActive(togglePanel);
+        _hoverInfoToggleController.Toggle(togglePanel);
 
         if (togglePanel == false) return;
 

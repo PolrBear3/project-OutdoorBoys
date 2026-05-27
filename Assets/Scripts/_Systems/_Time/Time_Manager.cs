@@ -14,6 +14,11 @@ public class Time_Manager : MonoBehaviour, ISaveLoadable
     [SerializeField][Range(0, 1000)] private int _nightActiveTime;
     [SerializeField][Range(0, 100)] private int _rewardTargetTime;
 
+    [Space(20)]
+    [SerializeField] private FillBar_UI _countTimeFillBar;
+
+
+    private Coroutine _fillBarCoroutine;
 
     private TimeData _data;
     public TimeData data => _data;
@@ -38,7 +43,10 @@ public class Time_Manager : MonoBehaviour, ISaveLoadable
     {
         EventBus_Manager.UnRegister(EventBus.AwakeLoad, Set_Data);
 
-        Input_Controller.instance.OnHoldInteract -= Count_Time;
+        Input_Controller input = Input_Controller.instance;
+
+        input.OnHoldInteract -= Count_Time;
+        input.OnInteractStated -= HoldUpdate_CountTimeBar;
     }
 
 
@@ -87,7 +95,12 @@ public class Time_Manager : MonoBehaviour, ISaveLoadable
     // Data
     private void Set_Data()
     {
-        Input_Controller.instance.OnHoldInteract += Count_Time;
+        Input_Controller input = Input_Controller.instance;
+
+        input.OnHoldInteract += Count_Time;
+        input.OnInteractStated += HoldUpdate_CountTimeBar;
+
+        HoldUpdate_CountTimeBar(false);
     }
 
 
@@ -150,5 +163,45 @@ public class Time_Manager : MonoBehaviour, ISaveLoadable
 
         OnDayCount?.Invoke(_data.dayCount);
         Run_TimeUpdates();
+    }
+
+    private void HoldUpdate_CountTimeBar(bool isHolding)
+    {
+        if (TimeUpdateActions_Running()) return;
+        if (InGame_Manager.instance.movements.AllMovements_Complete() == false) return;
+
+        _countTimeFillBar.gameObject.SetActive(isHolding);
+        InGame_Manager.instance.ingameUI.timeText.gameObject.SetActive(!isHolding);
+
+        if (_fillBarCoroutine != null)
+        {
+            StopCoroutine(_fillBarCoroutine);
+            _fillBarCoroutine = null;
+        }
+        if (isHolding == false) return;
+
+        _fillBarCoroutine = StartCoroutine(CountTimeBar_FillUpdate());
+    }
+    private IEnumerator CountTimeBar_FillUpdate()
+    {
+        const float holdDuration = 0.5f;
+
+        int maxValue = (int)_countTimeFillBar.maxFillWidth;
+        float stepDuration = holdDuration / maxValue;
+
+        int currentValue = 0;
+
+        for (int i = 0; i < maxValue; i++)
+        {
+            currentValue++;
+            _countTimeFillBar.Update_Visuals(maxValue, currentValue);
+
+            yield return new WaitForSeconds(stepDuration);
+        }
+
+        _countTimeFillBar.gameObject.SetActive(false);
+        InGame_Manager.instance.ingameUI.timeText.gameObject.SetActive(true);
+
+        _fillBarCoroutine = null;
     }
 }
