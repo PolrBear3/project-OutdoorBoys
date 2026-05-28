@@ -14,8 +14,10 @@ public class FillBar_UI : MonoBehaviour
     public Image fillImage => _fillImage;
 
 
-    private float _maxFillWidth;
-    public float maxFillWidth => _maxFillWidth;
+    private bool _isHorizontalBar;
+
+    private float _maxFillSize;
+    public float maxFillSize => _maxFillSize;
 
 
     // MonoBehaviour
@@ -23,22 +25,37 @@ public class FillBar_UI : MonoBehaviour
     {
         if (_fillImage == null) return;
 
-        _maxFillWidth = _fillImage.rectTransform.rect.width;
+        Rect fillRect = _fillImage.rectTransform.rect;
+
+        _isHorizontalBar = fillRect.width >= fillRect.height;
+        _maxFillSize = _isHorizontalBar ? fillRect.width : fillRect.height;
     }
 
 
     // Main
-    public void Update_Visuals(int maxValue, int currentValue)
+    private void Update_BarVisual(int maxValue, int currentValue, int barSpriteUpdateValue)
+    {
+        if (_barImage == null) return;
+        if (_barImage.sprite == null) return;
+
+        int barSpriteIndex = Mathf.Clamp(currentValue > barSpriteUpdateValue ? 0 : 1, 0, _barSprites.Length - 1);
+        _barImage.sprite = _barSprites[barSpriteIndex];
+    }
+
+    public void Update_Visuals(int maxValue, int currentValue, int barSpriteUpdateValue)
     {
         if (_fillImage == null) return;
         if (maxValue <= 0) return;
 
-        int barSpriteIndex = Mathf.Clamp(currentValue > 1 ? 0 : 1, 0, _barSprites.Length - 1);
-        _barImage.sprite = _barSprites[barSpriteIndex];
+        Update_BarVisual(maxValue, currentValue, barSpriteUpdateValue);
 
         RectTransform rect = _fillImage.rectTransform;
+        float fillSize = currentValue > 0 ? Mathf.Clamp01((float)currentValue / maxValue) : 0;
 
-        float fillSize = currentValue > 1 ? Mathf.Clamp01((float)currentValue / maxValue) : 0;
-        rect.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, _maxFillWidth * fillSize);
+        rect.SetSizeWithCurrentAnchors(_isHorizontalBar ? RectTransform.Axis.Horizontal : RectTransform.Axis.Vertical, _maxFillSize * fillSize);
+    }
+    public void Update_Visuals(int maxValue, int currentValue)
+    {
+        Update_Visuals(maxValue, currentValue, 1);
     }
 }

@@ -124,12 +124,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _pointer: {fileID: 1210712548005400206}
   _selectorAnimPlayer: {fileID: 894385741868623628}
-  _statesController: {fileID: 0}
   _tileSpriteRenderer: {fileID: 8526343298762341458}
   _setPosition: {fileID: 7971817962077731149}
   _boundPointRenderer: {fileID: 3872212962410569136}
   _useableItemDrop: {fileID: 11400000, guid: 38f3d32e30dd248c99301e476ece34c4, type: 2}
-  _maxItemPlaceCount: 2
 --- !u!1 &8297920845869203048
 GameObject:
   m_ObjectHideFlags: 0

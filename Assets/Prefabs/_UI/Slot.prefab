@@ -65,7 +65,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 674899101, guid: 876726b4a75bd4d21af424fd6ed1343c, type: 3}
+  m_Sprite: {fileID: -1326168949, guid: 876726b4a75bd4d21af424fd6ed1343c, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -459,7 +459,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: -103093361, guid: 876726b4a75bd4d21af424fd6ed1343c, type: 3}
+  m_Sprite: {fileID: 674899101, guid: 876726b4a75bd4d21af424fd6ed1343c, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -483,6 +483,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _barImage: {fileID: 7491906676195727024}
   _barSprites:
-  - {fileID: -103093361, guid: 876726b4a75bd4d21af424fd6ed1343c, type: 3}
-  - {fileID: 1258320460, guid: 876726b4a75bd4d21af424fd6ed1343c, type: 3}
+  - {fileID: 674899101, guid: 876726b4a75bd4d21af424fd6ed1343c, type: 3}
+  - {fileID: 1145563902, guid: 876726b4a75bd4d21af424fd6ed1343c, type: 3}
   _fillImage: {fileID: 1509952541164287790}
+  _isVerticalFill: 0

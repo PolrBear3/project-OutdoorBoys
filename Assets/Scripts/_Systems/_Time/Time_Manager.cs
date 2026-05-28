@@ -168,25 +168,27 @@ public class Time_Manager : MonoBehaviour, ISaveLoadable
     private void HoldUpdate_CountTimeBar(bool isHolding)
     {
         if (TimeUpdateActions_Running()) return;
-        if (InGame_Manager.instance.movements.AllMovements_Complete() == false) return;
 
-        _countTimeFillBar.gameObject.SetActive(isHolding);
-        InGame_Manager.instance.ingameUI.timeText.gameObject.SetActive(!isHolding);
+        InGame_Manager manager = InGame_Manager.instance;
+        if (manager.movements.AllMovements_Complete() == false) return;
 
         if (_fillBarCoroutine != null)
         {
             StopCoroutine(_fillBarCoroutine);
             _fillBarCoroutine = null;
         }
-        if (isHolding == false) return;
 
+        _countTimeFillBar.gameObject.SetActive(isHolding);
+        manager.ingameUI.timeText.gameObject.SetActive(!isHolding);
+
+        if (isHolding == false) return;
         _fillBarCoroutine = StartCoroutine(CountTimeBar_FillUpdate());
     }
     private IEnumerator CountTimeBar_FillUpdate()
     {
         const float holdDuration = 0.5f;
 
-        int maxValue = (int)_countTimeFillBar.maxFillWidth;
+        int maxValue = (int)_countTimeFillBar.maxFillSize;
         float stepDuration = holdDuration / maxValue;
 
         int currentValue = 0;

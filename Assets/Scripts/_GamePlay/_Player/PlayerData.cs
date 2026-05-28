@@ -6,14 +6,14 @@ using UnityEngine;
 [System.Serializable]
 public class PlayerData
 {
-    [ES3Serializable][SerializeField][Range(0, 10)] private int _health;
+    [ES3Serializable][SerializeField][Range(0, 500)] private int _health;
     public int health => _health;
 
-    [ES3Serializable][SerializeField][Range(0, 10)] private int _temperature;
+    [ES3Serializable][SerializeField][Range(0, 500)] private int _temperature;
     public int temperature => _temperature;
 
-    [ES3Serializable][SerializeField][Range(0, 500)] private int _maxStamina;
-    public int maxStamina => _maxStamina;
+    [ES3Serializable][SerializeField][Range(0, 500)] private int _stamina;
+    public int stamina => _stamina;
 
     [ES3Serializable] private int _currentStamina;
     public int currentStamina => _currentStamina;
@@ -32,14 +32,9 @@ public class PlayerData
         return _temperature;
     }
 
-    public int Update_MaxStamina(int updateValue)
+    public int Update_Stamina(int updateValue)
     {
-        _maxStamina = Mathf.Max(0, updateValue);
-        return _maxStamina;
-    }
-    public int Update_CurrentStamina(int updateValue)
-    {
-        _currentStamina = Mathf.Clamp(updateValue, 0, _maxStamina);
+        _currentStamina = Mathf.Clamp(updateValue, 0, _stamina);
         return _currentStamina;
     }
 }

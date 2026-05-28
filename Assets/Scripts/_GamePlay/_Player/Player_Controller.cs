@@ -21,7 +21,8 @@ public class Player_Controller : MonoBehaviour, ISaveLoadable, IDamageable
     public Item_ScrObj inventoryBagpack => _inventoryBagpack;
 
     [Space(20)]
-    [SerializeField] private PlayerData _defaultData;
+    [SerializeField] private PlayerData _maxData;
+    public PlayerData maxData => _maxData;
 
 
     private PlayerData _data;
@@ -29,7 +30,7 @@ public class Player_Controller : MonoBehaviour, ISaveLoadable, IDamageable
 
     public Action<int> OnHealthUpdate;
     public Action<int> OnTemperatureUpdate;
-    public Action<int, int> OnStaminaUpdate;
+    public Action<int> OnStaminaUpdate;
 
 
     // MonoBehaviour
@@ -51,15 +52,15 @@ public class Player_Controller : MonoBehaviour, ISaveLoadable, IDamageable
     // ISaveLoadable
     public void Save_Data()
     {
-        ES3.Save(SaveKeys.Player_SaveKeys.Data, _data ?? _defaultData);
+        ES3.Save(SaveKeys.Player_SaveKeys.Data, _data ?? _maxData);
     }
 
     public void Load_Data()
     {
-        _data = ES3.Load(SaveKeys.Player_SaveKeys.Data, _defaultData);
+        _data = ES3.Load(SaveKeys.Player_SaveKeys.Data, _maxData);
 
         if (ES3.KeyExists(SaveKeys.Player_SaveKeys.Data)) return;
-        _data.Update_CurrentStamina(_data.maxStamina);
+        _data.Update_Stamina(_data.stamina);
     }
 
 
@@ -89,13 +90,9 @@ public class Player_Controller : MonoBehaviour, ISaveLoadable, IDamageable
         OnTemperatureUpdate?.Invoke(_data.Update_Temperature(updateValue));
     }
 
-    public void Update_MaxStamina(int updateValue)
+    public void Update_Stamina(int updateValue)
     {
-        OnStaminaUpdate?.Invoke(_data.Update_MaxStamina(updateValue), _data.currentStamina);
-    }
-    public void Update_CurrentStamina(int updateValue)
-    {
-        OnStaminaUpdate?.Invoke(_data.maxStamina, _data.Update_CurrentStamina(updateValue));
+        OnStaminaUpdate?.Invoke(_data.Update_Stamina(updateValue));
     }
 
 

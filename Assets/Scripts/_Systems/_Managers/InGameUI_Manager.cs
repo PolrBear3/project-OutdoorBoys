@@ -13,9 +13,13 @@ public class InGameUI_Manager : MonoBehaviour
     [SerializeField] private TextMeshProUGUI _dayText;
 
     [Space(20)]
-    [SerializeField] private TextMeshProUGUI _healthText;
-    [SerializeField] private TextMeshProUGUI _temperatureText;
-    [SerializeField] private TextMeshProUGUI _staminaText;
+    [SerializeField] private FillBar_UI _healthBar;
+    [SerializeField] private FillBar_UI _temperatureBar;
+
+    [Space(10)]
+    [SerializeField] private FillBar_UI _staminaBar;
+    [SerializeField] private FillBar_UI _staminaValueBar;
+
 
     [Space(20)]
     [SerializeField][Range(0, 10)] private float _textAnimateDuration;
@@ -41,11 +45,11 @@ public class InGameUI_Manager : MonoBehaviour
 
         Player_Controller player = manager.player;
 
-        player.OnHealthUpdate -= Update_HealthText;
-        player.OnTemperatureUpdate -= Update_TemperatureText;
-        player.OnStaminaUpdate -= Update_StaminaText;
+        player.OnHealthUpdate -= Update_HealthBar;
+        player.OnTemperatureUpdate -= Update_TemperatureBar;
 
-        manager.cursor.itemCursor.OnSetData -= Update_StaminaText;
+        player.OnStaminaUpdate -= Update_StaminaBar;
+        manager.cursor.itemCursor.OnSetData -= Update_StaminaBar;
     }
 
 
@@ -66,15 +70,15 @@ public class InGameUI_Manager : MonoBehaviour
         Player_Controller player = manager.player;
         PlayerData playerData = player.data;
 
-        Update_HealthText(playerData.health);
-        Update_TemperatureText(playerData.temperature);
-        Update_StaminaText(playerData.maxStamina, playerData.currentStamina);
+        Update_HealthBar(playerData.health);
+        Update_TemperatureBar(playerData.temperature);
+        Update_StaminaBar(playerData.stamina);
 
-        player.OnHealthUpdate += Update_HealthText;
-        player.OnTemperatureUpdate += Update_TemperatureText;
-        player.OnStaminaUpdate += Update_StaminaText;
+        player.OnHealthUpdate += Update_HealthBar;
+        player.OnTemperatureUpdate += Update_TemperatureBar;
 
-        manager.cursor.itemCursor.OnSetData += Update_StaminaText;
+        player.OnStaminaUpdate += Update_StaminaBar;
+        manager.cursor.itemCursor.OnSetData += Update_StaminaBar;
     }
 
 
@@ -99,30 +103,30 @@ public class InGameUI_Manager : MonoBehaviour
 
 
     // Player Data Text
-    private void Update_HealthText(int currentValue)
+    private void Update_HealthBar(int currentValue)
     {
-        _healthText.text = currentValue.ToString();
-        Update_TextAnimation(_healthText);
+        _healthBar.Update_Visuals(InGame_Manager.instance.player.maxData.health, currentValue, 0);
     }
 
-    private void Update_TemperatureText(int currentValue)
+    private void Update_TemperatureBar(int currentValue)
     {
-        _temperatureText.text = currentValue.ToString();
-        Update_TextAnimation(_temperatureText);
+        _temperatureBar.Update_Visuals(InGame_Manager.instance.player.maxData.temperature, currentValue, 0);
     }
 
-    private void Update_StaminaText(int maxValue, int currentValue)
+    private void Update_StaminaBar(int currentValue)
     {
         Player_Controller player = InGame_Manager.instance.player;
-        string decreaseString = "\n(-" + player.interaction.Current_StaminaValue() + ")";
-        
-        _staminaText.text = currentValue + "/" + maxValue + decreaseString;
-        Update_TextAnimation(_staminaText);
+        Player_Interaction interaction = player.interaction;
+
+        int maxStamina = player.maxData.stamina;
+        int barUpdateValue = interaction.Has_Stamina() || currentValue <= 1 ? 0 : maxStamina;
+
+        _staminaBar.Update_Visuals(maxStamina, currentValue, barUpdateValue);
+        _staminaValueBar.Update_Visuals(maxStamina, Mathf.Min(currentValue, interaction.Current_StaminaValue()));
     }
-    private void Update_StaminaText()
+    private void Update_StaminaBar()
     {
-        PlayerData playerData = InGame_Manager.instance.player.data;
-        Update_StaminaText(playerData.maxStamina, playerData.currentStamina);
+        Update_StaminaBar(InGame_Manager.instance.player.data.currentStamina);
     }
 
 
