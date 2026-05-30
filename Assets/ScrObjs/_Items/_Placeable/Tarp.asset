@@ -37,6 +37,10 @@ MonoBehaviour:
   _placeRestrictions: []
   _selectRestrictions: []
   _itemIngredientDatas:
-  - _itemScrObj: {fileID: 11400000, guid: 86e876e6c7e9c467db97ab95dfa547ce, type: 2}
-    _amount: 2
+  - _itemScrObj: {fileID: 11400000, guid: 52365bb8720a743b3bc321e7dd0faf4d, type: 2}
+    _amount: 10
+  - _itemScrObj: {fileID: 11400000, guid: b8845cbe07fe54f259c7ae56d25a6092, type: 2}
+    _amount: 4
+  - _itemScrObj: {fileID: 11400000, guid: 61796550184fa4a80a822586dc68a405, type: 2}
+    _amount: 4
   _craftRequiredPlacedItemDatas: []

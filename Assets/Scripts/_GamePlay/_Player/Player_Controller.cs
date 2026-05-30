@@ -57,10 +57,10 @@ public class Player_Controller : MonoBehaviour, ISaveLoadable, IDamageable
 
     public void Load_Data()
     {
-        _data = ES3.Load(SaveKeys.Player_SaveKeys.Data, _maxData);
+        _data = ES3.Load(SaveKeys.Player_SaveKeys.Data, new PlayerData(_maxData));
 
         if (ES3.KeyExists(SaveKeys.Player_SaveKeys.Data)) return;
-        _data.Update_Stamina(_data.stamina);
+        _data.Update_Stamina(_maxData.stamina + 1);
     }
 
 
@@ -82,17 +82,17 @@ public class Player_Controller : MonoBehaviour, ISaveLoadable, IDamageable
     // Data
     public void Update_Health(int updateValue)
     {
-        OnHealthUpdate?.Invoke(_data.Update_Health(updateValue));
+        OnHealthUpdate?.Invoke(_data.Update_Health(Mathf.Min(updateValue, _maxData.health)));
     }
 
     public void Update_Temperature(int updateValue)
     {
-        OnTemperatureUpdate?.Invoke(_data.Update_Temperature(updateValue));
+        OnTemperatureUpdate?.Invoke(_data.Update_Temperature(Mathf.Min(updateValue, _maxData.temperature)));
     }
 
     public void Update_Stamina(int updateValue)
     {
-        OnStaminaUpdate?.Invoke(_data.Update_Stamina(updateValue));
+        OnStaminaUpdate?.Invoke(_data.Update_Stamina(Mathf.Min(updateValue, _maxData.stamina)));
     }
 
 

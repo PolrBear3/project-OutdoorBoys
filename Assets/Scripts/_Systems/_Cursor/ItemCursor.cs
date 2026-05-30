@@ -344,7 +344,7 @@ public class ItemCursor : MonoBehaviour, IItemsSource, IItemsSourceRemove, IItem
         if (currentItem.itemType != ItemType.use) return;
 
         Player_Controller player = InGame_Manager.instance.player;
-        if (player.data.currentStamina <= 0) return;
+        if (player.data.stamina <= 0) return;
 
         GameObject currentUseItem = player.interaction.currentItemPrefab;
         if (currentUseItem.TryGetComponent(out UseableItem useItem) == false) return;

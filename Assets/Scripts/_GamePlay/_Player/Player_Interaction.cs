@@ -149,13 +149,13 @@ public class Player_Interaction : MonoBehaviour, IItemsSource, IItemsSourceRemov
 
     public bool Has_Stamina()
     {
-        return _controller.data.currentStamina - Current_StaminaValue() >= 0;
+        return _controller.data.stamina - Current_StaminaValue() > 0;
     }
 
 
     public void InteractUpdate_Stamina()
     {
-        _controller.Update_Stamina(_controller.data.currentStamina - Mathf.Max(1, Current_StaminaValue()));
+        _controller.Update_Stamina(_controller.data.stamina - Mathf.Max(1, Current_StaminaValue()));
     }
     private void InteractUpdate_Stamina(Tile _)
     {
@@ -164,6 +164,6 @@ public class Player_Interaction : MonoBehaviour, IItemsSource, IItemsSourceRemov
 
     private void MaxUpdate_Stamina()
     {
-        _controller.Update_Stamina(_controller.data.stamina);
+        _controller.Update_Stamina(_controller.maxData.stamina);
     }
 }

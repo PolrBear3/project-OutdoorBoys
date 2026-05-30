@@ -17,6 +17,7 @@ public class PanelToggle_AnimationController : MonoBehaviour
     [SerializeField] private Vector2[] _toggleScales;
 
     private Coroutine _animationCoroutine;
+    public Coroutine animationCoroutine => _animationCoroutine;
 
 
     // Main

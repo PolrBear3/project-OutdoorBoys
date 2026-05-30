@@ -15,8 +15,14 @@ public class PlayerData
     [ES3Serializable][SerializeField][Range(0, 500)] private int _stamina;
     public int stamina => _stamina;
 
-    [ES3Serializable] private int _currentStamina;
-    public int currentStamina => _currentStamina;
+
+    // New Constructors
+    public PlayerData(PlayerData copyData)
+    {
+        _health = copyData._health;
+        _temperature = copyData._temperature;
+        _stamina = copyData._stamina;
+    }
 
 
     // Data
@@ -34,7 +40,7 @@ public class PlayerData
 
     public int Update_Stamina(int updateValue)
     {
-        _currentStamina = Mathf.Clamp(updateValue, 0, _stamina);
-        return _currentStamina;
+        _stamina = Mathf.Max(0, updateValue);
+        return _stamina;
     }
 }

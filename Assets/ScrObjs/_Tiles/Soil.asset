@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: Soil
   m_EditorClassIdentifier: 
   _type: 0
+  _staticStates: 
   _prefab: {fileID: 8222574897102272058, guid: 1ec2223a34a274f77b6b486869dba276, type: 3}
   _groupedSprites:
   - _sprites:

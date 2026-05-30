@@ -14,11 +14,16 @@ public class InGameUI_Manager : MonoBehaviour
 
     [Space(20)]
     [SerializeField] private FillBar_UI _healthBar;
+    [SerializeField] private PanelToggle_AnimationController _healthBarAnim;
+
+    [Space(10)]
     [SerializeField] private FillBar_UI _temperatureBar;
+    [SerializeField] private PanelToggle_AnimationController _temperatureBarAnim;
 
     [Space(10)]
     [SerializeField] private FillBar_UI _staminaBar;
     [SerializeField] private FillBar_UI _staminaValueBar;
+    [SerializeField] private PanelToggle_AnimationController _staminaBarAnim;
 
 
     [Space(20)]
@@ -50,6 +55,9 @@ public class InGameUI_Manager : MonoBehaviour
 
         player.OnStaminaUpdate -= Update_StaminaBar;
         manager.cursor.itemCursor.OnSetData -= Update_StaminaBar;
+
+        manager.tilesController.OnTileSelect -= Update_StaminaBar_ToggleAnimation;
+        Input_Controller.instance.OnMovement -= Update_StaminaBar_ToggleAnimation;
     }
 
 
@@ -79,6 +87,9 @@ public class InGameUI_Manager : MonoBehaviour
 
         player.OnStaminaUpdate += Update_StaminaBar;
         manager.cursor.itemCursor.OnSetData += Update_StaminaBar;
+
+        manager.tilesController.OnTileSelect += Update_StaminaBar_ToggleAnimation;
+        Input_Controller.instance.OnMovement += Update_StaminaBar_ToggleAnimation;
     }
 
 
@@ -106,11 +117,13 @@ public class InGameUI_Manager : MonoBehaviour
     private void Update_HealthBar(int currentValue)
     {
         _healthBar.Update_Visuals(InGame_Manager.instance.player.maxData.health, currentValue, 0);
+        _healthBarAnim.Update_ToggleAnimation();
     }
 
     private void Update_TemperatureBar(int currentValue)
     {
         _temperatureBar.Update_Visuals(InGame_Manager.instance.player.maxData.temperature, currentValue, 0);
+        _temperatureBarAnim.Update_ToggleAnimation();
     }
 
     private void Update_StaminaBar(int currentValue)
@@ -122,11 +135,26 @@ public class InGameUI_Manager : MonoBehaviour
         int barUpdateValue = interaction.Has_Stamina() || currentValue <= 1 ? 0 : maxStamina;
 
         _staminaBar.Update_Visuals(maxStamina, currentValue, barUpdateValue);
+        _staminaBarAnim.Update_ToggleAnimation();
+
         _staminaValueBar.Update_Visuals(maxStamina, Mathf.Min(currentValue, interaction.Current_StaminaValue()));
     }
     private void Update_StaminaBar()
     {
-        Update_StaminaBar(InGame_Manager.instance.player.data.currentStamina);
+        Update_StaminaBar(InGame_Manager.instance.player.data.stamina);
+    }
+    
+    private void Update_StaminaBar_ToggleAnimation()
+    {
+        if (InGame_Manager.instance.player.data.stamina > 0) return;
+        if (_staminaBarAnim.animationCoroutine != null) return;
+        
+        _staminaBarAnim.Update_ToggleAnimation();
+    }
+    private void Update_StaminaBar_ToggleAnimation(Vector2 inputDirection)
+    {
+        if (inputDirection == Vector2.zero) return;
+        Update_StaminaBar_ToggleAnimation();
     }
 
 

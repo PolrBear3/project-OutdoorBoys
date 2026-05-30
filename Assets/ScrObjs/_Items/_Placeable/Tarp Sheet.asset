@@ -10,22 +10,22 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 069327ba6dded4f16af0714f2c328413, type: 3}
-  m_Name: Wooden Stick
+  m_Name: Tarp Sheet
   m_EditorClassIdentifier: 
-  _inventorySprite: {fileID: -63277710, guid: bf7ece83f843c4c35977c02f8c40d92d, type: 3}
-  _microSprite: {fileID: 1927026929, guid: bf7ece83f843c4c35977c02f8c40d92d, type: 3}
-  _itemName: Wooden Stick
-  _description: 
+  _inventorySprite: {fileID: 1312922826, guid: bf7ece83f843c4c35977c02f8c40d92d, type: 3}
+  _microSprite: {fileID: 1497331343, guid: bf7ece83f843c4c35977c02f8c40d92d, type: 3}
+  _itemName: Tarp Sheet
+  _description: A torn sheet of tarp
   _itemType: 0
-  _itemPrefab: {fileID: 3637228250238346253, guid: bd9e085d33c0442c49f741b90139f001, type: 3}
+  _itemPrefab: {fileID: 3637228250238346253, guid: 691c09206f7bf43e19be7176bc4abde0, type: 3}
   _offsetData:
-  - _position: {x: 0, y: 0.5}
+  - _position: {x: 0, y: 0.55}
     _rotationValue: 0
-  - _position: {x: -0.25, y: 0.5}
+  - _position: {x: -0.25, y: 0.55}
     _rotationValue: 0
-  - _position: {x: 0.25, y: 0.5}
+  - _position: {x: 0.25, y: 0.55}
     _rotationValue: 0
-  _maxAmount: 50
+  _maxAmount: 20
   _itemWeight: 0
   _triggerRange: 0
   _discoverTimeRangeData:
@@ -36,7 +36,5 @@ MonoBehaviour:
     _maxTimeCount: 0
   _placeRestrictions: []
   _selectRestrictions: []
-  _itemIngredientDatas:
-  - _itemScrObj: {fileID: 11400000, guid: cea7459d8010d4a229cb42a2a5b65381, type: 2}
-    _amount: 1
+  _itemIngredientDatas: []
   _craftRequiredPlacedItemDatas: []
