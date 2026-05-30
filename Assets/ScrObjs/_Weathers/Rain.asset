@@ -22,4 +22,4 @@ MonoBehaviour:
     _activeTime: 0
     _restrictTime: 0
     _minTimeCount: 0
-    _maxTimeCount: 10
+    _maxTimeCount: 5

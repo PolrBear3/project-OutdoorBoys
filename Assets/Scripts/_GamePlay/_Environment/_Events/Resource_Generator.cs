@@ -21,8 +21,8 @@ public class ResourceGenerate_Data
     public int generatePointDistance => _generatePointDistance;
 
     [Space(10)]
-    [SerializeField][Range(0, 100)] private int _generateAmount;
-    public int generateAmount => _generateAmount;
+    [SerializeField] private Vector2 _generateAmountRange;
+    public Vector2 generateAmountRange => _generateAmountRange;
 
     [SerializeField][Range(0, 100)] private int _maxGenerateAmount;
     public int maxGenerateAmount => _maxGenerateAmount;
@@ -36,6 +36,11 @@ public class ResourceGenerate_Data
             if (targetTile == _generateTiles[i]) return true;
         }
         return false;
+    }
+
+    public int Generate_Amount()
+    {
+        return (int)Random.Range(_generateAmountRange.x, _generateAmountRange.y);
     }
 }
 
@@ -149,7 +154,7 @@ public class Resource_Generator : MonoBehaviour
         for (int i = 0; i < _generateOnLoadDatas.Length; i++)
         {
             ResourceGenerate_Data data = _generateOnLoadDatas[i];
-            Generate(data, Random.Range(data.generateAmount, data.maxGenerateAmount + 1));
+            Generate(data, data.Generate_Amount());
         }
     }
     private void Generate()
@@ -159,7 +164,7 @@ public class Resource_Generator : MonoBehaviour
         if (_currentCoolTime <= _generateCoolTime) return;
 
         ResourceGenerate_Data generateData = Random_GenerateData();
-        Generate(generateData, generateData.generateAmount);
+        Generate(generateData, generateData.Generate_Amount());
 
         _currentCoolTime = 0;
     }

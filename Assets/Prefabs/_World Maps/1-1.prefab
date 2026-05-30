@@ -53,22 +53,22 @@ MonoBehaviour:
     - {fileID: 11400000, guid: 8145ed0e845b14bca951ca79c25e2e94, type: 2}
     _generateRate: 0
     _generatePointDistance: 0
-    _generateAmount: 15
-    _maxGenerateAmount: 25
+    _generateAmountRange: {x: 15, y: 25}
+    _maxGenerateAmount: 0
   - _resourceItem: {fileID: 11400000, guid: 85f6c95d406fa44a1890666516ac97b7, type: 2}
     _generateTiles:
     - {fileID: 11400000, guid: 621605563892d4d0a95e4d57c264bf5c, type: 2}
     _generateRate: 0
     _generatePointDistance: 0
-    _generateAmount: 4
-    _maxGenerateAmount: 10
+    _generateAmountRange: {x: 4, y: 10}
+    _maxGenerateAmount: 0
   - _resourceItem: {fileID: 11400000, guid: 61796550184fa4a80a822586dc68a405, type: 2}
     _generateTiles:
     - {fileID: 11400000, guid: 621605563892d4d0a95e4d57c264bf5c, type: 2}
     _generateRate: 0
     _generatePointDistance: 0
-    _generateAmount: 3
-    _maxGenerateAmount: 6
+    _generateAmountRange: {x: 3, y: 6}
+    _maxGenerateAmount: 0
   _generateDatas:
   - _resourceItem: {fileID: 11400000, guid: 86e876e6c7e9c467db97ab95dfa547ce, type: 2}
     _generateTiles:
@@ -76,15 +76,15 @@ MonoBehaviour:
     - {fileID: 11400000, guid: 8145ed0e845b14bca951ca79c25e2e94, type: 2}
     _generateRate: 6
     _generatePointDistance: 2
-    _generateAmount: 2
-    _maxGenerateAmount: 20
+    _generateAmountRange: {x: 5, y: 10}
+    _maxGenerateAmount: 25
   - _resourceItem: {fileID: 11400000, guid: 85f6c95d406fa44a1890666516ac97b7, type: 2}
     _generateTiles:
     - {fileID: 11400000, guid: 621605563892d4d0a95e4d57c264bf5c, type: 2}
     _generateRate: 5
     _generatePointDistance: 2
-    _generateAmount: 2
-    _maxGenerateAmount: 10
+    _generateAmountRange: {x: 2, y: 4}
+    _maxGenerateAmount: 25
   - _resourceItem: {fileID: 11400000, guid: 61796550184fa4a80a822586dc68a405, type: 2}
     _generateTiles:
     - {fileID: 11400000, guid: 621605563892d4d0a95e4d57c264bf5c, type: 2}
@@ -92,8 +92,8 @@ MonoBehaviour:
     - {fileID: 11400000, guid: 8145ed0e845b14bca951ca79c25e2e94, type: 2}
     _generateRate: 1
     _generatePointDistance: 2
-    _generateAmount: 1
-    _maxGenerateAmount: 3
+    _generateAmountRange: {x: 3, y: 6}
+    _maxGenerateAmount: 15
 --- !u!114 &644200425565053860
 MonoBehaviour:
   m_ObjectHideFlags: 0
