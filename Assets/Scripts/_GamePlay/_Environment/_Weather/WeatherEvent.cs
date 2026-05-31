@@ -6,16 +6,6 @@ public abstract class WeatherEvent : MonoBehaviour
 {
     private Weather_Manager _manager;
 
-    
-    [Space(20)]
-    [SerializeField] private TileIndicator_VisualData _activateTileVisuals;
-    public TileIndicator_VisualData activateTileVisuals => _activateTileVisuals;
-
-    [Space(10)]
-    [SerializeField] private TileState[] _tileStatesToRemove;
-    [SerializeField] private TileState[] _tileStatesToAdd;
-
-
     private List<Tile> _reservedActivationTiles = new();
     public List<Tile> reservedActivationTiles => _reservedActivationTiles;
 
@@ -49,15 +39,21 @@ public abstract class WeatherEvent : MonoBehaviour
     {
         if (_reservedActivationTiles.Count <= 0) return;
 
+        Weather_ScrObj weatherData = _manager.TargetEvent_Weather(this);
+        if (weatherData == null) return;
+
+        TileState[] statesToRemove = weatherData.tileStatesToRemove;
+        TileState[] statesToAdd = weatherData.tileStatesToAdd;
+
         foreach (Tile tile in _reservedActivationTiles)
         {
-            for (int i = 0; i < _tileStatesToRemove.Length; i++)
+            for (int i = 0; i < statesToRemove.Length; i++)
             {
-                tile.Remove_State(_tileStatesToRemove[i]);
+                tile.Remove_State(statesToRemove[i]);
             }
-            for (int i = 0; i < _tileStatesToAdd.Length; i++)
+            for (int i = 0; i < statesToAdd.Length; i++)
             {
-                tile.Add_State(_tileStatesToAdd[i]);
+                tile.Add_State(statesToAdd[i]);
             }
         }
     }

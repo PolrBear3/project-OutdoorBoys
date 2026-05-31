@@ -16,6 +16,17 @@ MonoBehaviour:
   _descriptionText: Rain wet tiles decrease player's temperature by -{temperatureDecreaseValue}
   _iconSprite: {fileID: -443011722, guid: 08db937c9bf304fd9bd2b19319eae929, type: 3}
   _activePrefab: {fileID: 5858694087719140007, guid: 806d10ca5f9d8449db30d7c234d7860b, type: 3}
+  _warpUpdateVisualData:
+    _loadDuration: 0
+    _pixelSize: 0
+    _animationSpeed: 0
+    _colorA: {r: 0, g: 0, b: 0, a: 0}
+    _colorB: {r: 0, g: 0, b: 0, a: 0}
+    _colorC: {r: 0, g: 0, b: 0, a: 0}
+  _activateTileVisuals:
+    _indicatorSprite: {fileID: 8321326, guid: 99b3ae6f72cfb43edb595fcf1373eec9, type: 3}
+    _indicatorColor: {r: 0.6431373, g: 0.8666667, b: 0.85882354, a: 1}
+    _sortingOrder: 1
   _rateValue: 5
   _timeRangeData:
     _activeDay: 0
@@ -23,3 +34,5 @@ MonoBehaviour:
     _restrictTime: 0
     _minTimeCount: 0
     _maxTimeCount: 5
+  _tileStatesToRemove: 02000000
+  _tileStatesToAdd: 01000000

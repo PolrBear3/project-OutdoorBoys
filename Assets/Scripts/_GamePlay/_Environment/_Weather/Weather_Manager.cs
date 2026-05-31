@@ -190,7 +190,7 @@ public class Weather_Manager : MonoBehaviour
 
         return availableWeathers[UnityEngine.Random.Range(0, availableWeathers.Count)];
     }
-    
+
     private void Update_UpcomingWeathers()
     {
         InGame_Manager.instance.time.timeUpdateActions.Add(this);
@@ -205,10 +205,12 @@ public class Weather_Manager : MonoBehaviour
 
             if (eventData.timeCount <= 1)
             {
-                WeatherEvent weatherEvent = Current_WeatherEvent(eventData.weather);
+                Weather_ScrObj dataWeather = eventData.weather;
+                WeatherEvent weatherEvent = Current_WeatherEvent(dataWeather);
 
                 // visuals
                 Icon(eventData).Update_ActivateAnimation(_updateDelayTime);
+                Update_WarpRenderer(dataWeather);
                 ActivateBlink_TileIndicator(weatherEvent);
 
                 // activation
@@ -224,7 +226,7 @@ public class Weather_Manager : MonoBehaviour
         }
 
         InGame_Manager.instance.time.timeUpdateActions.Remove(this);
-        
+
         Weather_ScrObj updateEvent = RandomWeight_WeatherScrObj();
         if (updateEvent == null || Update_CoolTime() == false)
         {
@@ -373,6 +375,11 @@ public class Weather_Manager : MonoBehaviour
     }
 
 
+    private void Update_WarpRenderer(Weather_ScrObj updateWeather)
+    {
+        WarpRenderer_Controller warpRenderer = InGame_Manager.instance.environmentVisuals.backgroundRenderer;
+    }
+
     private void Update_TileIndicator(WeatherEvent targetEvent)
     {
         List<Tile> activationTiles = targetEvent.reservedActivationTiles;
@@ -384,13 +391,14 @@ public class Weather_Manager : MonoBehaviour
         {
             _tileIndicator.Set_Indicator(activationTiles[i]);
         }
-        _tileIndicator.Update_CurrentVisualDatas(targetEvent.activateTileVisuals);
+
+        _tileIndicator.Update_CurrentVisualDatas(TargetEvent_Weather(targetEvent).activateTileVisuals);
     }
 
     private void Toggle_TileIndicator(WeatherUI_Icon hoveringIcon)
     {
         if (_weathersUpdateCoroutine != null) return;
-        
+
         Cancel_IndicatorToggleDelay();
 
         if (hoveringIcon != null)
@@ -426,7 +434,7 @@ public class Weather_Manager : MonoBehaviour
     {
         Cancel_IndicatorToggleDelay();
         Update_TileIndicator(activateEvent);
-        
+
         StartCoroutine(ActivateBlink_Update());
     }
     private IEnumerator ActivateBlink_Update()

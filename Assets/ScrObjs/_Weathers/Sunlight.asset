@@ -17,6 +17,17 @@ MonoBehaviour:
     the player's temperature by +{temperatureIncreaseValue}
   _iconSprite: {fileID: 1127324843, guid: 08db937c9bf304fd9bd2b19319eae929, type: 3}
   _activePrefab: {fileID: 5858694087719140007, guid: 2519fbc749378423e8d755864585a3a3, type: 3}
+  _warpUpdateVisualData:
+    _loadDuration: 0
+    _pixelSize: 0
+    _animationSpeed: 0
+    _colorA: {r: 0, g: 0, b: 0, a: 0}
+    _colorB: {r: 0, g: 0, b: 0, a: 0}
+    _colorC: {r: 0, g: 0, b: 0, a: 0}
+  _activateTileVisuals:
+    _indicatorSprite: {fileID: 8321326, guid: 99b3ae6f72cfb43edb595fcf1373eec9, type: 3}
+    _indicatorColor: {r: 0.9098039, g: 0.75686276, b: 0.4392157, a: 1}
+    _sortingOrder: 1
   _rateValue: 2
   _timeRangeData:
     _activeDay: 0
@@ -24,3 +35,5 @@ MonoBehaviour:
     _restrictTime: 15
     _minTimeCount: 0
     _maxTimeCount: 0
+  _tileStatesToRemove: 00000000
+  _tileStatesToAdd: 02000000

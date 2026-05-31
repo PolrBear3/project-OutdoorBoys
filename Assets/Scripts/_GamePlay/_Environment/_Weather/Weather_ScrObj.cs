@@ -19,11 +19,25 @@ public class Weather_ScrObj : ScriptableObject
     public GameObject activePrefab => _activePrefab;
 
     [Space(20)]
+    [SerializeField] private WarpRenderer_Data _warpUpdateVisualData;
+    public WarpRenderer_Data warpUpdateVisualData => _warpUpdateVisualData;
+
+    [SerializeField] private TileIndicator_VisualData _activateTileVisuals;
+    public TileIndicator_VisualData activateTileVisuals => _activateTileVisuals;
+
+    [Space(20)]
     [SerializeField][Range(0, 10)] private int _rateValue;
     public int rateValue => _rateValue;
 
     [SerializeField] private TimeRange_Data _timeRangeData;
     public TimeRange_Data timeRangeData => _timeRangeData;
+
+    [Space(20)]
+    [SerializeField] private TileState[] _tileStatesToRemove;
+    public TileState[] tileStatesToRemove => _tileStatesToRemove;
+
+    [SerializeField] private TileState[] _tileStatesToAdd;
+    public TileState[] tileStatesToAdd => _tileStatesToAdd;
 
 
     // Text Template
