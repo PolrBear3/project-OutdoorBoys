@@ -5,7 +5,7 @@ Shader "Unlit/Background"
         _MainTex ("Sprite Texture", 2D) = "white" {}
 
         _PixelSize ("Pixel Size", Float) = 8
-        _Speed ("Animation Speed", Float) = 0.1
+        _Speed ("Animation Speed", Float) = 0.4
         _UVScale ("UV Scale", Float) = 1.0
         _Brightness ("Brightness", Float) = 1.0
 

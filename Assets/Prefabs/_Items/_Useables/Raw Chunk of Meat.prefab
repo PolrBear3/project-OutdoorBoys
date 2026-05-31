@@ -45,7 +45,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1d7b415f5701a4ae888e036e1ae5a777, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _coolTime: 1
 --- !u!114 &8570170425162867595
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -59,5 +58,5 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _useableItem: {fileID: 2873364016420352242}
-  _healthUpdateValue: 1
-  _tempUpdateValue: 2
+  _healthUpdateValue: 0
+  _tempUpdateValue: 0

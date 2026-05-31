@@ -198,6 +198,8 @@ public class Weather_Manager : MonoBehaviour
     }
     private IEnumerator UpcomingWeathers_Update()
     {
+        List<Weather_ScrObj> activatedWeathers = new();
+        
         for (int i = _upcomingWeatherDatas.Count - 1; i >= 0; i--)
         {
             WeatherEvent_Data eventData = _upcomingWeatherDatas[i];
@@ -205,13 +207,15 @@ public class Weather_Manager : MonoBehaviour
 
             if (eventData.timeCount <= 1)
             {
-                Weather_ScrObj dataWeather = eventData.weather;
-                WeatherEvent weatherEvent = Current_WeatherEvent(dataWeather);
+                Weather_ScrObj activateWeather = eventData.weather;
+                WeatherEvent weatherEvent = Current_WeatherEvent(activateWeather);
 
                 // visuals
                 Icon(eventData).Update_ActivateAnimation(_updateDelayTime);
-                Update_WarpRenderer(dataWeather);
                 ActivateBlink_TileIndicator(weatherEvent);
+
+                Update_WarpRenderer(weatherEvent);
+                activatedWeathers.Add(activateWeather);
 
                 // activation
                 weatherEvent.Activate_Event();
@@ -224,6 +228,7 @@ public class Weather_Manager : MonoBehaviour
             }
             eventData.Update_TimeCount(eventData.timeCount - 1);
         }
+        Update_WarpRenderer(activatedWeathers);
 
         InGame_Manager.instance.time.timeUpdateActions.Remove(this);
 
@@ -375,9 +380,34 @@ public class Weather_Manager : MonoBehaviour
     }
 
 
-    private void Update_WarpRenderer(Weather_ScrObj updateWeather)
+    private void Update_WarpRenderer(WeatherEvent weatherEvent)
     {
         WarpRenderer_Controller warpRenderer = InGame_Manager.instance.environmentVisuals.backgroundRenderer;
+
+        WarpRenderer_Data rendererData = TargetEvent_Weather(weatherEvent).warpUpdateVisualData;
+        if (rendererData.loadDuration <= 0) return;
+
+        warpRenderer.Load_Renderer(rendererData);
+    }
+    private void Update_WarpRenderer(List<Weather_ScrObj> activatedWeathers)
+    {
+        Weather_ScrObj updateWeather = null;
+        int warpOrderNum = int.MaxValue;
+
+        for (int i = 0; i < activatedWeathers.Count; i++)
+        {
+            Weather_ScrObj activateWeather = activatedWeathers[i];
+            if (activateWeather.persistingBackground == false) continue;
+
+            int orderNum = activateWeather.warpUpdateOrderNum;
+            if (orderNum >= warpOrderNum) continue;
+
+            updateWeather = activateWeather;
+            warpOrderNum = orderNum;
+        }
+
+        if (updateWeather != null) return;
+        InGame_Manager.instance.worldMapGenerator.Set_Background();
     }
 
     private void Update_TileIndicator(WeatherEvent targetEvent)

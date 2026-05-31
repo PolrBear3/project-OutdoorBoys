@@ -1,8 +1,6 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using Unity.Mathematics;
-using Unity.VisualScripting;
 using UnityEngine;
 
 public class ItemCursor : MonoBehaviour, IItemsSource, IItemsSourceRemove, IItemsSourceAdd
@@ -14,6 +12,11 @@ public class ItemCursor : MonoBehaviour, IItemsSource, IItemsSourceRemove, IItem
 
     private ItemData _data;
     public ItemData data => _data;
+
+    private const int _usedItemHistoryDataCount = 2;
+
+    private List<ItemData> _usedItemHistoryDatas = new();
+    public List<ItemData> usedItemHistoryDatas => _usedItemHistoryDatas;
 
     private int _itemPickupFlag = -1;
 
@@ -335,6 +338,24 @@ public class ItemCursor : MonoBehaviour, IItemsSource, IItemsSourceRemove, IItem
         useItem.Set_Data(_data);
     }
 
+    private void Track_UseItemHistory(Item_ScrObj useItem)
+    {
+        int dataCount = _usedItemHistoryDatas.Count;
+
+        ItemData recentData = dataCount > 0
+            ? _usedItemHistoryDatas[dataCount - 1]
+            : null;
+
+        if (recentData != null && recentData.itemScrObj == useItem)
+        {
+            recentData.Update_CurrentAmount(recentData.amount + 1);
+            return;
+        }
+        _usedItemHistoryDatas.Add(new(useItem, 1));
+
+        if (_usedItemHistoryDatas.Count <= _usedItemHistoryDataCount) return;
+        _usedItemHistoryDatas.RemoveAt(0);
+    }
     private void Use_Item(Tile selectTile)
     {
         if (_itemPickupFlag == Time.frameCount) return;
@@ -347,9 +368,11 @@ public class ItemCursor : MonoBehaviour, IItemsSource, IItemsSourceRemove, IItem
         if (player.data.stamina <= 0) return;
 
         GameObject currentUseItem = player.interaction.currentItemPrefab;
+        
         if (currentUseItem.TryGetComponent(out UseableItem useItem) == false) return;
-
         if (useItem.CanUse?.Invoke(selectTile) == false) return;
+        
         useItem.OnUse?.Invoke(selectTile);
+        Track_UseItemHistory(currentItem);
     }
 }

@@ -212,7 +212,7 @@ public class WorldMap_Generator : MonoBehaviour
         if (eventsPrefab == null) return;
         _currentMapEventsPrefab = Instantiate(eventsPrefab, transform);
     }
-    private void Set_Background()
+    public void Set_Background()
     {
         InGame_Manager.instance.environmentVisuals.backgroundRenderer.Load_Renderer(_currentWorldMap.backgroundWarpRenderData);
     }

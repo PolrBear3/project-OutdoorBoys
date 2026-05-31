@@ -34,3 +34,27 @@ public class ItemData
         return singleWeight * _amount;
     }
 }
+
+[System.Serializable]
+public class HeatUpdate_ItemData
+{
+    [SerializeField] private Item_ScrObj _preHeatItem;
+    public Item_ScrObj preHeatItem => _preHeatItem;
+
+    [SerializeField] private Item_ScrObj _heatedItem;
+    public Item_ScrObj heatedItem => _heatedItem;
+
+    [Space(10)]
+    [SerializeField][Range(0, 100)] private int _updatePointValue;
+    public int updatePointValue => _updatePointValue;
+}
+
+[System.Serializable]
+public class TileUpdate_ItemData
+{
+    [SerializeField] private TileScrObj _tile;
+    public TileScrObj tile => _tile;
+
+    [SerializeField] private Item_ScrObj _updateItem;
+    public Item_ScrObj updateItem => _updateItem;
+}

@@ -19,9 +19,16 @@ public class Weather_ScrObj : ScriptableObject
     public GameObject activePrefab => _activePrefab;
 
     [Space(20)]
+    [SerializeField] private bool _persistingBackground;
+    public bool persistingBackground => _persistingBackground;
+
+    [SerializeField][Range(0, 10)] private int _warpUpdateOrderNum;
+    public int warpUpdateOrderNum => _warpUpdateOrderNum;
+
     [SerializeField] private WarpRenderer_Data _warpUpdateVisualData;
     public WarpRenderer_Data warpUpdateVisualData => _warpUpdateVisualData;
 
+    [Space(20)]
     [SerializeField] private TileIndicator_VisualData _activateTileVisuals;
     public TileIndicator_VisualData activateTileVisuals => _activateTileVisuals;
 

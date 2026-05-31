@@ -4,20 +4,6 @@ using System.Linq;
 using Unity.VisualScripting;
 using UnityEngine;
 
-[System.Serializable]
-public class HeatUpdate_ItemData
-{
-    [SerializeField] private Item_ScrObj _preHeatItem;
-    public Item_ScrObj preHeatItem => _preHeatItem;
-
-    [SerializeField] private Item_ScrObj _heatedItem;
-    public Item_ScrObj heatedItem => _heatedItem;
-
-    [Space(10)]
-    [SerializeField][Range(0, 100)] private int _updatePointValue;
-    public int updatePointValue => _updatePointValue;
-}
-
 public class Fire : MonoBehaviour
 {
     [SerializeField] private PlaceableItem _placeableItem;
