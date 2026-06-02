@@ -1,0 +1,41 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 158c8b4bfec7b4eea85d8dea788cb83b, type: 3}
+  m_Name: Storm
+  m_EditorClassIdentifier: 
+  _upcomingInfoText: 'Storm will start in : <sprite=0> {upcomingTimeValue}'
+  _descriptionText: player's temperature decrease by {temperatureUpdateValue}
+  _iconSprite: {fileID: 1384424326, guid: 08db937c9bf304fd9bd2b19319eae929, type: 3}
+  _activePrefab: {fileID: 5858694087719140007, guid: 23ba39a1cba704c848eac88d775bf49d, type: 3}
+  _persistingBackground: 1
+  _warpUpdateOrderNum: 0
+  _warpUpdateVisualData:
+    _loadDuration: 1
+    _pixelSize: 16
+    _colorA: {r: 0.22352941, g: 0.2901961, b: 0.3137255, a: 1}
+    _colorB: {r: 0.34117648, g: 0.44705883, b: 0.46666667, a: 1}
+    _colorC: {r: 0.92156863, g: 0.92941177, b: 0.9137255, a: 1}
+  _activateTileVisuals:
+    _indicatorSprite: {fileID: 198080653, guid: 99b3ae6f72cfb43edb595fcf1373eec9, type: 3}
+    _indicatorColor: {r: 1, g: 1, b: 1, a: 1}
+    _sortingOrder: 1
+  _rateValue: 5
+  _persistTimeCount: 3
+  _persistUpcomingTimeCount: 2
+  _timeRangeData:
+    _activeDay: 0
+    _activeTime: 0
+    _restrictTime: 0
+    _minTimeCount: 0
+    _maxTimeCount: 5
+  _tileStatesToRemove: 0200000003000000
+  _tileStatesToAdd: 01000000

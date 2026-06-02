@@ -9,6 +9,9 @@ public class PlayerData
     [ES3Serializable][SerializeField][Range(0, 500)] private int _health;
     public int health => _health;
 
+    [ES3Serializable][SerializeField][Range(0, 500)] private int _hunger;
+    public int hunger => _hunger;
+
     [ES3Serializable][SerializeField][Range(0, 500)] private int _temperature;
     public int temperature => _temperature;
 
@@ -20,6 +23,7 @@ public class PlayerData
     public PlayerData(PlayerData copyData)
     {
         _health = copyData._health;
+        _hunger = copyData._hunger;
         _temperature = copyData._temperature;
         _stamina = copyData._stamina;
     }
@@ -30,6 +34,12 @@ public class PlayerData
     {
         _health = Mathf.Max(0, updateValue);
         return _health;
+    }
+
+    public int Update_Hunger(int updateValue)
+    {
+        _hunger = Mathf.Clamp(updateValue, 0, _health);
+        return _hunger;
     }
 
     public int Update_Temperature(int updateValue)

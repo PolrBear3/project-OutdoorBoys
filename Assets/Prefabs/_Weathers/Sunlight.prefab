@@ -9,6 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6260189666786567346}
+  - component: {fileID: 8391400275872652814}
   - component: {fileID: 6114300806410340996}
   m_Layer: 0
   m_Name: Sunlight
@@ -32,6 +33,22 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &8391400275872652814
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5858694087719140007}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 35c7424dbeac047f995e29434a07a8e5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _healthUpdateValue: 0
+  _hungerUpdateValue: 0
+  _temperatureUpdateValue: 1
+  _staminaUpdateValue: 0
 --- !u!114 &6114300806410340996
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -44,11 +61,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f191078691a354d2bbe83d672f59c4ed, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _activateTileVisuals:
-    _indicatorSprite: {fileID: 8321326, guid: 99b3ae6f72cfb43edb595fcf1373eec9, type: 3}
-    _indicatorColor: {r: 0.9098039, g: 0.75686276, b: 0.4392157, a: 1}
-    _sortingOrder: 1
-  _tileStatesToAdd: 02000000
-  _tileStatesToRemove: 0100000000000000
+  _playerDataModifier: {fileID: 8391400275872652814}
   _activationRange: 2
   _temperatureIncreaseValue: 1

@@ -11,6 +11,11 @@ public class Player_Interaction : MonoBehaviour, IItemsSource, IItemsSourceRemov
     [SerializeField] private SpriteRenderer _indicationIcon;
     public SpriteRenderer indicationIcon => _indicationIcon;
 
+    [Space(20)]
+    [SerializeField][Range(0, 10)] private int _hungerDecreaseValue;
+    [SerializeField][Range(0, 10)] private int _healthDecreaseValue;
+
+
     private GameObject _currentItemPrefab;
     public GameObject currentItemPrefab => _currentItemPrefab;
 
@@ -30,7 +35,12 @@ public class Player_Interaction : MonoBehaviour, IItemsSource, IItemsSourceRemov
 
     private void OnDestroy()
     {
-        _controller.movement.tileTracker.UnRegister(ActionUpdateBus.AwakeUpdate, InteractUpdate_Stamina);
+        TileTracker tileTracker = _controller.movement.tileTracker;
+
+        tileTracker.UnRegister(ActionUpdateBus.AwakeUpdate, InteractUpdate_Hunger);
+        tileTracker.UnRegister(ActionUpdateBus.AwakeUpdate, HealthUpdate_OnHungerEmpty);
+        tileTracker.UnRegister(ActionUpdateBus.AwakeUpdate, InteractUpdate_Stamina);
+
         InGame_Manager.instance.time.UnRegister(ActionUpdateBus.AwakeUpdate, MaxUpdate_Stamina);
     }
 
@@ -105,7 +115,12 @@ public class Player_Interaction : MonoBehaviour, IItemsSource, IItemsSourceRemov
     // Data
     private void Set_Data()
     {
-        _controller.movement.tileTracker.Register(ActionUpdateBus.AwakeUpdate, InteractUpdate_Stamina);
+        TileTracker tileTracker = _controller.movement.tileTracker;
+
+        tileTracker.Register(ActionUpdateBus.AwakeUpdate, InteractUpdate_Hunger);
+        tileTracker.Register(ActionUpdateBus.AwakeUpdate, HealthUpdate_OnHungerEmpty);
+        tileTracker.Register(ActionUpdateBus.AwakeUpdate, InteractUpdate_Stamina);
+
         InGame_Manager.instance.time.Register(ActionUpdateBus.AwakeUpdate, MaxUpdate_Stamina);
     }
 
@@ -128,6 +143,32 @@ public class Player_Interaction : MonoBehaviour, IItemsSource, IItemsSourceRemov
 
         if (updateAvailable == false) return;
         _indicationIcon.sprite = iconSprite;
+    }
+
+
+    // Health & Hunger
+    private void InteractUpdate_Hunger()
+    {
+        PlayerData playerData = _controller.data;
+
+        if (playerData.hunger <= 0) return;
+        _controller.Update_Hunger(playerData.hunger - _hungerDecreaseValue);
+    }
+    private void InteractUpdate_Hunger(Tile _)
+    {
+        InteractUpdate_Hunger();
+    }
+
+    private void HealthUpdate_OnHungerEmpty()
+    {
+        PlayerData playerData = _controller.data;
+
+        if (playerData.hunger > 0) return;
+        _controller.Update_Health(playerData.health - _healthDecreaseValue);
+    }
+    private void HealthUpdate_OnHungerEmpty(Tile _)
+    {
+        HealthUpdate_OnHungerEmpty();
     }
 
 

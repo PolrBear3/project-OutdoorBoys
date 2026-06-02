@@ -151,6 +151,8 @@ public class Weather_Manager : MonoBehaviour
         foreach (var activeEvent in _currentWeathers)
         {
             Weather_ScrObj weatherToAdd = activeEvent.Key;
+
+
             bool upcomingFound = false;
 
             for (int i = 0; i < _upcomingWeatherDatas.Count; i++)
@@ -219,8 +221,16 @@ public class Weather_Manager : MonoBehaviour
 
                 // activation
                 weatherEvent.Activate_Event();
-                weatherEvent.reservedActivationTiles.Clear();
 
+                // persist activation
+                if (eventData.Is_Persisting())
+                {
+                    eventData.Update_PersistTimeCount(eventData.persistTimeCount - 1);
+                    eventData.Update_TimeCount(activateWeather.persistUpcomingTimeCount);
+                    continue;
+                }
+                
+                weatherEvent.reservedActivationTiles.Clear();
                 _upcomingWeatherDatas.RemoveAt(i);
 
                 yield return new WaitForSeconds(_updateDelayTime);
@@ -231,7 +241,7 @@ public class Weather_Manager : MonoBehaviour
         Update_WarpRenderer(activatedWeathers);
 
         InGame_Manager.instance.time.timeUpdateActions.Remove(this);
-
+        
         Weather_ScrObj updateEvent = RandomWeight_WeatherScrObj();
         if (updateEvent == null || Update_CoolTime() == false)
         {

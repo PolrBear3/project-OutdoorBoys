@@ -6,14 +6,13 @@ public class WeatherEvent_Rain : WeatherEvent
 {
     [Space(20)]
     [SerializeField] private Item_ScrObj[] _excludeItems;
-    [SerializeField][Range(0, 10)] private int _temperatureDecreaseValue;
 
 
     // Text Template
     public override string Description()
     {
         return base.Description()
-            .Replace("{temperatureDecreaseValue}", _temperatureDecreaseValue.ToString());
+            .Replace("{temperatureUpdateValue}", playerDataModifier.temperatureUpdateValue.ToString());
     }
 
 
@@ -42,7 +41,6 @@ public class WeatherEvent_Rain : WeatherEvent
         
         if (ActivationTiles_PlayerDetected() == false) return;
 
-        Player_Controller player = InGame_Manager.instance.player;
-        player.Update_Temperature(player.data.temperature - _temperatureDecreaseValue);
+        playerDataModifier.Update_Data();
     }
 }

@@ -24,13 +24,13 @@ MonoBehaviour:
   _harshGroundDensity: 10
   _worldMapEventsPrefab: {fileID: 353555265533623462, guid: 556217c5b3b7f42f8b49b5cc77927991, type: 3}
   _weathers:
-  - {fileID: 11400000, guid: dd95a5d82f9fb4d8e842dd3938129501, type: 2}
-  - {fileID: 11400000, guid: 7d5ed3b52409443119f0f6ee41db4f54, type: 2}
   - {fileID: 11400000, guid: 8a1f7c46e181347769b0b4048f23f0ef, type: 2}
+  - {fileID: 11400000, guid: 7d5ed3b52409443119f0f6ee41db4f54, type: 2}
+  - {fileID: 11400000, guid: dd95a5d82f9fb4d8e842dd3938129501, type: 2}
+  - {fileID: 11400000, guid: 6e2f06d8fae764998893f2bfaf3fb059, type: 2}
   _backgroundWarpRenderData:
     _loadDuration: 1
     _pixelSize: 16
-    _animationSpeed: 0.4
     _colorA: {r: 0.09803922, g: 0.2, b: 0.1764706, a: 1}
     _colorB: {r: 0.14509805, g: 0.3372549, b: 0.18039216, a: 1}
     _colorC: {r: 0.65882355, g: 0.7921569, b: 0.34509805, a: 1}

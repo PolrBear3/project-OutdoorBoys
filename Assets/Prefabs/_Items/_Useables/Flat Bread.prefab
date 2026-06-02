@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 6202383651998061352}
   - component: {fileID: 2873364016420352242}
   - component: {fileID: 8570170425162867595}
+  - component: {fileID: 2371835579499370456}
   m_Layer: 0
   m_Name: Flat Bread
   m_TagString: Untagged
@@ -59,4 +60,22 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _useableItem: {fileID: 2873364016420352242}
   _healthUpdateValue: 5
-  _tempUpdateValue: 5
+  _hungerUpdateValue: 1
+  _tempUpdateValue: 0
+  _playerDataModifier: {fileID: 2371835579499370456}
+--- !u!114 &2371835579499370456
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5769858720269626403}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 35c7424dbeac047f995e29434a07a8e5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _healthUpdateValue: 5
+  _hungerUpdateValue: 1
+  _temperatureUpdateValue: 0
+  _staminaUpdateValue: 0

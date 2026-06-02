@@ -7,8 +7,7 @@ public class PlayerData_UpdateItem : MonoBehaviour
     [SerializeField] private UseableItem _useableItem;
 
     [Space(20)]
-    [SerializeField][Range(-10, 10)] private int _healthUpdateValue;
-    [SerializeField][Range(-10, 10)] private int _tempUpdateValue;
+    [SerializeField] private PlayerData_Modifier _playerDataModifier;
 
 
     // MonoBehaviour
@@ -29,11 +28,7 @@ public class PlayerData_UpdateItem : MonoBehaviour
         Player_Controller player = InGame_Manager.instance.player;
         if (useTile != player.movement.tileTracker.data.CurrentTile()) return;
 
-        PlayerData data = player.data;
-
-        player.Update_Health(data.health + _healthUpdateValue);
-        player.Update_Temperature(data.temperature + _tempUpdateValue);
-
+        _playerDataModifier.Update_Data();
         _useableItem.Update_UseAmount(1);
     }
 }

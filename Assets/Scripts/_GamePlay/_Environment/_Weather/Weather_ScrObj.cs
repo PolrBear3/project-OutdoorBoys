@@ -18,28 +18,37 @@ public class Weather_ScrObj : ScriptableObject
     [SerializeField] private GameObject _activePrefab;
     public GameObject activePrefab => _activePrefab;
 
-    [Space(20)]
+    [Space(40)]
     [SerializeField] private bool _persistingBackground;
     public bool persistingBackground => _persistingBackground;
 
+    [Space(10)]
     [SerializeField][Range(0, 10)] private int _warpUpdateOrderNum;
     public int warpUpdateOrderNum => _warpUpdateOrderNum;
 
     [SerializeField] private WarpRenderer_Data _warpUpdateVisualData;
     public WarpRenderer_Data warpUpdateVisualData => _warpUpdateVisualData;
 
-    [Space(20)]
+    [Space(10)]
     [SerializeField] private TileIndicator_VisualData _activateTileVisuals;
     public TileIndicator_VisualData activateTileVisuals => _activateTileVisuals;
 
-    [Space(20)]
+    [Space(40)]
     [SerializeField][Range(0, 10)] private int _rateValue;
     public int rateValue => _rateValue;
 
+    [Space(10)]
+    [SerializeField][Range(0, 10)] private int _persistTimeCount;
+    public int persistTimeCount => _persistTimeCount;
+
+    [SerializeField][Range(0, 10)] private int _persistUpcomingTimeCount;
+    public int persistUpcomingTimeCount => _persistUpcomingTimeCount;
+
+    [Space(10)]
     [SerializeField] private TimeRange_Data _timeRangeData;
     public TimeRange_Data timeRangeData => _timeRangeData;
 
-    [Space(20)]
+    [Space(10)]
     [SerializeField] private TileState[] _tileStatesToRemove;
     public TileState[] tileStatesToRemove => _tileStatesToRemove;
 

@@ -25,9 +25,10 @@ public class UseableItem : MonoBehaviour
     public void Update_UseAmount(int useDecreaseAmount)
     {
         InGame_Manager manager = InGame_Manager.instance;
-
         _data.Update_CurrentAmount(_data.amount - useDecreaseAmount);
-        manager.player.interaction.InteractUpdate_Stamina();
+
+        Player_Interaction interaction = manager.player.interaction;
+        interaction.InteractUpdate_Stamina();
 
         if (_data.amount > 0) return;
         

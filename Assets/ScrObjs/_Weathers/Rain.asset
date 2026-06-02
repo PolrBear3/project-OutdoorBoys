@@ -13,11 +13,11 @@ MonoBehaviour:
   m_Name: Rain
   m_EditorClassIdentifier: 
   _upcomingInfoText: 'Rain will fall in : <sprite=0> {upcomingTimeValue}'
-  _descriptionText: Rain wet tiles decrease player's temperature by -{temperatureDecreaseValue}
+  _descriptionText: Rain wet tiles decrease player's temperature by {temperatureUpdateValue}
   _iconSprite: {fileID: -443011722, guid: 08db937c9bf304fd9bd2b19319eae929, type: 3}
   _activePrefab: {fileID: 5858694087719140007, guid: 806d10ca5f9d8449db30d7c234d7860b, type: 3}
   _persistingBackground: 1
-  _warpUpdateOrderNum: 0
+  _warpUpdateOrderNum: 1
   _warpUpdateVisualData:
     _loadDuration: 1
     _pixelSize: 16
@@ -29,6 +29,8 @@ MonoBehaviour:
     _indicatorColor: {r: 0.6431373, g: 0.8666667, b: 0.85882354, a: 1}
     _sortingOrder: 1
   _rateValue: 5
+  _persistTimeCount: 0
+  _persistUpcomingTimeCount: 0
   _timeRangeData:
     _activeDay: 0
     _activeTime: 0

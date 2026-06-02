@@ -6,8 +6,14 @@ public abstract class WeatherEvent : MonoBehaviour
 {
     private Weather_Manager _manager;
 
+    [SerializeField] private PlayerData_Modifier _playerDataModifier;
+    public PlayerData_Modifier playerDataModifier => _playerDataModifier;
+
     private List<Tile> _reservedActivationTiles = new();
     public List<Tile> reservedActivationTiles => _reservedActivationTiles;
+
+    private int _persistTimeCount;
+    public int persistTimeCount => _persistTimeCount;
 
 
     // Data

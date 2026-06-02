@@ -94,13 +94,21 @@ public class TileTracker : MonoBehaviour
         return peripheralTiles;
     }
 
+
+    public void Load_CurrentTile(Tile loadTile)
+    {
+        if (loadTile == null) return;
+
+        _data.TrackTile(loadTile);
+        loadTile.Set_CurrentPrefab(gameObject);
+    }
+
     public Tile TrackUpdate_CurrentTile(Tile targetTile)
     {
         if (targetTile == null) return _data?.CurrentTile();
 
-        _data.TrackTile(targetTile);
-        targetTile.Set_CurrentPrefab(gameObject);
-
+        Load_CurrentTile(targetTile);
+        
         RunRegistered_UpdateBus(targetTile);
         return targetTile;
     }

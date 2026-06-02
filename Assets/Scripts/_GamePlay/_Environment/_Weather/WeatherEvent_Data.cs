@@ -11,14 +11,31 @@ public class WeatherEvent_Data
     [SerializeField] private int _timeCount;
     public int timeCount => _timeCount;
 
+    [SerializeField] private int _persistTimeCount;
+    public int persistTimeCount => _persistTimeCount;
+
+
+    // Constructor
     public WeatherEvent_Data(Weather_ScrObj trackWeather, int trackStartTime)
     {
         _weather = trackWeather;
         _timeCount = trackStartTime;
+        _persistTimeCount = _weather.persistTimeCount;
     }
 
+
+    // Data
     public void Update_TimeCount(int updateValue)
     {
         _timeCount = Mathf.Max(0, updateValue);
+    }
+
+    public bool Is_Persisting()
+    {
+        return _weather.persistTimeCount > 0 && _persistTimeCount > 1;
+    }
+    public void Update_PersistTimeCount(int updateValue)
+    {
+        _persistTimeCount = Mathf.Max(0, updateValue);
     }
 }

@@ -14,6 +14,7 @@ public class InGameUI_Manager : MonoBehaviour
 
     [Space(20)]
     [SerializeField] private FillBar_UI _healthBar;
+    [SerializeField] private FillBar_UI _hungerBar;
     [SerializeField] private PanelToggle_AnimationController _healthBarAnim;
 
     [Space(10)]
@@ -51,6 +52,7 @@ public class InGameUI_Manager : MonoBehaviour
         Player_Controller player = manager.player;
 
         player.OnHealthUpdate -= Update_HealthBar;
+        player.OnHungerUpdate -= Update_HungerBar;
         player.OnTemperatureUpdate -= Update_TemperatureBar;
 
         player.OnStaminaUpdate -= Update_StaminaBar;
@@ -79,10 +81,12 @@ public class InGameUI_Manager : MonoBehaviour
         PlayerData playerData = player.data;
 
         Update_HealthBar(playerData.health);
+        Update_HungerBar(playerData.hunger);
         Update_TemperatureBar(playerData.temperature);
         Update_StaminaBar(playerData.stamina);
 
         player.OnHealthUpdate += Update_HealthBar;
+        player.OnHungerUpdate += Update_HungerBar;
         player.OnTemperatureUpdate += Update_TemperatureBar;
 
         player.OnStaminaUpdate += Update_StaminaBar;
@@ -116,7 +120,20 @@ public class InGameUI_Manager : MonoBehaviour
     // Player Data Text
     private void Update_HealthBar(int currentValue)
     {
-        _healthBar.Update_Visuals(InGame_Manager.instance.player.maxData.health, currentValue, 0);
+        Player_Controller player = InGame_Manager.instance.player;
+
+        _healthBar.Update_Visuals(player.maxData.health, currentValue, 0);
+        Update_HungerBar(player.data.hunger);
+
+        if (_healthBarAnim.animationCoroutine != null) return;
+        _healthBarAnim.Update_ToggleAnimation();
+    }
+
+    private void Update_HungerBar(int currentValue)
+    {
+        _hungerBar.Update_Visuals(InGame_Manager.instance.player.maxData.hunger, currentValue, 0);
+
+        if (_healthBarAnim.animationCoroutine != null) return;
         _healthBarAnim.Update_ToggleAnimation();
     }
 

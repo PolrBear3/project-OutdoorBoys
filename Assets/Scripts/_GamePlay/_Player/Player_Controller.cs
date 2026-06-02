@@ -29,6 +29,7 @@ public class Player_Controller : MonoBehaviour, ISaveLoadable, IDamageable
     public PlayerData data => _data;
 
     public Action<int> OnHealthUpdate;
+    public Action<int> OnHungerUpdate;
     public Action<int> OnTemperatureUpdate;
     public Action<int> OnStaminaUpdate;
 
@@ -60,7 +61,7 @@ public class Player_Controller : MonoBehaviour, ISaveLoadable, IDamageable
         _data = ES3.Load(SaveKeys.Player_SaveKeys.Data, new PlayerData(_maxData));
 
         if (ES3.KeyExists(SaveKeys.Player_SaveKeys.Data)) return;
-        _data.Update_Stamina(_maxData.stamina + 1);
+        _data.Update_Stamina(_maxData.stamina);
     }
 
 
@@ -82,17 +83,37 @@ public class Player_Controller : MonoBehaviour, ISaveLoadable, IDamageable
     // Data
     public void Update_Health(int updateValue)
     {
-        OnHealthUpdate?.Invoke(_data.Update_Health(Mathf.Min(updateValue, _maxData.health)));
+        updateValue = Mathf.Min(updateValue, _maxData.health);
+        if (updateValue == _data.health) return;
+
+        OnHealthUpdate?.Invoke(_data.Update_Health(updateValue));
+
+        if (_data.hunger <= _data.health) return;
+        Update_Hunger(_data.health);
+    }
+
+    public void Update_Hunger(int updateValue)
+    {
+        updateValue = Mathf.Clamp(updateValue, 0, _data.health);
+        if (updateValue == _data.hunger) return;
+
+        OnHungerUpdate?.Invoke(_data.Update_Hunger(updateValue));
     }
 
     public void Update_Temperature(int updateValue)
     {
-        OnTemperatureUpdate?.Invoke(_data.Update_Temperature(Mathf.Min(updateValue, _maxData.temperature)));
+        updateValue = Mathf.Min(updateValue, _maxData.temperature);
+        if (updateValue == _data.temperature) return;
+
+        OnTemperatureUpdate?.Invoke(_data.Update_Temperature(updateValue));
     }
 
     public void Update_Stamina(int updateValue)
     {
-        OnStaminaUpdate?.Invoke(_data.Update_Stamina(Mathf.Min(updateValue, _maxData.stamina)));
+        updateValue = Mathf.Min(updateValue, _maxData.stamina);
+        if (updateValue == _data.stamina) return;
+        
+        OnStaminaUpdate?.Invoke(_data.Update_Stamina(updateValue));
     }
 
 
@@ -110,7 +131,7 @@ public class Player_Controller : MonoBehaviour, ISaveLoadable, IDamageable
         transform.position = setTile.Random_BoundPoint();
         
         _movement.tileTracker.Set_Data(setTile);
-        _movement.tileTracker.TrackUpdate_CurrentTile(setTile);
+        _movement.tileTracker.Load_CurrentTile(setTile);
     }
 
     private void Set_InventoryBagpack()
