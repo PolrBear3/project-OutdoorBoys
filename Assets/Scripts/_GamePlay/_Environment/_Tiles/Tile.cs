@@ -184,6 +184,7 @@ public class Tile : MonoBehaviour
 
         Update_PlacedItemOffsets();
     }
+    
     /// <returns>
     /// Leftover data
     /// </returns>
@@ -302,7 +303,6 @@ public class Tile : MonoBehaviour
         _data.Preserve_ItemData(leftOverData);
         InGame_Manager.instance.tilesController.OnTileItemsUpdate(this);
     }
-
 
     private void Update_PlacedItemOffsets()
     {

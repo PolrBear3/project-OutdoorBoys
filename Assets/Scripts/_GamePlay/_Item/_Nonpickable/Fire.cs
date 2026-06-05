@@ -21,7 +21,7 @@ public class Fire : MonoBehaviour
     [SerializeField][Range(0, 10)] private int _heatTilesUpdateThresholdPoint;
 
     [Space(20)]
-    [SerializeField] private HeatUpdate_ItemData[] _heatItemDatas;
+    [SerializeField] private ConvertUpdate_ItemData[] _heatItemDatas;
 
     [Space(20)]
     [SerializeField] private Item_ScrObj _coalItem;
@@ -30,8 +30,6 @@ public class Fire : MonoBehaviour
     [Space(20)]
     [SerializeField][Range(0, 100)] private int _temperatureIncreaseValue;
 
-
-    private Dictionary<PlaceableItem, int> _trackingDatas = new();
     private int _coalGeneratedCount;
 
 
@@ -50,8 +48,6 @@ public class Fire : MonoBehaviour
         time.Register(ActionUpdateBus.AwakeUpdate, Toggle_HeatTiles);
 
         time.Register(ActionUpdateBus.AwakeUpdate, Update_PlayerTemperature);
-
-        time.Register(ActionUpdateBus.AwakeUpdate, Track_HeatingItems);
         time.Register(ActionUpdateBus.AwakeUpdate, Update_HeatingItems);
 
         Tiles_Controller tiles = manager.tilesController;
@@ -81,14 +77,15 @@ public class Fire : MonoBehaviour
         time.UnRegister(ActionUpdateBus.AwakeUpdate, Toggle_HeatTiles);
 
         time.UnRegister(ActionUpdateBus.AwakeUpdate, Update_PlayerTemperature);
-
-        time.UnRegister(ActionUpdateBus.AwakeUpdate, Track_HeatingItems);
         time.UnRegister(ActionUpdateBus.AwakeUpdate, Update_HeatingItems);
 
         Tiles_Controller tiles = manager.tilesController;
 
         tiles.OnTileHover -= Toggle_FillBar;
         tiles.OnTileHover -= Toggle_HeatTiles;
+
+
+        _heatTileIndicator.Clear_CurrentIndicators();
     }
 
 
@@ -116,8 +113,6 @@ public class Fire : MonoBehaviour
     // Main
     private void Remove()
     {
-        Transfer_HeatingItems();
-
         Tile currentTile = _placeableItem.currentTile;
 
         currentTile.Remove_PlacedItemData(_placeableItem);
@@ -229,149 +224,46 @@ public class Fire : MonoBehaviour
 
 
     // Placed Items Heating
-    private HeatUpdate_ItemData Update_ItemData(Item_ScrObj checkItem)
+    private ConvertUpdate_ItemData Update_ItemData(Item_ScrObj checkItem)
     {
         for (int i = 0; i < _heatItemDatas.Length; i++)
         {
-            HeatUpdate_ItemData updateItemData = _heatItemDatas[i];
+            ConvertUpdate_ItemData updateItemData = _heatItemDatas[i];
 
-            if (checkItem != updateItemData.preHeatItem && checkItem != updateItemData.heatedItem) continue;
+            if (checkItem != updateItemData.preUpdateItem && updateItemData.Is_ConvertedItem(checkItem) == false) continue;
             return updateItemData;
         }
         return null;
     }
 
-    private List<PlaceableItem> Placed_FireItems()
-    {
-        Item_ScrObj fireItem = _placeableItem.data.itemScrObj;
-        return InGame_Manager.instance.tilesController.PlacedItems(fireItem);
-    }
-    private Fire ItemTracking_OtherFire(PlaceableItem trackingItem)
-    {
-        List<PlaceableItem> placedFireItems = Placed_FireItems();
-
-        for (int i = placedFireItems.Count - 1; i >= 0; i--)
-        {
-            PlaceableItem placedItem = placedFireItems[i];
-
-            if (placedItem == _placeableItem) continue;
-            if (placedItem.TryGetComponent(out Fire fire) == false) continue;
-
-            Dictionary<PlaceableItem, int> trackingDatas = fire._trackingDatas;
-
-            foreach (var data in trackingDatas)
-            {
-                if (data.Key != trackingItem) continue;
-                return fire;
-            }
-        }
-        return null;
-    }
-
-
-    private void Track_HeatingItems()
-    {
-        List<Tile> currentHeatTiles = _heatTileIndicator.Current_IndicateTiles();
-
-        for (int i = 0; i < currentHeatTiles.Count; i++)
-        {
-            Tile heatTile = currentHeatTiles[i];
-            List<PlaceableItem> placedItems = heatTile.PlacedItems();
-
-            for (int j = 0; j < placedItems.Count; j++)
-            {
-                PlaceableItem placedItem = placedItems[j];
-
-                if (Update_ItemData(placedItem.data.itemScrObj) == null) continue;
-                if (_trackingDatas.ContainsKey(placedItem)) continue;
-
-                Fire otherTrackingFire = ItemTracking_OtherFire(placedItem);
-                if (otherTrackingFire == null)
-                {
-                    _trackingDatas[placedItem] = 0;
-                    continue;
-                }
-
-                List<Tile> heatingTiles = otherTrackingFire._heatTileIndicator.Current_IndicateTiles();
-                if (heatingTiles.Contains(placedItem.currentTile)) continue;
-
-                _trackingDatas[placedItem] = otherTrackingFire._trackingDatas[placedItem] + 1;
-                otherTrackingFire._trackingDatas.Remove(placedItem);
-            }
-        }
-    }
     private void Update_HeatingItems()
     {
         if (_placeableItem.data.amount <= 0) return;
 
         List<Tile> currentHeatTiles = _heatTileIndicator.Current_IndicateTiles();
-
-        foreach (PlaceableItem trackingItem in _trackingDatas.Keys.ToList())
+        
+        for (int i = 0; i < currentHeatTiles.Count; i++)
         {
-            if (trackingItem == null)
+            Tile heatTile = currentHeatTiles[i];
+            List<PlaceableItem> placedItems = heatTile.PlacedItems();
+            
+            for (int j = placedItems.Count - 1; j >= 0 ; j--)
             {
-                _trackingDatas.Remove(trackingItem);
-                continue;
+                PlaceableItem placedItem = placedItems[j];
+
+                Item_ScrObj itemToUpdate = placedItem.data.itemScrObj;
+                ConvertUpdate_ItemData updateData = Update_ItemData(itemToUpdate);
+                
+                if (updateData == null) continue;
+
+                int replaceAmount = placedItem.data.amount;
+
+                heatTile.Remove_PlacedItemData(placedItem);
+                Destroy(placedItem.gameObject);
+
+                Item_ScrObj replaceItem = itemToUpdate == updateData.preUpdateItem ? updateData.Converted_ItemData().itemScrObj : _coalItem;
+                heatTile.Set_Item(new(replaceItem, replaceAmount));
             }
-
-            Tile trackingItemTile = trackingItem.currentTile;
-            int currentValue = _trackingDatas[trackingItem] += currentHeatTiles.Contains(trackingItemTile) ? 1 : -1;
-
-            if (currentValue <= 0)
-            {
-                _trackingDatas.Remove(trackingItem);
-                continue;
-            }
-
-            Item_ScrObj currentItem = trackingItem.data.itemScrObj;
-            HeatUpdate_ItemData updateData = Update_ItemData(currentItem);
-
-            if (updateData == null) continue;
-            if (currentValue < updateData.updatePointValue) continue;
-
-            int replaceAmount = trackingItem.data.amount;
-
-            trackingItemTile.Remove_PlacedItemData(trackingItem);
-            Destroy(trackingItem.gameObject);
-
-            _trackingDatas.Remove(trackingItem);
-
-            Item_ScrObj replaceItem = currentItem == updateData.preHeatItem ? updateData.heatedItem : _coalItem;
-            trackingItemTile.Set_Item(new(replaceItem, replaceAmount));
-        }
-    }
-
-    private void Transfer_HeatingItems()
-    {
-        List<PlaceableItem> placedFireItems = Placed_FireItems();
-        placedFireItems.Remove(_placeableItem);
-
-        PlaceableItem closestPlacedFire = null;
-        int closestDistance = int.MaxValue;
-
-        for (int i = 0; i < placedFireItems.Count; i++)
-        {
-            PlaceableItem otherPlacedFireItem = placedFireItems[i];
-            int checkDistance = _placeableItem.currentTile.DistanceTo_TargetTile(otherPlacedFireItem.currentTile);
-
-            if (checkDistance >= closestDistance) continue;
-
-            closestPlacedFire = otherPlacedFireItem;
-            closestDistance = checkDistance;
-        }
-
-        if (closestPlacedFire == null) return;
-        if (closestPlacedFire.TryGetComponent(out Fire placedOtherFire) == false) return;
-
-        foreach (var data in _trackingDatas.ToList())
-        {
-            PlaceableItem transferItem = data.Key;
-            int transferHeatCount = data.Value;
-
-            bool otherFireTracking = placedOtherFire._trackingDatas.TryGetValue(transferItem, out int heatCount);
-            if (otherFireTracking && heatCount >= transferHeatCount) continue;
-
-            placedOtherFire._trackingDatas[transferItem] = data.Value;
         }
     }
 }

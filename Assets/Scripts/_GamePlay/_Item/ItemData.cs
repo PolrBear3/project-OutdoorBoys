@@ -36,17 +36,27 @@ public class ItemData
 }
 
 [System.Serializable]
-public class HeatUpdate_ItemData
+public class ConvertUpdate_ItemData
 {
-    [SerializeField] private Item_ScrObj _preHeatItem;
-    public Item_ScrObj preHeatItem => _preHeatItem;
+    [SerializeField] private Item_ScrObj _preUpdateItem;
+    public Item_ScrObj preUpdateItem => _preUpdateItem;
 
-    [SerializeField] private Item_ScrObj _heatedItem;
-    public Item_ScrObj heatedItem => _heatedItem;
+    [SerializeField] private ItemData[] _convertUpdateItemDatas;
 
-    [Space(10)]
-    [SerializeField][Range(0, 100)] private int _updatePointValue;
-    public int updatePointValue => _updatePointValue;
+    public bool Is_ConvertedItem(Item_ScrObj targetItem)
+    {
+        for (int i = 0; i < _convertUpdateItemDatas.Length; i++)
+        {
+            if (_convertUpdateItemDatas[i].itemScrObj == targetItem) return true;
+        }
+        return false;
+    }
+
+    public ItemData Converted_ItemData()
+    {
+        if (_convertUpdateItemDatas.Length <= 0) return null;
+        return _convertUpdateItemDatas[Random.Range(0, _convertUpdateItemDatas.Length)];
+    }
 }
 
 [System.Serializable]

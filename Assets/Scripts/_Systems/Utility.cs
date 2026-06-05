@@ -4,18 +4,29 @@ using UnityEngine;
 
 public static class Utility
 {
-    public static List<Vector2> Surrounding_Positions(Vector2 pivotPos)
+    public static List<Vector2> Surrounding_Directions()
     {
-        List<Vector2> positions = new(8);
+        List<Vector2> directions = new(8);
 
         for (int y = -1; y <= 1; y++)
         {
             for (int x = -1; x <= 1; x++)
             {
-                if (x == 0 && y == 0) continue; // skip center
-
-                positions.Add(new Vector2(pivotPos.x + x, pivotPos.y + y));
+                if (x == 0 && y == 0) continue;
+                directions.Add(new Vector2(x, y));
             }
+        }
+        return directions;
+    }
+
+    public static List<Vector2> Surrounding_Positions(Vector2 pivotPos)
+    {
+        List<Vector2> positions = new();
+        List<Vector2> directions = Surrounding_Directions();
+
+        for (int i = 0; i < directions.Count; i++)
+        {
+            positions.Add(pivotPos + directions[i]);
         }
         return positions;
     }

@@ -45,10 +45,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 35c7424dbeac047f995e29434a07a8e5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _healthUpdateValue: 0
+  _healthUpdateValue: -5
   _hungerUpdateValue: 0
   _temperatureUpdateValue: -5
-  _staminaUpdateValue: 0
+  _staminaUpdateValue: -5
 --- !u!114 &-6105739805433686834
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -62,4 +62,18 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _playerDataModifier: {fileID: 1105032225907665582}
-  _temperatureDecreaseValue: 5
+  _protectItems:
+  - {fileID: 11400000, guid: 1f0f853271bde41e785e0d219c0cdbe3, type: 2}
+  _positionUpdateItems:
+  - {fileID: 11400000, guid: 86e876e6c7e9c467db97ab95dfa547ce, type: 2}
+  - {fileID: 11400000, guid: b8845cbe07fe54f259c7ae56d25a6092, type: 2}
+  - {fileID: 11400000, guid: cea7459d8010d4a229cb42a2a5b65381, type: 2}
+  - {fileID: 11400000, guid: 61796550184fa4a80a822586dc68a405, type: 2}
+  - {fileID: 11400000, guid: 52365bb8720a743b3bc321e7dd0faf4d, type: 2}
+  - {fileID: 11400000, guid: 1f0f853271bde41e785e0d219c0cdbe3, type: 2}
+  _itemDropRate: 0.5
+  _dropItemDatas:
+  - _preUpdateItem: {fileID: 11400000, guid: 86e876e6c7e9c467db97ab95dfa547ce, type: 2}
+    _convertUpdateItemDatas:
+    - _itemScrObj: {fileID: 11400000, guid: b8845cbe07fe54f259c7ae56d25a6092, type: 2}
+      _amount: 5
