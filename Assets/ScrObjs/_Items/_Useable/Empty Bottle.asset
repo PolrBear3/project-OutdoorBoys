@@ -28,7 +28,13 @@ MonoBehaviour:
   _maxAmount: 1
   _itemWeight: 0
   _triggerRange: 0
+  _discoverTimeRangeData:
+    _activeDay: 0
+    _activeTime: 0
+    _restrictTime: 0
+    _minTimeCount: 0
+    _maxTimeCount: 0
   _placeRestrictions: []
   _selectRestrictions: []
-  _craftPlacedCheckDatas: []
   _itemIngredientDatas: []
+  _craftRequiredPlacedItemDatas: []

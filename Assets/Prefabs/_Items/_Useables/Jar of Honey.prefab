@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 2873364016420352242}
   - component: {fileID: 8570170425162867595}
   - component: {fileID: 8053521220263231301}
+  - component: {fileID: -163978999775735021}
   m_Layer: 0
   m_Name: Jar of Honey
   m_TagString: Untagged
@@ -59,9 +60,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _useableItem: {fileID: 2873364016420352242}
-  _healthUpdateValue: 2
-  _hungerUpdateValue: 0
-  _tempUpdateValue: 2
   _playerDataModifier: {fileID: 8053521220263231301}
 --- !u!114 &8053521220263231301
 MonoBehaviour:
@@ -79,3 +77,18 @@ MonoBehaviour:
   _hungerUpdateValue: 0
   _temperatureUpdateValue: 2
   _staminaUpdateValue: 0
+--- !u!114 &-163978999775735021
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5769858720269626403}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 29e805e2b3da0488bbd1b6120eebe255, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _useableItem: {fileID: 2873364016420352242}
+  _emptyBottle: {fileID: 11400000, guid: db6604057f7384c0e9ef23012a8f6848, type: 2}
+  _updateItemDatas: []

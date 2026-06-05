@@ -7,7 +7,7 @@ public class ItemData
 {
     [SerializeField] private Item_ScrObj _itemScrObj;
     public Item_ScrObj itemScrObj => _itemScrObj;
-    
+
     [SerializeField][Range(0, 100)] private int _amount;
     public int amount => _amount;
 
@@ -53,8 +53,27 @@ public class HeatUpdate_ItemData
 public class TileUpdate_ItemData
 {
     [SerializeField] private TileScrObj _tile;
-    public TileScrObj tile => _tile;
+    [SerializeField] private ItemData[] _placedItemDatas;
 
+    [Space(10)]
     [SerializeField] private Item_ScrObj _updateItem;
-    public Item_ScrObj updateItem => _updateItem;
+
+
+    public Item_ScrObj TilePlaced_UpdateItem(Tile targetTile)
+    {
+        if (targetTile == null) return null;
+        if (_tile != null && _tile != targetTile.data.tileScrObj) return null;
+
+        int checkCount = _placedItemDatas.Length;
+        if (checkCount <= 0) return _updateItem;
+
+        for (int i = 0; i < _placedItemDatas.Length; i++)
+        {
+            ItemData checkData = _placedItemDatas[i];
+            int placedCount = targetTile.Placed_ItemCount(checkData.itemScrObj);
+
+            if (placedCount < Mathf.Max(1, checkData.amount)) return null;
+        }
+        return _updateItem;
+    }
 }

@@ -31,8 +31,9 @@ public class UseableItem : MonoBehaviour
         interaction.InteractUpdate_Stamina();
 
         if (_data.amount > 0) return;
-        
         OnUseDestroy?.Invoke();
+
+        if (manager.cursor.itemCursor.data.amount > 0) return;
         manager.cursor.itemCursor.Set_Data(null);
     }
 }
