@@ -68,7 +68,17 @@ MonoBehaviour:
   _positionUpdateDuration: 1
   _positionUpdateItems:
   - {fileID: 11400000, guid: 26c374e79e8034b2296d632a131f422e, type: 2}
+  - {fileID: 11400000, guid: e50291faad97248a7aa944b68f1d5612, type: 2}
+  - {fileID: 11400000, guid: 56e836a9404ef431d9aaf1eb6c56e70a, type: 2}
+  - {fileID: 11400000, guid: db6604057f7384c0e9ef23012a8f6848, type: 2}
+  - {fileID: 11400000, guid: c9d8faa604a524e1e9c2e339a58df06f, type: 2}
+  - {fileID: 11400000, guid: dd79d83e38be849b384afc2c8b813ccd, type: 2}
   - {fileID: 11400000, guid: 86e876e6c7e9c467db97ab95dfa547ce, type: 2}
+  - {fileID: 11400000, guid: fba43ae9d93594cddbc2a132e3fd3b95, type: 2}
+  - {fileID: 11400000, guid: 61796550184fa4a80a822586dc68a405, type: 2}
+  - {fileID: 11400000, guid: 52365bb8720a743b3bc321e7dd0faf4d, type: 2}
+  - {fileID: 11400000, guid: cea7459d8010d4a229cb42a2a5b65381, type: 2}
+  - {fileID: 11400000, guid: b8845cbe07fe54f259c7ae56d25a6092, type: 2}
   _itemDropRate: 1
   _dropItemDatas:
   - _preUpdateItem: {fileID: 11400000, guid: 86e876e6c7e9c467db97ab95dfa547ce, type: 2}

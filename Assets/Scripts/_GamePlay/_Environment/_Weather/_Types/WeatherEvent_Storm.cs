@@ -38,8 +38,8 @@ public class WeatherEvent_Storm : WeatherEvent
         Update_TileStates();
         Update_PlayerData();
 
-        PositionUpdate_PlacedItems();
         RemoveUpdate_ProtectItems();
+        PositionUpdate_PlacedItems();
     }
 
 
@@ -53,6 +53,27 @@ public class WeatherEvent_Storm : WeatherEvent
             if (playerTile.Placed_ItemCount(_protectItems[i]) > 0) return;
         }
         playerDataModifier.Update_Data();
+    }
+    private void RemoveUpdate_ProtectItems()
+    {
+        for (int i = 0; i < reservedActivationTiles.Count; i++)
+        {
+            Tile activationTile = reservedActivationTiles[i];
+
+            for (int j = 0; j < _protectItems.Length; j++)
+            {
+                List<PlaceableItem> placedProtectItems = activationTile.PlacedItems(_protectItems[j]);
+                int placedCount = placedProtectItems.Count;
+
+                if (placedCount <= 0) continue;
+                PlaceableItem placedProtectItem = placedProtectItems[placedCount - 1];
+
+                activationTile.Remove_PlacedItemData(placedProtectItem);
+                Destroy(placedProtectItem.gameObject);
+
+                break;
+            }
+        }
     }
 
 
@@ -97,9 +118,9 @@ public class WeatherEvent_Storm : WeatherEvent
 
             Vector2 updateTilePos = (Vector2)placedItemTile.transform.position + updateDirection;
             Tile updateTile = tilesController.Current_Tile(updateTilePos);
-            
+
             if (PositionUpdate_Available(randPlacedItem, updateTile) == false) continue;
-            
+
             positionUpdateItemDatas[randPlacedItem] = updateTile;
             activationTiles.Add(placedItemTile);
         }
@@ -117,7 +138,7 @@ public class WeatherEvent_Storm : WeatherEvent
 
             updateTile.Track_PlacingItem(placedItem);
             placedItem.Track_CurrentTile(updateTile);
-            
+
             updateTile.ClampUpdate_PlacedItemOffsets(_positionUpdateDuration);
         }
 
@@ -134,7 +155,7 @@ public class WeatherEvent_Storm : WeatherEvent
         }
         return null;
     }
-    
+
     private void DropUpdate_PositionUpdateItems(List<PlaceableItem> positionUpdateItems)
     {
         for (int i = 0; i < positionUpdateItems.Count; i++)
@@ -164,28 +185,5 @@ public class WeatherEvent_Storm : WeatherEvent
 
         DropUpdate_PositionUpdateItems(positionUpdateItems);
         InGame_Manager.instance.time.timeUpdateActions.Remove(this);
-    }
-
-
-    private void RemoveUpdate_ProtectItems()
-    {
-        for (int i = 0; i < reservedActivationTiles.Count; i++)
-        {
-            Tile activationTile = reservedActivationTiles[i];
-
-            for (int j = 0; j < _protectItems.Length; j++)
-            {
-                List<PlaceableItem> placedProtectItems = activationTile.PlacedItems(_protectItems[j]);
-                int placedCount = placedProtectItems.Count;
-
-                if (placedCount <= 0) continue;
-                PlaceableItem placedProtectItem = placedProtectItems[placedCount - 1];
-
-                activationTile.Remove_PlacedItemData(placedProtectItem);
-                Destroy(placedProtectItem.gameObject);
-
-                break;
-            }
-        }
     }
 }
