@@ -49,6 +49,17 @@ public class Tile : MonoBehaviour
     }
 
 
+    // Debug
+    public int PlacedItem_IndexNum(PlaceableItem targetItem)
+    {
+        for (int i = 0; i < _placedItems.Count; i++)
+        {
+            if (targetItem == _placedItems[i]) return i;
+        }
+        return -1;
+    }
+
+
     // Data
     public TileData Set_Data(TileScrObj setTile)
     {
@@ -170,7 +181,7 @@ public class Tile : MonoBehaviour
 
 
     // Current Placed Items
-    private void Track_PlacingItem(PlaceableItem placingItem)
+    public void Track_PlacingItem(PlaceableItem placingItem)
     {
         if (_placedItems == null) return;
 
@@ -182,7 +193,7 @@ public class Tile : MonoBehaviour
         tilesController.placedItems.Add(placingItem);
         tilesController.OnTileItemsUpdate?.Invoke(this);
 
-        Update_PlacedItemOffsets();
+        Set_CurrentPrefab(placingItem.gameObject);
     }
 
     /// <returns>
@@ -242,7 +253,9 @@ public class Tile : MonoBehaviour
             setItemAmount -= spawnSetAmount;
 
             newPlacedItem.Track_CurrentTile(this);
+
             Track_PlacingItem(newPlacedItem);
+            Update_PlacedItemOffsets();
 
             newPlacedItem.Play_PlaceAnimation();
         }
@@ -272,6 +285,7 @@ public class Tile : MonoBehaviour
         placedUseItem.animPlayer.spriteRenderer.sprite = setItem.microSprite;
 
         Track_PlacingItem(placedUseItem);
+        Update_PlacedItemOffsets();
 
         return true;
     }
@@ -304,6 +318,7 @@ public class Tile : MonoBehaviour
         InGame_Manager.instance.tilesController.OnTileItemsUpdate(this);
     }
 
+
     private void Update_PlacedItemOffsets()
     {
         int placedItemCount = _placedItems.Count;
@@ -311,13 +326,26 @@ public class Tile : MonoBehaviour
         for (int i = 0; i < placedItemCount; i++)
         {
             PlaceableItem placedItem = _placedItems[i];
-            Transform transform = placedItem.transform;
+            Offset_PositionData positionData = placedItem.data.itemScrObj.Offset_Data(i + placedItemCount - 1);
 
-            Offset_PositionData offsetData = placedItem.data.itemScrObj.Offset_Data(i + placedItemCount - 1);
-            if (offsetData == null) continue;
+            placedItem.transform.SetLocalPositionAndRotation(positionData.position, Quaternion.Euler(0f, 0f, positionData.rotationValue));
+        }
+    }
+    public void ClampUpdate_PlacedItemOffsets(float clampDuration)
+    {
+        int placedItemCount = _placedItems.Count;
 
-            transform.localPosition = offsetData.position;
-            transform.rotation = Quaternion.Euler(0f, 0f, offsetData.rotationValue);
+        for (int i = 0; i < placedItemCount; i++)
+        {
+            PlaceableItem placedItem = _placedItems[i];
+
+            GameObject placedItemObject = placedItem.gameObject;
+            LeanTween.cancel(placedItemObject);
+
+            Offset_PositionData positionData = placedItem.data.itemScrObj.Offset_Data(i + placedItemCount - 1);
+
+            LeanTween.moveLocal(placedItemObject, positionData.position, clampDuration).setEase(LeanTweenType.easeOutElastic);
+            LeanTween.rotateLocal(placedItemObject, new(0f, 0f, positionData.rotationValue), clampDuration);
         }
     }
 
@@ -384,7 +412,7 @@ public class Tile : MonoBehaviour
 
         for (int i = 0; i < samePlacedItems.Count; i++)
         {
-            int leftSpaceAmount = maxStackAmount - samePlacedItems[i].amount;
+            int leftSpaceAmount = Mathf.Max(0, maxStackAmount - samePlacedItems[i].amount);
             availableCount += leftSpaceAmount;
         }
 

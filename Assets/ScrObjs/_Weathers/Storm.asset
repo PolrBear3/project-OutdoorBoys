@@ -36,6 +36,6 @@ MonoBehaviour:
     _activeTime: 0
     _restrictTime: 0
     _minTimeCount: 0
-    _maxTimeCount: 5
+    _maxTimeCount: 2
   _tileStatesToRemove: 0200000003000000
   _tileStatesToAdd: 01000000

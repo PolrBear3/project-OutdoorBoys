@@ -73,7 +73,7 @@ SpriteRenderer:
   m_SortingLayerID: 678841433
   m_SortingLayer: -1
   m_SortingOrder: 2
-  m_Sprite: {fileID: 1258320460, guid: 876726b4a75bd4d21af424fd6ed1343c, type: 3}
+  m_Sprite: {fileID: 368633743, guid: 876726b4a75bd4d21af424fd6ed1343c, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -94,6 +94,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4520642281758493457}
   - component: {fileID: 3045259509940891077}
+  - component: {fileID: 6678813042971149987}
   - component: {fileID: 1531750997209139500}
   - component: {fileID: 7462963495597463765}
   - component: {fileID: 7914443749448274476}
@@ -134,6 +135,18 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _spriteRenderer: {fileID: 5921556619054699056}
   _animationClips: []
+--- !u!114 &6678813042971149987
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3637228250238346253}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 69e70a24ff5f64a4eb7ae9aededb5356, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!114 &1531750997209139500
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -147,6 +160,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _animPlayer: {fileID: 3045259509940891077}
+  _tileTracker: {fileID: 6678813042971149987}
   _placeAnimationClip: {fileID: 0}
   _removeAnimationClip: {fileID: 0}
 --- !u!114 &7462963495597463765

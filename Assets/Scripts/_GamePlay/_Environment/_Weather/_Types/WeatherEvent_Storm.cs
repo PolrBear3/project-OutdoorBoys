@@ -9,6 +9,9 @@ public class WeatherEvent_Storm : WeatherEvent
 
     [Space(20)]
     [SerializeField][Range(0, 100)] private int _positionUpdateCount;
+    [SerializeField][Range(0, 10)] private float _positionUpdateDuration;
+
+    [Space(10)]
     [SerializeField] private Item_ScrObj[] _positionUpdateItems;
 
     [Space(20)]
@@ -36,8 +39,6 @@ public class WeatherEvent_Storm : WeatherEvent
         Update_PlayerData();
 
         PositionUpdate_PlacedItems();
-        DropUpdate_PlacedItems();
-
         RemoveUpdate_ProtectItems();
     }
 
@@ -55,90 +56,74 @@ public class WeatherEvent_Storm : WeatherEvent
     }
 
 
-    private bool Is_PositionUpdateItem(Item_ScrObj checkItem)
+    private bool PositionUpdate_Available(PlaceableItem placedItem, Tile positionUpdateTile)
     {
+        if (positionUpdateTile == null) return false;
+        if (placedItem.placedTile == positionUpdateTile) return true;
+
+        Item_ScrObj item = placedItem.data.itemScrObj;
+
         for (int i = 0; i < _positionUpdateItems.Length; i++)
         {
-            if (checkItem == _positionUpdateItems[i]) return true;
+            if (item != _positionUpdateItems[i]) continue;
+            if (positionUpdateTile.ItemPlace_AvailableCount(item) < item.maxAmount) return false;
+
+            return true;
         }
         return false;
     }
-    private List<PlaceableItem> PositionUpdate_PlacedItems(Vector2 updateDirection)
-    {
-        Tiles_Controller tilesController = InGame_Manager.instance.tilesController;
-
-        List<Tile> activationTiles = new(reservedActivationTiles);
-        List<PlaceableItem> updateItems = new();
-
-        while (updateItems.Count < _positionUpdateCount && activationTiles.Count > 0)
-        {
-            Tile randomTile = activationTiles[Random.Range(0, activationTiles.Count)];
-            Tile updateTile = tilesController.Current_Tile((Vector2)randomTile.transform.position + updateDirection);
-
-            List<PlaceableItem> placedItems = new(randomTile.PlacedItems());
-
-            if (placedItems.Count <= 0 || updateTile == null)
-            {
-                activationTiles.Remove(randomTile);
-                continue;
-            }
-            for (int i = placedItems.Count - 1; i >= 0; i--)
-            {
-                PlaceableItem placedItem = placedItems[i];
-
-                if (updateItems.Contains(placedItem))
-                {
-                    placedItems.RemoveAt(i);
-                    continue;
-                }
-
-                ItemData placedItemData = placedItem.data;
-
-                if (Is_PositionUpdateItem(placedItemData.itemScrObj) == false) continue;
-                if (updateTile.ItemPlace_AvailableCount(placedItemData) <= 0) continue;
-
-                updateItems.Add(placedItem);
-                break;
-            }
-
-            if (placedItems.Count > 0) continue;
-            activationTiles.Remove(randomTile);
-
-        }
-        return updateItems;
-    }
-
     private void PositionUpdate_PlacedItems()
     {
-        Tiles_Controller tilesController = InGame_Manager.instance.tilesController;
+        InGame_Manager manager = InGame_Manager.instance;
+        Tiles_Controller tilesController = manager.tilesController;
 
         List<Vector2> allDirections = Utility.Surrounding_Directions();
-        Vector2 updateDirection = allDirections[Random.Range(0, allDirections.Count - 1)];
+        Vector2 updateDirection = allDirections[Random.Range(0, allDirections.Count)];
 
-        List<PlaceableItem> updateItems = PositionUpdate_PlacedItems(updateDirection);
+        List<PlaceableItem> allPlacedItems = new(tilesController.placedItems);
 
-        for (int i = 0; i < updateItems.Count; i++)
+        Dictionary<PlaceableItem, Tile> positionUpdateItemDatas = new();
+        List<Tile> activationTiles = new();
+
+        while (positionUpdateItemDatas.Count < _positionUpdateCount && allPlacedItems.Count > 0)
         {
-            Tile updateItemTile = updateItems[i].currentTile;
-            Tile updateTile = tilesController.Current_Tile((Vector2)updateItemTile.transform.position + updateDirection);
+            int randItemIndex = Random.Range(0, allPlacedItems.Count);
+            PlaceableItem randPlacedItem = allPlacedItems[randItemIndex];
 
-            Debug.Log(updateItems[i] + " " + updateItemTile.gameObject + updateTile.gameObject);
+            allPlacedItems.RemoveAt(randItemIndex);
+
+            Tile placedItemTile = randPlacedItem.placedTile;
+            if (activationTiles.Contains(placedItemTile)) continue; // no duplicate tile placed items position update
+
+            Vector2 updateTilePos = (Vector2)placedItemTile.transform.position + updateDirection;
+            Tile updateTile = tilesController.Current_Tile(updateTilePos);
+            
+            if (PositionUpdate_Available(randPlacedItem, updateTile) == false) continue;
+            
+            positionUpdateItemDatas[randPlacedItem] = updateTile;
+            activationTiles.Add(placedItemTile);
         }
 
-        /*
-        activationTile.Remove_PlacedItemData(placeableItem);
+        List<PlaceableItem> dropUpdateItems = new();
 
-        Tile updateTile = tilesController.Current_Tile((Vector2)activationTile.transform.position + updateDirection);
-        if (updateTile == null)
+        foreach (var updateData in positionUpdateItemDatas)
         {
-            Destroy(placeableItem.gameObject);
-            continue;
+            PlaceableItem placedItem = updateData.Key;
+            dropUpdateItems.Add(placedItem);
+
+            Tile updateTile = updateData.Value;
+
+            placedItem.placedTile.Remove_PlacedItemData(placedItem);
+
+            updateTile.Track_PlacingItem(placedItem);
+            placedItem.Track_CurrentTile(updateTile);
+            
+            updateTile.ClampUpdate_PlacedItemOffsets(_positionUpdateDuration);
         }
-        updateTile.Set_Item(placedData);
-        Destroy(placeableItem.gameObject);
-        */
+
+        manager.time.timeUpdateActions.Add(this);
+        StartCoroutine(DropUpdateDelay_PositionUpdateItems(dropUpdateItems));
     }
-
 
     private ItemData DropUpdate_ItemData(Item_ScrObj droppingItem)
     {
@@ -149,34 +134,38 @@ public class WeatherEvent_Storm : WeatherEvent
         }
         return null;
     }
-    private void DropUpdate_PlacedItems()
+    
+    private void DropUpdate_PositionUpdateItems(List<PlaceableItem> positionUpdateItems)
     {
-        for (int i = 0; i < reservedActivationTiles.Count; i++)
+        for (int i = 0; i < positionUpdateItems.Count; i++)
         {
-            Tile activationTile = reservedActivationTiles[i];
-            List<PlaceableItem> placedItems = activationTile.PlacedItems();
+            PlaceableItem updateItems = positionUpdateItems[i];
 
-            for (int j = placedItems.Count - 1; j >= 0; j--)
-            {
-                PlaceableItem placeableItem = placedItems[j];
-                ItemData placedData = placeableItem.data;
+            ItemData placedData = updateItems.data;
+            Item_ScrObj placedItem = placedData.itemScrObj;
 
-                Item_ScrObj placedItem = placedData.itemScrObj;
-                int placedAmount = placedData.amount;
+            int placedAmount = placedData.amount;
 
-                float amountRatio = Mathf.Clamp01((float)placedAmount / placedItem.maxAmount);
-                float dropRate = Mathf.Lerp(0f, _itemDropRate, amountRatio);
+            float amountRatio = Mathf.Clamp01((float)placedAmount / placedItem.maxAmount);
+            float dropRate = Mathf.Lerp(0f, _itemDropRate, amountRatio);
 
-                if (Random.value >= dropRate) continue;
+            if (Random.value >= dropRate) return;
 
-                ItemData dropData = DropUpdate_ItemData(placedData.itemScrObj);
-                if (dropData == null) continue;
+            ItemData dropData = DropUpdate_ItemData(placedItem);
+            if (dropData == null) return;
 
-                int dropAmount = Random.Range(1, dropData.amount);
-                activationTile.Set_PlacingItem(new(dropData.itemScrObj, dropAmount));
-            }
+            int dropAmount = Random.Range(1, dropData.amount);
+            updateItems.placedTile.Set_PlacingItem(new(dropData.itemScrObj, dropAmount));
         }
     }
+    private IEnumerator DropUpdateDelay_PositionUpdateItems(List<PlaceableItem> positionUpdateItems)
+    {
+        yield return new WaitForSeconds(_positionUpdateDuration);
+
+        DropUpdate_PositionUpdateItems(positionUpdateItems);
+        InGame_Manager.instance.time.timeUpdateActions.Remove(this);
+    }
+
 
     private void RemoveUpdate_ProtectItems()
     {

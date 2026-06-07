@@ -65,10 +65,11 @@ MonoBehaviour:
   _protectItems:
   - {fileID: 11400000, guid: 1f0f853271bde41e785e0d219c0cdbe3, type: 2}
   _positionUpdateCount: 5
+  _positionUpdateDuration: 1
   _positionUpdateItems:
-  - {fileID: 11400000, guid: 86e876e6c7e9c467db97ab95dfa547ce, type: 2}
   - {fileID: 11400000, guid: 26c374e79e8034b2296d632a131f422e, type: 2}
-  _itemDropRate: 0.5
+  - {fileID: 11400000, guid: 86e876e6c7e9c467db97ab95dfa547ce, type: 2}
+  _itemDropRate: 1
   _dropItemDatas:
   - _preUpdateItem: {fileID: 11400000, guid: 86e876e6c7e9c467db97ab95dfa547ce, type: 2}
     _convertUpdateItemDatas:

@@ -178,6 +178,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4520642281758493457}
   - component: {fileID: 3045259509940891077}
+  - component: {fileID: 872528173093922414}
   - component: {fileID: 2191419684246612499}
   - component: {fileID: 1531750997209139500}
   - component: {fileID: 8267873137990113261}
@@ -221,6 +222,18 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _spriteRenderer: {fileID: 5921556619054699056}
   _animationClips: []
+--- !u!114 &872528173093922414
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3637228250238346253}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 69e70a24ff5f64a4eb7ae9aededb5356, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!114 &2191419684246612499
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -253,6 +266,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _animPlayer: {fileID: 3045259509940891077}
+  _tileTracker: {fileID: 872528173093922414}
   _placeAnimationClip: {fileID: 11400000, guid: 3912441fa2ff44b6f86c025387358775, type: 2}
   _removeAnimationClip: {fileID: 11400000, guid: ea1735fffa4d4455e98412a54481ff2e, type: 2}
 --- !u!114 &8267873137990113261

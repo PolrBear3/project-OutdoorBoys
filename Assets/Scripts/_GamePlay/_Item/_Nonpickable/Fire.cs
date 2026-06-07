@@ -36,7 +36,7 @@ public class Fire : MonoBehaviour
     // MonoBehaviour
     private void Start()
     {
-        _placeableItem.currentTile.OnStateUpdate += RemoveUpdate_WetState;
+        _placeableItem.placedTile.OnStateUpdate += RemoveUpdate_WetState;
 
         InGame_Manager manager = InGame_Manager.instance;
         Time_Manager time = manager.time;
@@ -65,7 +65,7 @@ public class Fire : MonoBehaviour
 
     private void OnDestroy()
     {
-        _placeableItem.currentTile.OnStateUpdate -= RemoveUpdate_WetState;
+        _placeableItem.placedTile.OnStateUpdate -= RemoveUpdate_WetState;
 
         InGame_Manager manager = InGame_Manager.instance;
         Time_Manager time = manager.time;
@@ -92,7 +92,7 @@ public class Fire : MonoBehaviour
     // Visuals
     private void Toggle_FillBar(Tile hoveringTile)
     {
-        bool toggle = hoveringTile != null && hoveringTile == _placeableItem.currentTile;
+        bool toggle = hoveringTile != null && hoveringTile == _placeableItem.placedTile;
         _fillBarController.Toggle(toggle);
 
         if (toggle == false) return;
@@ -101,7 +101,7 @@ public class Fire : MonoBehaviour
 
     private void Toggle_HeatTiles(Tile hoveringTile)
     {
-        bool toggle = hoveringTile != null && hoveringTile == _placeableItem.currentTile;
+        bool toggle = hoveringTile != null && hoveringTile == _placeableItem.placedTile;
         _heatTileIndicator.Toggle_CurrentIndicators(toggle);
     }
     private void Toggle_HeatTiles()
@@ -113,7 +113,7 @@ public class Fire : MonoBehaviour
     // Main
     private void Remove()
     {
-        Tile currentTile = _placeableItem.currentTile;
+        Tile currentTile = _placeableItem.placedTile;
 
         currentTile.Remove_PlacedItemData(_placeableItem);
         currentTile.Set_Item(new(_coalItem, _coalGeneratedCount));
@@ -125,7 +125,7 @@ public class Fire : MonoBehaviour
         if (activated == false) return;
         if (updateState != TileState.wet) return;
         
-        Tile currentTile = _placeableItem.currentTile;
+        Tile currentTile = _placeableItem.placedTile;
         
         foreach (Item_ScrObj item in _wetStateProtectItems)
         {
@@ -136,7 +136,7 @@ public class Fire : MonoBehaviour
 
     private void UpdatePlaced_BurnItems()
     {
-        Tile currentTile = _placeableItem.currentTile;
+        Tile currentTile = _placeableItem.placedTile;
         List<PlaceableItem> placedBurnItems = currentTile.PlacedItems();
 
         for (int i = placedBurnItems.Count - 1; i >= 0; i--)
@@ -187,7 +187,7 @@ public class Fire : MonoBehaviour
             return;
         }
 
-        Tile currentTile = _placeableItem.currentTile;
+        Tile currentTile = _placeableItem.placedTile;
         int maxTileCount = _heatTileIndicator.defaultTilePositions.Length;
 
         float thresholdAmount = itemData.itemScrObj.maxAmount * (_heatTilesUpdateThresholdPoint / 10f);

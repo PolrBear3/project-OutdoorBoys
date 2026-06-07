@@ -15,12 +15,12 @@ public class AnimalTrap : MonoBehaviour
     // MonoBehaviour
     private void Start()
     {
-        _placeableItem.currentTile.OnSetPrefab += Activate;
+        _placeableItem.placedTile.OnSetPrefab += Activate;
     }
 
     private void OnDestroy()
     {
-        _placeableItem.currentTile.OnSetPrefab -= Activate;
+        _placeableItem.placedTile.OnSetPrefab -= Activate;
     }
 
 

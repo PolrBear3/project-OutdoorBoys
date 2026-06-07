@@ -56,6 +56,17 @@ public class Tiles_Controller : MonoBehaviour, IItemsSource
     }
 
 
+    // Debug
+    public int CurrentTile_IndexNum(Tile targetTile)
+    {
+        for (int i = 0; i < _currentTiles.Count; i++)
+        {
+            if (targetTile == _currentTiles[i]) return i;
+        }
+        return -1;
+    }
+
+
     // IItemsSource
     public IEnumerable<ItemData> ItemDatas()
     {

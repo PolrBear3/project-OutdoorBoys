@@ -146,17 +146,26 @@ public class TileTracker : MonoBehaviour
     }
 
 
-    public void Clamp_toTile(Tile targetTile)
+    public void Clamp_toTile(Tile targetTile, Vector2 offset)
     {
         if (targetTile == null) return;
         if (_clampCoroutine != null) return;
 
-        LeanTween.move(gameObject, targetTile.transform.position, _clampduration).setEase(LeanTweenType.easeOutElastic);
+        LeanTween.move(gameObject, (Vector2)targetTile.transform.position + offset, _clampduration).setEase(LeanTweenType.easeOutElastic);
         _clampCoroutine = StartCoroutine(ClampInside_StateUpdate());
     }
+    public void Clamp_toTile(Tile targetTile)
+    {
+        Clamp_toTile(targetTile, Vector2.zero);
+    }
+    
     public void Clamp_toCurrentTile()
     {
         Clamp_toTile(data.CurrentTile());
+    }
+    public void Clamp_toCurrentTile(Vector2 offset)
+    {
+        Clamp_toTile(data.CurrentTile(), offset);
     }
 
     private IEnumerator ClampInside_StateUpdate()
