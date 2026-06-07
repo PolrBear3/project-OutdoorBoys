@@ -184,7 +184,7 @@ public class Tile : MonoBehaviour
 
         Update_PlacedItemOffsets();
     }
-    
+
     /// <returns>
     /// Leftover data
     /// </returns>
@@ -392,6 +392,15 @@ public class Tile : MonoBehaviour
         availableCount += newPlaceCount * maxStackAmount;
 
         return availableCount;
+    }
+    public int ItemPlace_AvailableCount(ItemData placedItemData)
+    {
+        if (placedItemData == null) return 0;
+
+        Item_ScrObj placeItem = placedItemData.itemScrObj;
+        if (placeItem.Place_Available(placedItemData, this) == false) return 0;
+
+        return ItemPlace_AvailableCount(placeItem);
     }
 
 
