@@ -17,6 +17,18 @@ public class TimeRange_Data
     [SerializeField][Range(0, 100)] private int _maxTimeCount;
 
 
+    // Converted Main Data
+    public bool CurrentDayTime_InRange()
+    {
+        if (Is_ActiveDay() == false) return false;
+
+        if (Is_ActiveTime() == false) return false;
+        if (Is_RestrictTime()) return false;
+
+        return true;
+    }
+
+
     // Converted Data
     public bool Is_ActiveDay()
     {

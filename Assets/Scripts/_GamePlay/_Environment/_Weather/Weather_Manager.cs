@@ -164,11 +164,7 @@ public class Weather_Manager : MonoBehaviour
             }
             if (upcomingFound) continue;
 
-            TimeRange_Data timeRangeData = weatherToAdd.timeRangeData;
-
-            if (timeRangeData.Is_ActiveDay() == false) continue;
-            if (timeRangeData.Is_ActiveTime() == false || timeRangeData.Is_RestrictTime()) continue;
-
+            if (weatherToAdd.timeRangeData.CurrentDayTime_InRange() == false) continue;
             availableWeathers.Add(weatherToAdd);
         }
 

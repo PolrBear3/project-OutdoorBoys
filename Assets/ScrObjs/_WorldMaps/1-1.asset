@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 21e98e1b1271248ff99876a7e7247df9, type: 3}
   m_Name: 1-1
   m_EditorClassIdentifier: 
-  _generateSize: {x: 19, y: 8}
+  _generateSize: {x: 8, y: 8}
   _generateTiles:
   - {fileID: 11400000, guid: 13d5158de20cd4105b5f0b097494ca71, type: 2}
   - {fileID: 11400000, guid: 621605563892d4d0a95e4d57c264bf5c, type: 2}

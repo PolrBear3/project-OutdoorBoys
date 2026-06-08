@@ -69,6 +69,7 @@ public class TileUpdate_ItemData
 
     [Space(10)]
     [SerializeField] private Item_ScrObj _updateItem;
+    public Item_ScrObj updateItem => _updateItem;
 
 
     public Item_ScrObj TilePlaced_UpdateItem(Tile targetTile)

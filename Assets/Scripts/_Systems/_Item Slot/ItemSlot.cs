@@ -65,6 +65,8 @@ public class ItemSlot : MonoBehaviour
 
     public void UpdateManager_HoveringSlot()
     {
+        if (_slotManager == null) return;
+
         bool isTracking = _slotManager.slots.Contains(this) && _eventPointer.pointerDetected;
         ItemSlot updateSlot = isTracking ? this : null;
 

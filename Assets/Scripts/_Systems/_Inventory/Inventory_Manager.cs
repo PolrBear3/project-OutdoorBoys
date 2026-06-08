@@ -12,7 +12,7 @@ public class Inventory_Manager : MonoBehaviour, IItemsSource, IItemsSourceRemove
 
     [Space(20)]
     [SerializeField] private PanelToggle_AnimationController _toggleController;
-    
+
     [Space(20)]
     [SerializeField] private ItemSlot_Manager _slotManager;
     public ItemSlot_Manager slotManager => _slotManager;
@@ -20,6 +20,7 @@ public class Inventory_Manager : MonoBehaviour, IItemsSource, IItemsSourceRemove
     [SerializeField] private ItemInfo_Controller _itemInfo;
 
 
+    public Action<bool> OnToggle;
     public Action OnItemAdded;
 
 
@@ -160,12 +161,17 @@ public class Inventory_Manager : MonoBehaviour, IItemsSource, IItemsSourceRemove
     private void Toggle_Update()
     {
         Tile playerTile = InGame_Manager.instance.player.movement.tileTracker.data.CurrentTile();
+        bool toggle = playerTile.Placed_ItemCount(_inventoryBagpack) > 0;
 
         _toggleController.Toggle(playerTile.Placed_ItemCount(_inventoryBagpack) > 0);
+        OnToggle.Invoke(toggle);
     }
     private void Toggle_Update(Tile playerTile)
     {
+        bool toggle = playerTile.Placed_ItemCount(_inventoryBagpack) > 0;
+
         _toggleController.Toggle(playerTile.Placed_ItemCount(_inventoryBagpack) > 0);
+        OnToggle.Invoke(toggle);
     }
 
     public bool Toggled()

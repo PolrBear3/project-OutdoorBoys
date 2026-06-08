@@ -7,12 +7,19 @@ using UnityEngine;
 public class InGameUI_Manager : MonoBehaviour
 {
     [Space(20)]
+    [Header("Top Panel")]
+    [Space(10)]
     [SerializeField] private TextMeshProUGUI _timeText;
     public TextMeshProUGUI timeText => _timeText;
 
     [SerializeField] private TextMeshProUGUI _dayText;
 
+    [Space(10)]
+    [SerializeField][Range(0, 10)] private float _textAnimateDuration;
+
     [Space(20)]
+    [Header("Left Panel")]
+    [Space(10)]
     [SerializeField] private FillBar_UI _healthBar;
     [SerializeField] private FillBar_UI _hungerBar;
     [SerializeField] private PanelToggle_AnimationController _healthBarAnim;
@@ -26,9 +33,11 @@ public class InGameUI_Manager : MonoBehaviour
     [SerializeField] private FillBar_UI _staminaValueBar;
     [SerializeField] private PanelToggle_AnimationController _staminaBarAnim;
 
-
     [Space(20)]
-    [SerializeField][Range(0, 10)] private float _textAnimateDuration;
+    [Header("Sub Panel")]
+    [Space(10)]
+    [SerializeField] private PanelToggle_AnimationController _subPanelToggleController;
+
 
     private Dictionary<TextMeshProUGUI, Coroutine> _textAnimationDatas = new();
 
@@ -60,6 +69,8 @@ public class InGameUI_Manager : MonoBehaviour
 
         manager.tilesController.OnTileSelect -= Update_StaminaBar_ToggleAnimation;
         Input_Controller.instance.OnMovement -= Update_StaminaBar_ToggleAnimation;
+
+        manager.inventory.OnToggle -= Toggle_SubPanel;
     }
 
 
@@ -94,6 +105,12 @@ public class InGameUI_Manager : MonoBehaviour
 
         manager.tilesController.OnTileSelect += Update_StaminaBar_ToggleAnimation;
         Input_Controller.instance.OnMovement += Update_StaminaBar_ToggleAnimation;
+
+        Inventory_Manager inventory = manager.inventory;
+        inventory.OnToggle += Toggle_SubPanel;
+
+
+        Toggle_SubPanel(inventory.Toggled());
     }
 
 
@@ -160,12 +177,12 @@ public class InGameUI_Manager : MonoBehaviour
     {
         Update_StaminaBar(InGame_Manager.instance.player.data.stamina);
     }
-    
+
     private void Update_StaminaBar_ToggleAnimation()
     {
         if (InGame_Manager.instance.player.data.stamina > 0) return;
         if (_staminaBarAnim.animationCoroutine != null) return;
-        
+
         _staminaBarAnim.Update_ToggleAnimation();
     }
     private void Update_StaminaBar_ToggleAnimation(Vector2 inputDirection)
@@ -197,5 +214,12 @@ public class InGameUI_Manager : MonoBehaviour
         yield return new WaitForSeconds(_textAnimateDuration);
 
         _textAnimationDatas.Remove(targetText);
+    }
+
+
+    // Sub Panel
+    private void Toggle_SubPanel(bool inventoryToggled)
+    {
+        _subPanelToggleController.Toggle(!inventoryToggled);
     }
 }

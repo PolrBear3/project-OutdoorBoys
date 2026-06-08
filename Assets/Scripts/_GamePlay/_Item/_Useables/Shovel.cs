@@ -7,7 +7,7 @@ public class Shovel_DigUpdateData
 {
     [SerializeField][Range(0, 100)] private int _chanceRate;
     public int chanceRate => _chanceRate;
-    
+
     [SerializeField] private TileUpdate_ItemData _tileDigItemData;
     public TileUpdate_ItemData tileDigItemData => _tileDigItemData;
 }
@@ -37,11 +37,16 @@ public class Shovel : MonoBehaviour
     private Shovel_DigUpdateData WeightRandom_DigUpdateData(Tile targetTile)
     {
         List<Shovel_DigUpdateData> targetTileUpdateDatas = new();
-        
+
         for (int i = 0; i < _digUpdateDatas.Length; i++)
         {
-            if (targetTile.data.tileScrObj != _digUpdateDatas[i].tileDigItemData.tile) continue;
-            targetTileUpdateDatas.Add(_digUpdateDatas[i]);
+            Shovel_DigUpdateData digUpdateData = _digUpdateDatas[i];
+            TileUpdate_ItemData digItemData = digUpdateData.tileDigItemData;
+
+            if (targetTile.data.tileScrObj != digItemData.tile) continue;
+            if (digItemData.updateItem.discoverTimeRangeData.CurrentDayTime_InRange() == false) continue;
+
+            targetTileUpdateDatas.Add(digUpdateData);
         }
         if (targetTileUpdateDatas.Count <= 0) return null;
 
