@@ -11,7 +11,6 @@ GameObject:
   - component: {fileID: 4520642281758493457}
   - component: {fileID: 5977787769705234577}
   - component: {fileID: 3045259509940891077}
-  - component: {fileID: 2181840732172584654}
   - component: {fileID: 1531750997209139500}
   m_Layer: 0
   m_Name: Tarp Sheet
@@ -102,18 +101,6 @@ MonoBehaviour:
   _spriteRenderer: {fileID: 5977787769705234577}
   _animationClips:
   - {fileID: 11400000, guid: f7a2d73dd65204e07bdfd514451a5f04, type: 2}
---- !u!114 &2181840732172584654
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3637228250238346253}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 69e70a24ff5f64a4eb7ae9aededb5356, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &1531750997209139500
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -127,6 +114,5 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _animPlayer: {fileID: 3045259509940891077}
-  _tileTracker: {fileID: 2181840732172584654}
   _placeAnimationClip: {fileID: 0}
   _removeAnimationClip: {fileID: 0}

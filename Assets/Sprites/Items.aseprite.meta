@@ -124,14 +124,14 @@ ScriptedImporter:
   animatedSpriteImportData:
   - name: Items
     originalName: 
-    pivot: {x: 0.48550725, y: 0}
+    pivot: {x: 0.48823532, y: 0}
     alignment: 9
     border: {x: 0, y: 0, z: 0, w: 0}
     rect:
       serializedVersion: 2
       x: 4
       y: 4
-      width: 138
+      width: 170
       height: 95
     spriteID: 05cfb79ac62304ba58c4eab0752db909
     spriteBone: []
@@ -162,7 +162,7 @@ ScriptedImporter:
       cellRect:
         x: 5
         y: 0
-        width: 138
+        width: 170
         height: 95
       spriteId: 05cfb79ac62304ba58c4eab0752db909
     linkedCells: []
@@ -183,5 +183,5 @@ ScriptedImporter:
   generatePhysicsShape: 0
   secondarySpriteTextures: []
   spritePackingTag: 
-  canvasSize: {x: 144, y: 96}
+  canvasSize: {x: 176, y: 96}
   previousTextureSize: {x: 256, y: 128}

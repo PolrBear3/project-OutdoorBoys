@@ -10,33 +10,29 @@ public class Saw : MonoBehaviour
     [Space(20)]
     [SerializeField] private FillBar_Controller _fillBarController;
 
-    [Space(20)]
-    [SerializeField] private Item_ScrObj _woodDropItem;
-    [SerializeField] private Item_ScrObj[] _treeItems;
-
-    [Space(20)]
+    [Space(10)]
     [SerializeField][Range(0, 100)] private int _chopDamage;
-    [SerializeField][Range(0, 100)] private int _minWoodDropAmount;
+    [SerializeField] private ConvertUpdate_ItemData[] _chopItemDatas;
 
-    private PlaceableItem_DurabilityData _choppingTreeData;
+    private PlaceableItem_DurabilityData _choppingItemData;
 
 
     // MonoBehaviour
     private void Awake()
     {
-        _useableItem.CanUse += Tree_Placed;
-        _useableItem.OnUse += Chop_Tree;
+        _useableItem.CanUse += ChopItem_Placed;
+        _useableItem.OnUse += Chop_PlacedItem;
     }
 
     private void OnDestroy()
     {
-        _useableItem.CanUse -= Tree_Placed;
-        _useableItem.OnUse -= Chop_Tree;
+        _useableItem.CanUse -= ChopItem_Placed;
+        _useableItem.OnUse -= Chop_PlacedItem;
     }
 
 
     // Main
-    private PlaceableItem PlacedTree(Tile useTile)
+    private PlaceableItem Placed_ChopItem(Tile useTile)
     {
         List<PlaceableItem> placedItems = useTile.PlacedItems();
 
@@ -44,44 +40,44 @@ public class Saw : MonoBehaviour
         {
             PlaceableItem placedItem = placedItems[i];
 
-            for (int j = 0; j < _treeItems.Length; j++)
+            for (int j = 0; j < _chopItemDatas.Length; j++)
             {
-                if (placedItem.data.itemScrObj != _treeItems[j]) continue;
+                if (placedItem.data.itemScrObj != _chopItemDatas[j].preUpdateItem) continue;
                 return placedItem;
             }
         }
         return null;
     }
-    private bool Tree_Placed(Tile checkTile)
+    private bool ChopItem_Placed(Tile checkTile)
     {
-        return PlacedTree(checkTile) != null;
+        return Placed_ChopItem(checkTile) != null;
     }
 
-    private void Update_ChoppingTree(PlaceableItem targetItem)
+    private void Update_ChoppingItem(PlaceableItem targetItem)
     {
-        if (_choppingTreeData != null && _choppingTreeData.placeableItem == targetItem) return;
+        if (_choppingItemData != null && _choppingItemData.placeableItem == targetItem) return;
         
         if (targetItem == null)
         {
-            _choppingTreeData = null;
+            _choppingItemData = null;
             return;
         }
 
         int maxDurability = targetItem.data.itemScrObj.itemWeight;
-        _choppingTreeData = new(targetItem, maxDurability);
+        _choppingItemData = new(targetItem, maxDurability);
 
         _fillBarController.Set_FillBar(targetItem.transform);
         _fillBarController.Update_CurrentBarFill(maxDurability, maxDurability);
     }
-    private void Chop_Tree(Tile useTile)
+    private void Chop_PlacedItem(Tile useTile)
     {
-        PlaceableItem placedTree = PlacedTree(useTile);
-        Update_ChoppingTree(placedTree);
+        PlaceableItem placedTree = Placed_ChopItem(useTile);
+        Update_ChoppingItem(placedTree);
 
         _useableItem.Update_UseAmount(1);
         placedTree.animPlayer.Play(0);
 
-        int currentDurability = _choppingTreeData.Update_DurabilityCount(_choppingTreeData.durabilityCount - _chopDamage);
+        int currentDurability = _choppingItemData.Update_DurabilityCount(_choppingItemData.durabilityCount - _chopDamage);
 
         if (currentDurability > 0)
         {
@@ -90,17 +86,26 @@ public class Saw : MonoBehaviour
         }
         _fillBarController.Refresh_CurrentFillBar();
 
-        Update_ChoppingTree(null);
+        Update_ChoppingItem(null);
         placedTree.AnimationDelay_Remove();
 
-        Drop_Wood(useTile, placedTree.data.itemScrObj);
+        DropUpdate_onChop(useTile, placedTree.data.itemScrObj);
     }
 
-    private void Drop_Wood(Tile useTile, Item_ScrObj treeItem)
+    private void DropUpdate_onChop(Tile useTile, Item_ScrObj chopItem)
     {
-        int treeWeight = treeItem.itemWeight;
-        int dropAmount = Random.Range(Mathf.Min(_minWoodDropAmount, treeWeight), treeWeight);
-        
-        useTile.Set_PlacingItem(new(_woodDropItem, dropAmount));
+        int treeWeight = chopItem.itemWeight;
+
+        for (int i = 0; i < _chopItemDatas.Length; i++)
+        {
+            ConvertUpdate_ItemData updateItemData = _chopItemDatas[i];
+            if (chopItem != updateItemData.preUpdateItem) continue;
+
+            ItemData dropItemData = updateItemData.Converted_ItemData();
+            int dropAmount = Random.Range(Mathf.Min(dropItemData.amount, treeWeight), treeWeight);
+            
+            useTile.Set_PlacingItem(new(dropItemData.itemScrObj, dropAmount));
+            return;
+        }
     }
 }

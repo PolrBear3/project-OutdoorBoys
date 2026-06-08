@@ -46,7 +46,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1d7b415f5701a4ae888e036e1ae5a777, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _coolTime: 2
 --- !u!114 &5631418347883325040
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -76,8 +75,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _useableItem: {fileID: 2873364016420352242}
   _fillBarController: {fileID: 5631418347883325040}
-  _woodDropItem: {fileID: 11400000, guid: cea7459d8010d4a229cb42a2a5b65381, type: 2}
-  _treeItems:
-  - {fileID: 11400000, guid: 86e876e6c7e9c467db97ab95dfa547ce, type: 2}
+  _chopItemDatas:
+  - _preUpdateItem: {fileID: 11400000, guid: 86e876e6c7e9c467db97ab95dfa547ce, type: 2}
+    _convertUpdateItemDatas:
+    - _itemScrObj: {fileID: 11400000, guid: cea7459d8010d4a229cb42a2a5b65381, type: 2}
+      _amount: 1
   _chopDamage: 1
   _minWoodDropAmount: 1

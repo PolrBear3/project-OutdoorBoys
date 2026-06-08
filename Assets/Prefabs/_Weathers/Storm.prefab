@@ -62,10 +62,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _playerDataModifier: {fileID: 1105032225907665582}
+  _itemRemoveAnimationclip: {fileID: 11400000, guid: ea1735fffa4d4455e98412a54481ff2e, type: 2}
+  _itemRemoveTweenType: 28
+  _updatesDuration: 1
   _protectItems:
   - {fileID: 11400000, guid: 1f0f853271bde41e785e0d219c0cdbe3, type: 2}
   _positionUpdateCount: 5
-  _positionUpdateDuration: 1
   _positionUpdateItems:
   - {fileID: 11400000, guid: 26c374e79e8034b2296d632a131f422e, type: 2}
   - {fileID: 11400000, guid: e50291faad97248a7aa944b68f1d5612, type: 2}

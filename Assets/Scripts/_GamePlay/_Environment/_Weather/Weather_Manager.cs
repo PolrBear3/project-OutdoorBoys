@@ -221,15 +221,17 @@ public class Weather_Manager : MonoBehaviour
 
                 // activation
                 weatherEvent.Activate_Event();
-                weatherEvent.Reserve_ActivationTiles();
 
                 // persist activation
                 if (eventData.Is_Persisting())
                 {
                     eventData.Update_PersistTimeCount(eventData.persistTimeCount - 1);
                     eventData.Update_TimeCount(activateWeather.persistUpcomingTimeCount);
+
+                    weatherEvent.Reserve_ActivationTiles();
                     continue;
                 }
+                weatherEvent.reservedActivationTiles.Clear();
                 _upcomingWeatherDatas.RemoveAt(i);
 
                 yield return new WaitForSeconds(_updateDelayTime);

@@ -73,20 +73,25 @@ public class PlaceableItem : MonoBehaviour
         _animPlayer.Play(_placeAnimationClip);
     }
 
-    public void AnimationDelay_Remove()
+    public void AnimationDelay_Remove(AnimationClipScrObj removeAnimationClip)
     {
         _placedTile.Remove_PlacedItemData(this);
 
-        if (_removeAnimationClip == null)
+        if (removeAnimationClip == null)
         {
             Destroy(gameObject);
             return;
         }
-        StartCoroutine(AnimationDelay_RemoveUpdate());
+        StartCoroutine(AnimationDelay_RemoveUpdate(removeAnimationClip));
     }
-    private IEnumerator AnimationDelay_RemoveUpdate()
+    public void AnimationDelay_Remove()
     {
-        _animPlayer.Play(_removeAnimationClip);
+        AnimationDelay_Remove(_removeAnimationClip);
+    }
+    
+    private IEnumerator AnimationDelay_RemoveUpdate(AnimationClipScrObj removeAnimationClip)
+    {
+        _animPlayer.Play(removeAnimationClip);
 
         while (_animPlayer.Animation_Playing()) yield return null;
         Destroy(gameObject);

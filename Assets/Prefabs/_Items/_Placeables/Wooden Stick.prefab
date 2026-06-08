@@ -94,7 +94,6 @@ GameObject:
   m_Component:
   - component: {fileID: 4520642281758493457}
   - component: {fileID: 3045259509940891077}
-  - component: {fileID: -6492832349718178103}
   - component: {fileID: 1531750997209139500}
   m_Layer: 0
   m_Name: Wooden Stick
@@ -133,18 +132,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _spriteRenderer: {fileID: 5921556619054699056}
   _animationClips: []
---- !u!114 &-6492832349718178103
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3637228250238346253}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 69e70a24ff5f64a4eb7ae9aededb5356, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &1531750997209139500
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -158,6 +145,5 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _animPlayer: {fileID: 3045259509940891077}
-  _tileTracker: {fileID: -6492832349718178103}
   _placeAnimationClip: {fileID: 11400000, guid: f7a2d73dd65204e07bdfd514451a5f04, type: 2}
   _removeAnimationClip: {fileID: 11400000, guid: ea1735fffa4d4455e98412a54481ff2e, type: 2}

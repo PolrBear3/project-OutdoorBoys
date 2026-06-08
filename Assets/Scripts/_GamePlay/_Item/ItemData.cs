@@ -63,6 +63,8 @@ public class ConvertUpdate_ItemData
 public class TileUpdate_ItemData
 {
     [SerializeField] private TileScrObj _tile;
+    public TileScrObj tile => _tile;
+
     [SerializeField] private ItemData[] _placedItemDatas;
 
     [Space(10)]

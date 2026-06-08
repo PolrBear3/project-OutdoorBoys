@@ -5,27 +5,32 @@ using UnityEngine;
 public class WeatherEvent_Storm : WeatherEvent
 {
     [Space(20)]
+    [SerializeField] private AnimationClipScrObj _itemRemoveAnimationclip;
+    [SerializeField] private LeanTweenType _itemRemoveTweenType;
+
+    [Space(10)]
+    [SerializeField][Range(0, 10)] private float _updatesDuration;
+
+    [Space(20)]
     [SerializeField] private Item_ScrObj[] _protectItems;
 
     [Space(20)]
     [SerializeField][Range(0, 100)] private int _positionUpdateCount;
-    [SerializeField][Range(0, 10)] private float _positionUpdateDuration;
-
-    [Space(10)]
     [SerializeField] private Item_ScrObj[] _positionUpdateItems;
 
     [Space(20)]
     [SerializeField][Range(0, 1)] private float _itemDropRate;
     [SerializeField] private ConvertUpdate_ItemData[] _dropItemDatas;
 
-    [SerializeField] private Vector2 _positionUpdateDirection;
+    private Vector2 _positionUpdateDirection;
 
 
     // Text Template
     public override string Description()
     {
         return base.Description()
-            .Replace("{temperatureUpdateValue}", playerDataModifier.temperatureUpdateValue.ToString());
+            .Replace("{temperatureUpdateValue}", playerDataModifier.temperatureUpdateValue.ToString())
+            .Replace("{positionUpdateDirection}", _positionUpdateDirection.ToString());
     }
 
 
@@ -59,6 +64,7 @@ public class WeatherEvent_Storm : WeatherEvent
         }
         playerDataModifier.Update_Data();
     }
+    
     private void RemoveUpdate_ProtectItems()
     {
         for (int i = 0; i < reservedActivationTiles.Count; i++)
@@ -71,16 +77,17 @@ public class WeatherEvent_Storm : WeatherEvent
                 int placedCount = placedProtectItems.Count;
 
                 if (placedCount <= 0) continue;
-                PlaceableItem placedProtectItem = placedProtectItems[placedCount - 1];
+                PlaceableItem removeItem = placedProtectItems[placedCount - 1];
 
-                activationTile.Remove_PlacedItemData(placedProtectItem);
-                Destroy(placedProtectItem.gameObject);
+                removeItem.AnimationDelay_Remove(_itemRemoveAnimationclip);
+
+                Vector2 movePosition = (Vector2)removeItem.transform.position + _positionUpdateDirection;
+                LeanTween.move(removeItem.gameObject, movePosition, _updatesDuration).setEase(_itemRemoveTweenType);
 
                 break;
             }
         }
     }
-
 
     private bool PositionUpdate_Available(PlaceableItem placedItem, Tile positionUpdateTile)
     {
@@ -141,7 +148,7 @@ public class WeatherEvent_Storm : WeatherEvent
             updateTile.Track_PlacingItem(placedItem);
             placedItem.Track_CurrentTile(updateTile);
 
-            updateTile.ClampUpdate_PlacedItemOffsets(_positionUpdateDuration);
+            updateTile.ClampUpdate_PlacedItemOffsets(_updatesDuration);
         }
 
         manager.time.timeUpdateActions.Add(this);
@@ -183,7 +190,7 @@ public class WeatherEvent_Storm : WeatherEvent
     }
     private IEnumerator DropUpdateDelay_PositionUpdateItems(List<PlaceableItem> positionUpdateItems)
     {
-        yield return new WaitForSeconds(_positionUpdateDuration);
+        yield return new WaitForSeconds(_updatesDuration);
 
         DropUpdate_PositionUpdateItems(positionUpdateItems);
         InGame_Manager.instance.time.timeUpdateActions.Remove(this);
