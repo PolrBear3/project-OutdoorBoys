@@ -18,6 +18,8 @@ public class WeatherEvent_Storm : WeatherEvent
     [SerializeField][Range(0, 1)] private float _itemDropRate;
     [SerializeField] private ConvertUpdate_ItemData[] _dropItemDatas;
 
+    [SerializeField] private Vector2 _positionUpdateDirection;
+
 
     // Text Template
     public override string Description()
@@ -30,6 +32,9 @@ public class WeatherEvent_Storm : WeatherEvent
     // Activation
     public override List<Tile> Generated_ActivationTiles()
     {
+        List<Vector2> allDirections = Utility.Surrounding_Directions();
+        _positionUpdateDirection = allDirections[Random.Range(0, allDirections.Count)];
+
         return new(InGame_Manager.instance.tilesController.currentTiles);
     }
 
@@ -98,9 +103,6 @@ public class WeatherEvent_Storm : WeatherEvent
         InGame_Manager manager = InGame_Manager.instance;
         Tiles_Controller tilesController = manager.tilesController;
 
-        List<Vector2> allDirections = Utility.Surrounding_Directions();
-        Vector2 updateDirection = allDirections[Random.Range(0, allDirections.Count)];
-
         List<PlaceableItem> allPlacedItems = new(tilesController.placedItems);
 
         Dictionary<PlaceableItem, Tile> positionUpdateItemDatas = new();
@@ -116,7 +118,7 @@ public class WeatherEvent_Storm : WeatherEvent
             Tile placedItemTile = randPlacedItem.placedTile;
             if (activationTiles.Contains(placedItemTile)) continue; // no duplicate tile placed items position update
 
-            Vector2 updateTilePos = (Vector2)placedItemTile.transform.position + updateDirection;
+            Vector2 updateTilePos = (Vector2)placedItemTile.transform.position + _positionUpdateDirection;
             Tile updateTile = tilesController.Current_Tile(updateTilePos);
 
             if (PositionUpdate_Available(randPlacedItem, updateTile) == false) continue;
