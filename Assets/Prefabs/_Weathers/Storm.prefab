@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6260189666786567346}
   - component: {fileID: 1105032225907665582}
+  - component: {fileID: 8042987143684252783}
   - component: {fileID: -6105739805433686834}
   m_Layer: 0
   m_Name: Storm
@@ -49,6 +50,22 @@ MonoBehaviour:
   _hungerUpdateValue: 0
   _temperatureUpdateValue: -5
   _staminaUpdateValue: -5
+--- !u!114 &8042987143684252783
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5858694087719140007}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 35c7424dbeac047f995e29434a07a8e5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _healthUpdateValue: 0
+  _hungerUpdateValue: 0
+  _temperatureUpdateValue: -2
+  _staminaUpdateValue: 0
 --- !u!114 &-6105739805433686834
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -62,6 +79,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _playerDataModifier: {fileID: 1105032225907665582}
+  _passivePlayerDataModifier: {fileID: 8042987143684252783}
   _itemRemoveAnimationclip: {fileID: 11400000, guid: ea1735fffa4d4455e98412a54481ff2e, type: 2}
   _itemRemoveTweenType: 28
   _updatesDuration: 1

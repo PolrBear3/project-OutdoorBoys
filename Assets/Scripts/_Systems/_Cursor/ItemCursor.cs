@@ -9,6 +9,8 @@ public class ItemCursor : MonoBehaviour, IItemsSource, IItemsSourceRemove, IItem
     [SerializeField] private Cursor _cursor;
     public Cursor cursor => _cursor;
 
+    [SerializeField] private FillBar_UI _coolTimeBar;
+
 
     private ItemData _data;
     public ItemData data => _data;
@@ -23,6 +25,8 @@ public class ItemCursor : MonoBehaviour, IItemsSource, IItemsSourceRemove, IItem
     public Action OnSetData;
     public Action OnItemReturn;
 
+    private Coroutine _useItemCoolTimeCoroutine;
+    
 
     // MonoBehaviour
     private void Awake()
@@ -33,6 +37,9 @@ public class ItemCursor : MonoBehaviour, IItemsSource, IItemsSourceRemove, IItem
     private void OnDestroy()
     {
         EventBus_Manager.UnRegister(EventBus.AwakeLoad, Set_Data);
+
+
+        OnSetData -= Toggle_CoolTimeBar;
 
         Tiles_Controller tilesController = InGame_Manager.instance.tilesController;
 
@@ -117,6 +124,8 @@ public class ItemCursor : MonoBehaviour, IItemsSource, IItemsSourceRemove, IItem
     // Data
     private void Set_Data()
     {
+        OnSetData += Toggle_CoolTimeBar;
+       
         Tiles_Controller tilesController = InGame_Manager.instance.tilesController;
 
         tilesController.OnTargetTileSelect += Place_AllItem;
@@ -134,6 +143,9 @@ public class ItemCursor : MonoBehaviour, IItemsSource, IItemsSourceRemove, IItem
 
         input.OnRightClick += Update_Visuals;
         input.OnHoldRightClick += Update_Visuals;
+
+
+        Toggle_CoolTimeBar();
     }
 
 
@@ -165,6 +177,7 @@ public class ItemCursor : MonoBehaviour, IItemsSource, IItemsSourceRemove, IItem
         }
 
         _data.Update_CurrentAmount(updateItemData.amount);
+        OnSetData?.Invoke();
     }
 
     public void Update_Visuals()
@@ -292,7 +305,9 @@ public class ItemCursor : MonoBehaviour, IItemsSource, IItemsSourceRemove, IItem
         }
 
         if (selectTile.Set_PlacingItem(new(_data.itemScrObj, 1)) != null) return;
+        
         _data.Update_CurrentAmount(_data.amount - 1);
+        OnSetData?.Invoke();
 
         if (_data.amount > 0) return;
         Set_Data(null);
@@ -356,6 +371,7 @@ public class ItemCursor : MonoBehaviour, IItemsSource, IItemsSourceRemove, IItem
         if (_usedItemHistoryDatas.Count <= _usedItemHistoryDataCount) return;
         _usedItemHistoryDatas.RemoveAt(0);
     }
+    
     private void Use_Item(Tile selectTile)
     {
         if (_itemPickupFlag == Time.frameCount) return;
@@ -370,9 +386,42 @@ public class ItemCursor : MonoBehaviour, IItemsSource, IItemsSourceRemove, IItem
         GameObject currentUseItem = player.interaction.currentItemPrefab;
         
         if (currentUseItem.TryGetComponent(out UseableItem useItem) == false) return;
+        if (_useItemCoolTimeCoroutine != null) return;
         if (useItem.CanUse?.Invoke(selectTile) == false) return;
         
         useItem.OnUse?.Invoke(selectTile);
         Track_UseItemHistory(currentItem);
+
+        float calculatedCoolTime = Mathf.Max(0, useItem.data.itemScrObj.coolTime - player.data.Total_CoolTimeDecreaseValue());
+
+        _useItemCoolTimeCoroutine = StartCoroutine(UseItem_CoolTimeUpdate(calculatedCoolTime));
+        Toggle_CoolTimeBar();
+    }
+    private IEnumerator UseItem_CoolTimeUpdate(float coolTime)
+    {
+        const int maxValue = 100;
+        float elapsedTime = 0f;
+
+        while (elapsedTime < coolTime)
+        {
+            elapsedTime += Time.deltaTime;
+            int currentValue = Mathf.RoundToInt(elapsedTime / coolTime * maxValue);
+
+            currentValue = Mathf.Clamp(currentValue, 0, maxValue);
+            _coolTimeBar.Update_Visuals(maxValue, currentValue);
+
+            yield return null;
+        }
+
+        _useItemCoolTimeCoroutine = null;
+        Toggle_CoolTimeBar();
+    }
+
+    private void Toggle_CoolTimeBar()
+    {
+        bool hasUseItem = _data != null && _data.itemScrObj.itemType == ItemType.use;
+        bool toggle = _useItemCoolTimeCoroutine != null && hasUseItem;
+
+        _coolTimeBar.gameObject.SetActive(toggle);
     }
 }

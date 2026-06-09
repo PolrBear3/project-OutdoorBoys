@@ -382,12 +382,13 @@ public class Inventory_Manager_Editor : Editor
 
             ItemData data = inventory.Add_ItemData(new(loadItem, loadAmount));
             inventory.slotManager.Update_Visuals();
-
-            if (data == null) return;
-            Debug.Log("Leftover Amount: " + data.amount);
         }
-
         EditorGUILayout.EndHorizontal();
+
+        if (GUILayout.Button("Debug Button"))
+        {
+            
+        }
         GUILayout.Space(20);
 
         serializedObject.ApplyModifiedProperties();

@@ -28,6 +28,11 @@ public class Player_Controller : MonoBehaviour, ISaveLoadable, IDamageable
     private PlayerData _data;
     public PlayerData data => _data;
 
+    /// <summary>
+    /// target object, target item & sustain value
+    /// </summary>
+    private Dictionary<GameObject, ItemData> _temperatureSustainDatas = new();
+
     public Action<int> OnHealthUpdate;
     public Action<int> OnHungerUpdate;
     public Action<int> OnTemperatureUpdate;
@@ -102,7 +107,7 @@ public class Player_Controller : MonoBehaviour, ISaveLoadable, IDamageable
 
     public void Update_Temperature(int updateValue)
     {
-        updateValue = Mathf.Min(updateValue, _maxData.temperature);
+        updateValue = Sustained_Temperature(Mathf.Min(updateValue, _maxData.temperature));
         if (updateValue == _data.temperature) return;
 
         OnTemperatureUpdate?.Invoke(_data.Update_Temperature(updateValue));
@@ -114,6 +119,44 @@ public class Player_Controller : MonoBehaviour, ISaveLoadable, IDamageable
         if (updateValue == _data.stamina) return;
         
         OnStaminaUpdate?.Invoke(_data.Update_Stamina(updateValue));
+    }
+
+
+    public int Total_TemperatureSustainValue()
+    {
+        int totalValue = 0;
+
+        foreach (var data in _temperatureSustainDatas)
+        {
+            totalValue += data.Value.amount;
+        }
+        return Mathf.Min(totalValue, data.temperature);
+    }
+    private int Sustained_Temperature(int targetTemperature)
+    {
+        int currentTemperature = data.temperature;
+        if (targetTemperature >= currentTemperature) return targetTemperature;
+
+        int decreaseValue = currentTemperature - targetTemperature;
+        int sustainValue = Mathf.Min(Total_TemperatureSustainValue(), decreaseValue);
+
+        return targetTemperature + sustainValue;
+    }
+
+    public void Register_TemperatureSustainData(GameObject registerObject, ItemData sustainData)
+    {
+        if (registerObject == null || sustainData == null) return;
+
+        _temperatureSustainDatas[registerObject] = sustainData;
+        OnTemperatureUpdate?.Invoke(_data.temperature);
+    }
+    public void UnRegister_TemperatureSustainData(GameObject registeredObject)
+    {
+        if (registeredObject == null) return;
+        if (_temperatureSustainDatas.ContainsKey(registeredObject) == false) return;
+
+        _temperatureSustainDatas.Remove(registeredObject);
+        OnTemperatureUpdate?.Invoke(_data.temperature);
     }
 
 

@@ -13,8 +13,9 @@ MonoBehaviour:
   m_Name: Storm
   m_EditorClassIdentifier: 
   _upcomingInfoText: 'Storm will start in : <sprite=0> {upcomingTimeValue}'
-  _descriptionText: player's temperature decrease by {temperatureUpdateValue} and
-    pushes some items {positionUpdateDirection} direction
+  _descriptionText: Decreases the player's temperature by {preTemperatureUpdateValue}.
+    Without protection, it decreases by {temperatureUpdateValue} instead and pushes
+    some items to {positionUpdateDirection} direction
   _iconSprite: {fileID: 1384424326, guid: 08db937c9bf304fd9bd2b19319eae929, type: 3}
   _activePrefab: {fileID: 5858694087719140007, guid: 23ba39a1cba704c848eac88d775bf49d, type: 3}
   _persistingBackground: 1

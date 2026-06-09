@@ -18,6 +18,12 @@ public class PlayerData
     [ES3Serializable][SerializeField][Range(0, 500)] private int _stamina;
     public int stamina => _stamina;
 
+    /// <summary>
+    /// ItemData (item & duration), int cooltime decrease value
+    /// </summary>
+    [ES3Serializable] private Dictionary<ItemData, float> _coolTimeDecreaseDatas = new();
+    public Dictionary<ItemData, float> coolTimeDecreaseDatas => _coolTimeDecreaseDatas;
+
 
     // New Constructors
     public PlayerData(PlayerData copyData)
@@ -29,7 +35,7 @@ public class PlayerData
     }
 
 
-    // Data
+    // Datas
     public int Update_Health(int updateValue)
     {
         _health = Mathf.Max(0, updateValue);
@@ -52,5 +58,30 @@ public class PlayerData
     {
         _stamina = Mathf.Max(0, updateValue);
         return _stamina;
+    }
+
+
+    // Cool Time Decrease
+    public float Total_CoolTimeDecreaseValue()
+    {
+        float totalValue = 0;
+
+        foreach (var data in _coolTimeDecreaseDatas)
+        {
+            totalValue += data.Value;
+        }
+        return totalValue;
+    }
+
+    public void Update_CoolTimeDecrease(ItemData itemDurationData, float buffValue)
+    {
+        foreach (var data in _coolTimeDecreaseDatas)
+        {
+            if (data.Key.itemScrObj != itemDurationData.itemScrObj) continue;
+            
+            _coolTimeDecreaseDatas.Remove(data.Key);
+            break;
+        }
+        _coolTimeDecreaseDatas[itemDurationData] = buffValue;
     }
 }

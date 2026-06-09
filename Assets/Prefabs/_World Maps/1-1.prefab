@@ -75,7 +75,7 @@ MonoBehaviour:
     _generateRate: 0
     _generatePointDistance: 0
     _generateAmountRange: {x: 3, y: 6}
-    _maxGenerateAmount: 6
+    _maxGenerateAmount: 50
   _generateDatas:
   - _resourceItem: {fileID: 11400000, guid: 86e876e6c7e9c467db97ab95dfa547ce, type: 2}
     _generateTiles:
@@ -100,7 +100,7 @@ MonoBehaviour:
     _generateRate: 1
     _generatePointDistance: 2
     _generateAmountRange: {x: 3, y: 6}
-    _maxGenerateAmount: 15
+    _maxGenerateAmount: 50
   - _resourceItem: {fileID: 11400000, guid: 52365bb8720a743b3bc321e7dd0faf4d, type: 2}
     _generateTiles:
     - {fileID: 11400000, guid: 621605563892d4d0a95e4d57c264bf5c, type: 2}
@@ -109,7 +109,7 @@ MonoBehaviour:
     _generateRate: 1
     _generatePointDistance: 2
     _generateAmountRange: {x: 3, y: 6}
-    _maxGenerateAmount: 15
+    _maxGenerateAmount: 50
 --- !u!114 &644200425565053860
 MonoBehaviour:
   m_ObjectHideFlags: 0

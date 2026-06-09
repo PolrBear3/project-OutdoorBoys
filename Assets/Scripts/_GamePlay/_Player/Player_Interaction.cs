@@ -41,7 +41,10 @@ public class Player_Interaction : MonoBehaviour, IItemsSource, IItemsSourceRemov
         tileTracker.UnRegister(ActionUpdateBus.AwakeUpdate, HealthUpdate_OnHungerEmpty);
         tileTracker.UnRegister(ActionUpdateBus.AwakeUpdate, InteractUpdate_Stamina);
 
-        InGame_Manager.instance.time.UnRegister(ActionUpdateBus.AwakeUpdate, MaxUpdate_Stamina);
+        Time_Manager time = InGame_Manager.instance.time;
+
+        time.UnRegister(ActionUpdateBus.AwakeUpdate, MaxUpdate_Stamina);
+        time.UnRegister(ActionUpdateBus.AwakeUpdate, DurationUpdate_CoolTimeDecreases);
     }
 
 
@@ -121,7 +124,10 @@ public class Player_Interaction : MonoBehaviour, IItemsSource, IItemsSourceRemov
         tileTracker.Register(ActionUpdateBus.AwakeUpdate, HealthUpdate_OnHungerEmpty);
         tileTracker.Register(ActionUpdateBus.AwakeUpdate, InteractUpdate_Stamina);
 
-        InGame_Manager.instance.time.Register(ActionUpdateBus.AwakeUpdate, MaxUpdate_Stamina);
+        Time_Manager time = InGame_Manager.instance.time;
+
+        time.Register(ActionUpdateBus.AwakeUpdate, MaxUpdate_Stamina);
+        time.Register(ActionUpdateBus.AwakeUpdate, DurationUpdate_CoolTimeDecreases);
     }
 
     public void Load_ItemPrefab(GameObject itemPrefab)
@@ -206,5 +212,26 @@ public class Player_Interaction : MonoBehaviour, IItemsSource, IItemsSourceRemov
     private void MaxUpdate_Stamina()
     {
         _controller.Update_Stamina(_controller.maxData.stamina);
+    }
+
+
+    // Cool Time Decrease
+    public void DurationUpdate_CoolTimeDecreases()
+    {
+        Dictionary<ItemData, float> currentBuffDatas = _controller.data.coolTimeDecreaseDatas;
+        List<ItemData> durationEndedDatas = new();
+
+        foreach (var data in currentBuffDatas)
+        {
+            ItemData currentData = data.Key;
+            currentData.Update_CurrentAmount(currentData.amount - 1);
+
+            if (currentData.amount > 0) continue;
+            durationEndedDatas.Add(currentData);
+        }
+        for (int i = 0; i < durationEndedDatas.Count; i++)
+        {
+            currentBuffDatas.Remove(durationEndedDatas[i]);
+        }
     }
 }

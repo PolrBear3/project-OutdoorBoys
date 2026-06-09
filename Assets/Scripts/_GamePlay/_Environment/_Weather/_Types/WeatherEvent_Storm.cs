@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class WeatherEvent_Storm : WeatherEvent
 {
+    [SerializeField] private PlayerData_Modifier _passivePlayerDataModifier;
+
     [Space(20)]
     [SerializeField] private AnimationClipScrObj _itemRemoveAnimationclip;
     [SerializeField] private LeanTweenType _itemRemoveTweenType;
@@ -29,6 +31,7 @@ public class WeatherEvent_Storm : WeatherEvent
     public override string Description()
     {
         return base.Description()
+            .Replace("{preTemperatureUpdateValue}", _passivePlayerDataModifier.temperatureUpdateValue.ToString())
             .Replace("{temperatureUpdateValue}", playerDataModifier.temperatureUpdateValue.ToString())
             .Replace("{positionUpdateDirection}", _positionUpdateDirection.ToString());
     }
@@ -56,6 +59,8 @@ public class WeatherEvent_Storm : WeatherEvent
     // Custom Activations
     private void Update_PlayerData()
     {
+        _passivePlayerDataModifier.Update_Data();
+
         Tile playerTile = InGame_Manager.instance.player.movement.tileTracker.data.CurrentTile();
 
         for (int i = 0; i < _protectItems.Length; i++)

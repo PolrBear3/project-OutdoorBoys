@@ -9,6 +9,10 @@ public class PlayerData_UpdateItem : MonoBehaviour
     [Space(20)]
     [SerializeField] private PlayerData_Modifier _playerDataModifier;
 
+    [Space(10)]
+    [SerializeField][Range(0, 10)] private float _coolTimeDecreaseValue;
+    [SerializeField][Range(0, 100)] private int _timeCountDuration;
+
 
     // MonoBehaviour
     private void Awake()
@@ -29,6 +33,8 @@ public class PlayerData_UpdateItem : MonoBehaviour
         if (useTile != player.movement.tileTracker.data.CurrentTile()) return;
 
         _playerDataModifier.Update_Data();
+        player.data.Update_CoolTimeDecrease(new(_useableItem.data.itemScrObj, _timeCountDuration), _coolTimeDecreaseValue);
+
         _useableItem.Update_UseAmount(1);
     }
 }

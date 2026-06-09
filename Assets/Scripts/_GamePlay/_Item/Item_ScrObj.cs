@@ -51,6 +51,9 @@ public class Item_ScrObj : ScriptableObject
     [SerializeField][Range(0, 10)] private int _triggerRange;
     public int triggerRange => _triggerRange;
 
+    [SerializeField][Range(0, 10)] private float _coolTime;
+    public float coolTime => _coolTime;
+
     [Space(20)]
     [SerializeField] private TimeRange_Data _discoverTimeRangeData;
     public TimeRange_Data discoverTimeRangeData => _discoverTimeRangeData;

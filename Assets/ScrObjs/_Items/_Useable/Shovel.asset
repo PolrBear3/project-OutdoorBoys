@@ -28,6 +28,7 @@ MonoBehaviour:
   _maxAmount: 30
   _itemWeight: 1
   _triggerRange: 0
+  _coolTime: 0.5
   _discoverTimeRangeData:
     _activeDay: 0
     _activeTime: 0

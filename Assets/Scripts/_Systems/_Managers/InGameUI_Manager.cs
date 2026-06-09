@@ -26,6 +26,7 @@ public class InGameUI_Manager : MonoBehaviour
 
     [Space(10)]
     [SerializeField] private FillBar_UI _temperatureBar;
+    [SerializeField] private FillBar_UI _temeratureSustainBar;
     [SerializeField] private PanelToggle_AnimationController _temperatureBarAnim;
 
     [Space(10)]
@@ -156,8 +157,13 @@ public class InGameUI_Manager : MonoBehaviour
 
     private void Update_TemperatureBar(int currentValue)
     {
-        _temperatureBar.Update_Visuals(InGame_Manager.instance.player.maxData.temperature, currentValue, 0);
+        Player_Controller player = InGame_Manager.instance.player;
+        int maxTemperature = player.maxData.temperature;
+
+        _temperatureBar.Update_Visuals(maxTemperature, currentValue, 0);
         _temperatureBarAnim.Update_ToggleAnimation();
+
+        _temeratureSustainBar.Update_Visuals(maxTemperature, Mathf.Min(currentValue, player.Total_TemperatureSustainValue()));
     }
 
     private void Update_StaminaBar(int currentValue)
