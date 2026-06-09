@@ -21,6 +21,8 @@ public class Item_ScrObj : ScriptableObject
     [SerializeField] private Sprite _inventorySprite;
     public Sprite inventorySprite => _inventorySprite;
 
+    [SerializeField] private Sprite _placedSprite;
+
     [SerializeField] private Sprite _microSprite;
     public Sprite microSprite => _microSprite;
 
@@ -77,6 +79,11 @@ public class Item_ScrObj : ScriptableObject
     {
         if (_offsetData.Length <= 0) return null;
         return _offsetData[Mathf.Clamp(offsetIndex, 0, _offsetData.Length - 1)];
+    }
+
+    public Sprite PlacedSprite()
+    {
+        return _placedSprite != null ? _placedSprite : _inventorySprite;
     }
 
 
@@ -137,7 +144,7 @@ public class Item_ScrObj : ScriptableObject
     public int Available_CraftCount(List<ItemData> checkItemDatas)
     {
         List<ItemData> ingredientDatas = new(Item_IngredientDatas());
-        
+
         if (ingredientDatas.Count <= 0) return 0;
         if (_discoverTimeRangeData.Is_ActiveDay() == false) return 0;
         if (_discoverTimeRangeData.Is_ActiveTime() == false || _discoverTimeRangeData.Is_RestrictTime()) return 0;

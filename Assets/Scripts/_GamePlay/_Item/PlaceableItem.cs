@@ -70,6 +70,8 @@ public class PlaceableItem : MonoBehaviour
     public void Play_PlaceAnimation()
     {
         if (_placeAnimationClip == null) return;
+
+        _animPlayer.defaultData.Update_ClipSprite(_data.itemScrObj.PlacedSprite());
         _animPlayer.Play(_placeAnimationClip);
     }
 
@@ -88,7 +90,7 @@ public class PlaceableItem : MonoBehaviour
     {
         AnimationDelay_Remove(_removeAnimationClip);
     }
-    
+
     private IEnumerator AnimationDelay_RemoveUpdate(AnimationClipScrObj removeAnimationClip)
     {
         _animPlayer.Play(removeAnimationClip);

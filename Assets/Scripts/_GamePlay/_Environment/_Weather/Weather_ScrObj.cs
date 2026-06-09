@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-[CreateAssetMenu(menuName = "New ScriptableObject/New Weather Event")]
+[CreateAssetMenu(menuName = "New ScriptableObject/ New Weather Event")]
 public class Weather_ScrObj : ScriptableObject
 {
     [Space(20)]

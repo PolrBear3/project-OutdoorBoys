@@ -28,6 +28,10 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 7d5ed3b52409443119f0f6ee41db4f54, type: 2}
   - {fileID: 11400000, guid: dd95a5d82f9fb4d8e842dd3938129501, type: 2}
   - {fileID: 11400000, guid: 6e2f06d8fae764998893f2bfaf3fb059, type: 2}
+  _boneCollectables:
+  - {fileID: 11400000, guid: c0b17ac9a726043da9e7a32f8f7f8583, type: 2}
+  - {fileID: 11400000, guid: 49251b1167a3740439a2c7d9e2c97cb5, type: 2}
+  - {fileID: 11400000, guid: 01178d82a3a864dceb83472051178847, type: 2}
   _backgroundWarpRenderData:
     _loadDuration: 1
     _pixelSize: 16

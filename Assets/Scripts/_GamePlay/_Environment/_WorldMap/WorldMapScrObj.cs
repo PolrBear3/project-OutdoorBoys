@@ -24,8 +24,12 @@ public class WorldMapScrObj : ScriptableObject
     [SerializeField] private GameObject _worldMapEventsPrefab;
     public GameObject worldMapEventsPrefab => _worldMapEventsPrefab;
 
+    [Space(20)]
     [SerializeField] private Weather_ScrObj[] _weathers;
     public Weather_ScrObj[] weathers => _weathers;
+
+    [SerializeField] private BoneCollectable_ScrObj[] _boneCollectables;
+    public BoneCollectable_ScrObj[] boneCollectables => _boneCollectables;
 
     [Space(20)]
     [SerializeField] private WarpRenderer_Data _backgroundWarpRenderData;
@@ -49,7 +53,6 @@ public class WorldMapScrObj : ScriptableObject
                 tiles.Add(tile);
             }
         }
-
         return tiles;
     }
 

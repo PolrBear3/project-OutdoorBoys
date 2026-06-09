@@ -43,6 +43,13 @@ public class ClipSpriteData
     }
 
 
+    // Data Update
+    public void Update_ClipSprite(Sprite updateSprite)
+    {
+        _clipSprite = updateSprite;
+    }
+
+
     // Duration Time
     public float DurationTime()
     {

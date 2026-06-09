@@ -26,7 +26,7 @@ public class Tarp : MonoBehaviour
     }
 
 
-    // Main
+    // Visuals
     private void Update_Transparency(Tile playerCurrentTile)
     {
         float transparencyValue = playerCurrentTile == _placeableItem.placedTile ? _transparencyValue : 1f;

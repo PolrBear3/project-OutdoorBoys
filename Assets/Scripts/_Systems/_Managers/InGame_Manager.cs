@@ -48,6 +48,9 @@ public class InGame_Manager : MonoBehaviour
     [SerializeField] private Weather_Manager _weather;
     public Weather_Manager weather => _weather;
 
+    [SerializeField] private BoneCollection_Manager _boneCollection;
+    public BoneCollection_Manager boneCollection => _boneCollection;
+
 
     [Space(20)]
     [SerializeField] private Player_Controller _player;

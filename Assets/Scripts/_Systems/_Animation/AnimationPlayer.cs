@@ -13,6 +13,7 @@ public class AnimationPlayer : MonoBehaviour
 
 
     private ClipSpriteData _defaultData;
+    public ClipSpriteData defaultData => _defaultData;
 
     private AnimationClipScrObj _playClip;
     private Coroutine _playCoroutine;
@@ -106,7 +107,7 @@ public class AnimationPlayer : MonoBehaviour
 
                 GameObject animObject = _spriteRenderer.gameObject;
 
-                _spriteRenderer.sprite = dataSprite != null ? dataSprite : _spriteRenderer.sprite;
+                _spriteRenderer.sprite = dataSprite != null ? dataSprite : _defaultData.clipSprite;
                 _spriteRenderer.sortingOrder = _defaultData.sortingOrderUpdateValue + data.sortingOrderUpdateValue;
 
                 float alphaValue = _defaultData.alphaUpdateValue + data.alphaUpdateValue;

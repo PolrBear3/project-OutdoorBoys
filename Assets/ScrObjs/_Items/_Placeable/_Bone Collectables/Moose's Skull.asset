@@ -9,16 +9,16 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 069327ba6dded4f16af0714f2c328413, type: 3}
-  m_Name: Pine Tree
+  m_Script: {fileID: 11500000, guid: d7a898d55452e4c67bbee2df32dc5638, type: 3}
+  m_Name: Moose's Skull
   m_EditorClassIdentifier: 
-  _inventorySprite: {fileID: -1150653497, guid: bf7ece83f843c4c35977c02f8c40d92d, type: 3}
-  _placedSprite: {fileID: 1495015643, guid: bf7ece83f843c4c35977c02f8c40d92d, type: 3}
-  _microSprite: {fileID: -903501210, guid: bf7ece83f843c4c35977c02f8c40d92d, type: 3}
-  _itemName: Pine Tree
+  _inventorySprite: {fileID: -2017797557, guid: bf7ece83f843c4c35977c02f8c40d92d, type: 3}
+  _placedSprite: {fileID: 0}
+  _microSprite: {fileID: -2017797557, guid: bf7ece83f843c4c35977c02f8c40d92d, type: 3}
+  _itemName: Moose's Skull
   _description: 
   _itemType: 0
-  _itemPrefab: {fileID: 3637228250238346253, guid: ef1737ce7ac5d4892891d078200388ab, type: 3}
+  _itemPrefab: {fileID: 3637228250238346253, guid: 4187fddab9ef9408bbe41499b35a71e3, type: 3}
   _offsetData:
   - _position: {x: 0, y: 0.5}
     _rotationValue: 0
@@ -27,7 +27,7 @@ MonoBehaviour:
   - _position: {x: 0.25, y: 0.5}
     _rotationValue: 0
   _maxAmount: 1
-  _itemWeight: 5
+  _itemWeight: 0
   _triggerRange: 0
   _coolTime: 0
   _discoverTimeRangeData:
@@ -38,7 +38,6 @@ MonoBehaviour:
     _maxTimeCount: 0
   _placeRestrictions: []
   _selectRestrictions: []
-  _itemIngredientDatas:
-  - _itemScrObj: {fileID: 11400000, guid: cea7459d8010d4a229cb42a2a5b65381, type: 2}
-    _amount: 10
+  _itemIngredientDatas: []
   _craftRequiredPlacedItemDatas: []
+  _customSlotSprite: {fileID: 0}
