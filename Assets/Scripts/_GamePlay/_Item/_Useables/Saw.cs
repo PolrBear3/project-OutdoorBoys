@@ -14,7 +14,8 @@ public class Saw : MonoBehaviour
     [SerializeField][Range(0, 100)] private int _chopDamage;
     [SerializeField] private ConvertUpdate_ItemData[] _chopItemDatas;
 
-    private PlaceableItem_DurabilityData _choppingItemData;
+    private const int _maxChoppingItemDatasCount = 10;
+    private List<PlaceableItem_DurabilityData> _choppingItemDatas = new();
 
 
     // MonoBehaviour
@@ -53,45 +54,70 @@ public class Saw : MonoBehaviour
         return Placed_ChopItem(checkTile) != null;
     }
 
-    private void Update_ChoppingItem(PlaceableItem targetItem)
+    private PlaceableItem_DurabilityData Chopping_ItemData(PlaceableItem choppingItem)
     {
-        if (_choppingItemData != null && _choppingItemData.placeableItem == targetItem) return;
-        
-        if (targetItem == null)
+        for (int i = 0; i < _choppingItemDatas.Count; i++)
         {
-            _choppingItemData = null;
-            return;
+            PlaceableItem_DurabilityData choppingData = _choppingItemDatas[i];
+
+            if (choppingItem != choppingData.placeableItem) continue;
+            return choppingData;
+        }
+        return null;
+    }
+
+    private void Update_ChoppingItems()
+    {
+        for (int i = _choppingItemDatas.Count - 1; i >= 0; i--)
+        {
+            PlaceableItem_DurabilityData data = _choppingItemDatas[i];
+
+            if (data.placeableItem != null && data.durabilityCount > 0) continue;
+            _choppingItemDatas.RemoveAt(i);
         }
 
+        if (_choppingItemDatas.Count <= _maxChoppingItemDatasCount) return;
+        _choppingItemDatas.RemoveAt(0);
+    }
+    private PlaceableItem_DurabilityData Update_ChoppingItem(PlaceableItem targetItem)
+    {
+        PlaceableItem_DurabilityData existingData = Chopping_ItemData(targetItem);
+        if (existingData != null) return existingData;
+
         int maxDurability = targetItem.data.itemScrObj.itemWeight;
-        _choppingItemData = new(targetItem, maxDurability);
+        _choppingItemDatas.Add(new(targetItem, maxDurability));
+
+        Update_ChoppingItems();
 
         _fillBarController.Set_FillBar(targetItem.transform);
         _fillBarController.Update_CurrentBarFill(maxDurability, maxDurability);
+
+        return Chopping_ItemData(targetItem);
     }
+
     private void Chop_PlacedItem(Tile useTile)
     {
         PlaceableItem placedTree = Placed_ChopItem(useTile);
-        Update_ChoppingItem(placedTree);
+        PlaceableItem_DurabilityData updateData = Update_ChoppingItem(placedTree);
 
         _useableItem.Update_UseAmount(1);
         placedTree.animPlayer.Play(0);
 
-        int currentDurability = _choppingItemData.Update_DurabilityCount(_choppingItemData.durabilityCount - _chopDamage);
+        int currentDurability = updateData.Update_DurabilityCount(updateData.durabilityCount - _chopDamage);
 
         if (currentDurability > 0)
         {
+            _fillBarController.Set_FillBar(placedTree.transform);
             _fillBarController.Update_CurrentBarFill(placedTree.data.itemScrObj.itemWeight, currentDurability);
             return;
         }
         _fillBarController.Refresh_CurrentFillBar();
 
-        Update_ChoppingItem(null);
+        _choppingItemDatas.Remove(updateData);
         placedTree.AnimationDelay_Remove();
 
         DropUpdate_onChop(useTile, placedTree.data.itemScrObj);
     }
-
     private void DropUpdate_onChop(Tile useTile, Item_ScrObj chopItem)
     {
         int treeWeight = chopItem.itemWeight;
@@ -103,7 +129,7 @@ public class Saw : MonoBehaviour
 
             ItemData dropItemData = updateItemData.Converted_ItemData();
             int dropAmount = Random.Range(Mathf.Min(dropItemData.amount, treeWeight), treeWeight);
-            
+
             useTile.Set_PlacingItem(new(dropItemData.itemScrObj, dropAmount));
             return;
         }

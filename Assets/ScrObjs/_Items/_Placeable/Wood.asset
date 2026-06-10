@@ -13,11 +13,12 @@ MonoBehaviour:
   m_Name: Wood
   m_EditorClassIdentifier: 
   _inventorySprite: {fileID: -1041514726, guid: bf7ece83f843c4c35977c02f8c40d92d, type: 3}
+  _placedSprite: {fileID: 0}
   _microSprite: {fileID: 1617338267, guid: bf7ece83f843c4c35977c02f8c40d92d, type: 3}
   _itemName: Wood
   _description: 
   _itemType: 0
-  _itemPrefab: {fileID: 3637228250238346253, guid: e512f6af3be464692ab97c29239f1346, type: 3}
+  _itemPrefab: {fileID: 3637228250238346253, guid: 657360494c481422c801a61042b6d908, type: 3}
   _offsetData:
   - _position: {x: 0, y: 0.5}
     _rotationValue: 0
@@ -28,4 +29,14 @@ MonoBehaviour:
   _maxAmount: 10
   _itemWeight: 1
   _triggerRange: 0
+  _coolTime: 0
+  _discoverTimeRangeData:
+    _activeDay: 0
+    _activeTime: 0
+    _restrictTime: 0
+    _minTimeCount: 0
+    _maxTimeCount: 0
+  _placeRestrictions: []
+  _selectRestrictions: []
   _itemIngredientDatas: []
+  _craftRequiredPlacedItemDatas: []

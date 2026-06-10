@@ -73,7 +73,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: 1907964634, guid: bf7ece83f843c4c35977c02f8c40d92d, type: 3}
+  m_Sprite: {fileID: 144367351, guid: bf7ece83f843c4c35977c02f8c40d92d, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -96,7 +96,7 @@ GameObject:
   - component: {fileID: 3045259509940891077}
   - component: {fileID: 1531750997209139500}
   m_Layer: 0
-  m_Name: Coal
+  m_Name: Placeable Item
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

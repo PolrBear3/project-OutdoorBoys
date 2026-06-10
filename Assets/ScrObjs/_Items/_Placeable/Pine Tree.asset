@@ -18,7 +18,7 @@ MonoBehaviour:
   _itemName: Pine Tree
   _description: 
   _itemType: 0
-  _itemPrefab: {fileID: 3637228250238346253, guid: ef1737ce7ac5d4892891d078200388ab, type: 3}
+  _itemPrefab: {fileID: 3637228250238346253, guid: 47b338a9f5e1b4290bace3ffb9cfda7c, type: 3}
   _offsetData:
   - _position: {x: 0, y: 0.5}
     _rotationValue: 0

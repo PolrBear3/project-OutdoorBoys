@@ -63,4 +63,13 @@ MonoBehaviour:
     _tileDigItemData:
       _tile: {fileID: 11400000, guid: 8145ed0e845b14bca951ca79c25e2e94, type: 2}
       _placedItemDatas: []
+      _customTilesItemDatas: []
       _updateItem: {fileID: 11400000, guid: 826d98a3d4b17434eb29802f44c70531, type: 2}
+  _discoverUpdateDatas:
+  - _chanceRate: 100
+    _tileDigItemData:
+      _tile: {fileID: 11400000, guid: 8145ed0e845b14bca951ca79c25e2e94, type: 2}
+      _placedItemDatas: []
+      _customTilesItemDatas: []
+      _updateItem: {fileID: 11400000, guid: 49251b1167a3740439a2c7d9e2c97cb5, type: 2}
+  _discoverDigCount: 3

@@ -66,27 +66,51 @@ public class TileUpdate_ItemData
     public TileScrObj tile => _tile;
 
     [SerializeField] private ItemData[] _placedItemDatas;
+    [SerializeField] private ItemData[] _customTilesItemDatas;
 
     [Space(10)]
     [SerializeField] private Item_ScrObj _updateItem;
     public Item_ScrObj updateItem => _updateItem;
 
 
-    public Item_ScrObj TilePlaced_UpdateItem(Tile targetTile)
+    public bool CustomTiles_ItemsPlaced(List<Tile> customTiles)
     {
-        if (targetTile == null) return null;
-        if (_tile != null && _tile != targetTile.data.tileScrObj) return null;
+        if (_customTilesItemDatas.Length <= 0) return true;
 
-        int checkCount = _placedItemDatas.Length;
-        if (checkCount <= 0) return _updateItem;
+        for (int i = 0; i < _customTilesItemDatas.Length; i++)
+        {
+            ItemData checkData = _customTilesItemDatas[i];
+            int checkCount = Mathf.Max(1, checkData.amount); ;
+
+            for (int j = 0; j < customTiles.Count; j++)
+            {
+                checkCount -= customTiles[j].Placed_ItemCount(checkData.itemScrObj);
+                if (checkCount <= 0) break;
+            }
+            if (checkCount > 0) return false;
+        }
+        return true;
+    }
+
+    private bool TargetTile_ItemsPlaced(Tile targetTile)
+    {
+        if (_placedItemDatas.Length <= 0) return true;
 
         for (int i = 0; i < _placedItemDatas.Length; i++)
         {
             ItemData checkData = _placedItemDatas[i];
             int placedCount = targetTile.Placed_ItemCount(checkData.itemScrObj);
 
-            if (placedCount < Mathf.Max(1, checkData.amount)) return null;
+            if (placedCount < Mathf.Max(1, checkData.amount)) return false;
         }
+        return true;
+    }
+    public Item_ScrObj TargetTilePlaced_UpdateItem(Tile targetTile)
+    {
+        if (targetTile == null) return null;
+        if (_tile != null && _tile != targetTile.data.tileScrObj) return null;
+
+        if (TargetTile_ItemsPlaced(targetTile) == false) return null;
         return _updateItem;
     }
 }

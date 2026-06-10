@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -6,6 +7,6 @@ using UnityEngine;
 public class BoneCollectable_ScrObj : Item_ScrObj
 {
     [Space(40)]
-    [SerializeField] private Sprite _customSlotSprite;
-    public Sprite customSlotSprite => _customSlotSprite;
+    [SerializeField][Multiline] private string _collectedDescription;
+    public string collectedDescription => _collectedDescription;
 }

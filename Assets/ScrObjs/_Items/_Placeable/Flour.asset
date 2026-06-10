@@ -13,11 +13,12 @@ MonoBehaviour:
   m_Name: Flour
   m_EditorClassIdentifier: 
   _inventorySprite: {fileID: 1890634371, guid: bf7ece83f843c4c35977c02f8c40d92d, type: 3}
+  _placedSprite: {fileID: 0}
   _microSprite: {fileID: 1672481069, guid: bf7ece83f843c4c35977c02f8c40d92d, type: 3}
   _itemName: Flour
   _description: 
   _itemType: 0
-  _itemPrefab: {fileID: 3637228250238346253, guid: b0b7c4f4b05304ac38c102a900567034, type: 3}
+  _itemPrefab: {fileID: 3637228250238346253, guid: 657360494c481422c801a61042b6d908, type: 3}
   _offsetData:
   - _position: {x: 0, y: 0.5}
     _rotationValue: 0
@@ -28,6 +29,7 @@ MonoBehaviour:
   _maxAmount: 50
   _itemWeight: 0
   _triggerRange: 0
+  _coolTime: 0
   _discoverTimeRangeData:
     _activeDay: 0
     _activeTime: 0

@@ -13,11 +13,12 @@ MonoBehaviour:
   m_Name: Rope
   m_EditorClassIdentifier: 
   _inventorySprite: {fileID: 2000581215, guid: bf7ece83f843c4c35977c02f8c40d92d, type: 3}
+  _placedSprite: {fileID: 0}
   _microSprite: {fileID: -488600614, guid: bf7ece83f843c4c35977c02f8c40d92d, type: 3}
   _itemName: Rope
   _description: 
   _itemType: 0
-  _itemPrefab: {fileID: 3637228250238346253, guid: a695556dcd64440e7965e91c4031ba82, type: 3}
+  _itemPrefab: {fileID: 3637228250238346253, guid: 657360494c481422c801a61042b6d908, type: 3}
   _offsetData:
   - _position: {x: 0, y: 0.55}
     _rotationValue: 0
@@ -28,6 +29,7 @@ MonoBehaviour:
   _maxAmount: 20
   _itemWeight: 0
   _triggerRange: 0
+  _coolTime: 0
   _discoverTimeRangeData:
     _activeDay: 0
     _activeTime: 0

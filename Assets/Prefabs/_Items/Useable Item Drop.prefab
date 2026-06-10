@@ -73,7 +73,7 @@ SpriteRenderer:
   m_SortingLayerID: 678841433
   m_SortingLayer: -1
   m_SortingOrder: 2
-  m_Sprite: {fileID: 368633743, guid: 876726b4a75bd4d21af424fd6ed1343c, type: 3}
+  m_Sprite: {fileID: 144367351, guid: bf7ece83f843c4c35977c02f8c40d92d, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -160,7 +160,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _animPlayer: {fileID: 3045259509940891077}
-  _tileTracker: {fileID: 6678813042971149987}
   _placeAnimationClip: {fileID: 0}
   _removeAnimationClip: {fileID: 0}
 --- !u!114 &7462963495597463765
