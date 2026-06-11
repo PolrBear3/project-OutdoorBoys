@@ -6,7 +6,10 @@ public class BoneCollection_Manager : MonoBehaviour
 {
     [Space(20)]
     [SerializeField] private ItemsSource_Manager _itemSourceManager;
+
+    [Space(20)]
     [SerializeField] private ItemSlot_Manager _collectableSlotsManager;
+    [SerializeField] private ItemInfo_Controller _hoverInfo;
 
 
     // MonoBehaviour
@@ -24,6 +27,11 @@ public class BoneCollection_Manager : MonoBehaviour
 
         inventory.OnItemAdded -= UpdateCollectables_toSlots;
         inventory.OnToggle -= UpdateCollectables_toSlots;
+
+        inventory.OnItemAdded -= UpdateInfo_HoveringCollectable;
+
+        _collectableSlotsManager.OnSlotHover -= _hoverInfo.Toggle_ItemInfoPanel;
+        _collectableSlotsManager.OnSlotHover -= UpdateInfo_HoveringCollectable;
     }
 
 
@@ -34,6 +42,37 @@ public class BoneCollection_Manager : MonoBehaviour
 
         inventory.OnItemAdded += UpdateCollectables_toSlots;
         inventory.OnToggle += UpdateCollectables_toSlots;
+
+        inventory.OnItemAdded += UpdateInfo_HoveringCollectable;
+
+        _collectableSlotsManager.OnSlotHover += _hoverInfo.Toggle_ItemInfoPanel;
+        _collectableSlotsManager.OnSlotHover += UpdateInfo_HoveringCollectable;
+
+
+        _hoverInfo.Toggle_ItemInfoPanel(_collectableSlotsManager.hoveringSlot);
+    }
+
+    private BoneCollectable_ScrObj BoneCollectable_Item(Item_ScrObj item)
+    {
+        BoneCollectable_ScrObj[] collectableBones = InGame_Manager.instance.worldMapGenerator.currentWorldMap.boneCollectables;
+
+        for (int i = 0; i < collectableBones.Length; i++)
+        {
+            BoneCollectable_ScrObj collectableBone = collectableBones[i];
+
+            if (item != collectableBone) continue;
+            return collectableBone;
+        }
+        return null;
+    }
+    private bool Bone_Collected(ItemData checkData)
+    {
+        BoneCollectable_ScrObj boneItem = BoneCollectable_Item(checkData.itemScrObj);
+
+        if (boneItem == null) return false;
+        if (_itemSourceManager.ItemData_Count(boneItem) < boneItem.maxAmount) return false;
+
+        return true;
     }
 
 
@@ -47,21 +86,10 @@ public class BoneCollection_Manager : MonoBehaviour
 
         for (int i = 0; i < collectableBones.Length; i++)
         {
-            Item_ScrObj collectableBone = collectableBones[i];
-
-            List<ItemData> inventoryItemDatas = _itemSourceManager.ItemDatas();
-            bool collected = false;
-
-            for (int j = 0; j < inventoryItemDatas.Count; j++)
-            {
-                if (inventoryItemDatas[j].itemScrObj != collectableBone) continue;
-
-                collected = true;
-                break;
-            }
-
             ItemSlot slot = _collectableSlotsManager.slots[i];
-            slot.Set_Data(collected ? new ItemData(collectableBone, 1) : null);
+
+            slot.Set_Data(new ItemData(collectableBones[i], 1));
+            slot.Toggle_Transparency(Bone_Collected(slot.data) == false);
         }
         _collectableSlotsManager.Update_Visuals();
     }
@@ -70,5 +98,24 @@ public class BoneCollection_Manager : MonoBehaviour
         if (inventoryToggled) return;
 
         UpdateCollectables_toSlots();
+    }
+
+    private void UpdateInfo_HoveringCollectable(ItemSlot hoveringSlot)
+    {
+        InGame_Manager manager = InGame_Manager.instance;
+        if (manager.inventory.Toggled()) return;
+
+        if (hoveringSlot == null || hoveringSlot.data == null) return;
+        ItemData hoveringSlotData = hoveringSlot.data;
+
+        BoneCollectable_ScrObj boneItem = BoneCollectable_Item(hoveringSlotData.itemScrObj);
+        if (boneItem == null) return;
+
+        hoveringSlot.data.Update_CurrentAmount(_itemSourceManager.ItemData_Count(boneItem));
+        _hoverInfo.Update_HoveringItemInfo(hoveringSlot, Bone_Collected(hoveringSlotData) ? boneItem.collectedDescription : boneItem.description);
+    }
+    private void UpdateInfo_HoveringCollectable()
+    {
+        UpdateInfo_HoveringCollectable(_collectableSlotsManager.hoveringSlot);
     }
 }

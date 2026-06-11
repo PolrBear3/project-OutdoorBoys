@@ -15,6 +15,7 @@ public class ItemInfo_Controller : MonoBehaviour
     [SerializeField] private TextMeshProUGUI _itemDescriptionText;
 
 
+    // Item Info
     public void Toggle_ItemInfoPanel(ItemSlot targetItemSlot)
     {
         bool toggle = targetItemSlot != null && targetItemSlot.data != null;
@@ -28,7 +29,7 @@ public class ItemInfo_Controller : MonoBehaviour
         _togglePanelController.togglePanel.transform.position = panelPos;
     }
 
-    public void Update_HoveringItemInfo(ItemSlot targetItemSlot)
+    public void Update_HoveringItemInfo(ItemSlot targetItemSlot, string descriptionText)
     {
         if (targetItemSlot == null) return;
 
@@ -40,10 +41,18 @@ public class ItemInfo_Controller : MonoBehaviour
         _itemImageSlot.Update_AmountText();
 
         int hoverAmount = targetItemSlot.data.amount;
-
         _itemNameText.text = hoveringItem.itemName + " [" + hoverAmount + "/" + hoveringItem.maxAmount + "]";
-        _itemDescriptionText.text = hoveringItem.description;
 
+        _itemDescriptionText.text = descriptionText;
         LayoutRebuilder.ForceRebuildLayoutImmediate(_togglePanelController.togglePanel);
+    }
+    public void Update_HoveringItemInfo(ItemSlot targetItemSlot)
+    {
+        if (targetItemSlot == null) return;
+
+        Item_ScrObj hoveringItem = targetItemSlot.data?.itemScrObj;
+        
+        if (hoveringItem == null) return;
+        Update_HoveringItemInfo(targetItemSlot, hoveringItem.description);
     }
 }

@@ -36,12 +36,13 @@ public class EmptyBottle : MonoBehaviour
 
         for (int i = 0; i < _updateItemDatas.Length; i++)
         {
-            Item_ScrObj updateItem = _updateItemDatas[i].TargetTilePlaced_UpdateItem(useTile);
-            if (updateItem == null) continue;
+            ItemData fillItemData = _updateItemDatas[i].TargetTilePlaced_UpdateItemData(useTile, null);
+            if (fillItemData == null) continue;
 
             ItemCursor itemCursor = InGame_Manager.instance.cursor.itemCursor;
+            Item_ScrObj fillItem = fillItemData.itemScrObj;
 
-            itemCursor.Set_Data(new(updateItem, updateItem.maxAmount));
+            itemCursor.Set_Data(new(fillItem, fillItem.maxAmount));
             itemCursor.Update_Visuals();
 
             return;

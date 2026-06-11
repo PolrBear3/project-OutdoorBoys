@@ -10,24 +10,24 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 069327ba6dded4f16af0714f2c328413, type: 3}
-  m_Name: Animal Trap
+  m_Name: Animal Pelt
   m_EditorClassIdentifier: 
-  _inventorySprite: {fileID: -1361509600, guid: bf7ece83f843c4c35977c02f8c40d92d, type: 3}
+  _inventorySprite: {fileID: -1742208201, guid: bf7ece83f843c4c35977c02f8c40d92d, type: 3}
   _placedSprite: {fileID: 0}
-  _microSprite: {fileID: -767490444, guid: bf7ece83f843c4c35977c02f8c40d92d, type: 3}
-  _itemName: Animal Trap
-  _description: 
+  _microSprite: {fileID: -1132053118, guid: bf7ece83f843c4c35977c02f8c40d92d, type: 3}
+  _itemName: Animal Pelt
+  _description: A piece of fur from a deceased animal
   _itemType: 0
-  _itemPrefab: {fileID: 3637228250238346253, guid: 2bc4ff21ecd184446983d642708a9ab1, type: 3}
+  _itemPrefab: {fileID: 3637228250238346253, guid: 657360494c481422c801a61042b6d908, type: 3}
   _offsetData:
-  - _position: {x: 0, y: -0.2}
+  - _position: {x: 0, y: 0.55}
     _rotationValue: 0
-  - _position: {x: -0.1, y: -0.1}
+  - _position: {x: -0.25, y: 0.55}
     _rotationValue: 0
-  - _position: {x: 0.1, y: -0.3}
+  - _position: {x: 0.25, y: 0.55}
     _rotationValue: 0
-  _maxAmount: 1
-  _itemWeight: 3
+  _maxAmount: 20
+  _itemWeight: 0
   _triggerRange: 0
   _coolTime: 0
   _discoverTimeRangeData:
@@ -36,10 +36,7 @@ MonoBehaviour:
     _restrictTime: 0
     _minTimeCount: 0
     _maxTimeCount: 0
-  _placeRestrictions:
-  - {fileID: 11400000, guid: ce54e4e0d72924f0c9ece991976d94f8, type: 2}
+  _placeRestrictions: []
   _selectRestrictions: []
-  _itemIngredientDatas:
-  - _itemScrObj: {fileID: 11400000, guid: cea7459d8010d4a229cb42a2a5b65381, type: 2}
-    _amount: 10
+  _itemIngredientDatas: []
   _craftRequiredPlacedItemDatas: []

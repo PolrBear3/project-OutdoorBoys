@@ -18,7 +18,7 @@ MonoBehaviour:
   _itemName: Soil
   _description: 
   _itemType: 0
-  _itemPrefab: {fileID: 3637228250238346253, guid: 657360494c481422c801a61042b6d908, type: 3}
+  _itemPrefab: {fileID: 3637228250238346253, guid: 031e772aa53de4b3ea8167eb8bc8d780, type: 3}
   _offsetData:
   - _position: {x: 0, y: 0.5}
     _rotationValue: 0

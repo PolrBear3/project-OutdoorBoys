@@ -76,17 +76,17 @@ public class Shovel : MonoBehaviour
     private Shovel_DigUpdateData WeightRandom_DigUpdateData(Tile targetTile, Shovel_DigUpdateData[] digUpdateDatas)
     {
         List<Shovel_DigUpdateData> targetTileUpdateDatas = new();
+        List<Tile> surroundingTiles = TilePatterns_Utility.PivotDistanced_Tiles(targetTile, 1);
 
         for (int i = 0; i < digUpdateDatas.Length; i++)
         {
             Shovel_DigUpdateData digUpdateData = digUpdateDatas[i];
+
             TileUpdate_ItemData digItemData = digUpdateData.tileDigItemData;
+            if (digItemData.Update_ItemData().itemScrObj.discoverTimeRangeData.CurrentDayTime_InRange() == false) continue;
 
-            if (targetTile.data.tileScrObj != digItemData.tile) continue;
-            if (digItemData.updateItem.discoverTimeRangeData.CurrentDayTime_InRange() == false) continue;
-
-            List<Tile> surroundingTiles = TilePatterns_Utility.PivotDistanced_Tiles(targetTile, 1);
-            if (digItemData.CustomTiles_ItemsPlaced(surroundingTiles) == false) continue;
+            ItemData dataToAdd = digItemData.TargetTilePlaced_UpdateItemData(targetTile, surroundingTiles);
+            if (dataToAdd == null) continue;
 
             targetTileUpdateDatas.Add(digUpdateData);
         }
@@ -119,10 +119,10 @@ public class Shovel : MonoBehaviour
         Shovel_DigUpdateData digItemData = WeightRandom_DigUpdateData(targetTile, digItemDatas);
         if (digItemData == null) return;
 
-        Item_ScrObj digUpdateItem = digItemData.tileDigItemData.TargetTilePlaced_UpdateItem(targetTile);
-        if (digUpdateItem == null) return;
+        ItemData digUpdateItemData = digItemData.tileDigItemData.Update_ItemData();
+        if (digUpdateItemData == null) return;
 
-        targetTile.Set_PlacingItem(new(digUpdateItem, 1));
+        targetTile.Set_Item(digUpdateItemData);
         _useableItem.Update_UseAmount(1);
     }
 }

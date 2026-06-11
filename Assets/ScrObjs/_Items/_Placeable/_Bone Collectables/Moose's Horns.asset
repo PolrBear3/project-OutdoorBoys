@@ -16,7 +16,7 @@ MonoBehaviour:
   _placedSprite: {fileID: 0}
   _microSprite: {fileID: -2079565065, guid: bf7ece83f843c4c35977c02f8c40d92d, type: 3}
   _itemName: Moose's Horns
-  _description: 
+  _description: Horn can be found on soil
   _itemType: 0
   _itemPrefab: {fileID: 3637228250238346253, guid: 657360494c481422c801a61042b6d908, type: 3}
   _offsetData:
@@ -40,4 +40,4 @@ MonoBehaviour:
   _selectRestrictions: []
   _itemIngredientDatas: []
   _craftRequiredPlacedItemDatas: []
-  _customSlotSprite: {fileID: 0}
+  _collectedDescription: Horn, collected

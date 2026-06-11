@@ -153,6 +153,7 @@ public class Inventory_Manager : MonoBehaviour, IItemsSource, IItemsSourceRemove
         itemCursor.OnSetData += Toggle_Update;
         itemCursor.OnItemReturn += Toggle_Update;
 
+
         Toggle_ItemInfoPanel();
     }
 

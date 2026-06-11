@@ -69,13 +69,27 @@ public class TileUpdate_ItemData
     [SerializeField] private ItemData[] _customTilesItemDatas;
 
     [Space(10)]
-    [SerializeField] private Item_ScrObj _updateItem;
-    public Item_ScrObj updateItem => _updateItem;
+    [SerializeField] private ItemData _updateItemData;
 
 
-    public bool CustomTiles_ItemsPlaced(List<Tile> customTiles)
+    private bool TargetTile_ItemsPlaced(Tile targetTile)
+    {
+        if (targetTile == null) return false;
+        if (_placedItemDatas.Length <= 0) return true;
+
+        for (int i = 0; i < _placedItemDatas.Length; i++)
+        {
+            ItemData checkData = _placedItemDatas[i];
+            int placedCount = targetTile.Placed_ItemCount(checkData.itemScrObj);
+
+            if (placedCount < Mathf.Max(1, checkData.amount)) return false;
+        }
+        return true;
+    }
+    private bool CustomTiles_ItemsPlaced(List<Tile> customTiles)
     {
         if (_customTilesItemDatas.Length <= 0) return true;
+        if (customTiles == null) return false;
 
         for (int i = 0; i < _customTilesItemDatas.Length; i++)
         {
@@ -92,25 +106,32 @@ public class TileUpdate_ItemData
         return true;
     }
 
-    private bool TargetTile_ItemsPlaced(Tile targetTile)
+    public bool UpdateTile_Match(Tile targetTile)
     {
-        if (_placedItemDatas.Length <= 0) return true;
+        if (targetTile == null) return false;
+        if (_tile != null && _tile != targetTile.data.tileScrObj) return false;
 
-        for (int i = 0; i < _placedItemDatas.Length; i++)
-        {
-            ItemData checkData = _placedItemDatas[i];
-            int placedCount = targetTile.Placed_ItemCount(checkData.itemScrObj);
-
-            if (placedCount < Mathf.Max(1, checkData.amount)) return false;
-        }
         return true;
     }
-    public Item_ScrObj TargetTilePlaced_UpdateItem(Tile targetTile)
+    public bool AllTiles_ItemsPlaced(Tile targetTile, List<Tile> customCheckTiles)
     {
-        if (targetTile == null) return null;
-        if (_tile != null && _tile != targetTile.data.tileScrObj) return null;
+        if (TargetTile_ItemsPlaced(targetTile) == false) return false;
+        if (CustomTiles_ItemsPlaced(customCheckTiles) == false) return false;
 
-        if (TargetTile_ItemsPlaced(targetTile) == false) return null;
-        return _updateItem;
+        return true;
+    }
+
+    public ItemData Update_ItemData()
+    {
+        if (_updateItemData.itemScrObj == null) return null;
+
+        return new(_updateItemData.itemScrObj, Mathf.Max(1, _updateItemData.amount));
+    }
+    public ItemData TargetTilePlaced_UpdateItemData(Tile targetTile, List<Tile> customCheckTiles)
+    {
+        if (UpdateTile_Match(targetTile) == false) return null;
+        if (AllTiles_ItemsPlaced(targetTile, customCheckTiles) == false) return null;
+
+        return Update_ItemData();
     }
 }
