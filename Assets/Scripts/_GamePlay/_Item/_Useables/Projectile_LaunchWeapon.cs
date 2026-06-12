@@ -99,7 +99,6 @@ public class Projectile_LaunchWeapon : MonoBehaviour
 
         for (int i = 0; i < tilePrefabs.Count; i++)
         {
-            if (Obstacle_Blocked(damageTile)) break;
             if (tilePrefabs[i].TryGetComponent(out IDamageable damageable) == false) continue;
             if (damageable.InflictDamage(_damageValue) <= 0) continue;
 

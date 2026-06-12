@@ -235,6 +235,8 @@ MonoBehaviour:
   _deceasedDropItems:
   - _itemScrObj: {fileID: 11400000, guid: fba43ae9d93594cddbc2a132e3fd3b95, type: 2}
     _amount: 10
+  - _itemScrObj: {fileID: 11400000, guid: b55193dead1994612860b162ab6ac5a7, type: 2}
+    _amount: 10
   _onTimeCountActions:
   - {fileID: 5207438988470028086}
   - {fileID: 2603584078956696937}

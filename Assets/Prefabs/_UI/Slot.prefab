@@ -180,6 +180,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _eventPointer: {fileID: 5788690733077887148}
+  _slotImage: {fileID: 2360034919108439778}
   _itemImage: {fileID: 8068391383958225083}
   _amountText: {fileID: 4575078906471977968}
   _durabilityBar: {fileID: 1934676786381883347}

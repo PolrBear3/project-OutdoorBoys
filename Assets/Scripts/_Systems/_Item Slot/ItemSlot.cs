@@ -10,6 +10,9 @@ public class ItemSlot : MonoBehaviour
     [SerializeField] EventPointer _eventPointer;
 
     [Space(20)]
+    [SerializeField] private Image _slotImage;
+    public Image slotImage => _slotImage;
+
     [SerializeField] private Image _itemImage;
     public Image itemImage => _itemImage;
 
@@ -20,6 +23,9 @@ public class ItemSlot : MonoBehaviour
 
 
     private ItemSlot_Manager _slotManager;
+
+    private Sprite _defaultSlotSprite;
+    public Sprite defaultSlotSprite => _defaultSlotSprite;
 
     private ItemData _data;
     public ItemData data => _data;
@@ -47,6 +53,8 @@ public class ItemSlot : MonoBehaviour
     {
         _eventPointer.OnEnter += UpdateManager_HoveringSlot;
         _eventPointer.OnExit += UpdateManager_HoveringSlot;
+
+        _defaultSlotSprite = _slotImage.sprite;
     }
     public void Set_Data(ItemSlot_Manager setManager)
     {

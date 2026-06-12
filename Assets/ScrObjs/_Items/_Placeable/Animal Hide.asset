@@ -18,13 +18,13 @@ MonoBehaviour:
   _itemName: Animal Hide
   _description: A crafted hide made from animal pelts. Keeps the player warm
   _itemType: 0
-  _itemPrefab: {fileID: 3637228250238346253, guid: 657360494c481422c801a61042b6d908, type: 3}
+  _itemPrefab: {fileID: 3637228250238346253, guid: bb904bb218b1b4be8addf4ceedb36170, type: 3}
   _offsetData:
   - _position: {x: 0, y: -0.06}
     _rotationValue: 0
-  - _position: {x: 0.1, y: -0.06}
+  - _position: {x: 0, y: -0.06}
     _rotationValue: 0
-  - _position: {x: -0.1, y: -0.06}
+  - _position: {x: 0, y: 0.19}
     _rotationValue: 0
   _maxAmount: 1
   _itemWeight: 1

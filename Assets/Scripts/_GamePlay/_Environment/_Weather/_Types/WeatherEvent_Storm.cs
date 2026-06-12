@@ -49,7 +49,7 @@ public class WeatherEvent_Storm : WeatherEvent
     public override void Activate_Event()
     {
         Update_TileStates();
-        Update_PlayerData();
+        Update_PlayerState();
 
         RemoveUpdate_ProtectItems();
         PositionUpdate_PlacedItems();
@@ -57,17 +57,25 @@ public class WeatherEvent_Storm : WeatherEvent
 
 
     // Custom Activations
-    private void Update_PlayerData()
+    private void Update_PlayerState()
     {
-        _passivePlayerDataModifier.Update_Data();
+        InGame_Manager manager = InGame_Manager.instance;
 
-        Tile playerTile = InGame_Manager.instance.player.movement.tileTracker.data.CurrentTile();
+        TileTracker playerTracker = manager.player.movement.tileTracker;
+        Tile playerTile = playerTracker.data.CurrentTile();
+
+        _passivePlayerDataModifier.Update_Data();
 
         for (int i = 0; i < _protectItems.Length; i++)
         {
             if (playerTile.Placed_ItemCount(_protectItems[i]) > 0) return;
         }
         playerDataModifier.Update_Data();
+
+        Tile updateTile = manager.tilesController.Current_Tile((Vector2)playerTile.transform.position + _positionUpdateDirection);
+
+        playerTracker.TrackUpdate_CurrentTile(updateTile);
+        playerTracker.Clamp_toCurrentTile();
     }
     
     private void RemoveUpdate_ProtectItems()

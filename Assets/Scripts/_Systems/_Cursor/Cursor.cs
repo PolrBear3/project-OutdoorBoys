@@ -14,7 +14,7 @@ public class Cursor : MonoBehaviour
 
     [SerializeField] private RectTransform _rect;
 
-    [Space(20)]
+    [Space(10)]
     [SerializeField] private PanelToggle_AnimationController _cursorImageController;
     [SerializeField] private Image _cursorImage;
 
@@ -29,13 +29,27 @@ public class Cursor : MonoBehaviour
     [SerializeField] private Sprite _defaultPointerSprite;
     [SerializeField] private Sprite _pressedPointerSprite;
 
-    [Space(20)]
+    [Space(40)]
     [SerializeField] private PanelToggle_AnimationController _hoverInfoToggleController;
-    [SerializeField] private ItemSlot_Manager _placedItemsSlotManager;
+    [SerializeField] private float _verticalFlipOffset;
 
     [Space(10)]
-    [SerializeField] private GameObject _tileStateSlotsGroup;
+    [SerializeField] private ItemSlot_Manager _placedItemsSlotManager;
+    [SerializeField] private Sprite _placedItemsSynergizedSlotSprite;
+
+    [Space(10)]
+    [SerializeField] private VerticalLayoutGroup _synergyDescriptionGroup;
+    private int _synergyDescriptionBottomSpace;
+
+    [SerializeField] private TextMeshProUGUI _synergyDescriptionText;
+
+    [Space(10)]
+    [SerializeField] private GridLayoutGroup _tileStateSlotsGroup;
     [SerializeField] private TileState_IndicationSlot[] _tileStateSlots;
+
+    [Space(10)]
+    [SerializeField] private GameObject _preservedItemsGroup;
+    [SerializeField] private Image[] _preservedItemIcons;
 
 
     private bool _pointerVisible;
@@ -96,6 +110,8 @@ public class Cursor : MonoBehaviour
         tilesController.OnTileItemsUpdate += Update_HoverInfoPanel;
         tilesController.OnTilesStatesTimeCount += Toggle_HoverInfoPanel;
 
+
+        _synergyDescriptionBottomSpace = _synergyDescriptionGroup.padding.bottom;
         Toggle_HoverInfoPanel(_pointingTile);
     }
 
@@ -165,21 +181,71 @@ public class Cursor : MonoBehaviour
     }
 
 
+    // Tile Hover Info Panel
+    private void UpdatePivotPosition_HoverInfoPanel()
+    {
+        RectTransform panel = _hoverInfoToggleController.togglePanel;
+        Vector2 pivot = panel.pivot;
+
+        bool flipHorizontal = transform.position.x < Screen.width * 0.5f;
+        bool flipVertical = transform.position.y < Screen.height * 0.5f;
+
+        float absPosx = Mathf.Abs(panel.anchoredPosition.x);
+        float posX = flipHorizontal ? absPosx : -absPosx;
+
+        float posY = flipVertical ? _verticalFlipOffset : 0;
+        float pivotY = flipVertical ? 0f : 1f;
+
+        panel.anchoredPosition = new Vector2(posX, posY);
+
+        pivot.y = pivotY;
+        panel.pivot = pivot;
+    }
+
     private void Toggle_HoverInfoPanel(Tile hoveringTile)
     {
-        Dictionary<TileState, int> stateDatas = hoveringTile != null ? new(hoveringTile.data.stateDatas) : new();
-        bool hasStateData = stateDatas.Count > 0;
+        bool hasState = Update_TileStates(hoveringTile);
+        bool hasItem = Update_PlacedItems(hoveringTile);
 
-        List<ItemData> placedItemDatas = hoveringTile != null ? new(hoveringTile.Placed_ItemDatas()) : new();
-        int placedItemCount = placedItemDatas.Count;
-
-        bool togglePanel = hoveringTile != null && hasStateData || placedItemCount > 0;
+        bool togglePanel = hasItem || hasState;
         _hoverInfoToggleController.Toggle(togglePanel);
 
         if (togglePanel == false) return;
 
-        // tile states
-        _tileStateSlotsGroup.SetActive(hasStateData);
+        UpdatePivotPosition_HoverInfoPanel();
+
+        Update_PreservedItems(hoveringTile);
+        Update_SynergyDescription(hoveringTile);
+    }
+    private void Toggle_HoverInfoPanel()
+    {
+        if (_pointingTile == null || _pointingTile.pointer.pointerHoldCoroutine != null) return;
+
+        Toggle_HoverInfoPanel(_pointingTile);
+    }
+
+    private void Update_HoverInfoPanel(Tile updateTile)
+    {
+        if (_pointingTile != updateTile) return;
+
+        Toggle_HoverInfoPanel();
+    }
+
+
+    private bool Update_TileStates(Tile tile)
+    {
+        if (tile == null) return false;
+        
+        Dictionary<TileState, int> stateDatas = new(tile.data.stateDatas);
+        bool hasStateData = stateDatas.Count > 0;
+
+        _tileStateSlotsGroup.gameObject.SetActive(hasStateData);
+        if (hasStateData == false) return false;
+
+        RectOffset tileStatesPadding = _tileStateSlotsGroup.padding;
+
+        tileStatesPadding.bottom = tile.Placed_ItemDatas().Count > 0 ? 0 : tileStatesPadding.top;
+        _tileStateSlotsGroup.padding = tileStatesPadding;
 
         foreach (TileState_IndicationSlot slot in _tileStateSlots)
         {
@@ -204,30 +270,73 @@ public class Cursor : MonoBehaviour
             stateSlotsIndex++;
         }
 
-        // placed items
-        _placedItemsSlotManager.gameObject.SetActive(placedItemCount > 0);
-        _placedItemsSlotManager.Clear_Datas();
+        return true;
+    }
 
+    private bool Update_PlacedItems(Tile tile)
+    {
+        if (tile == null) return false;
+
+        List<ItemData> placedItemDatas = tile.Placed_ItemDatas();
+        bool itemPlaced = placedItemDatas.Count > 0;
+
+        _placedItemsSlotManager.gameObject.SetActive(itemPlaced);
+        if (itemPlaced == false) return false;
+
+        _placedItemsSlotManager.Clear_Datas();
         List<ItemSlot> itemSlots = _placedItemsSlotManager.slots;
 
-        for (int i = 0; i < placedItemCount; i++)
+        bool synergyActive = true; // ?
+
+        for (int i = 0; i < placedItemDatas.Count; i++)
         {
             if (i + 1 > itemSlots.Count) break;
-            itemSlots[i].Set_Data(placedItemDatas[i]);
+            ItemSlot slot = itemSlots[i];
+
+            slot.Set_Data(placedItemDatas[i]);
+            slot.slotImage.sprite = synergyActive ? _placedItemsSynergizedSlotSprite : slot.defaultSlotSprite;
         }
         _placedItemsSlotManager.Update_Visuals();
+
+        return true;
     }
-    private void Toggle_HoverInfoPanel()
+    private void Update_PreservedItems(Tile tile)
     {
-        if (_pointingTile == null || _pointingTile.pointer.pointerHoldCoroutine != null) return;
+        if (tile == null) return;
 
-        Toggle_HoverInfoPanel(_pointingTile);
+        List<ItemData> preservedDatas = new(tile.data.preservedItemDatas);
+        bool hasPreservedItems = preservedDatas.Count > 0;
+
+        _preservedItemsGroup.SetActive(hasPreservedItems);
+        if (hasPreservedItems == false) return;
+
+        for (int i = 0; i < _preservedItemIcons.Length; i++)
+        {
+            _preservedItemIcons[i].gameObject.SetActive(false);
+        }
+        for (int i = 0; i < preservedDatas.Count; i++)
+        {
+            if (i >= _preservedItemIcons.Length) break;
+            Image preservedIcon = _preservedItemIcons[i];
+
+            preservedIcon.sprite = preservedDatas[i].itemScrObj.microSprite;
+            preservedIcon.gameObject.SetActive(true);
+        }
     }
 
-    private void Update_HoverInfoPanel(Tile updateTile)
+    private void Update_SynergyDescription(Tile tile)
     {
-        if (_pointingTile != updateTile) return;
+        if (tile == null) return;
 
-        Toggle_HoverInfoPanel();
+        List<ItemData> placedItemDatas = new(tile.Placed_ItemDatas());
+        bool itemPlaced = placedItemDatas.Count > 0;
+
+        _synergyDescriptionGroup.gameObject.SetActive(itemPlaced);
+        if (itemPlaced == false) return;
+
+        RectOffset synergyPadding = _synergyDescriptionGroup.padding;
+
+        synergyPadding.bottom = tile.data.preservedItemDatas.Count > 0 ? _synergyDescriptionBottomSpace : 0;
+        _synergyDescriptionGroup.padding = synergyPadding;
     }
 }
