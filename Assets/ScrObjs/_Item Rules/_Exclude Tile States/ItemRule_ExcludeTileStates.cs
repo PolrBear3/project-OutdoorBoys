@@ -12,7 +12,12 @@ public class ItemRule_ExcludeTileStates : ItemRule_ScrObj
     {
         for (int i = 0; i < _excludeStates.Length; i++)
         {
-            if (targetTile.data.stateDatas.ContainsKey(_excludeStates[i])) return false;
+            List<TileState_Data> tileStateDatas = new(targetTile.data.stateDatas);
+
+            for (int j = 0; j < tileStateDatas.Count; j++)
+            {
+                if (_excludeStates[i] == tileStateDatas[j].tileState) return false;
+            }
         }
         return true;
     }

@@ -12,7 +12,7 @@ public class WeatherEvent_Rain : WeatherEvent
     public override string Description()
     {
         return base.Description()
-            .Replace("{temperatureUpdateValue}", playerDataModifier.temperatureUpdateValue.ToString());
+            .Replace("{temperatureUpdateValue}", playerDataModifier.modifyData.temperatureUpdateValue.ToString());
     }
 
 

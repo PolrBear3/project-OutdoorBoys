@@ -45,6 +45,9 @@ public class InGame_Manager : MonoBehaviour
     [SerializeField] private Reward_Manager _reward;
     public Reward_Manager reward => _reward;
 
+    [SerializeField] private ItemSynergy_Manager _itemSynergy;
+    public ItemSynergy_Manager itemSynergy => _itemSynergy;
+
     [SerializeField] private Weather_Manager _weather;
     public Weather_Manager weather => _weather;
 

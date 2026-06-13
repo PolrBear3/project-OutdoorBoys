@@ -2,9 +2,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PlayerData_Modifier : MonoBehaviour
+[System.Serializable]
+public class PlayerData_ModifierData
 {
-    [Space(20)]
     [SerializeField][Range(-100, 100)] private int _healthUpdateValue;
     public int healthUpdateValue => _healthUpdateValue;
 
@@ -16,16 +16,26 @@ public class PlayerData_Modifier : MonoBehaviour
 
     [SerializeField][Range(-100, 100)] private int _staminaUpdateValue;
     public int staminaUpdateValue => _staminaUpdateValue;
+}
 
+public class PlayerData_Modifier : MonoBehaviour
+{
+    [Space(20)] 
+    [SerializeField] private PlayerData_ModifierData _modityData;
+    public PlayerData_ModifierData modifyData => _modityData;
 
-    public void Update_Data()
+    public void Update_Data(PlayerData_ModifierData updateData)
     {
         Player_Controller player = InGame_Manager.instance.player;
         PlayerData data = player.data;
 
-        player.Update_Health(data.health + _healthUpdateValue);
-        player.Update_Hunger(data.hunger + _hungerUpdateValue);
-        player.Update_Temperature(data.temperature + _temperatureUpdateValue);
-        player.Update_Stamina(data.stamina + _staminaUpdateValue);
+        player.Update_Health(data.health + updateData.healthUpdateValue);
+        player.Update_Hunger(data.hunger + updateData.hungerUpdateValue);
+        player.Update_Temperature(data.temperature + updateData.temperatureUpdateValue);
+        player.Update_Stamina(data.stamina + updateData.staminaUpdateValue);
+    }
+    public void Update_Data()
+    {
+        Update_Data(_modityData);
     }
 }

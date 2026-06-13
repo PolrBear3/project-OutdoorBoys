@@ -1,9 +1,31 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public enum TileType { softGround, harshGround }
 public enum TileState { frozen, wet, warm, hot }
+
+[System.Serializable]
+public class TileState_Data
+{
+    [SerializeField] private TileState _tileState;
+    public TileState tileState => _tileState;
+
+    [SerializeField] private int _updateCount;
+    public int updateCount => _updateCount;
+
+    public TileState_Data(TileState state, int setCount)
+    {
+        _tileState = state;
+        _updateCount = setCount;
+    }
+
+    public void Update_Count(int updateCount)
+    {
+        _updateCount = updateCount;
+    }
+}
 
 [System.Serializable]
 public class TileState_VisualData
@@ -24,8 +46,8 @@ public class TileData
     /// <summary>
     /// State + Time Count
     /// </summary>
-    private Dictionary<TileState, int> _stateDatas = new();
-    public Dictionary<TileState, int> stateDatas => _stateDatas;
+    private List<TileState_Data> _stateDatas = new();
+    public List<TileState_Data> stateDatas => _stateDatas;
 
     private List<ItemData> _placedItemDatas = new();
     public List<ItemData> placedItemDatas => _placedItemDatas;
@@ -42,35 +64,53 @@ public class TileData
 
 
     // State Data
+    public void Add_StateData(TileState_Data addData)
+    {
+        TileState addState = addData.tileState;
+
+        for (int i = 0; i < _stateDatas.Count; i++)
+        {
+            TileState_Data data = _stateDatas[i];
+
+            if (addState != data.tileState) continue;
+            data.Update_Count(addData.updateCount);
+
+            return;
+        }
+        _stateDatas.Add(new(addState, addData.updateCount));
+    }
+    public void Remove_StateData(TileState removeState)
+    {
+        for (int i = 0; i < _stateDatas.Count; i++)
+        {
+            if (removeState != _stateDatas[i].tileState) continue;
+
+            _stateDatas.RemoveAt(i);
+            return;
+        }
+    }
+
     private void Remove_EmptyTimeStates()
     {
-        List<TileState> statesToRemove = new();
+        for (int i = _stateDatas.Count - 1; i >= 0 ; i--)
+        {
+            TileState_Data data = _stateDatas[i];
 
-        foreach (var data in stateDatas)
-        {
-            TileState state = data.Key;
-            if (_tileScrObj.Is_StaticState(state)) continue;
-            
-            if (data.Value > 0) continue;
-            statesToRemove.Add(state);
-        }
-        foreach (TileState state in statesToRemove)
-        {
-            _stateDatas.Remove(state);
+            if (_tileScrObj.Is_StaticState(data.tileState)) continue;
+            if (data.updateCount > 0) continue;
+
+            _stateDatas.RemoveAt(i);
         }
     }
     public void Decrease_StateDatas()
     {
-        List<TileState> currentStates = new(_stateDatas.Keys);
-
-        for (int i = 0; i < currentStates.Count; i++)
+        for (int i = _stateDatas.Count - 1; i >= 0; i--)
         {
-            TileState state = currentStates[i];
+            TileState_Data data = _stateDatas[i];
 
-            if (_tileScrObj.Is_StaticState(state)) continue;
-            _stateDatas[state]--;
+            if (_tileScrObj.Is_StaticState(data.tileState)) continue;
+            data.Update_Count(data.updateCount - 1);
         }
-
         Remove_EmptyTimeStates();
     }
 

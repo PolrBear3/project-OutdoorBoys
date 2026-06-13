@@ -158,7 +158,7 @@ public class Tile : MonoBehaviour
 
         foreach (TileState state in staticStates)
         {
-            _data.stateDatas[state] = _stateSetTime;
+            _data.stateDatas.Add(new(state, _stateSetTime));
         }
     }
 
@@ -166,7 +166,7 @@ public class Tile : MonoBehaviour
     {
         if (_data.tileScrObj.Is_StaticState(stateToAdd) == false)
         {
-            _data.stateDatas[stateToAdd] = _stateSetTime + 1;
+            _data.Add_StateData(new(stateToAdd, _stateSetTime + 1));
         }
         OnStateUpdate?.Invoke(stateToAdd, true);
     }
@@ -174,7 +174,7 @@ public class Tile : MonoBehaviour
     {
         if (_data.tileScrObj.Is_StaticState(stateToRemove) == false)
         {
-            _data.stateDatas.Remove(stateToRemove);
+            _data.Remove_StateData(stateToRemove);
         }
         OnStateUpdate?.Invoke(stateToRemove, false);
     }

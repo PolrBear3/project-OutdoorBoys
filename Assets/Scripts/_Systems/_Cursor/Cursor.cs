@@ -236,7 +236,7 @@ public class Cursor : MonoBehaviour
     {
         if (tile == null) return false;
         
-        Dictionary<TileState, int> stateDatas = new(tile.data.stateDatas);
+        List<TileState_Data> stateDatas = new(tile.data.stateDatas);
         bool hasStateData = stateDatas.Count > 0;
 
         _tileStateSlotsGroup.gameObject.SetActive(hasStateData);
@@ -260,12 +260,12 @@ public class Cursor : MonoBehaviour
             if (stateSlotsIndex >= _tileStateSlots.Length) break;
 
             TileState_IndicationSlot stateSlot = _tileStateSlots[stateSlotsIndex];
-            Sprite stateSprite = tilesController.TileState_VisualSprite(data.Key);
+            Sprite stateSprite = tilesController.TileState_VisualSprite(data.tileState);
 
             stateSlot.gameObject.SetActive(stateSprite != null);
 
             stateSlot.stateIcon.sprite = stateSprite;
-            stateSlot.timeCountText.text = "<sprite=0> " + data.Value;
+            stateSlot.timeCountText.text = "<sprite=0> " + data.updateCount;
 
             stateSlotsIndex++;
         }
@@ -286,7 +286,7 @@ public class Cursor : MonoBehaviour
         _placedItemsSlotManager.Clear_Datas();
         List<ItemSlot> itemSlots = _placedItemsSlotManager.slots;
 
-        bool synergyActive = true; // ?
+        bool synergyActive = false; // ?
 
         for (int i = 0; i < placedItemDatas.Count; i++)
         {
@@ -331,7 +331,9 @@ public class Cursor : MonoBehaviour
         List<ItemData> placedItemDatas = new(tile.Placed_ItemDatas());
         bool itemPlaced = placedItemDatas.Count > 0;
 
-        _synergyDescriptionGroup.gameObject.SetActive(itemPlaced);
+        bool synergyActive = false; // ?
+
+        _synergyDescriptionGroup.gameObject.SetActive(itemPlaced && synergyActive);
         if (itemPlaced == false) return;
 
         RectOffset synergyPadding = _synergyDescriptionGroup.padding;

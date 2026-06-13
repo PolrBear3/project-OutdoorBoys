@@ -60,6 +60,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _useableItem: {fileID: 2873364016420352242}
   _playerDataModifier: {fileID: 4865699342732044563}
+  _coolTimeDecreaseValue: 0
+  _timeCountDuration: 0
 --- !u!114 &4865699342732044563
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -76,3 +78,8 @@ MonoBehaviour:
   _hungerUpdateValue: 1
   _temperatureUpdateValue: 0
   _staminaUpdateValue: 0
+  _modityData:
+    _healthUpdateValue: 0
+    _hungerUpdateValue: 1
+    _temperatureUpdateValue: 0
+    _staminaUpdateValue: 0

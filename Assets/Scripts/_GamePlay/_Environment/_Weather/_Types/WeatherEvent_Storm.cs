@@ -31,8 +31,8 @@ public class WeatherEvent_Storm : WeatherEvent
     public override string Description()
     {
         return base.Description()
-            .Replace("{preTemperatureUpdateValue}", _passivePlayerDataModifier.temperatureUpdateValue.ToString())
-            .Replace("{temperatureUpdateValue}", playerDataModifier.temperatureUpdateValue.ToString())
+            .Replace("{preTemperatureUpdateValue}", _passivePlayerDataModifier.modifyData.temperatureUpdateValue.ToString())
+            .Replace("{temperatureUpdateValue}", playerDataModifier.modifyData.temperatureUpdateValue.ToString())
             .Replace("{positionUpdateDirection}", _positionUpdateDirection.ToString());
     }
 

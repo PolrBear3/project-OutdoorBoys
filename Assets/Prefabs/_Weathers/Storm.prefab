@@ -46,10 +46,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 35c7424dbeac047f995e29434a07a8e5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _healthUpdateValue: -5
-  _hungerUpdateValue: 0
-  _temperatureUpdateValue: -5
-  _staminaUpdateValue: -5
+  _modityData:
+    _healthUpdateValue: 0
+    _hungerUpdateValue: 0
+    _temperatureUpdateValue: -3
+    _staminaUpdateValue: 0
 --- !u!114 &8042987143684252783
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -62,10 +63,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 35c7424dbeac047f995e29434a07a8e5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _healthUpdateValue: 0
-  _hungerUpdateValue: 0
-  _temperatureUpdateValue: -2
-  _staminaUpdateValue: 0
+  _modityData:
+    _healthUpdateValue: -3
+    _hungerUpdateValue: 0
+    _temperatureUpdateValue: -5
+    _staminaUpdateValue: 0
 --- !u!114 &-6105739805433686834
 MonoBehaviour:
   m_ObjectHideFlags: 0

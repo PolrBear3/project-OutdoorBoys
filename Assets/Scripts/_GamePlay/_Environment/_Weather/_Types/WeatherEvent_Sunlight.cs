@@ -13,7 +13,7 @@ public class WeatherEvent_Sunlight : WeatherEvent
     {
         return base.Description()
             .Replace("{activationRange}", _activationRange.ToString())
-            .Replace("{temperatureUpdateValue}", playerDataModifier.temperatureUpdateValue.ToString());
+            .Replace("{temperatureUpdateValue}", playerDataModifier.modifyData.temperatureUpdateValue.ToString());
     }
 
 
