@@ -24,9 +24,10 @@ public class ItemCursor : MonoBehaviour, IItemsSource, IItemsSourceRemove, IItem
 
     public Action OnSetData;
     public Action OnItemReturn;
+    public Action<Tile> OnItemUse;
 
     private Coroutine _useItemCoolTimeCoroutine;
-    
+
 
     // MonoBehaviour
     private void Awake()
@@ -125,7 +126,7 @@ public class ItemCursor : MonoBehaviour, IItemsSource, IItemsSourceRemove, IItem
     private void Set_Data()
     {
         OnSetData += Toggle_CoolTimeBar;
-       
+
         Tiles_Controller tilesController = InGame_Manager.instance.tilesController;
 
         tilesController.OnTargetTileSelect += Place_AllItem;
@@ -305,7 +306,7 @@ public class ItemCursor : MonoBehaviour, IItemsSource, IItemsSourceRemove, IItem
         }
 
         if (selectTile.Set_PlacingItem(new(_data.itemScrObj, 1)) != null) return;
-        
+
         _data.Update_CurrentAmount(_data.amount - 1);
         OnSetData?.Invoke();
 
@@ -353,25 +354,6 @@ public class ItemCursor : MonoBehaviour, IItemsSource, IItemsSourceRemove, IItem
         useItem.Set_Data(_data);
     }
 
-    private void Track_UseItemHistory(Item_ScrObj useItem)
-    {
-        int dataCount = _usedItemHistoryDatas.Count;
-
-        ItemData recentData = dataCount > 0
-            ? _usedItemHistoryDatas[dataCount - 1]
-            : null;
-
-        if (recentData != null && recentData.itemScrObj == useItem)
-        {
-            recentData.Update_CurrentAmount(recentData.amount + 1);
-            return;
-        }
-        _usedItemHistoryDatas.Add(new(useItem, 1));
-
-        if (_usedItemHistoryDatas.Count <= _usedItemHistoryDataCount) return;
-        _usedItemHistoryDatas.RemoveAt(0);
-    }
-    
     private void Use_Item(Tile selectTile)
     {
         if (_itemPickupFlag == Time.frameCount) return;
@@ -384,13 +366,15 @@ public class ItemCursor : MonoBehaviour, IItemsSource, IItemsSourceRemove, IItem
         if (player.data.stamina <= 0) return;
 
         GameObject currentUseItem = player.interaction.currentItemPrefab;
-        
+
         if (currentUseItem.TryGetComponent(out UseableItem useItem) == false) return;
         if (_useItemCoolTimeCoroutine != null) return;
         if (useItem.CanUse?.Invoke(selectTile) == false) return;
-        
+
         useItem.OnUse?.Invoke(selectTile);
+
         Track_UseItemHistory(currentItem);
+        OnItemUse?.Invoke(selectTile);
 
         float calculatedCoolTime = Mathf.Max(0, useItem.data.itemScrObj.coolTime - player.data.Total_CoolTimeDecreaseValue());
 
@@ -415,6 +399,33 @@ public class ItemCursor : MonoBehaviour, IItemsSource, IItemsSourceRemove, IItem
 
         _useItemCoolTimeCoroutine = null;
         Toggle_CoolTimeBar();
+    }
+
+    private void Track_UseItemHistory(Item_ScrObj useItem)
+    {
+        int dataCount = _usedItemHistoryDatas.Count;
+
+        ItemData recentData = dataCount > 0
+            ? _usedItemHistoryDatas[dataCount - 1]
+            : null;
+
+        if (recentData != null && recentData.itemScrObj == useItem)
+        {
+            recentData.Update_CurrentAmount(recentData.amount + 1);
+            return;
+        }
+        _usedItemHistoryDatas.Add(new(useItem, 1));
+
+        if (_usedItemHistoryDatas.Count <= _usedItemHistoryDataCount) return;
+        _usedItemHistoryDatas.RemoveAt(0);
+    }
+    public void Remove_UseItemHistory(Item_ScrObj removeItem)
+    {
+        for (int i = _usedItemHistoryDatas.Count - 1; i >= 0; i--)
+        {
+            if (removeItem != _usedItemHistoryDatas[i].itemScrObj) continue;
+            _usedItemHistoryDatas.RemoveAt(i);
+        }
     }
 
     private void Toggle_CoolTimeBar()

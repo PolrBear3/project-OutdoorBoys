@@ -20,14 +20,21 @@ MonoBehaviour:
     _amount: 1
   - _itemScrObj: {fileID: 11400000, guid: 6ed344ca2eb5d4148ac7db71ea2bc56f, type: 2}
     _amount: 1
+  _timeRangeData:
+    _activeDay: 0
+    _activeTime: 0
+    _restrictTime: 0
+    _minTimeCount: 0
+    _maxTimeCount: 0
   _effectDatas:
   - _effectType: 0
-    _modifyData:
+    _playerModifyData:
       _healthUpdateValue: 2
       _hungerUpdateValue: 2
-      _temperatureUpdateValue: 0
+      _temperatureUpdateValue: 2
       _staminaUpdateValue: 0
     _temperatureSustainValue: 0
+    _damageValue: 0
     _stateUpdateDatas: []
     _placeItems: []
     _replaceItems: []

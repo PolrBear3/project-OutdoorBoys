@@ -19,7 +19,7 @@ public class PlayerData
     public int stamina => _stamina;
 
     /// <summary>
-    /// ItemData (item & duration), int cooltime decrease value
+    /// ItemData (item & time count duration), float cooltime decrease value
     /// </summary>
     [ES3Serializable] private Dictionary<ItemData, float> _coolTimeDecreaseDatas = new();
     public Dictionary<ItemData, float> coolTimeDecreaseDatas => _coolTimeDecreaseDatas;
@@ -78,7 +78,7 @@ public class PlayerData
         foreach (var data in _coolTimeDecreaseDatas)
         {
             if (data.Key.itemScrObj != itemDurationData.itemScrObj) continue;
-            
+
             _coolTimeDecreaseDatas.Remove(data.Key);
             break;
         }

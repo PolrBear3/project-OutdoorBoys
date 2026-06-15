@@ -233,7 +233,7 @@ public class Tile : MonoBehaviour
 
             if (setItemAmount > 0) continue;
 
-            InGame_Manager.instance.tilesController.OnTileItemsUpdate(this);
+            InGame_Manager.instance.tilesController.OnTileItemsUpdate?.Invoke(this);
             return null;
         }
 
@@ -315,7 +315,7 @@ public class Tile : MonoBehaviour
         if (leftOverData == null) return;
 
         _data.Preserve_ItemData(leftOverData);
-        InGame_Manager.instance.tilesController.OnTileItemsUpdate(this);
+        InGame_Manager.instance.tilesController.OnTileItemsUpdate?.Invoke(this);
     }
 
 

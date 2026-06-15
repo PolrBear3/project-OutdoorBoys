@@ -9,14 +9,10 @@ public class ItemSynergy_ScrObj : ScriptableObject
     [SerializeField] private string _synergyName;
 
     [SerializeField][Multiline] private string _description;
-    public string description => _description;
 
     [Space(20)]
     [SerializeField] private TileScrObj[] _targetTiles;
-    public TileScrObj[] targetTiles => _targetTiles;
-    
     [SerializeField] private ItemData[] _requiredItemDatas;
-    public ItemData[] requiredItemDatas => _requiredItemDatas;
 
     [SerializeField] private TimeRange_Data _timeRangeData;
     public TimeRange_Data timeRangeData => _timeRangeData;
@@ -29,7 +25,7 @@ public class ItemSynergy_ScrObj : ScriptableObject
     public bool TargetTile_Match(TileScrObj checkTile)
     {
         if (_targetTiles.Length <= 0) return true;
-        
+
         for (int i = 0; i < _targetTiles.Length; i++)
         {
             if (checkTile == _targetTiles[i]) return true;
@@ -37,11 +33,8 @@ public class ItemSynergy_ScrObj : ScriptableObject
         return false;
     }
 
-    public bool RequiredItems_Match(List<ItemData> checkItemDatas)
+    public List<ItemData> Required_ItemDatas()
     {
-        if (_requiredItemDatas.Length <= 0) return true;
-        if (checkItemDatas.Count <= 0) return false;
-
         List<ItemData> combinedRequiredDatas = new();
 
         for (int i = 0; i < _requiredItemDatas.Length; i++)
@@ -67,6 +60,14 @@ public class ItemSynergy_ScrObj : ScriptableObject
             if (duplicateFound) continue;
             combinedRequiredDatas.Add(new(requiredItem, requiredAmount));
         }
+        return combinedRequiredDatas;
+    }
+    public bool RequiredItems_Match(List<ItemData> checkItemDatas)
+    {
+        if (_requiredItemDatas.Length <= 0) return true;
+        if (checkItemDatas.Count <= 0) return false;
+
+        List<ItemData> combinedRequiredDatas = Required_ItemDatas();
 
         for (int i = 0; i < combinedRequiredDatas.Count; i++)
         {
