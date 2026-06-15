@@ -182,6 +182,8 @@ GameObject:
   - component: {fileID: -2972689179177090662}
   - component: {fileID: 2309280192532274155}
   - component: {fileID: 2052365069880464563}
+  - component: {fileID: 909013105756005040}
+  - component: {fileID: 8430593149233347554}
   m_Layer: 0
   m_Name: Water Tile
   m_TagString: Untagged
@@ -296,7 +298,6 @@ MonoBehaviour:
   _defaultData:
     _loadDuration: 0
     _pixelSize: 3
-    _animationSpeed: 1
     _colorA: {r: 0.30980393, g: 0.56078434, b: 0.7294118, a: 1}
     _colorB: {r: 0.6431373, g: 0.8666667, b: 0.85882354, a: 1}
     _colorC: {r: 0.92156863, g: 0.92941177, b: 0.9137255, a: 1}
@@ -318,6 +319,37 @@ MonoBehaviour:
   _setPosition: {fileID: 1782231622545405155}
   _boundPointRenderer: {fileID: 4874734453812154398}
   _useableItemDrop: {fileID: 11400000, guid: 38f3d32e30dd248c99301e476ece34c4, type: 2}
+--- !u!114 &909013105756005040
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8222574897102272058}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a62f1c115baa44478beea7665436485d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _tile: {fileID: 2052365069880464563}
+  _playerDataModifier: {fileID: 8430593149233347554}
+--- !u!114 &8430593149233347554
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8222574897102272058}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 35c7424dbeac047f995e29434a07a8e5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _modityData:
+    _healthUpdateValue: 0
+    _hungerUpdateValue: 0
+    _temperatureUpdateValue: -1
+    _staminaUpdateValue: 0
 --- !u!1001 &822888408035745877
 PrefabInstance:
   m_ObjectHideFlags: 0

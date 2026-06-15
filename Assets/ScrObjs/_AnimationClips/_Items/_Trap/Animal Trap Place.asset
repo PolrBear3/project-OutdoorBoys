@@ -16,7 +16,7 @@ MonoBehaviour:
   _loop: 0
   _clipSpriteDatas:
   - _clipSprite: {fileID: -1361509600, guid: bf7ece83f843c4c35977c02f8c40d92d, type: 3}
-    _durationTime: 0
+    _durationTime: 0.1
     _sortingOrderUpdateValue: 0
     _alphaUpdateValue: 0
     _alphaDurationTime: 0
@@ -24,7 +24,7 @@ MonoBehaviour:
     _rotationValue: 0
     _transformDurationTime: 0
   - _clipSprite: {fileID: -1361509600, guid: bf7ece83f843c4c35977c02f8c40d92d, type: 3}
-    _durationTime: 0.1
+    _durationTime: 0
     _sortingOrderUpdateValue: 0
     _alphaUpdateValue: 0
     _alphaDurationTime: 0

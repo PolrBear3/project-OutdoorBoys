@@ -24,8 +24,9 @@ public class Inventory_Manager : MonoBehaviour, IItemsSource, IItemsSourceRemove
     public Action OnItemAdded;
 
 
-    [HideInInspector] public Item_ScrObj loadItem;
-    [HideInInspector] public int loadItemAmount;
+    [Space(40)]
+    [SerializeField] private ItemData[] _editorLoadItemDatas;
+    public ItemData[] editorLoadItemDatas => _editorLoadItemDatas;
 
 
     // MonoBehaviour
@@ -352,36 +353,23 @@ public class Inventory_Manager : MonoBehaviour, IItemsSource, IItemsSourceRemove
 [CustomEditor(typeof(Inventory_Manager))]
 public class Inventory_Manager_Editor : Editor
 {
-    private SerializedProperty loadItemProp;
-    private SerializedProperty loadItemAmountProp;
-
-    private void OnEnable()
-    {
-        loadItemProp = serializedObject.FindProperty("loadItem");
-        loadItemAmountProp = serializedObject.FindProperty("loadItemAmount");
-    }
-
     public override void OnInspectorGUI()
     {
         serializedObject.Update();
         DrawDefaultInspector();
 
-        GUILayout.Space(40);
         EditorGUILayout.BeginHorizontal();
 
-        EditorGUILayout.PropertyField(loadItemProp, GUIContent.none);
-        Item_ScrObj loadItem = (Item_ScrObj)loadItemProp.objectReferenceValue;
-
-        EditorGUILayout.PropertyField(loadItemAmountProp, GUIContent.none);
-        int loadAmount = loadItemAmountProp.intValue;
-
-        if (GUILayout.Button("Load Item"))
+        if (GUILayout.Button("Load Editor Item"))
         {
-            if (loadItem == null) return;
-
             Inventory_Manager inventory = InGame_Manager.instance.inventory;
+            ItemData[] loadItemDatas = inventory.editorLoadItemDatas;
 
-            ItemData data = inventory.Add_ItemData(new(loadItem, loadAmount));
+            for (int i = 0; i < loadItemDatas.Length; i++)
+            {
+                ItemData loadData = loadItemDatas[i];
+                inventory.AddItem(loadData.itemScrObj, loadData.amount);
+            }
             inventory.slotManager.Update_Visuals();
         }
         EditorGUILayout.EndHorizontal();

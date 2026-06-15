@@ -24,7 +24,7 @@ public class PlayerTemperature_SustainItem : MonoBehaviour
         Player_Controller player = InGame_Manager.instance.player;
         player.movement.tileTracker.UnRegister(ActionUpdateBus.AwakeUpdate, Update_SustainState);
 
-        player.UnRegister_TemperatureSustainData(gameObject);
+        player.UnRegister_TemperatureSustainData(this);
     }
 
 
@@ -38,6 +38,6 @@ public class PlayerTemperature_SustainItem : MonoBehaviour
             player.UnRegister_TemperatureSustainData(gameObject);
             return;
         }
-        player.Register_TemperatureSustainData(gameObject, new(_placeableItem.data.itemScrObj, _sustainValue));
+        player.Register_TemperatureSustainData(this, _sustainValue);
     }
 }

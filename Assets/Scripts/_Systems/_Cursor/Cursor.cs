@@ -38,12 +38,6 @@ public class Cursor : MonoBehaviour
     [SerializeField] private Sprite _placedItemsSynergizedSlotSprite;
 
     [Space(10)]
-    [SerializeField] private VerticalLayoutGroup _synergyDescriptionGroup;
-    private int _synergyDescriptionBottomSpace;
-
-    [SerializeField] private TextMeshProUGUI _synergyDescriptionText;
-
-    [Space(10)]
     [SerializeField] private GridLayoutGroup _tileStateSlotsGroup;
     [SerializeField] private TileState_IndicationSlot[] _tileStateSlots;
 
@@ -110,8 +104,6 @@ public class Cursor : MonoBehaviour
         tilesController.OnTileItemsUpdate += Update_HoverInfoPanel;
         tilesController.OnTilesStatesTimeCount += Toggle_HoverInfoPanel;
 
-
-        _synergyDescriptionBottomSpace = _synergyDescriptionGroup.padding.bottom;
         Toggle_HoverInfoPanel(_pointingTile);
     }
 
@@ -212,10 +204,8 @@ public class Cursor : MonoBehaviour
 
         if (togglePanel == false) return;
 
-        UpdatePivotPosition_HoverInfoPanel();
-
         Update_PreservedItems(hoveringTile);
-        Update_SynergyDescription(hoveringTile);
+        UpdatePivotPosition_HoverInfoPanel();
     }
     private void Toggle_HoverInfoPanel()
     {
@@ -322,23 +312,5 @@ public class Cursor : MonoBehaviour
             preservedIcon.sprite = preservedDatas[i].itemScrObj.microSprite;
             preservedIcon.gameObject.SetActive(true);
         }
-    }
-
-    private void Update_SynergyDescription(Tile tile)
-    {
-        if (tile == null) return;
-
-        List<ItemData> placedItemDatas = new(tile.Placed_ItemDatas());
-        bool itemPlaced = placedItemDatas.Count > 0;
-
-        bool synergyActive = false; // ?
-
-        _synergyDescriptionGroup.gameObject.SetActive(itemPlaced && synergyActive);
-        if (itemPlaced == false) return;
-
-        RectOffset synergyPadding = _synergyDescriptionGroup.padding;
-
-        synergyPadding.bottom = tile.data.preservedItemDatas.Count > 0 ? _synergyDescriptionBottomSpace : 0;
-        _synergyDescriptionGroup.padding = synergyPadding;
     }
 }

@@ -181,30 +181,33 @@ public class ItemCursor : MonoBehaviour, IItemsSource, IItemsSourceRemove, IItem
         OnSetData?.Invoke();
     }
 
+    public bool Update_DurabilityBar()
+    {
+        FillBar_UI durabilityBar = _cursor.durabilityBar;
+        Item_ScrObj currentItem = _data?.itemScrObj;
+
+        bool toggle = currentItem != null && currentItem.itemType == ItemType.use;
+        durabilityBar.gameObject.SetActive(toggle);
+
+        if (toggle == false) return false;
+        
+        durabilityBar.Update_Visuals(currentItem.maxAmount, _data.amount);
+        return true;
+    }
     public void Update_Visuals()
     {
-        GameObject amountText = _cursor.amountText.gameObject;
-        FillBar_UI durabilityBar = _cursor.durabilityBar;
-
         Item_ScrObj currentItem = _data?.itemScrObj;
 
         _cursor.Update_PointerSprite(currentItem?.inventorySprite);
         InGame_Manager.instance.player.interaction.Update_IndicationIcon(currentItem?.microSprite);
 
+        GameObject amountText = _cursor.amountText.gameObject;
         amountText.SetActive(false);
-        durabilityBar.gameObject.SetActive(false);
 
+        bool durabilityBarToggled = Update_DurabilityBar();
         if (_data == null || currentItem == null) return;
 
-        if (currentItem.itemType == ItemType.use)
-        {
-            durabilityBar.gameObject.SetActive(true);
-            durabilityBar.Update_Visuals(currentItem.maxAmount, _data.amount);
-
-            return;
-        }
-
-        if (_data.amount <= 1) return;
+        if (durabilityBarToggled || _data.amount <= 1) return;
         _cursor.Update_AmountText(_data.amount);
     }
 

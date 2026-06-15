@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Animal Trap
   m_EditorClassIdentifier: 
   _inventorySprite: {fileID: -1361509600, guid: bf7ece83f843c4c35977c02f8c40d92d, type: 3}
-  _placedSprite: {fileID: 0}
+  _placedSprite: {fileID: 656074368, guid: bf7ece83f843c4c35977c02f8c40d92d, type: 3}
   _microSprite: {fileID: -767490444, guid: bf7ece83f843c4c35977c02f8c40d92d, type: 3}
   _itemName: Animal Trap
   _description: 

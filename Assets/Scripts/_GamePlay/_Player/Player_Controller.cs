@@ -29,9 +29,9 @@ public class Player_Controller : MonoBehaviour, ISaveLoadable, IDamageable
     public PlayerData data => _data;
 
     /// <summary>
-    /// target object, target item & sustain value
+    /// sustain object & sustain value
     /// </summary>
-    private Dictionary<GameObject, ItemData> _temperatureSustainDatas = new();
+    private Dictionary<object, int> _temperatureSustainDatas = new();
 
     public Action<int> OnHealthUpdate;
     public Action<int> OnHungerUpdate;
@@ -128,7 +128,7 @@ public class Player_Controller : MonoBehaviour, ISaveLoadable, IDamageable
 
         foreach (var data in _temperatureSustainDatas)
         {
-            totalValue += data.Value.amount;
+            totalValue += data.Value;
         }
         return Mathf.Min(totalValue, data.temperature);
     }
@@ -143,14 +143,14 @@ public class Player_Controller : MonoBehaviour, ISaveLoadable, IDamageable
         return targetTemperature + sustainValue;
     }
 
-    public void Register_TemperatureSustainData(GameObject registerObject, ItemData sustainData)
+    public void Register_TemperatureSustainData(object registerObject, int sustainValue)
     {
-        if (registerObject == null || sustainData == null) return;
+        if (registerObject == null) return;
 
-        _temperatureSustainDatas[registerObject] = sustainData;
+        _temperatureSustainDatas[registerObject] = sustainValue;
         OnTemperatureUpdate?.Invoke(_data.temperature);
     }
-    public void UnRegister_TemperatureSustainData(GameObject registeredObject)
+    public void UnRegister_TemperatureSustainData(object registeredObject)
     {
         if (registeredObject == null) return;
         if (_temperatureSustainDatas.ContainsKey(registeredObject) == false) return;

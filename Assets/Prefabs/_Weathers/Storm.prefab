@@ -80,8 +80,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f7ddaf9c6a6e94c9493383ede76442a4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _playerDataModifier: {fileID: 1105032225907665582}
-  _passivePlayerDataModifier: {fileID: 8042987143684252783}
+  _playerDataModifier: {fileID: 8042987143684252783}
+  _passivePlayerDataModifier: {fileID: 1105032225907665582}
   _itemRemoveAnimationclip: {fileID: 11400000, guid: ea1735fffa4d4455e98412a54481ff2e, type: 2}
   _itemRemoveTweenType: 28
   _updatesDuration: 1

@@ -33,13 +33,18 @@ public class FillBar_UI : MonoBehaviour
 
 
     // Main
-    private void Update_BarVisual(int maxValue, int currentValue, int barSpriteUpdateValue)
+    public void Update_BarVisual(int spriteIndexNum)
+    {
+        if (_barSprites.Length <= 0) return;
+        
+        _barImage.sprite = _barSprites[Mathf.Clamp(spriteIndexNum, 0, _barSprites.Length - 1)];
+    }
+    private void Update_BarVisual(int currentValue, int barSpriteUpdateValue)
     {
         if (_barImage == null) return;
         if (_barImage.sprite == null) return;
 
-        int barSpriteIndex = Mathf.Clamp(currentValue > barSpriteUpdateValue ? 0 : 1, 0, _barSprites.Length - 1);
-        _barImage.sprite = _barSprites[barSpriteIndex];
+        Update_BarVisual(currentValue > barSpriteUpdateValue ? 0 : 1);
     }
 
     public void Update_Visuals(int maxValue, int currentValue, int barSpriteUpdateValue)
@@ -47,7 +52,7 @@ public class FillBar_UI : MonoBehaviour
         if (_fillImage == null) return;
         if (maxValue <= 0) return;
 
-        Update_BarVisual(maxValue, currentValue, barSpriteUpdateValue);
+        Update_BarVisual(currentValue, barSpriteUpdateValue);
 
         RectTransform rect = _fillImage.rectTransform;
         float fillSize = currentValue > 0 ? Mathf.Clamp01((float)currentValue / maxValue) : 0;

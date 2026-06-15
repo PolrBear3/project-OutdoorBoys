@@ -10,12 +10,12 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: d7a898d55452e4c67bbee2df32dc5638, type: 3}
-  m_Name: Moose's Neck
+  m_Name: Moose Neck
   m_EditorClassIdentifier: 
   _inventorySprite: {fileID: -1940268053, guid: bf7ece83f843c4c35977c02f8c40d92d, type: 3}
   _placedSprite: {fileID: 0}
   _microSprite: {fileID: -1940268053, guid: bf7ece83f843c4c35977c02f8c40d92d, type: 3}
-  _itemName: Moose's Neck
+  _itemName: Moose Neck
   _description: Neck can be found on soil
   _itemType: 0
   _itemPrefab: {fileID: 3637228250238346253, guid: 657360494c481422c801a61042b6d908, type: 3}
