@@ -10,15 +10,15 @@ public class WeatherEvent_Storm : WeatherEvent
     [SerializeField] private AnimationClipScrObj _itemRemoveAnimationclip;
     [SerializeField] private LeanTweenType _itemRemoveTweenType;
 
-    [Space(10)]
-    [SerializeField][Range(0, 10)] private float _updatesDuration;
-
     [Space(20)]
     [SerializeField] private Item_ScrObj[] _protectItems;
 
     [Space(20)]
-    [SerializeField][Range(0, 100)] private int _positionUpdateCount;
-    [SerializeField] private Item_ScrObj[] _positionUpdateItems;
+    [SerializeField][Range(0, 100)] private int _pushItemsCount;
+    [SerializeField][Range(0, 10)] private float _pushDuration;
+
+    [Space(20)]
+    [SerializeField] private Item_ScrObj[] _pushRestrictedItems;
 
     [Space(20)]
     [SerializeField][Range(0, 1)] private float _itemDropRate;
@@ -100,7 +100,7 @@ public class WeatherEvent_Storm : WeatherEvent
                 removeItem.AnimationDelay_Remove(_itemRemoveAnimationclip);
 
                 Vector2 movePosition = (Vector2)removeItem.transform.position + _pushDirection;
-                LeanTween.move(removeItem.gameObject, movePosition, _updatesDuration).setEase(_itemRemoveTweenType);
+                LeanTween.move(removeItem.gameObject, movePosition, _pushDuration).setEase(_itemRemoveTweenType);
 
                 break;
             }
@@ -114,14 +114,12 @@ public class WeatherEvent_Storm : WeatherEvent
 
         Item_ScrObj item = placedPushItem.data.itemScrObj;
 
-        for (int i = 0; i < _positionUpdateItems.Length; i++)
+        for (int i = 0; i < _pushRestrictedItems.Length; i++)
         {
-            if (item != _positionUpdateItems[i]) continue;
+            if (item == _pushRestrictedItems[i]) return false;
             if (positionUpdateTile.ItemPlace_AvailableCount(item) < item.maxAmount) return false;
-
-            return true;
         }
-        return false;
+        return true;
     }
     private void PushUpdate_PlacedItems()
     {
@@ -133,7 +131,7 @@ public class WeatherEvent_Storm : WeatherEvent
         Dictionary<PlaceableItem, Tile> positionUpdateItemDatas = new();
         List<Tile> activationTiles = new();
 
-        while (positionUpdateItemDatas.Count < _positionUpdateCount && allPlacedItems.Count > 0)
+        while (positionUpdateItemDatas.Count < _pushItemsCount && allPlacedItems.Count > 0)
         {
             int randItemIndex = Random.Range(0, allPlacedItems.Count);
             PlaceableItem randPlacedItem = allPlacedItems[randItemIndex];
@@ -166,7 +164,7 @@ public class WeatherEvent_Storm : WeatherEvent
             updateTile.Track_PlacingItem(placedItem);
             placedItem.Track_CurrentTile(updateTile);
 
-            updateTile.ClampUpdate_PlacedItemOffsets(_updatesDuration);
+            updateTile.ClampUpdate_PlacedItemOffsets(_pushDuration);
         }
 
         manager.time.timeUpdateActions.Add(this);
@@ -208,7 +206,7 @@ public class WeatherEvent_Storm : WeatherEvent
     }
     private IEnumerator DropUpdateDelay_PushedItems(List<PlaceableItem> positionUpdateItems)
     {
-        yield return new WaitForSeconds(_updatesDuration);
+        yield return new WaitForSeconds(_pushDuration);
 
         DropUpdate_PushedItems(positionUpdateItems);
         InGame_Manager.instance.time.timeUpdateActions.Remove(this);

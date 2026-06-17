@@ -65,4 +65,8 @@ MonoBehaviour:
   _playerDataModifier: {fileID: 7629069812844524078}
   _pushDistanceValue: 2
   _pushItemsCount: 10
-  _pushItems: []
+  _pushDuration: 1
+  _pushRestrictedItems:
+  - {fileID: 11400000, guid: 3d6275337348a4d93b21e3172d4b2f80, type: 2}
+  - {fileID: 11400000, guid: 86e876e6c7e9c467db97ab95dfa547ce, type: 2}
+  - {fileID: 11400000, guid: 7eec0f9b59d3341c48ea66ddd607fcce, type: 2}

@@ -2,6 +2,16 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+[System.Serializable]
+public class BoneCollectable_Data
+{
+    [SerializeField] private Sprite _completedSprite;
+    public Sprite completedSprite => _completedSprite;
+    
+    [SerializeField] private BoneCollectable_ScrObj[] _collectables;
+    public BoneCollectable_ScrObj[] collectables => _collectables;
+}
+
 public class BoneCollection_Manager : MonoBehaviour
 {
     [Space(20)]
@@ -10,6 +20,9 @@ public class BoneCollection_Manager : MonoBehaviour
     [Space(20)]
     [SerializeField] private ItemSlot_Manager _collectableSlotsManager;
     [SerializeField] private ItemInfo_Controller _hoverInfo;
+
+    [Space(20)]
+    [SerializeField] private ItemSlot _completedSlot;
 
 
     // MonoBehaviour
@@ -54,7 +67,7 @@ public class BoneCollection_Manager : MonoBehaviour
 
     private BoneCollectable_ScrObj BoneCollectable_Item(Item_ScrObj item)
     {
-        BoneCollectable_ScrObj[] collectableBones = InGame_Manager.instance.worldMapGenerator.currentWorldMap.boneCollectables;
+        BoneCollectable_ScrObj[] collectableBones = InGame_Manager.instance.worldMapGenerator.currentWorldMap.boneCollectableData.collectables;
 
         for (int i = 0; i < collectableBones.Length; i++)
         {
@@ -82,16 +95,36 @@ public class BoneCollection_Manager : MonoBehaviour
         InGame_Manager manager = InGame_Manager.instance;
         if (manager.inventory.Toggled()) return;
 
-        BoneCollectable_ScrObj[] collectableBones = manager.worldMapGenerator.currentWorldMap.boneCollectables;
+        BoneCollectable_Data data = manager.worldMapGenerator.currentWorldMap.boneCollectableData;
+        BoneCollectable_ScrObj[] collectableBones = data.collectables;
+        
+        int collectCount = 0;
 
         for (int i = 0; i < collectableBones.Length; i++)
         {
             ItemSlot slot = _collectableSlotsManager.slots[i];
+            Item_ScrObj collectableBone = collectableBones[i];
 
-            slot.Set_Data(new ItemData(collectableBones[i], 1));
-            slot.Toggle_Transparency(Bone_Collected(slot.data) == false);
+            slot.Set_Data(new ItemData(collectableBone, 1));
+
+            bool boneCollected = Bone_Collected(slot.data);
+            slot.Toggle_Transparency(boneCollected == false);
+
+            if (boneCollected == false) continue;
+            collectCount++;
         }
-        _collectableSlotsManager.Update_Visuals();
+
+        bool collectCompleted = collectCount >= collectableBones.Length;
+
+        _collectableSlotsManager.Toggle_Slots(!collectCompleted);
+        _completedSlot.gameObject.SetActive(collectCompleted);
+
+        if (collectCompleted == false)
+        {
+            _collectableSlotsManager.Update_Visuals();
+            return;
+        }
+        _completedSlot.itemImage.sprite = data.completedSprite;
     }
     private void UpdateCollectables_toSlots(bool inventoryToggled)
     {
@@ -111,8 +144,10 @@ public class BoneCollection_Manager : MonoBehaviour
         BoneCollectable_ScrObj boneItem = BoneCollectable_Item(hoveringSlotData.itemScrObj);
         if (boneItem == null) return;
 
+        string description = Bone_Collected(hoveringSlotData) ? boneItem.collectedDescription : boneItem.description;
+
         hoveringSlot.data.Update_CurrentAmount(_itemSourceManager.ItemData_Count(boneItem));
-        _hoverInfo.Update_HoveringItemInfo(hoveringSlot, Bone_Collected(hoveringSlotData) ? boneItem.collectedDescription : boneItem.description);
+        _hoverInfo.Update_HoveringItemInfo(hoveringSlot, description);
     }
     private void UpdateInfo_HoveringCollectable()
     {

@@ -194,4 +194,12 @@ public class ItemSlot_Manager : MonoBehaviour
             slots[i].Update_AmountIndications();
         }
     }
+
+    public void Toggle_Slots(bool toggle)
+    {
+        foreach (ItemSlot slot in _slots)
+        {
+            slot.gameObject.SetActive(toggle);
+        }
+    }
 }

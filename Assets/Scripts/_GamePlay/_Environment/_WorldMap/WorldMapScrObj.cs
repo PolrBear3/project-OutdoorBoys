@@ -28,8 +28,8 @@ public class WorldMapScrObj : ScriptableObject
     [SerializeField] private Weather_ScrObj[] _weathers;
     public Weather_ScrObj[] weathers => _weathers;
 
-    [SerializeField] private BoneCollectable_ScrObj[] _boneCollectables;
-    public BoneCollectable_ScrObj[] boneCollectables => _boneCollectables;
+    [SerializeField] private BoneCollectable_Data _boneCollectableData;
+    public BoneCollectable_Data boneCollectableData => _boneCollectableData;
 
     [Space(20)]
     [SerializeField] private WarpRenderer_Data _backgroundWarpRenderData;

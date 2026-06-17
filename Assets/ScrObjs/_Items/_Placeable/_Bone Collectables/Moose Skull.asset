@@ -12,9 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d7a898d55452e4c67bbee2df32dc5638, type: 3}
   m_Name: Moose Skull
   m_EditorClassIdentifier: 
-  _inventorySprite: {fileID: -2017797557, guid: bf7ece83f843c4c35977c02f8c40d92d, type: 3}
-  _placedSprite: {fileID: 0}
-  _microSprite: {fileID: -2017797557, guid: bf7ece83f843c4c35977c02f8c40d92d, type: 3}
+  _inventorySprite: {fileID: 520720780, guid: fee4df37b11d14ae3a76d5bd254dacbf, type: 3}
+  _placedSprite: {fileID: 520720780, guid: fee4df37b11d14ae3a76d5bd254dacbf, type: 3}
+  _microSprite: {fileID: -70497151, guid: fee4df37b11d14ae3a76d5bd254dacbf, type: 3}
   _itemName: Moose Skull
   _description: Skull can be found on soil
   _itemType: 0
