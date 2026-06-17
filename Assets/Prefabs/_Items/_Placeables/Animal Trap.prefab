@@ -78,6 +78,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _placeableItem: {fileID: 1531750997209139500}
   _damage: 1
+  _stunUpdateCount: 3
 --- !u!1 &4762203460360835278
 GameObject:
   m_ObjectHideFlags: 0

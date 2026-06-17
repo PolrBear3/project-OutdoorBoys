@@ -12,7 +12,7 @@ public enum ActionUpdateBus
 public interface IDamageable
 {
     bool IsDamageable();
-    
+
     /// <returns>
     /// Actual Inflicted Damage Value
     /// </returns>
@@ -22,7 +22,6 @@ public interface IDamageable
 public class Data_Manager : MonoBehaviour
 {
     public static Data_Manager instance;
-
 
     [Space(20)]
     [SerializeField] private TileScrObj[] _tileScrObjs;
@@ -38,8 +37,7 @@ public class Data_Manager : MonoBehaviour
         instance = this;
     }
 
-
-    // _itemScrObjs
+    // Items
     public Item_ScrObj Item(string itemName)
     {
         for (int i = 0; i < _allItems.Length; i++)

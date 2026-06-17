@@ -8,8 +8,7 @@ public class AnimalTrap : MonoBehaviour
 
     [Space(20)]
     [SerializeField][Range(0, 100)] private int _damage;
-
-    private Coroutine _activationCoroutine;
+    [SerializeField][Range(0, 10)] private int _stunUpdateCount;
 
 
     // MonoBehaviour
@@ -25,25 +24,27 @@ public class AnimalTrap : MonoBehaviour
 
 
     // Main
-    private IDamageable Damageable_TargetAnimal(GameObject targetPrefab)
+    private Animal Damageable_TargetAnimal(GameObject targetPrefab)
     {
         if (targetPrefab.TryGetComponent(out Animal targetAnimal) == false) return null;
 
         AnimalData data = targetAnimal.data;
-        
+
         if (data == null) return null;
         if (targetAnimal.Deceased() || data.isOnSight == false) return null;
 
-        if (targetAnimal.TryGetComponent(out IDamageable damageable) == false) return null;
-        return damageable;
+        return targetAnimal;
     }
 
     private void Activate(GameObject activatePrefab)
     {
-        IDamageable damageAnimal = Damageable_TargetAnimal(activatePrefab);
+        Animal targetAnimal = Damageable_TargetAnimal(activatePrefab);
 
-        if (damageAnimal == null) return;
-        damageAnimal.InflictDamage(_damage);
+        if (targetAnimal == null) return;
+        if (targetAnimal.TryGetComponent(out IDamageable damageable) == false) return;
+
+        damageable.InflictDamage(_damage);
+        targetAnimal.data.statusStatesData.Register_State(StatusState.stunned, _stunUpdateCount);
 
         _placeableItem.AnimationDelay_Remove();
     }

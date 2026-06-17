@@ -8,6 +8,9 @@ public class AnimalData
     private AnimalScrObj _animalScrObj;
     public AnimalScrObj animalScrObj => _animalScrObj;
 
+    private StatusStates_Data _statusStatesData;
+    public StatusStates_Data statusStatesData => _statusStatesData;
+
     private int _health;
     public int health => _health;
 
@@ -22,6 +25,7 @@ public class AnimalData
     public AnimalData(AnimalScrObj setAnimal, int setHealth, int setTrailMarkCount)
     {
         _animalScrObj = setAnimal;
+        _statusStatesData = new();
         _health = setHealth;
         _trailMarkCount = setTrailMarkCount;
     }

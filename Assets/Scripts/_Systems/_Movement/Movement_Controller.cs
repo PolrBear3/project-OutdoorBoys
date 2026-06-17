@@ -5,9 +5,6 @@ using UnityEngine;
 
 public class Movement_Controller : MonoBehaviour
 {
-    private Movements_Manager _manager;
-
-    
     [SerializeField] private TileTracker _tileTracker;
     public TileTracker tileTracker => _tileTracker;
 
@@ -47,7 +44,7 @@ public class Movement_Controller : MonoBehaviour
     }
 
 
-    // Move Update
+    // Movement
     private void Movement_Update()
     {
         if (_moveCoroutine == null) return;

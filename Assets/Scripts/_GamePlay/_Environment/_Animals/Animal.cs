@@ -147,7 +147,7 @@ public class Animal : MonoBehaviour, IDamageable
     public void Update_Animation(bool isMoving)
     {
         if (_animation.Animation_Playing(_animation.AnimationClip(2))) return;
-        
+
         if (_data.isOnSight == false)
         {
             _animation.Play(0);
@@ -333,10 +333,18 @@ public class Animal : MonoBehaviour, IDamageable
         _movement.Stop();
     }
 
+    private bool RunAction_Available()
+    {
+        if (Deceased()) return false;
+        if (_data.isOnSight == false) return false;
+        if (_data.statusStatesData.Update_StateCount(StatusState.stunned)) return false;
+
+        return true;
+    }
+
     private void Run_TimeCountActions()
     {
-        if (Deceased()) return;
-        if (_data.isOnSight == false) return;
+        if (RunAction_Available() == false) return;
 
         Reset_ActionsUpdate();
         _tileIndicator.Clear_CurrentIndicators();
@@ -347,10 +355,20 @@ public class Animal : MonoBehaviour, IDamageable
     {
         while (_animation.Animation_Playing()) yield return null;
 
+        bool stunnedDuringAction = false;
+
         foreach (AnimalAction animalAction in _onTimeCountActions)
         {
             animalAction.Run_Action();
-            while (animalAction.actionRunning) yield return null;
+
+            while (animalAction.actionRunning)
+            {
+                stunnedDuringAction = data.statusStatesData.datas.ContainsKey(StatusState.stunned);
+                if (stunnedDuringAction) break;
+
+                yield return null;
+            }
+            if (stunnedDuringAction) break;
         }
 
         HealthBar_Toggle();
@@ -362,6 +380,8 @@ public class Animal : MonoBehaviour, IDamageable
 
     private void Run_AgroActions()
     {
+        if (RunAction_Available() == false) return;
+
         Reset_ActionsUpdate();
         _tileIndicator.Clear_CurrentIndicators();
 
@@ -379,10 +399,20 @@ public class Animal : MonoBehaviour, IDamageable
     {
         while (_animation.Animation_Playing()) yield return null;
 
+        bool stunnedDuringAction = false;
+
         foreach (AnimalAction animalAction in _onAgroActions)
         {
             animalAction.Run_Action();
-            while (animalAction.actionRunning) yield return null;
+
+            while (animalAction.actionRunning)
+            {
+                stunnedDuringAction = data.statusStatesData.datas.ContainsKey(StatusState.stunned);
+                if (stunnedDuringAction) break;
+
+                yield return null;
+            }
+            if (stunnedDuringAction) break;
         }
 
         HealthBar_Toggle();

@@ -24,7 +24,7 @@ public class WeatherEvent_Storm : WeatherEvent
     [SerializeField][Range(0, 1)] private float _itemDropRate;
     [SerializeField] private ConvertUpdate_ItemData[] _dropItemDatas;
 
-    private Vector2 _positionUpdateDirection;
+    private Vector2 _pushDirection;
 
 
     // Text Template
@@ -33,30 +33,36 @@ public class WeatherEvent_Storm : WeatherEvent
         return base.Description()
             .Replace("{preTemperatureUpdateValue}", _passivePlayerDataModifier.modifyData.temperatureUpdateValue.ToString())
             .Replace("{temperatureUpdateValue}", playerDataModifier.modifyData.temperatureUpdateValue.ToString())
-            .Replace("{positionUpdateDirection}", _positionUpdateDirection.ToString());
+            .Replace("{positionUpdateDirection}", _pushDirection.ToString());
     }
 
 
     // Activation
     public override List<Tile> Generated_ActivationTiles()
     {
-        List<Vector2> allDirections = Utility.Surrounding_Directions();
-        _positionUpdateDirection = allDirections[Random.Range(0, allDirections.Count)];
+        Load_PushDirection();
 
         return new(InGame_Manager.instance.tilesController.currentTiles);
     }
 
     public override void Activate_Event()
     {
-        Update_TileStates();
-        Update_PlayerState();
+        PushUpdate_PlacedItems();
 
+        Update_PlayerState();
         RemoveUpdate_ProtectItems();
-        PositionUpdate_PlacedItems();
+
+        Update_TileStates();
     }
 
 
     // Custom Activations
+    private void Load_PushDirection()
+    {
+        List<Vector2> allDirections = Utility.Surrounding_Directions();
+        _pushDirection = allDirections[Random.Range(0, allDirections.Count)];
+    }
+
     private void Update_PlayerState()
     {
         InGame_Manager manager = InGame_Manager.instance;
@@ -72,12 +78,11 @@ public class WeatherEvent_Storm : WeatherEvent
         }
         playerDataModifier.Update_Data();
 
-        Tile updateTile = manager.tilesController.Current_Tile((Vector2)playerTile.transform.position + _positionUpdateDirection);
+        Tile updateTile = manager.tilesController.Current_Tile((Vector2)playerTile.transform.position + _pushDirection);
 
         playerTracker.TrackUpdate_CurrentTile(updateTile);
         playerTracker.Clamp_toCurrentTile();
     }
-    
     private void RemoveUpdate_ProtectItems()
     {
         for (int i = 0; i < reservedActivationTiles.Count; i++)
@@ -94,7 +99,7 @@ public class WeatherEvent_Storm : WeatherEvent
 
                 removeItem.AnimationDelay_Remove(_itemRemoveAnimationclip);
 
-                Vector2 movePosition = (Vector2)removeItem.transform.position + _positionUpdateDirection;
+                Vector2 movePosition = (Vector2)removeItem.transform.position + _pushDirection;
                 LeanTween.move(removeItem.gameObject, movePosition, _updatesDuration).setEase(_itemRemoveTweenType);
 
                 break;
@@ -102,12 +107,12 @@ public class WeatherEvent_Storm : WeatherEvent
         }
     }
 
-    private bool PositionUpdate_Available(PlaceableItem placedItem, Tile positionUpdateTile)
+    private bool Push_Available(PlaceableItem placedPushItem, Tile positionUpdateTile)
     {
         if (positionUpdateTile == null) return false;
-        if (placedItem.placedTile == positionUpdateTile) return true;
+        if (placedPushItem.placedTile == positionUpdateTile) return true;
 
-        Item_ScrObj item = placedItem.data.itemScrObj;
+        Item_ScrObj item = placedPushItem.data.itemScrObj;
 
         for (int i = 0; i < _positionUpdateItems.Length; i++)
         {
@@ -118,7 +123,7 @@ public class WeatherEvent_Storm : WeatherEvent
         }
         return false;
     }
-    private void PositionUpdate_PlacedItems()
+    private void PushUpdate_PlacedItems()
     {
         InGame_Manager manager = InGame_Manager.instance;
         Tiles_Controller tilesController = manager.tilesController;
@@ -138,10 +143,10 @@ public class WeatherEvent_Storm : WeatherEvent
             Tile placedItemTile = randPlacedItem.placedTile;
             if (activationTiles.Contains(placedItemTile)) continue; // no duplicate tile placed items position update
 
-            Vector2 updateTilePos = (Vector2)placedItemTile.transform.position + _positionUpdateDirection;
+            Vector2 updateTilePos = (Vector2)placedItemTile.transform.position + _pushDirection;
             Tile updateTile = tilesController.Current_Tile(updateTilePos);
 
-            if (PositionUpdate_Available(randPlacedItem, updateTile) == false) continue;
+            if (Push_Available(randPlacedItem, updateTile) == false) continue;
 
             positionUpdateItemDatas[randPlacedItem] = updateTile;
             activationTiles.Add(placedItemTile);
@@ -165,7 +170,7 @@ public class WeatherEvent_Storm : WeatherEvent
         }
 
         manager.time.timeUpdateActions.Add(this);
-        StartCoroutine(DropUpdateDelay_PositionUpdateItems(dropUpdateItems));
+        StartCoroutine(DropUpdateDelay_PushedItems(dropUpdateItems));
     }
 
     private ItemData DropUpdate_ItemData(Item_ScrObj droppingItem)
@@ -178,7 +183,7 @@ public class WeatherEvent_Storm : WeatherEvent
         return null;
     }
 
-    private void DropUpdate_PositionUpdateItems(List<PlaceableItem> positionUpdateItems)
+    private void DropUpdate_PushedItems(List<PlaceableItem> positionUpdateItems)
     {
         for (int i = 0; i < positionUpdateItems.Count; i++)
         {
@@ -201,11 +206,11 @@ public class WeatherEvent_Storm : WeatherEvent
             updateItems.placedTile.Set_PlacingItem(new(dropData.itemScrObj, dropAmount));
         }
     }
-    private IEnumerator DropUpdateDelay_PositionUpdateItems(List<PlaceableItem> positionUpdateItems)
+    private IEnumerator DropUpdateDelay_PushedItems(List<PlaceableItem> positionUpdateItems)
     {
         yield return new WaitForSeconds(_updatesDuration);
 
-        DropUpdate_PositionUpdateItems(positionUpdateItems);
+        DropUpdate_PushedItems(positionUpdateItems);
         InGame_Manager.instance.time.timeUpdateActions.Remove(this);
     }
 }

@@ -18,10 +18,13 @@ public class PlayerData
     [ES3Serializable][SerializeField][Range(0, 500)] private int _stamina;
     public int stamina => _stamina;
 
+    [ES3Serializable][SerializeField] private StatusStates_Data _statusStatesData;
+    public StatusStates_Data statusStatesData => _statusStatesData;
+
     /// <summary>
     /// ItemData (item & time count duration), float cooltime decrease value
     /// </summary>
-    [ES3Serializable] private Dictionary<ItemData, float> _coolTimeDecreaseDatas = new();
+    [ES3Serializable][SerializeField] private Dictionary<ItemData, float> _coolTimeDecreaseDatas = new();
     public Dictionary<ItemData, float> coolTimeDecreaseDatas => _coolTimeDecreaseDatas;
 
 
@@ -32,6 +35,7 @@ public class PlayerData
         _hunger = copyData._hunger;
         _temperature = copyData._temperature;
         _stamina = copyData._stamina;
+        _statusStatesData = copyData._statusStatesData;
     }
 
 
