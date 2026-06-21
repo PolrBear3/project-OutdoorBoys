@@ -26,9 +26,8 @@ MonoBehaviour:
   _weathers:
   - {fileID: 11400000, guid: 8a1f7c46e181347769b0b4048f23f0ef, type: 2}
   - {fileID: 11400000, guid: 7d5ed3b52409443119f0f6ee41db4f54, type: 2}
-  - {fileID: 11400000, guid: 6890b9a6f17504eb98d36fdcff50630f, type: 2}
   - {fileID: 11400000, guid: dd95a5d82f9fb4d8e842dd3938129501, type: 2}
-  - {fileID: 11400000, guid: 6e2f06d8fae764998893f2bfaf3fb059, type: 2}
+  - {fileID: 11400000, guid: 6890b9a6f17504eb98d36fdcff50630f, type: 2}
   _boneCollectableData:
     _completedSprite: {fileID: 1200880308, guid: fee4df37b11d14ae3a76d5bd254dacbf, type: 3}
     _collectables:

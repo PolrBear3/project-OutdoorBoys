@@ -31,7 +31,6 @@ public class Tarp : MonoBehaviour
     {
         float transparencyValue = playerCurrentTile == _placeableItem.placedTile ? _transparencyValue : 1f;
 
-        LeanTween.cancel(gameObject);
         LeanTween.alpha(gameObject, transparencyValue, _transparencyUpdateDuration);
     }
 }

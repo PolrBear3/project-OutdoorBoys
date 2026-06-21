@@ -66,11 +66,11 @@ public class WeatherEvent_StrongWind : WeatherEvent
     private void PushUpdate_Items()
     {
         List<PlaceableItem> allPlacedItems = new(InGame_Manager.instance.tilesController.placedItems);
-        
-        for (int i = allPlacedItems.Count - 1; i >= 0 ; i--)
+
+        for (int i = allPlacedItems.Count - 1; i >= 0; i--)
         {
             Item_ScrObj placedItem = allPlacedItems[i].data.itemScrObj;
-            
+
             for (int j = 0; j < _pushRestrictedItems.Length; j++)
             {
                 if (placedItem != _pushRestrictedItems[j]) continue;
