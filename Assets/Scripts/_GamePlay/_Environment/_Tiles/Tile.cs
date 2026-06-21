@@ -28,6 +28,7 @@ public class Tile : MonoBehaviour
     private const int _maxItemPlaceCount = 2;
     private List<PlaceableItem> _placedItems = new();
 
+    private HashSet<int> _placedItemsClampUpdateIds = new();
     public Action<GameObject> OnSetPrefab;
 
     private const int _stateSetTime = 3;
@@ -330,7 +331,7 @@ public class Tile : MonoBehaviour
 
             placedItem.transform.SetLocalPositionAndRotation(positionData.position, Quaternion.Euler(0f, 0f, positionData.rotationValue));
         }
-    }
+    }  
     public void ClampUpdate_PlacedItemOffsets(float clampDuration)
     {
         int placedItemCount = _placedItems.Count;

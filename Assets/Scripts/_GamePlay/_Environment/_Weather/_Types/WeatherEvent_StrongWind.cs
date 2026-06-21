@@ -38,7 +38,7 @@ public class WeatherEvent_StrongWind : WeatherEvent
     public override void Activate_Event()
     {
         PushUpdate_Items();
-        PushUpdate_Player();
+        //PushUpdate_Player();
     }
 
 
